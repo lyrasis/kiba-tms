@@ -1,5 +1,5 @@
 module Kiba
-  module TMS
+  module Tms
     VERSION = '0.0.1'
   end
 end
