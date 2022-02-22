@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+# require 'kiba'
+# require 'kiba/extend'
 require_relative 'lib/kiba/tms'
 
 # Looks up the absolute path to the kiba-extend gem where it is installed on your
