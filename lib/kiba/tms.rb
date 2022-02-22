@@ -10,13 +10,6 @@ require 'kiba-common/sources/csv'
 require 'kiba/extend'
 require 'zeitwerk'
 
-loader = Zeitwerk::Loader.new
-loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
-#loader.logger = method(:puts)
-loader.setup
-
-::Tms = Kiba::Tms
-
 # dev
 require 'pry'
 
@@ -31,6 +24,8 @@ module Kiba
     # you will want to override the following in any application using this extension
     setting :datadir, default: "#{__dir__}/data", reader: true
     setting :delim, default: Kiba::Extend.delim, reader: true
+    # TMS tables not used in a given project. Override in project application
+    setting :excluded_tables, default: [], reader: true
     # File registry - best to just leave this as-is
     setting :registry, default: Kiba::Extend.registry, reader: true
 
@@ -44,3 +39,11 @@ module Kiba
     }
   end
 end
+
+loader = Zeitwerk::Loader.new
+loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
+#loader.logger = method(:puts)
+loader.setup
+
+::Tms = Kiba::Tms
+

@@ -7,115 +7,20 @@ module Kiba
     # Populates file registry provided by Kiba::Extend
     module RegistryData
       def self.register
+        register_supplied_files
         register_files
       end
 
-      def self.register_files
-        Kiba::Tms.registry.namespace('tms') do
-          register :alt_nums, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'AltNums.csv'),
-            supplied: true
-          }
-          register :classification_notations, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ClassificationNotations.csv'),
-            supplied: true
-          }
-          register :classification_xrefs, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ClassificationXRefs.csv'),
-            supplied: true
-          }
-          register :classifications, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Classifications.csv'),
-            supplied: true
-          }
-          register :con_alt_names, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ConAltNames.csv'),
-            supplied: true
-          }
-          register :con_dates, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ConDates.csv'),
-            supplied: true
-          }
-          register :constituents, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Constituents.csv'),
-            supplied: true,
-            lookup_on: :constituentid
-          }
-          register :con_types, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ConTypes.csv'),
-            supplied: true
-          }
-          register :departments, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Departments.csv'),
-            supplied: true,
-            lookup_on: :departmentid
-          }
-          register :exh_ven_obj_xrefs, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ExhVenObjXrefs.csv'),
-            supplied: true
-          }
-          register :indemnity_responsibilities, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'IndemnityResponsibilities.csv'),
-            supplied: true
-          }
-          register :insurance_responsibilities, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'InsuranceResponsibilities.csv'),
-            supplied: true
-          }
-          register :loan_obj_xrefs, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'LoanObjXrefs.csv'),
-            supplied: true
-          }
-          register :media_files, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'MediaFiles.csv'),
-            supplied: true
-          }
-          register :media_renditions, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'MediaRenditions.csv'),
-            supplied: true
-          }
-          register :objects, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Objects.csv'),
-            supplied: true
-          }
-          register :obj_ins_indem_resp, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ObjInsIndemResp.csv'),
-            supplied: true
-          }
-          register :object_statuses, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ObjectStatuses.csv'),
-            supplied: true
-          }
-          register :relationships, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Relationships.csv'),
-            supplied: true
-          }
-          register :term_master, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'TermMasterThes.csv'),
-            supplied: true
-          }
-          register :term_master_geo, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'TermMasterGeo.csv'),
-            supplied: true
-          }
-          register :term_types, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'TermTypes.csv'),
-            supplied: true
-          }
-          register :terms, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'Terms.csv'),
-            supplied: true
-          }
-          register :thes_xrefs, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ThesXrefs.csv'),
-            supplied: true
-          }
-          register :thes_xref_types, {
-            path: File.join(Kiba::Tms.datadir, 'tms', 'ThesXrefTypes.csv'),
-            supplied: true
-          }
-        end
+      def self.register_supplied_files
+        tables = Tms::Table::List.call.map{ |table| Tms::Table::Obj.new(table) }
+          .select(&:included)
         
+        Kiba::Tms.registry.namespace('tms') do
+          tables.each{ |table| register table.filekey, Tms::Table::Supplied::RegistryHashCreator.call(table) }
+        end
+      end
+      
+      def self.register_files
         Kiba::Tms.registry.namespace('prep') do
           register :alt_nums, {
             path: File.join(Kiba::Tms.datadir, 'prepped', 'alt_nums.csv'),
