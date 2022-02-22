@@ -8,274 +8,453 @@ module Kiba
     module RegistryData
       def self.register
         register_files
-        Kiba::Tms.registry.transform # Transforms the file hashes below into Kiba::Extend::Registry::FileRegistryEntry objects
       end
 
       def self.register_files
         Kiba::Tms.registry.namespace('tms') do
           register :alt_nums, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'AltNums.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'AltNums.csv'),
             supplied: true
           }
           register :classification_notations, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ClassificationNotations.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ClassificationNotations.csv'),
             supplied: true
           }
           register :classification_xrefs, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ClassificationXRefs.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ClassificationXRefs.csv'),
             supplied: true
           }
           register :classifications, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Classifications.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Classifications.csv'),
             supplied: true
           }
           register :con_alt_names, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ConAltNames.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ConAltNames.csv'),
             supplied: true
           }
           register :con_dates, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ConDates.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ConDates.csv'),
             supplied: true
           }
           register :constituents, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Constituents.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Constituents.csv'),
             supplied: true,
             lookup_on: :constituentid
           }
           register :con_types, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ConTypes.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ConTypes.csv'),
             supplied: true
           }
           register :departments, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Departments.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Departments.csv'),
             supplied: true,
             lookup_on: :departmentid
           }
           register :exh_ven_obj_xrefs, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ExhVenObjXrefs.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ExhVenObjXrefs.csv'),
             supplied: true
           }
           register :indemnity_responsibilities, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'IndemnityResponsibilities.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'IndemnityResponsibilities.csv'),
             supplied: true
           }
           register :insurance_responsibilities, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'InsuranceResponsibilities.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'InsuranceResponsibilities.csv'),
             supplied: true
           }
           register :loan_obj_xrefs, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'LoanObjXrefs.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'LoanObjXrefs.csv'),
             supplied: true
           }
           register :media_files, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'MediaFiles.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'MediaFiles.csv'),
             supplied: true
           }
           register :media_renditions, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'MediaRenditions.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'MediaRenditions.csv'),
             supplied: true
           }
           register :objects, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Objects.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Objects.csv'),
             supplied: true
           }
           register :obj_ins_indem_resp, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ObjInsIndemResp.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ObjInsIndemResp.csv'),
             supplied: true
           }
           register :object_statuses, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ObjectStatuses.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ObjectStatuses.csv'),
             supplied: true
           }
           register :relationships, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Relationships.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Relationships.csv'),
             supplied: true
           }
           register :term_master, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'TermMasterThes.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'TermMasterThes.csv'),
             supplied: true
           }
           register :term_master_geo, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'TermMasterGeo.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'TermMasterGeo.csv'),
             supplied: true
           }
           register :term_types, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'TermTypes.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'TermTypes.csv'),
             supplied: true
           }
           register :terms, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'Terms.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'Terms.csv'),
             supplied: true
           }
           register :thes_xrefs, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ThesXrefs.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ThesXrefs.csv'),
             supplied: true
           }
           register :thes_xref_types, {
-            path: File.join(Kiba::Tms.tmsdatadir, 'tms', 'ThesXrefTypes.csv'),
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ThesXrefTypes.csv'),
             supplied: true
           }
         end
         
         Kiba::Tms.registry.namespace('prep') do
-        #   register :alt_nums, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'alt_nums.csv'),
-        #     creator: Kiba::Tms::AltNums.method(:prep),
-        #     lookup_on: :description,
-        #     tags: %i[altnums prep]
-        #   }
-        #   register :classification_notations, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'classification_notations.csv'),
-        #     creator: Kiba::Tms::ClassificationNotations.method(:prep),
-        #     lookup_on: :classificationnotationid,
-        #     tags: %i[classificationnotations prep]
-        #   }
-        #   register :classification_xrefs, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'classification_xrefs.csv'),
-        #     creator: Kiba::Tms::ClassificationXrefs.method(:prep),
-        #     lookup_on: :id,
-        #     tags: %i[classificationxrefs prep]
-        #   }
-        #   register :classifications, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'classifications.csv'),
-        #     creator: Kiba::Tms::Classifications.method(:prep),
-        #     lookup_on: :classificationid,
-        #     tags: %i[classifications prep]
-        #   }
+          register :alt_nums, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'alt_nums.csv'),
+            creator: Kiba::Tms::AltNums.method(:prep),
+            lookup_on: :description,
+            tags: %i[altnums prep]
+          }
+          register :classification_notations, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'classification_notations.csv'),
+            creator: Kiba::Tms::ClassificationNotations.method(:prep),
+            lookup_on: :classificationnotationid,
+            tags: %i[classificationnotations prep]
+          }
+          register :classification_xrefs, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'classification_xrefs.csv'),
+            creator: Kiba::Tms::ClassificationXrefs.method(:prep),
+            lookup_on: :id,
+            tags: %i[classificationxrefs prep]
+          }
+          register :classifications, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'classifications.csv'),
+            creator: Kiba::Tms::Classifications.method(:prep),
+            lookup_on: :classificationid,
+            tags: %i[classifications prep]
+          }
           register :constituents, {
-            path: File.join(Mmm.datadir, 'prepped', 'constituents.csv'),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
             creator: Kiba::Tms::Constituents.method(:prep),
             lookup_on: :constituentid,
             dest_special_opts: { initial_headers: %i[constituentid constituenttype displayname defaultnameid] },
             tags: %i[con prep]
           }
-        #   register :con_types, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'con_types.csv'),
-        #     creator: Kiba::Tms::ConTypes.method(:prep),
-        #     lookup_on: :constituenttypeid,
-        #     tags: %i[con contypes prep]
-        #   }
-        #   register :con_alt_names, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'con_alt_names.csv'),
-        #     creator: Kiba::Tms::ConAltNames.method(:prep),
-        #     lookup_on: :altnameid,
-        #     dest_special_opts: {
-        #       initial_headers:
-        #       %i[constituentid constituentdefaultnameid altnameid constituentdisplayname constituenttype
-        #          nametype displayname]
-        #     },
-        #     tags: %i[con conaltnames prep]
-        #   }
-        #   register :con_dates, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'con_dates.csv'),
-        #     creator: Kiba::Tms::ConDates.method(:prep),
-        #     dest_special_opts: {
-        #       initial_headers:
-        #       %i[constituentdisplayname constituenttype datedescription remarks
-        #          datebegsearch monthbegsearch daybegsearch
-        #          dateendsearch monthendsearch dayendsearch]
-        #     },
-        #     tags: %i[con condates prep]
-        #   }
-        #   register :departments, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'departments.csv'),
-        #     creator: Kiba::Tms::Departments.method(:prep),
-        #     lookup_on: :departmentid,
-        #     tags: %i[departments prep]
-        #   }
-        #   register :exh_ven_obj_xrefs, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'exh_ven_obj_xrefs.csv'),
-        #     creator: Kiba::Tms::ExhVenObjXrefs.method(:prep),
-        #     tags: %i[exhibitions objects venues rels prep]
-        #   }
-        #   register :indemnity_responsibilities, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'indemnity_responsibilities.csv'),
-        #     creator: Kiba::Tms::IndemnityResponsibilities.method(:prep),
-        #     lookup_on: :responsibilityid,
-        #     tags: %i[ins indemnityresponsibilities prep]
-        #   }
-        #   register :insurance_responsibilities, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'insurance_responsibilities.csv'),
-        #     creator: Kiba::Tms::InsuranceResponsibilities.method(:prep),
-        #     lookup_on: :responsibilityid,
-        #     tags: %i[ins insuranceresponsibilities prep]
-        #   }
-        #   register :loan_obj_xrefs, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'loan_obj_xrefs.csv'),
-        #     creator: Kiba::Tms::LoanObjXrefs.method(:prep),
-        #     tags: %i[loans objects rels prep]
-        #   }
-        #   register :obj_ins_indem_resp, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'obj_ins_indem_resp.csv'),
-        #     creator: Kiba::Tms::ObjInsIndemResp.method(:prep),
-        #     lookup_on: :objinsindemrespid,
-        #     tags: %i[ins indemnityresponsibilities insuranceresponsibilitie prep]
-        #   }
-        #   register :object_number_lookup, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'object_number_lookup.csv'),
-        #     creator: Kiba::Tms::Objects.method(:object_number_lookup),
-        #     lookup_on: :objectid,
-        #     tags: %i[objects lookup prep]
-        #   }
-        #   register :object_numbers, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'object_numbers.csv'),
-        #     creator: Kiba::Tms::Objects.method(:object_numbers),
-        #     lookup_on: :objectnumber,
-        #     tags: %i[objects lookup prep]
-        #   }
-        #   register :objects, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'objects.csv'),
-        #     creator: Kiba::Tms::Objects.method(:prep),
-        #     lookup_on: :objectnumber,
-        #     dest_special_opts: {
-        #       initial_headers:
-        #       %i[objectnumber department classification classificationxref objectname objectstatus title]
-        #     },
-        #     tags: %i[objects prep]
-        #   }
-        #   register :object_statuses, {
-        #     path: File.join(Mmm.datadir, 'prepped', 'object_statuses.csv'),
-        #     creator: Kiba::Tms::ObjectStatuses.method(:prep),
-        #     lookup_on: :objectstatusid,
-        #     tags: %i[objectstatuses prep]
-        #   }
-        #   register :term_master, {
-        #     creator: Kiba::Tms::TermMaster.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'term_master.csv'),
-        #     lookup_on: :termmasterid,
-        #     tags: %i[termdata termmaster prep]
-        #   }
-        #   register :term_master_geo, {
-        #     creator: Kiba::Tms::TermMasterGeo.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'term_master_geo.csv'),
-        #     lookup_on: :termmastergeoid,
-        #     tags: %i[termdata termmastergeo prep]
-        #   }
-        #   register :term_types, {
-        #     creator: Kiba::Tms::TermTypes.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'term_types.csv'),
-        #     lookup_on: :termtypeid,
-        #     tags: %i[termdata termtypes prep]
-        #   }
-        #   register :terms, {
-        #     creator: Kiba::Tms::Terms.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'terms.csv'),
-        #     lookup_on: :termid,
-        #     dest_special_opts: { initial_headers: %i[termid termmasterid termtype term termsource termsourceid] },
-        #     tags: %i[termdata terms prep]
-        #   }
-        #   register :thes_xrefs, {
-        #     creator: Kiba::Tms::ThesXrefs.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'thes_xrefs.csv'),
-        #     dest_special_opts: { initial_headers: %i[tablename table_row_id thesxreftype term] },
-        #     tags: %i[termdata thesxrefs prep]
-        #   }
-        #   register :thes_xref_types, {
-        #     creator: Kiba::Tms::ThesXrefTypes.method(:prep),
-        #     path: File.join(Mmm.datadir, 'prepped', 'thes_xref_types.csv'),
-        #     lookup_on: :thesxreftypeid,
-        #     tags: %i[termdata thesxreftypes prep]
-        #   }
+          register :con_types, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'con_types.csv'),
+            creator: Kiba::Tms::ConTypes.method(:prep),
+            lookup_on: :constituenttypeid,
+            tags: %i[con contypes prep]
+          }
+          register :con_alt_names, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
+            creator: Kiba::Tms::ConAltNames.method(:prep),
+            lookup_on: :altnameid,
+            dest_special_opts: {
+              initial_headers:
+              %i[constituentid constituentdefaultnameid altnameid constituentdisplayname constituenttype
+                 nametype displayname]
+            },
+            tags: %i[con conaltnames prep]
+          }
+          register :con_dates, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'con_dates.csv'),
+            creator: Kiba::Tms::ConDates.method(:prep),
+            dest_special_opts: {
+              initial_headers:
+              %i[constituentdisplayname constituenttype datedescription remarks
+                 datebegsearch monthbegsearch daybegsearch
+                 dateendsearch monthendsearch dayendsearch]
+            },
+            tags: %i[con condates prep]
+          }
+          register :departments, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'departments.csv'),
+            creator: Kiba::Tms::Departments.method(:prep),
+            lookup_on: :departmentid,
+            tags: %i[departments prep]
+          }
+          register :exh_ven_obj_xrefs, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'exh_ven_obj_xrefs.csv'),
+            creator: Kiba::Tms::ExhVenObjXrefs.method(:prep),
+            tags: %i[exhibitions objects venues rels prep]
+          }
+          register :indemnity_responsibilities, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'indemnity_responsibilities.csv'),
+            creator: Kiba::Tms::IndemnityResponsibilities.method(:prep),
+            lookup_on: :responsibilityid,
+            tags: %i[ins indemnityresponsibilities prep]
+          }
+          register :insurance_responsibilities, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'insurance_responsibilities.csv'),
+            creator: Kiba::Tms::InsuranceResponsibilities.method(:prep),
+            lookup_on: :responsibilityid,
+            tags: %i[ins insuranceresponsibilities prep]
+          }
+          register :loan_obj_xrefs, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'loan_obj_xrefs.csv'),
+            creator: Kiba::Tms::LoanObjXrefs.method(:prep),
+            tags: %i[loans objects rels prep]
+          }
+          register :obj_ins_indem_resp, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'obj_ins_indem_resp.csv'),
+            creator: Kiba::Tms::ObjInsIndemResp.method(:prep),
+            lookup_on: :objinsindemrespid,
+            tags: %i[ins indemnityresponsibilities insuranceresponsibilitie prep]
+          }
+          register :object_number_lookup, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'object_number_lookup.csv'),
+            creator: Kiba::Tms::Objects.method(:object_number_lookup),
+            lookup_on: :objectid,
+            tags: %i[objects lookup prep]
+          }
+          register :object_numbers, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'object_numbers.csv'),
+            creator: Kiba::Tms::Objects.method(:object_numbers),
+            lookup_on: :objectnumber,
+            tags: %i[objects lookup prep]
+          }
+          register :objects, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'objects.csv'),
+            creator: Kiba::Tms::Objects.method(:prep),
+            lookup_on: :objectnumber,
+            dest_special_opts: {
+              initial_headers:
+              %i[objectnumber department classification classificationxref objectname objectstatus title]
+            },
+            tags: %i[objects prep]
+          }
+          register :object_statuses, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'object_statuses.csv'),
+            creator: Kiba::Tms::ObjectStatuses.method(:prep),
+            lookup_on: :objectstatusid,
+            tags: %i[objectstatuses prep]
+          }
+          register :term_master, {
+            creator: Kiba::Tms::TermMaster.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'term_master.csv'),
+            lookup_on: :termmasterid,
+            tags: %i[termdata termmaster prep]
+          }
+          register :term_master_geo, {
+            creator: Kiba::Tms::TermMasterGeo.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'term_master_geo.csv'),
+            lookup_on: :termmastergeoid,
+            tags: %i[termdata termmastergeo prep]
+          }
+          register :term_types, {
+            creator: Kiba::Tms::TermTypes.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'term_types.csv'),
+            lookup_on: :termtypeid,
+            tags: %i[termdata termtypes prep]
+          }
+          register :terms, {
+            creator: Kiba::Tms::Terms.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'terms.csv'),
+            lookup_on: :termid,
+            dest_special_opts: { initial_headers: %i[termid termmasterid termtype term termsource termsourceid] },
+            tags: %i[termdata terms prep]
+          }
+          register :thes_xrefs, {
+            creator: Kiba::Tms::ThesXrefs.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xrefs.csv'),
+            dest_special_opts: { initial_headers: %i[tablename table_row_id thesxreftype term] },
+            tags: %i[termdata thesxrefs prep]
+          }
+          register :thes_xref_types, {
+            creator: Kiba::Tms::ThesXrefTypes.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xref_types.csv'),
+            lookup_on: :thesxreftypeid,
+            tags: %i[termdata thesxreftypes prep]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('report') do
+          register :terms_in_mig, {
+            creator: Kiba::Tms::Terms::Reports.method(:in_mig),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'terms_in_migration.csv'),
+            desc: 'Unique terms in migration',
+            tags: %i[termdata reports]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('alt_nums') do
+          register :for_objects, {
+            creator: Kiba::Tms::AltNums.method(:for_objects),
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects.csv'),
+            desc: 'AltNums to be merged into Objects',
+            tags: %i[altnums mergeable]
+          }
+          register :for_refs, {
+            creator: Kiba::Tms::AltNums.method(:for_refs),
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs.csv'),
+            desc: 'AltNums to be merged into ReferenceMaster',
+            tags: %i[altnums mergeable]
+          }
+          register :for_objects_todo, {
+            creator: Kiba::Tms::AltNums.method(:for_objects_todo),
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects_todo.csv'),
+            desc: 'Reference AltNums with date values - need to map',
+            tags: %i[altnums todochk]
+          }
+          register :for_refs_todo, {
+            creator: Kiba::Tms::AltNums.method(:for_refs_todo),
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs_todo.csv'),
+            desc: 'Reference AltNums with date values - need to map',
+            tags: %i[altnums todochk]
+          }
+          register :for_constituents, {
+            creator: Kiba::Tms::AltNums.method(:for_constituents),
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_constituents.csv'),
+            desc: 'AltNums to be merged into Constituents',
+            tags: %i[altnums mergeable]
+          }
+          register :single_occ_description, {
+            creator: Kiba::Tms::AltNums.method(:single_occ_description),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_single_occ.csv'),
+            desc: 'AltNums with a description only used once'
+          }
+          register :description_occs, {
+            creator: Kiba::Tms::AltNums.method(:description_occs),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'alt_nums_description_occs.csv'),
+            desc: 'AltNums with count of description occurrences',
+            tags: %i[altnums prep]
+          }
+          register :no_description, {
+            creator: Kiba::Tms::AltNums.method(:no_description),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_no_description.csv'),
+            desc: 'AltNums without a description value',
+            tags: %i[altnums reports]
+          }
+          register :types, {
+            creator: Kiba::Tms::AltNums.method(:types),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_num_types.csv'),
+            desc: 'AltNumber types',
+            tags: %i[altnums reports]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('constituents') do
+          register :with_type, {
+            creator: Kiba::Tms::Constituents.method(:with_type),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_type.csv'),
+            desc: 'Constituents with a constituent type entered',
+            tags: %i[con reports]
+          }
+          register :without_type, {
+            creator: Kiba::Tms::Constituents.method(:without_type),
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_without_type.csv'),
+            desc: 'Constituents without a constituent type entered',
+            tags: %i[con]
+          }
+          register :with_name_data, {
+            creator: Kiba::Tms::Constituents.method(:with_name_data),
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_with_name_data.csv'),
+            desc: 'Constituents with displayname or alphasort name',
+            tags: %i[con]
+          }
+          register :without_name_data, {
+            creator: Kiba::Tms::Constituents.method(:without_name_data),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_without_name_data.csv'),
+            desc: 'Constituents without displayname or alphasort name',
+            tags: %i[con reports]
+          }
+          register :derived_type, {
+            creator: Kiba::Tms::Constituents.method(:derived_type),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_derived_type.csv'),
+            desc: 'Constituents with a derived type',
+            tags: %i[con reports]
+          }
+          register :no_derived_type, {
+            creator: Kiba::Tms::Constituents.method(:no_derived_type),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_without_derived_type.csv'),
+            desc: 'Constituents without a derived type',
+            tags: %i[con reports]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('media_files') do
+          register :file_names, {
+            creator: Kiba::Tms::MediaFiles.method(:file_names),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'media_file_names.csv'),
+            desc: 'Media file names',
+            tags: %i[mediafiles reports]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('terms') do
+          register :descriptors, {
+            creator: Kiba::Tms::Terms.method(:descriptors),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
+            desc: 'Thesaurus terms with type 1 = descriptor',
+            lookup_on: :termid,
+            tags: %i[termdata terms prep]
+          }
+        end
+        
+        Kiba::Tms.registry.namespace('thes_xrefs') do
+          register :for_term_report, {
+            creator: Kiba::Tms::ThesXrefs.method(:for_term_report),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xrefs_for_term_report.csv'),
+            desc: 'Thesaurus xrefs prepped for term report',
+            tags: %i[termdata thesxrefs prep]
+          }
+          register :with_notation, {
+            creator: Kiba::Tms::ThesXrefs.method(:with_notation),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation.csv'),
+            desc: 'Thesaurus xrefs with notation values',
+            tags: %i[termdata thesxrefs]
+          }
+          register :without_notation, {
+            creator: Kiba::Tms::ThesXrefs.method(:without_notation),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation.csv'),
+            desc: 'Thesaurus xrefs without notation values',
+            tags: %i[termdata thesxrefs]
+          }
+          register :with_notation_usage_type_lookup, {
+            creator: Kiba::Tms::ThesXrefs.method(:with_notation_usage_type_lookup),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_usage_type_lookup.csv'),
+            lookup_on: :notation,
+            tags: %i[termdata thesxrefs]
+          }
+          register :without_notation_usage_type_lookup, {
+            creator: Kiba::Tms::ThesXrefs.method(:without_notation_usage_type_lookup),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_usage_type_lookup.csv'),
+            lookup_on: :term,
+            tags: %i[termdata thesxrefs]
+          }
+          register :with_notation_uniq, {
+            creator: Kiba::Tms::ThesXrefs.method(:with_notation_uniq),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq.csv'),
+            desc: 'Thesaurus xrefs with notation values, deduplicated',
+            tags: %i[termdata thesxrefs]
+          }
+          register :without_notation_uniq, {
+            creator: Kiba::Tms::ThesXrefs.method(:without_notation_uniq),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq.csv'),
+            desc: 'Thesaurus xrefs without notation values, deduplicated',
+            tags: %i[termdata thesxrefs]
+          }
+          register :with_notation_uniq_typed, {
+            creator: Kiba::Tms::ThesXrefs.method(:with_notation_uniq_typed),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq_typed.csv'),
+            desc: 'Thesaurus xrefs with notation values, deduplicated',
+            tags: %i[termdata thesxrefs]
+          }
+          register :without_notation_uniq_typed, {
+            creator: Kiba::Tms::ThesXrefs.method(:without_notation_uniq_typed),
+            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq_typed.csv'),
+            desc: 'Thesaurus xrefs without notation values, deduplicated',
+            tags: %i[termdata thesxrefs]
+          }
         end
       end
     end

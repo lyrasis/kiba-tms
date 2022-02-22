@@ -41,4 +41,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kiba', '~> 4.0'
   spec.add_dependency 'kiba-common', '~> 1.5'
   spec.add_dependency 'thor', '~> 1'
+  spec.add_dependency 'zeitwerk', '~> 2.5'
 end

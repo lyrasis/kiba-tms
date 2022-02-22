@@ -2,8 +2,10 @@
 
 module Kiba
   module Tms
-    # Namespace for project-specific transforms
     module Transforms
+      # namespace for relationship transformation helpers
+      module Relationships
+      end
     end
   end
 end
