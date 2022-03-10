@@ -23,6 +23,9 @@ module Kiba
           attr_reader :table_key
 
           FIELDS = {
+            classifications: :classificationid,
+            classification_notations: :classificationnotationid,
+            classification_xrefs: :classificationxrefid,
             constituents: :constituentid,
             con_types: :constituenttypeid,
             con_alt_names: :altnameid,
@@ -32,7 +35,7 @@ module Kiba
             obj_ins_indem_resp: :objinsindemrespid,
             objects: :objectnumber,
             object_statuses: :objectstatusid,
-            term_master: :termmasterid,
+            term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
             term_types: :termtypeid,
             terms: :termid,

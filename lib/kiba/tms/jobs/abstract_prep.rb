@@ -21,6 +21,7 @@ module Kiba
         def prep_xforms
           Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
+            transform Delete::EmptyFields
           end
         end
 

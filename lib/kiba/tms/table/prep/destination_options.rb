@@ -23,7 +23,10 @@ module Kiba
           attr_reader :table_key
 
           OPTS = {
-            constituents: { initial_headers: %i[constituentid constituenttype displayname defaultnameid] },
+            constituents: {
+              initial_headers:
+              %i[constituentid constituenttype displayname alt_constituentdisplayname alt_displayname]
+            },
             con_alt_names: {
               initial_headers:
               %i[constituentid constituentdefaultnameid altnameid constituentdisplayname constituenttype

@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Constituents
-        extend self
+        module_function
         
         def prep
           Kiba::Extend::Jobs::Job.new(
             files: {
               source: :tms__constituents,
               destination: :prep__constituents,
-              lookup: :prep__con_types
+              lookup: %i[prep__con_types prep__con_alt_names]
             },
             transformer: prep_xforms
           )
@@ -22,13 +22,16 @@ module Kiba
             transform Tms::Transforms::DeleteTmsFields
             transform Delete::Fields,
               fields: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
-                         begindate enddate systemflag internalstatus]
+                         begindate enddate systemflag internalstatus islocked publicaccess]
+#            transform Kiba::Tms::Transforms::Constituents::RenamePreferredNameField, target: :preferred_name
             transform Merge::MultiRowLookup,
               keycolumn: :constituenttypeid,
               lookup: prep__con_types,
               fieldmap: {constituenttype: :constituenttype}
             transform Delete::Fields, fields: :constituenttypeid
 
+            transform Kiba::Tms::Transforms::Constituents::MergeDefaultAltName, alt_names: prep__con_alt_names
+            
             # tag rows as to whether they do or do not actually contain any name data
             transform CombineValues::FromFieldsWithDelimiter,
               sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,

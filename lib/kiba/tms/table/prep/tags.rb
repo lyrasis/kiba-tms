@@ -26,6 +26,7 @@ module Kiba
             table_key
               .to_s
               .delete('_')
+              .to_sym
           end
           
           TAGS = {

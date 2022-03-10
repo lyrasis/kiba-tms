@@ -21,8 +21,7 @@ module Kiba
             transform Tms::Transforms::DeleteTmsFields
             transform Delete::Fields, fields: %i[multiselect archivedeletes showguideterms broadesttermfirst
                                                  numlevels alwaysdisplayfullpath]
-            transform FilterRows::FieldMatchRegexp, action: :reject, field: :thesxreftype, value: '^\([Nn]ot [Aa]ssigned\)$'
-            transform FilterRows::FieldPopulated, action: :keep, field: :term
+            transform FilterRows::FieldMatchRegexp, action: :reject, field: :thesxreftype, match: '^\([Nn]ot [Aa]ssigned\)$'
           end
         end
       end

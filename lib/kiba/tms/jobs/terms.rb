@@ -11,7 +11,7 @@ module Kiba
             files: {
               source: :tms__terms,
               destination: :prep__terms,
-              lookup: %i[prep__term_types prep__term_master]
+              lookup: %i[prep__term_types prep__term_master_thes]
             },
             transformer: prep_xforms
           )
@@ -28,7 +28,7 @@ module Kiba
             transform Delete::Fields, fields: :termtypeid
             transform Merge::MultiRowLookup,
               keycolumn: :termmasterid,
-              lookup: prep__term_master,
+              lookup: prep__term_master_thes,
               fieldmap: {
                 termsource: :termsource,
                 termsourceid: :sourcetermid

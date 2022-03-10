@@ -42,154 +42,6 @@ module Kiba
       private_class_method :register_supplied_files
 
       def register_files
-        Kiba::Tms.registry.namespace('prep') do
-          # register :alt_nums, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'alt_nums.csv'),
-          #   creator: Kiba::Tms::Jobs::AltNums.method(:prep),
-          #   lookup_on: :description,
-          #   tags: %i[altnums prep]
-          # }
-          # register :classification_notations, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'classification_notations.csv'),
-          #   creator: Kiba::Tms::Jobs::ClassificationNotations.method(:prep),
-          #   lookup_on: :classificationnotationid,
-          #   tags: %i[classificationnotations prep]
-          # }
-          # register :classification_xrefs, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'classification_xrefs.csv'),
-          #   creator: Kiba::Tms::Jobs::ClassificationXrefs.method(:prep),
-          #   lookup_on: :id,
-          #   tags: %i[classificationxrefs prep]
-          # }
-          # register :classifications, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'classifications.csv'),
-          #   creator: Kiba::Tms::Jobs::Classifications.method(:prep),
-          #   lookup_on: :classificationid,
-          #   tags: %i[classifications prep]
-          # }
-          # register :constituents, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
-          #   creator: Kiba::Tms::Jobs::Constituents.method(:prep),
-          #   lookup_on: :constituentid,
-          #   dest_special_opts: { initial_headers: %i[constituentid constituenttype displayname defaultnameid] },
-          #   tags: %i[con prep]
-          # }
-          # register :con_types, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'con_types.csv'),
-          #   creator: Kiba::Tms::Jobs::ConTypes.method(:prep),
-          #   lookup_on: :constituenttypeid,
-          #   tags: %i[con contypes prep]
-          # }
-          # register :con_alt_names, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
-          #   creator: Kiba::Tms::Jobs::ConAltNames.method(:prep),
-          #   lookup_on: :altnameid,
-          #   dest_special_opts: {
-          #     initial_headers:
-          #     %i[constituentid constituentdefaultnameid altnameid constituentdisplayname constituenttype
-          #        nametype displayname]
-          #   },
-          #   tags: %i[con conaltnames prep]
-          # }
-          # register :con_dates, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'con_dates.csv'),
-          #   creator: Kiba::Tms::Jobs::ConDates.method(:prep),
-          #   dest_special_opts: {
-          #     initial_headers:
-          #     %i[constituentdisplayname constituenttype datedescription remarks
-          #        datebegsearch monthbegsearch daybegsearch
-          #        dateendsearch monthendsearch dayendsearch]
-          #   },
-          #   tags: %i[con condates prep]
-          # }
-          # register :departments, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'departments.csv'),
-          #   creator: Kiba::Tms::Jobs::Departments.method(:prep),
-          #   lookup_on: :departmentid,
-          #   tags: %i[departments prep]
-          # }
-          # register :exh_ven_obj_xrefs, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'exh_ven_obj_xrefs.csv'),
-          #   creator: Kiba::Tms::Jobs::ExhVenObjXrefs.method(:prep),
-          #   tags: %i[exhibitions objects venues rels prep]
-          # }
-          # register :indemnity_responsibilities, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'indemnity_responsibilities.csv'),
-          #   creator: Kiba::Tms::Jobs::IndemnityResponsibilities.method(:prep),
-          #   lookup_on: :responsibilityid,
-          #   tags: %i[ins indemnityresponsibilities prep]
-          # }
-          # register :insurance_responsibilities, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'insurance_responsibilities.csv'),
-          #   creator: Kiba::Tms::Jobs::InsuranceResponsibilities.method(:prep),
-          #   lookup_on: :responsibilityid,
-          #   tags: %i[ins insuranceresponsibilities prep]
-          # }
-          # register :loan_obj_xrefs, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'loan_obj_xrefs.csv'),
-          #   creator: Kiba::Tms::Jobs::LoanObjXrefs.method(:prep),
-          #   tags: %i[loans objects rels prep]
-          # }
-          # register :obj_ins_indem_resp, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'obj_ins_indem_resp.csv'),
-          #   creator: Kiba::Tms::Jobs::ObjInsIndemResp.method(:prep),
-          #   lookup_on: :objinsindemrespid,
-          #   tags: %i[ins indemnityresponsibilities insuranceresponsibilitie prep]
-          # }
-          # register :objects, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'objects.csv'),
-          #   creator: Kiba::Tms::Jobs::Objects.method(:prep),
-          #   lookup_on: :objectnumber,
-          #   dest_special_opts: {
-          #     initial_headers:
-          #     %i[objectnumber department classification classificationxref objectname objectstatus title]
-          #   },
-          #   tags: %i[objects prep]
-          # }
-          # register :object_statuses, {
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_statuses.csv'),
-          #   creator: Kiba::Tms::Jobs::ObjectStatuses.method(:prep),
-          #   lookup_on: :objectstatusid,
-          #   tags: %i[objectstatuses prep]
-          # }
-          # register :term_master, {
-          #   creator: Kiba::Tms::Jobs::TermMaster.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'term_master.csv'),
-          #   lookup_on: :termmasterid,
-          #   tags: %i[termdata termmaster prep]
-          # }
-          # register :term_master_geo, {
-          #   creator: Kiba::Tms::Jobs::TermMasterGeo.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'term_master_geo.csv'),
-          #   lookup_on: :termmastergeoid,
-          #   tags: %i[termdata termmastergeo prep]
-          # }
-          # register :term_types, {
-          #   creator: Kiba::Tms::Jobs::TermTypes.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'term_types.csv'),
-          #   lookup_on: :termtypeid,
-          #   tags: %i[termdata termtypes prep]
-          # }
-          # register :terms, {
-          #   creator: Kiba::Tms::Jobs::Terms.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'terms.csv'),
-          #   lookup_on: :termid,
-          #   dest_special_opts: { initial_headers: %i[termid termmasterid termtype term termsource termsourceid] },
-          #   tags: %i[termdata terms prep]
-          # }
-          # register :thes_xrefs, {
-          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xrefs.csv'),
-          #   dest_special_opts: { initial_headers: %i[tablename table_row_id thesxreftype term] },
-          #   tags: %i[termdata thesxrefs prep]
-          # }
-          # register :thes_xref_types, {
-          #   creator: Kiba::Tms::Jobs::ThesXrefTypes.method(:prep),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xref_types.csv'),
-          #   lookup_on: :thesxreftypeid,
-          #   tags: %i[termdata thesxreftypes prep]
-          # }
-        end
 
         # register :object_number_lookup, {
         #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_number_lookup.csv'),
@@ -314,6 +166,47 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports', 'media_file_names.csv'),
             desc: 'Media file names',
             tags: %i[mediafiles reports]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('names') do
+          register :compiled, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:compiled),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
+            desc: 'Compiled names',
+            tags: %i[names],
+            dest_special_opts: { initial_headers: [:termsource, :constituenttype, :norm, :duplicate,
+                                                   Tms.config.constituents.preferred_name_field,
+                                                   "alt_#{Tms.config.constituents.preferred_name_field}".to_sym,
+                                                   :salutation, :nametitle, :firstname, :middlename, :lastname, :suffix,
+                                                   :displaydate, :begindateiso, :enddateiso,
+                                                   :institution, :position,
+                                                   :code, :nationality, :culturegroup, :school, :biography,
+                                                   :remarks] }
+          }
+          register :from_constituents, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents.csv'),
+            desc: 'Names extracted from constituents table',
+            tags: %i[names con]
+          }
+          register :from_loans, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_loans),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loans.csv'),
+            desc: 'Names extracted from loans table',
+            tags: %i[names loans]
+          }
+          register :from_obj_accession, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_obj_accession),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),
+            desc: 'Names extracted from obj_accession table',
+            tags: %i[names obj_accession]
+          }
+          register :from_obj_locations, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_obj_locations),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
+            desc: 'Names extracted from obj_locations table',
+            tags: %i[names obj_locations]
           }
         end
 

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
 gem 'activesupport', require: false #selected extensions to base Ruby classes
-gem 'kiba-extend', branch: 'dev', tag: 'v2.5.3', :github => 'lyrasis/kiba-extend' #even more extensions to kiba
+gem 'kiba-extend', branch: 'nil-field-handler', tag: 'v2.6.1', :github => 'lyrasis/kiba-extend' #even more extensions to kiba
 
 # dev
 gem 'pry', '~> 0.13.0'
