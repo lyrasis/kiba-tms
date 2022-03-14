@@ -30,8 +30,7 @@ module Kiba
             },
             con_alt_names: {
               initial_headers:
-              %i[constituentid constituentdefaultnameid altnameid constituentdisplayname constituenttype
-                 nametype displayname]
+              %i[constituentid altnameid nametype displayname]
             },
             con_dates: {
               initial_headers:

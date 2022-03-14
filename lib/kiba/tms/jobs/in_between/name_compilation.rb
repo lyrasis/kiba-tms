@@ -23,7 +23,7 @@ module Kiba
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__constituents,
+                source: :constituents__alt_names_merged,
                 destination: :names__from_constituents
               },
               transformer: xforms,
@@ -213,6 +213,7 @@ module Kiba
             xforms = Kiba.job_segment do
               transform Tms::Transforms::Constituents::CleanPersonNamePartsFromOrg
               transform Tms::Transforms::Constituents::CleanOrgNameInfoFromPerson
+              transform Tms::Transforms::Constituents::FlagPersonNamesLackingNameDetails
               transform Merge::MultiRowLookup,
                 fieldmap: {normnew: :norm},
                 lookup: names__flagged_duplicates,

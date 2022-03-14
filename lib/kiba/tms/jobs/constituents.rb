@@ -78,6 +78,40 @@ module Kiba
           )
         end
 
+        def alt_names_merged
+          xforms = Kiba.job_segment do
+            prefname = Tms.config.constituents.preferred_name_field
+            transform Merge::MultiRowLookup,
+              fieldmap: {alt_names: prefname},
+              lookup: con_alt_names__by_constituent,
+              keycolumn: :constituentid,
+              delim: Mmm.delim
+
+            transform Delete::FieldValueIfEqualsOtherField,
+              delete: :alt_names,
+              if_equal_to: prefname,
+              multival: true,
+              delim: Mmm.delim,
+              casesensitive: false
+            transform Delete::FieldValueIfEqualsOtherField,
+              delete: :alt_names,
+              if_equal_to: Tms.config.constituents.alt_name_field,
+              multival: true,
+              delim: Mmm.delim,
+              casesensitive: false
+
+          end
+          
+          Kiba::Extend::Jobs::Job.new(
+            files: {
+              source: :prep__constituents,
+              destination: :constituents__alt_names_merged,
+              lookup: :con_alt_names__by_constituent
+            },
+            transformer: xforms
+          )
+        end
+
         def alt_name_mismatch
           xforms = Kiba.job_segment do
             prefname = Tms.config.constituents.preferred_name_field

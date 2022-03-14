@@ -121,6 +121,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('con_alt_names') do
+          register :by_constituent, {
+            creator: Kiba::Tms::Jobs::ConAltNames.method(:prep),
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
+            tags: %i[con prep],
+            lookup_on: :constituentid
+          }
+        end
+        
         Kiba::Tms.registry.namespace('constituents') do
           register :alt_name_mismatch, {
             creator: Kiba::Tms::Jobs::Constituents.method(:alt_name_mismatch),
@@ -128,6 +137,12 @@ module Kiba
             desc: 'Constituents where value looked up on defaultnameid (in con_alt_names table) does
                    not match value of preferred name field in constituents table',
             tags: %i[con reports]
+          }
+          register :alt_names_merged, {
+            creator: Kiba::Tms::Jobs::Constituents.method(:alt_names_merged),
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_alt_names_merged.csv'),
+            desc: 'Constituents with non-default form of name merged in',
+            tags: %i[con]
           }
           register :with_type, {
             creator: Kiba::Tms::Jobs::Constituents.method(:with_type),
@@ -183,8 +198,8 @@ module Kiba
             desc: 'Compiled names',
             tags: %i[names],
             dest_special_opts: { initial_headers: %i[use_type use_name_form use_variant_forms
-               constituenttype duplicate inconsistent_org_names
-               preferred_name_form variant_name_form
+               constituenttype duplicate inconsistent_org_names missing_last_name	
+               preferred_name_form variant_name_form alt_names
                institution contact_person contact_role
                nametitle firstname middlename lastname suffix
                begindateiso enddateiso nationality culturegroup
