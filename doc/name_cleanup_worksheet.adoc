@@ -15,3 +15,91 @@ endif::[]
 toc::[]
 
 
+== Important things re: working with the worksheet
+* It is fine to sort/filter the worksheet however you want in order to review and edit your data.
+* Feel free to change the order of the columns to support your work. 
+* **Only edit in green columns**. If you change data in the non-green columns, we may not be able to merge your work back into the migration.
+* **Do not change column names** or we may not be able to merge your work back into the migration.
+* Because `use_type` and `use_name_form` fields need to be filled in for everything and are useful for sorting/filtering the spreadsheet as you work, they are pre-populated with the values from `constituenttype` and `preferred_name_form` columns, respectively.
+* `use_variant_form` is not prepopulated with the value from `variant_name_form` column because the cases where you need to provide a `use_variant_form` value are somewhat rare, and seems less useful for sorting/filtering the spreadsheet. You can feel free to copy the whole `variant_name_form` column into `use_variant_form` if that helps you. 
+
+== Background, and important things about authorities in CS that affect this work
+
+* All names in CS need to be categorized as `Person` or `Organization`.
+
+=== On duplicates
+
+* CS will let you have exact duplicate name records within a given authority, but for the purposes of the migration we have to avoid that. For your data integrity and ability to batch update your data with the CSV Import Tool in the future, you also want to avoid this.
+** There is a field at the end of the spreadsheet called `normalized_form`. This approximates the under-the-hood value we deduplicate on in the migration process, and it is what the `duplicate` field is based on. Normalization downcases and removes special characters, punctuation, and spaces, which is why you will see some not-exact-duplicates marked as duplicates
+
+TIP: To review the duplicates, sort the spreadsheet by `normalized_form` and filter to show rows where `duplicate` = `y`
+
+=== On modeling relationships between Person and Organization
+* A CS Organization authority record has a dedicated/linked field (Contact Person, with associated Contact Role) in which to record an associated Person, but the details of the person name have to be recorded in the Person name record
+** TMS lets you record details of individual/person names (first name, middle name, title, etc.) in a Consituent coded as an Institution or other type mapped to CS Organization.
+
+* A CS Person authority record does not have a dedicated/linked field in which to record an associated Organization
+** If a person has been included as a contact in an Organization record, you can see that from the Person record.
+** TMS allows you to record an institution in a Constituent coded as an Individual
+
+Because of the above differences, we need to extract some extra rows of data from some Constituent records for your review. These rows can be identified by the `termsource` column value as described below.
+
+* `termsource` = `TMS Constituents.orgs_with_person_names`
+** Original constituent record is coded as not an Individual, but includes person name details
+** A row has been added for the Person name recorded as part of the constituent record.
+
+* `termsource` = `TMS Constituents.org_with_contact_person`
+** Original constituent record is coded as an Individual, but includes an institution name
+** A row has been added for the Organization name recorded as part of the constituent record.
+** The preferred form of the person name is recorded as the contact person for the derived Organization
+
+NOTE: Breaking this data out may introduce some rows marked as duplicates.
+
+== To-do overview
+
+More details on each step are given below. Examples are included!
+
+1. Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
+2. Check and resolve names where `duplicate` value = `y`
+3. Check and resolve names where `inconsistent_org_names` value = `y`
+4. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `use_type` = `Person` and filter to blank `firstname` values.]
+5. Look for and merge near-duplicates and variants
+
+== Step details
+=== Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
+
+This includes providing missing values (Strategy 1) and verifying/correcting existing values (remaining strategies).
+
+==== Strategy 1: Filter to `use_type` empty
+Provide the appropriate value for any rows
+
+==== Strategy 2: Filter to `missing_last_name` = `y`
+Should some of these be coded as Organizations instead of people?
+
+== How to
+
+NOTE: In the examples below, columns are omitted if they aren't relevant to the change you want to make.
+
+=== Switch a Person to an Organization
+
+**First** make sure there aren't both a Person and Organization row for the same name. Handling that situation is different.
+
+* Change the `use_type` value to `Organization`
+* Do not fill in `institution` value
+
+.Example "Person" data that should be an Organization
+[source]
+----
+| use_type | use_name_form | constituenttype | missing_last_name | institution |
+|----------+---------------+-----------------+-------------------+-------------|
+| Person   | Acme Corp.    | Person          | y                 |             |
+----
+
+.Changed to migrate as an Organization
+[source]
+----
+| use_type     | use_name_form | constituenttype | missing_last_name | institution |
+|--------------+---------------+-----------------+-------------------+-------------|
+| Organization | Acme Corp.    | Person          | y                 |             |
+----
+
