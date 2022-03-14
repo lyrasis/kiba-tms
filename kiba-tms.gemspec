@@ -35,11 +35,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '~> 6'
-  spec.add_dependency 'amazing_print'
-  spec.add_dependency 'dry-configurable', '~> 0.11'
-  spec.add_dependency 'kiba', '~> 4.0'
-  spec.add_dependency 'kiba-common', '~> 1.5'
-  spec.add_dependency 'thor', '~> 1'
+  # spec.add_dependency 'activesupport', '~> 6'
+  # spec.add_dependency 'amazing_print'
+  # spec.add_dependency 'dry-configurable', '~> 0.11'
+  # spec.add_dependency 'kiba', '~> 4.0'
+  # spec.add_dependency 'kiba-common', '~> 1.5'
+  # spec.add_dependency 'thor', '~> 1'
   spec.add_dependency 'zeitwerk', '~> 2.5'
 end

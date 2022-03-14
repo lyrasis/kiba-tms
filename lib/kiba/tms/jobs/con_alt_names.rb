@@ -10,8 +10,7 @@ module Kiba
           Kiba::Extend::Jobs::Job.new(
             files: {
               source: :tms__con_alt_names,
-              destination: :prep__con_alt_names,
-              lookup: :prep__constituents
+              destination: :prep__con_alt_names
             },
             transformer: prep_xforms
           )
@@ -20,14 +19,6 @@ module Kiba
         def prep_xforms
           Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
-            transform Merge::MultiRowLookup,
-              keycolumn: :constituentid,
-              lookup: prep__constituents,
-              fieldmap: {
-                constituentdisplayname: :displayname,
-                constituenttype: :constituenttype,
-                constituentdefaultnameid: :defaultnameid
-              }
           end
         end
       end

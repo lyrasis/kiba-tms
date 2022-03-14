@@ -1,0 +1,56 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Name cleanup worksheet for TMS-to-CS migration
+
+toc::[]
+
+
+== Important things re: working with the worksheet
+* It is fine to sort/filter the worksheet however you want in order to review and edit your data
+* **Only edit in green columns**. If you change data in the non-green columns, we may not be able to merge your work back into the migration.
+
+== Background, and important things about authorities in CS that affect this work
+
+* All names in CS need to be categorized as `Person` or `Organization`.
+
+=== On duplicates
+
+* CS will let you have exact duplicate name records within a given authority, but for the purposes of the migration we have to avoid that. For your data integrity and ability to batch update your data with the CSV Import Tool in the future, you also want to avoid this.
+** There is a field at the end of the spreadsheet called `normalized_form`. This approximates the under-the-hood value we deduplicate on in the migration process, and it is what the `duplicate` field is based on. Normalization downcases and removes special characters, punctuation, and spaces, which is why you will see some not-exact-duplicates marked as duplicates
+
+TIP: To review the duplicates, sort the spreadsheet by `normalized_form` and filter to show rows where `duplicate` = `y`
+
+=== On modeling relationships between Person and Organization
+* A CS Person authority record does not have a dedicated/linked field in which to record an associated Organization
+** TMS allows you to record an institution in a Constituent coded as an Individual
+
+* A CS Organization authority record has a dedicated/linked field (Contact Person, with associated Contact Role) in which to record an associated Person, but the details of the person name have to be recorded in the Person name record
+** TMS lets you record details of individual/person names (first name, middle name, title, etc.) in a Consituent coded as an Institution or other type mapped to CS Organization.
+
+Because of the above differences, we need to extract some extra rows of data from some Constituent records for your review. These rows can be identified by the `termsource` column value as described below.
+
+* `termsource` = `TMS Constituents.orgs_with_person_names`
+** Original constituent record is coded as not an Individual, but includes person name details
+** A row has been added for the Person name recorded as part of the constituent record.
+
+* `termsource` = `TMS Constituents.org_with_contact_person`
+** Original constituent record is coded as an Individual, but includes an institution name
+** A row has been added for the Organization name recorded as part of the constituent record
+** The preferred form of the person name 
+
+
+== To-do overview
+
+1. Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
+2. Check and resolve names where `duplicate` value = `y`
+3. Check and resolve names where `inconsistent_org_names` value = `y`

@@ -122,6 +122,13 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('constituents') do
+          register :alt_name_mismatch, {
+            creator: Kiba::Tms::Jobs::Constituents.method(:alt_name_mismatch),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_alt_name_mismatch.csv'),
+            desc: 'Constituents where value looked up on defaultnameid (in con_alt_names table) does
+                   not match value of preferred name field in constituents table',
+            tags: %i[con reports]
+          }
           register :with_type, {
             creator: Kiba::Tms::Jobs::Constituents.method(:with_type),
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_type.csv'),
@@ -175,19 +182,45 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
             desc: 'Compiled names',
             tags: %i[names],
-            dest_special_opts: { initial_headers: [:termsource, :constituenttype, :norm, :duplicate,
-                                                   Tms.config.constituents.preferred_name_field,
-                                                   "alt_#{Tms.config.constituents.preferred_name_field}".to_sym,
-                                                   :salutation, :nametitle, :firstname, :middlename, :lastname, :suffix,
-                                                   :displaydate, :begindateiso, :enddateiso,
-                                                   :institution, :position,
-                                                   :code, :nationality, :culturegroup, :school, :biography,
-                                                   :remarks] }
+            dest_special_opts: { initial_headers: %i[use_type use_name_form use_variant_forms
+               constituenttype duplicate inconsistent_org_names
+               preferred_name_form variant_name_form
+               institution contact_person contact_role
+               nametitle firstname middlename lastname suffix
+               begindateiso enddateiso nationality culturegroup
+               biography remarks
+               active isstaff is_private_collector
+              ] }
+          }
+          register :flagged_duplicates, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:flagged_duplicates),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_flagged_duplicates.csv'),
+            desc: 'Names extracted from constituents table and flagged as duplicates',
+            tags: %i[names con],
+            lookup_on: :norm
+          }
+          register :initial_compile, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:initial_compile),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_initial_compile.csv'),
+            desc: 'Names extracted from constituents table, with only subsequent duplicates flagged',
+            tags: %i[names con]
           }
           register :from_constituents, {
             creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents),
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents.csv'),
             desc: 'Names extracted from constituents table',
+            tags: %i[names con]
+          }
+          register :from_constituents_orgs_from_persons, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents_orgs_from_persons),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_orgs_from_persons.csv'),
+            desc: 'Names extracted from institution field of Person constituents',
+            tags: %i[names con]
+          }
+          register :from_constituents_persons_from_orgs, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents_persons_from_orgs),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_persons_from_orgs.csv'),
+            desc: 'Names extracted from Organization constituents when the name part values are populated',
             tags: %i[names con]
           }
           register :from_loans, {

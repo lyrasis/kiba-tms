@@ -25,7 +25,8 @@ module Kiba
           OPTS = {
             constituents: {
               initial_headers:
-              %i[constituentid constituenttype displayname alt_constituentdisplayname alt_displayname]
+              [:constituentid, :constituenttype, Tms.config.constituents.preferred_name_field,
+               Tms.config.constituents.alt_name_field, :institution, :inconsistent_org_names]
             },
             con_alt_names: {
               initial_headers:

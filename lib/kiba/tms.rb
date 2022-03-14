@@ -33,7 +33,7 @@ module Kiba
 
     # These weird, specific settings are included here instead of in individual job or transform code
     #   because it may be necessary to override them per client project using this library.
-    setting :constituents do
+    setting :constituents, reader: true do
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
@@ -41,7 +41,7 @@ module Kiba
 
       # The following are useful if there are duplicate preferred names that have different date values that
       #   can disambiguate the names
-      setting :date_append do
+      setting :date_append, reader: true do
         # constituenttype values to add dates to. Should be: [:all], [:none], or Array of String values
         setting :to_types, default: [:all], reader: true
         # String that will separate the two dates. Will be appended to start date if there is no end date.
@@ -55,7 +55,7 @@ module Kiba
       end
     end
 
-    setting :name_compilation do
+    setting :name_compilation, reader: true do
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
 
@@ -74,6 +74,4 @@ loader = Zeitwerk::Loader.new
 loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
 #loader.logger = method(:puts)
 loader.setup
-
-::Tms = Kiba::Tms
 

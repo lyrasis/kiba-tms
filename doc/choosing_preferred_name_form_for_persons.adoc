@@ -1,0 +1,58 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Choosing preferred form of name for Person authorities
+
+toc::[]
+
+== The big decision
+
+This is about whether to use direct (Joe W. Smith) or inverted (Smith, Joe W.) form of name as your preferred form of person name in CS.
+
+TMS constituent alt names will be merged into the appropriate person records as variant forms of name. 
+
+== What does "preferred form" mean in CS?
+
+- This is the first form of the name recorded in the Person authority record
+- It is the form of name that will be displayed in your Object or procedure records when you populate fields using Person authority terms
+- It is the name you will see under "Display name" in search results for Persons
+
+== What are "variant forms" in CS?
+
+- These would be any subsequent forms of a name recorded in the same Person record.
+- When entering data in a field controlled by a Person authority, you can type in the variant form to find/assign the desired person name.
+- Variant forms are searchable in simple or advanced search for Persons.
+
+== Considerations in choosing preferred form
+
+* **Will you (now or in the future) want to use https://getty.edu/research/tools/vocabularies/ulan[Union List of Artist Names (ULAN)] Person names in your CS instance?**
+** ULAN names are in inverted format
+** If you want your local names to be consistent with your ULAN names, you probably want to use inverted form as your preferred form (This is desireable because it will simplify reporting and sorting exported record data which may use names from both authorities)
+
+* **Have you consistently recorded name part details (first name, middle name, last name) in your TMS individual constituent records?**
+** IF NO:
+*** Migration with direct form as the preferred form can proceed without you doing data cleanup, but inverted form of name will **not** be included as a variant name form for names lacking name part details
+*** You will need to provide those name details in the migration cleanup step in order to use inverted form as your preferred form
+** IF YES:
+*** Either approach works without too much cleanup
+*** If you use direct form as the preferred form, for all names having name part details recorded in TMS, you will get the inverted form as a variant form. 
+
+* **Exporting/sorting/reporting**
+** _**Do you need/want to alphabetize person names by surname with minimal effort?**_ Using inverted form of name may be preferable.
+
+NOTE: If you have coded name part details in TMS and choose direct form as your preferred form in CS, you can still sort on last name, export all the name parts and combine them as needed outside CS, or use the individual name parts in reports to control sort order.
+
+== Common questions
+Can I change my mind later?:: Not really. This choice is fundamental to linking your data together in CS, so changin it during the course of a migration would require a lot of initial work to be re-done. After data is in CS, you can manually change what form is used as preferred form in one record at a time. This causes all records using that name to need to be updated. Unfortunately, you cannot batch change the preferred form of name via the CSV Importer. This is because the preferred form of name is what the CSV Importer uses to match data in a CSV to records in CS. If you change the preferred form of name in the CSV, it won't match an existing name in CS, and will import as a new name.
+
+A lot of our Person names don't have individual name part data (first vs. middle vs. last) filled in. Should we just use the direct form of name?:: Yes, if the quickest possible migration is your priority. If you have the resources to provide those individual name parts as part of the migration (we provide a worksheet that makes this pretty efficient), it improves your data and how you can sort/report on it for the long term. 
+
