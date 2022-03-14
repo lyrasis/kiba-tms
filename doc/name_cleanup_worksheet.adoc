@@ -74,7 +74,7 @@ This includes providing missing values (Strategy 1) and verifying/correcting exi
 Provide the appropriate value for any rows
 
 ==== Strategy 2: Filter to `missing_last_name` = `y`
-Should some of these be coded as Organizations instead of people?
+Should some of these be coded as Organizations instead of people? See <<_switch_a_person_to_an_organization>>.
 
 == How to
 
