@@ -29,7 +29,7 @@ The spreadsheet then becomes another data source in the migration. The `fingerpr
 At the beginning of the final phase of the migration, when you send us the final data to migrate into your production CS, we will run the final data through this process, generate the "just in the migration process" version of your data, and re-check it for new duplicates or any other issues. At this point, you may need to complete a smaller version of this spreadsheet to handle any issues introduced by new data in the system.
 
 === `migration_action` values
-blank:: An authority record of the given type will be created in CS
+(blank):: An authority record of the given type will be created in CS
 main:: When multiple rows have the same name value, indicates which row should be used to create the authority record for that name in CS.
 use_name:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column.
 merge_variant:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column. **AND, the migration should merge the original `preferred_name_form` value of this row into the record as a non-preferred/variant name.**
@@ -128,9 +128,11 @@ Should some of these be coded as Organizations instead of people? See <<switch-a
 === Check and resolve duplicate names
 Initially, filter to `duplicate` = `y`.
 
-As you change/add data, check for highlighed `approx_normalized` values
+As you change/add data, check for highlighed `approx_normalized` values. 
 
 === Check and resolve names where `inconsistent_org_names` value = `y`
+When `inconsistent_org_names` value = `y`, it often means an organization name row has person name details embedded in it. This is common, so it apparently works in TMS. It will not work well in CS, however.
+
 === Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y`
 === Look for and merge near-duplicates and variants
 === Ensure all `contact_person` values exist as Person names
@@ -328,15 +330,63 @@ I moved the `enddateiso` (death date) value to the main row since death date is 
 
 * Companies do not have inverted form of name (Mae, Fanny), nor first names and last names, so clear the values for `variant_name_form`, `firstname`, and `lastname`.
 * Person names do not record links to institutions. Clear the `institution` value. A link between this organization and person will be made based on the `contact_person` value in the organization name. 
+* `ok` is added to `migration_action` to stop these being flagged as duplicates in `approx_normalized`
 
 .Fixed
 [source]
 ----
-| constituenttype | preferred_name_form | variant_name_form | institution | contact_person | firstname | lastname |
-|-----------------+---------------------+-------------------+-------------+----------------+-----------+----------|
-| Organization    | Fanny Mae           |                   |             | Fanny Mae      |           |          |
-| Person          | Fanny Mae           | Mae, Fanny        |             |                | Fanny     | Mae      |
+| migration_action | constituenttype | preferred_name_form | variant_name_form | institution | contact_person | firstname | lastname |
+|------------------+-----------------+---------------------+-------------------+-------------+----------------+-----------+----------|
+| ok               | Organization    | Fanny Mae           |                   |             | Fanny Mae      |           |          |
+| ok               | Person          | Fanny Mae           | Mae, Fanny        |             |                | Fanny     | Mae      |
 ----
+
+=== Person name details embedded in Organization record
+
+NOTE: The following examples assume that inverted form of name is used as the preferred Person name format.
+
+.Original
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form      | variant_name_form | contact_person | contact_role | nametitle | firstname | middlename | lastname |
+|------------------+------------------+-----------------+--------------------------+-------------------+----------------+--------------+-----------+-----------+------------+----------|
+| TMS Constituents |                  | Organization    | Zenith, Inc. Jones, Jane | Zenith, Inc.      |                | CEO          |           | Jane      |            | Jones    |
+| TMS Constituents |                  | Organization    | Acme Corp. Smith, Robert | Acme Corp.        | Smith, Robert  |              |           | Robert    |            | Smith    |
+| TMS Constituents |                  | Organization    | Apex                     | Apex Co.          |                |              |           |           |            |          |
+----
+
+Upon review, the record for Apex is fine. There are no person name details embedded in the record. The other two need to be cleaned up, though.
+
+.Fixed
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | contact_role | nametitle | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+----------------+--------------+-----------+-----------+------------+----------|
+| TMS Constituents |                  | Organization    | Zenith, Inc.        |                   | Jones, Jane    | CEO          |           |           |            |          |
+|                  |                  | Person          | Jones, Jane         | Jane Jones        |                |              |           | Jane      |            | Jones    |
+| TMS Constituents |                  | Organization    | Acme Corp.          |                   | Smith, Robert  |              |           |           |            |          |
+| TMS Constituents |                  | Organization    | Apex                | Apex Co.          |                |              |           |           |            |          |
+----
+
+**For Zenith**
+
+* Determined there **is not** already a Person row with `preferred_name_form`=`Jones, Jane`.
+* Create a new row to record the person name details: `preferred_name_form`=`Jones,Jane`, `variant_name_form`=`Jane Jones`, `firstname`, and `lastname`.
+* You can tell this is an added row because it has no `termsource` value.
+* Do not add any `migration_action`
+* Once you have moved the Person details to a new record, remove them from the Organization record:
+** After removing the person name from `preferred_name_form`, `variant_name_form` is redundant, so I remove `variant_name_form`
+** Clear the `firstname` and `lastname` fields
+** In real life, I'd review all the fields and make sure they are in the appropriate row
+* Add the Person's `preferred_name_form` value to the Organization's `contact_person` field.
+
+**For Acme**
+* Determined there **is** already a Person row with `preferred_name_form`=`Smith, Robert`, so I do **not** create a new row for person name data.
+* I just remove the person name data from the Organization row:
+** After removing the person name from `preferred_name_form`, `variant_name_form` is redundant, so I remove `variant_name_form`
+** Clear the `firstname` and `lastname` fields
+** In real life, I'd review all the fields and make sure they are in the appropriate row
+* `Smith, Robert` is already the organization `contact_person`, so I leave that alone
 
 === Prepare for reviewing duplicates
 * Sort by `normalized_form`
