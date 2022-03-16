@@ -108,11 +108,13 @@ NOTE: Breaking this data out usually introduces some rows marked as duplicates, 
 More details on each step are given below. Examples are included!
 
 1. Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
-2. Check and resolve duplicate names
-3. Check and resolve names where `inconsistent_org_names` value = `y`
-4. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `use_type` = `Person` and filter to blank `firstname` values.]
-5. Look for and merge near-duplicates and variants
-6. Ensure all `contact_person` values exist as Person names
+2. Ensure all names have a `preferred_name_form` value
+3. Check and resolve duplicate names
+4. Check and resolve names where `inconsistent_org_names` value = `y`
+5. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `use_type` = `Person` and filter to blank `firstname` values.]
+6. Look for and merge near-duplicates and variants
+7. Ensure all `contact_person` values exist as Person names
+8. Deal with Persons as alt names of Organizations and vice-versa
 
 == Step details
 === Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
@@ -125,21 +127,75 @@ Provide the appropriate value for any rows
 ==== Strategy 2: Filter to `missing_last_name` = `y`
 Should some of these be coded as Organizations instead of people? See <<switch-a-person-to-an-organization>>.
 
+=== Ensure all names have a `preferred_name_form` value
+
+This can sometimes be an issue if you have chosen to use the inverted form as the preferred form of person name. It usually means name details (`lastname`, etc.) were not recorded.
+
+Rows without a `preferred_name_form` value will be highlighted pink.
+
 === Check and resolve duplicate names
 Initially, filter to `duplicate` = `y`.
 
-As you change/add data, check for highlighed `approx_normalized` values. 
+As you change/add data, check for highlighed `approx_normalized` values.
+
+The <<how-to>> section includes various ways of handling duplicates.
 
 === Check and resolve names where `inconsistent_org_names` value = `y`
 When `inconsistent_org_names` value = `y`, it often means an organization name row has person name details embedded in it. This is common, so it apparently works in TMS. It will not work well in CS, however.
 
+See <<person-name-details-embedded-in-organization-record>>.
+
 === Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y`
+IMPORTANT: This is necessary only for Person names.
+
+Person names lacking `lastname` and `firstname` values will be warning highlighted in those columns.
+
 === Look for and merge near-duplicates and variants
+There's no clear successful procedure for this. Some strategies may include:
+
+- Sorting on `preferred_name_form` and eyeballing the list
+- Sorting on `variant_name_form` and eyeballing the list
+- Your migration specialist will provide some similarity/clustering reports generated using OpenRefine. These are often a mix of usefully highlighted similar values, with a generous helping of stuff to ignore. They may be worth looking at to find other near-duplicates.
+
+The <<how-to>> section includes various ways of handling variants.
+
 === Ensure all `contact_person` values exist as Person names
+
+The spreadsheet tries to help you with this by warning highlighting any `contact_person` values that do not exist as person records.
+
+The `contact_person` value must match the `preferred_name_form` value of a Person record.
+
+You may just need to change the `contact_person` value to use the correct form of an existing Person row.
+
+Or, you may need to create a new Person row as shown in the Zenith example in <<person-name-details-embedded-in-organization-record>>.
+
+=== Deal with Persons as alt names of Organizations and vice-versa
+
+It is technically possible in CS to add "Jones, Jane" as a non-preferred/variant form of the Organization name "Zenith, Inc.". This is what will happen if you have the following:
+
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | contact_person |
+|------------------+------------------+-----------------+---------------------+-------------------+-------------+----------------|
+| TMS Constituents |                  | Organization    | Zenith, Inc.        |                   | Jones, Jane |                |
+----
+
+Since Jane Jones is actually not an alternate name for Zenith, Inc., it's not ideal modeling of data to migrate it as such.
+
+If you have both a person record for "Jones, Jane" and an organization record with "Jones, Jane" as a variant form, it can complicate/confuse the data entry process in fields which may be populated by either Person or Organization authority.
+
+Our recommendation is to split these out into separate records of the appropriate type as necessary, and to relate persons and organizations via the `contact_person` field in the relevant organization record.
+
+However, if you have Organizations which are one-person businesses, the person vs. organization names are much more interchangeable and this may not be a priority for you.
+
+To clean up, ...TODO
 
 == How to
 
 NOTE: In the examples below, columns are omitted if they aren't relevant to the change you want to make.
+
+=== Clean up `alt_names` of different type than record they are on
+
 
 === Differentiate "duplicates" that are not actually duplicates
 
