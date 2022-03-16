@@ -107,21 +107,21 @@ NOTE: Breaking this data out usually introduces some rows marked as duplicates, 
 
 More details on each step are given below. Examples are included!
 
-1. Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
+1. Ensure all names have the appropriate `constituenttype` value: "Person" or "Organization"
 2. Ensure all names have a `preferred_name_form` value
 3. Check and resolve duplicate names
 4. Check and resolve names where `inconsistent_org_names` value = `y`
-5. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `use_type` = `Person` and filter to blank `firstname` values.]
+5. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `constituenttype` = `Person` and filter to blank `firstname` values.]
 6. Look for and merge near-duplicates and variants
 7. Ensure all `contact_person` values exist as Person names
 8. Deal with Persons as alt names of Organizations and vice-versa
 
 == Step details
-=== Ensure all names have the appropriate `use_type` value: "Person" or "Organization"
+=== Ensure all names have the appropriate `constituenttype` value: "Person" or "Organization"
 
 This includes providing missing values (Strategy 1) and verifying/correcting existing values (remaining strategies).
 
-==== Strategy 1: Filter to `use_type` empty
+==== Strategy 1: Filter to `constituenttype` empty
 Provide the appropriate value for any rows
 
 ==== Strategy 2: Filter to `missing_last_name` = `y`
