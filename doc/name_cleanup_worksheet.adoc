@@ -31,9 +31,10 @@ At the beginning of the final phase of the migration, when you send us the final
 === `migration_action` values
 (blank):: An authority record of the given type will be created in CS
 main:: When multiple rows have the same name value, indicates which row should be used to create the authority record for that name in CS.
-use_name:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column.
 merge_variant:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column. **AND, the migration should merge the original `preferred_name_form` value of this row into the record as a non-preferred/variant name.**
 ok:: This just turns off warning highlighting in the spreadsheet. Only use this in particular instances described below. 
+skip:: Ignore this row altogether. If used on rows derived directly from TMS tables (i.e. not from migration processing), this means values using this name will be lost.
+use_name:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column.
 
 == Explanation of selected worksheet columns
 `termsource`:: Where the name came from---TMS table or a data extraction method
@@ -448,6 +449,47 @@ Upon review, the record for Apex is fine. There are no person name details embed
 === Prepare for reviewing duplicates
 * Sort by `normalized_form`
 * Filter to `duplicate` = `y`
+
+=== Remove/Ignore unwanted names
+
+[WARNING]
+====
+Typically you will only want to use the `skip` `migration_action` in rows derived from migration-related data processing (i.e. `termsource` with a dot plus some function/routine name after the table name)
+
+We run these processes because they tend to mostly extract/identify data necessary for the migration. But sometimes they add spurious names, typically because data was entered in TMS in an unexpected way.
+
+The `skip` option tells the later  migration processes: this isn't a real name. Don't create a record for it. Don't link anything to it. Any data in other tables that refers to this name should be ignored/dropped.
+
+If the row came directly from TMS Constituents or other table, you probably want to use one of the <<merge-variant-multiple-name-forms-into-one-name>> options.
+====
+
+.Original data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+----------|
+| TMS Constituents                        |                  | Organization    | Smith               |                   | Smith          |          |
+| TMS Constituents.orgs_with_person_names |                  | Person          | Smith               | Smith             |                | Smith    |
+----
+
+.Fixed data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+----------|
+| TMS Constituents                        | ok               | Organization    | Smith               |                   |                |          |
+| TMS Constituents.orgs_with_person_names | skip             | Person          | Smith               | Smith             |                | Smith    |
+----
+
+The Person row was added by the migration data process to automagically extract Persons from Constituent Organizations that have name details associated with people. Magic doesn't always work perfectly, unfortunately!
+
+This was triggered by `Smith` being recorded as the `lastname` value in the organization constituent record in TMS.
+
+This personal name detail has been moved to the Person row in the spreadsheet, and `Smith` has been retained as the `contact_person` in the Organization.
+
+We don't want a Person name for this, so we enter `migration_action`=`skip` in the Person row.
+
+Because there is not actually a contact person named `Smith` we clear that value out of the Organization row. If you add `migration_action`=`ok` in the Organization row, that prevents it from getting highlighted as a probably duplicate.
 
 === Switch a Person to an Organization
 
