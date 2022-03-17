@@ -290,7 +290,44 @@ Add new row marked `merge_variant` with relevant name details for the variant na
 
 === Clean up `alt_names` of different type than record they are on
 
-TODO
+Here we want to move the organization alt_name out of the Person record, but retain the alt_name for her previous name.
+
+Additionally, we want to move the person alt_name out of the Organization record.
+
+.Original data
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names                | contact_person | contact_role        | firstname | middlename | lastname |
+|------------------+-----------------+---------------------+-------------------+--------------------------+----------------+---------------------+-----------+------------+----------|
+|                  | Person          | Baker, Kat Harlow   | Kat Harlow Baker  | Arts Academy|Harlow, Kat |                | Assistant Principal | Kat       | Harlow     | Baker    |
+|                  | Organization    | Hill Corporation    |                   | Hill, David              |                |                     |           |            |          |
+----
+
+.Fixed data
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names                     | contact_person    | contact_role        | firstname | middlename | lastname |
+|------------------+-----------------+---------------------+-------------------+-------------------------------+-------------------+---------------------+-----------+------------+----------|
+|                  | Person          | Baker, Kat Harlow   | Kat Harlow Baker  | -{{Arts Academy}}|Harlow, Kat |                   |                     | Kat       | Harlow     | Baker    |
+|                  | Organization    | Arts Academy        |                   |                               | Baker, Kat Harlow | Assistant Principal |           |            |          |
+|                  | Organization    | Hill Corporation    |                   | -{{Hill, David}}              | Hill, David       |                     |           |            |          |
+|                  | Person          | Hill, David         | David Hill        |                               |                   |                     | David     |            | Hill     |
+----
+
+For the `Baker, Kat Harlow` row:
+
+* I indicate I do not want `Arts Academy` treated as a variant name of `Baker, Kat Harlow` by wrapping it in `-{{` and `}}`
+* I create a new row for `Arts Academy`, indicating it is an Organization.
+* I copy the `preferred_name_form` from the previous row as the `contact_person` value in this organization
+* I move `Assistant Principal` to be the `contact_role` value with the `contact_person` name on the organization row
+
+For the `Hill Corporation` row:
+
+* I indicate I do not want `Hill, David` treated as a variant name of `Hill Corporation` by wrapping it in `-{{` and `}}`
+* I create a new row for `Hill, David`, indicating this is a Person.
+* In this new Person record, I fill in `variant_name_form`, `firstname`, `lastname` and any other details I have
+* `Hill, David` is already in the organization name as `contact person`. If it were not, I would need to add it to link these two names together.
+* If I knew the relationship between `Hill, David` and `Hill Corporation`, I could specify it in the `contact_role` field of the organization record.
 
 === Differentiate "duplicates" that are not actually duplicates
 
