@@ -320,6 +320,7 @@ The actions I took are based on an assumption that there were not already an org
 
 If there had been, I could have just added `Baker, Kat Harlow` as the contact person on the existing org record.
 ====
+
 For the `Baker, Kat Harlow` row:
 
 * I indicate I do not want `Arts Academy` treated as a variant name of `Baker, Kat Harlow` by wrapping it in `-{{` and `}}`
