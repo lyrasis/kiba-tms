@@ -197,14 +197,16 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
             desc: 'Compiled names',
             tags: %i[names],
-            dest_special_opts: { initial_headers: %i[use_type use_name_form use_variant_forms
-               constituenttype duplicate inconsistent_org_names missing_last_name	
-               preferred_name_form variant_name_form alt_names
+            dest_special_opts: {
+              initial_headers:
+              %i[
+               termsource normalized_form approx_normalized duplicate inconsistent_org_names missing_last_name
+               migration_action constituenttype preferred_name_form variant_name_form alt_names
                institution contact_person contact_role
-               nametitle firstname middlename lastname suffix
-               begindateiso enddateiso nationality culturegroup
+               salutation nametitle firstname middlename lastname suffix
+               begindateiso enddateiso nationality culturegroup school
                biography remarks
-               active isstaff is_private_collector
+               approved active isstaff is_private_collector code
               ] }
           }
           register :flagged_duplicates, {
