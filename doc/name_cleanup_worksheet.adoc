@@ -195,6 +195,99 @@ To clean up, ...TODO
 
 NOTE: In the examples below, columns are omitted if they aren't relevant to the change you want to make.
 
+=== Change the form of name used
+==== Change the form of name used (multiple rows involved)
+
+What if you determine that all three of these rows are the same person, and you want the name in CS to be "Smith, Robert J."?
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+| TMS Loans        |                  |                 | robertsmith         |                   |           |            |          |
+| TMS Constituents |                  | Person          | Smith, Robert       | Robert Smith      | Robert    |            | Smith    |
+----
+
+In the "Smith, Robert" row (chosen because it is closest to the name I want to use):
+
+* `migration_action`=`main`
+* update `preferred_name_form` to be the form you want to use
+* update all relevant details fields to match the form you want to use
+
+In row from TMS Loans:
+
+* Add constituentype (necessary because the same name can be in the organization authority *and* person authority
+* `migration_action`=`use_name` (we want the Loans info to use the record that will be created by the main row, but we don't want a variant name `robertsmith` added to that record)
+* Change `preferred_name_form` to `Smith, Robert J.`
+
+In the `Smith, R.J.` row:
+
+* `migration_action`=`merge_variant` (if we want the record in CS to also be findable by "Smith, R.J.")
+* Change `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+* Ensure any data in additional fields in this row that don't belong in the Term section of a CS Person/Org are copied into the main row
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents | merge_variant    | Person          | Smith, Robert J.    | R.J. Smith        | R.        | J.         | Smith    |
+| TMS Loans        | use_name         | Person          | Smith, Robert J.    |                   |           |            |          |
+| TMS Constituents | main             | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+----
+
+==== Change the form of name used (one row) without adding a variant form of name
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
+* Change `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+----
+
+==== Change the form of name used (one row) and add a variant
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
+We have to make the desired changes in the existing row, since that is the row that other tables in TMS link to.
+
+* In existing row `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+* add `migration_action`=`main` 
+
+Add new row marked `merge_variant` with relevant name details for the variant name
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents | main             | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+|                  | merge_variant    | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
 === Clean up `alt_names` of different type than record they are on
 
 TODO
@@ -451,6 +544,7 @@ Upon review, the record for Apex is fine. There are no person name details embed
 * Filter to `duplicate` = `y`
 
 === Remove/Ignore unwanted names
+==== Added by migration processing
 
 [WARNING]
 ====
@@ -490,6 +584,45 @@ This personal name detail has been moved to the Person row in the spreadsheet, a
 We don't want a Person name for this, so we enter `migration_action`=`skip` in the Person row.
 
 Because there is not actually a contact person named `Smith` we clear that value out of the Organization row. If you add `migration_action`=`ok` in the Organization row, that prevents it from getting highlighted as a probably duplicate.
+
+==== Name added by migration processing is correct, original TMS row is wrong
+
+.Original data
+[source]
+----
+| termsource                              | constituenttype | preferred_name_form | variant_name_form | contact_person | firstname | lastname |
+|-----------------------------------------+-----------------+---------------------+-------------------+----------------+-----------+----------|
+| TMS Constituents                        | Organization    | Barlow, Mary        | Mary Barlow       | Barlow, Mary   |           |          |
+| TMS Constituents.orgs_with_person_names | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+----
+
+We ended up with this situation because, in TMS, the Constituent entry for `Barlow, Mary` is coded as an organization, but has a `firstname` and `lastname` value.
+
+In this case, the `constituenttype` coded in TMS was incorrect.
+
+As described above, we do not want to `skip` the row that came from TMS Constituents. We expect that other tables link to this name, and using `skip` would cause those links to be lost.
+
+Here is how we handle it:
+
+.Fixed data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | firstname | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+-----------+----------|
+| TMS Constituents                        | ok               | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+| TMS Constituents.orgs_with_person_names | skip             | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+----
+
+* In row from TMS Consituents:
+** Correct the `constituenttype`
+** Copy the person name details from the other row into
+** Remove `contact_person` value from the now-Person we are keeping
+** `migration_action`=`ok` (optional -- keeps it from being highlighted as a duplicate)
+
+* In row added by migration process:
+** `migration_action`=`skip`
+
+
 
 === Switch a Person to an Organization
 
