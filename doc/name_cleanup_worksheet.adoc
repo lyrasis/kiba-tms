@@ -30,6 +30,7 @@ At the beginning of the final phase of the migration, when you send us the final
 
 === `migration_action` values
 (blank):: An authority record of the given type will be created in CS
+add_contact:: Merge the given `contact_person` (and, if present, `contact_role`) value into the organization in `preferred_name_form`
 main:: When multiple rows have the same name value, indicates which row should be used to create the authority record for that name in CS.
 merge_variant:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column. **AND, the migration should merge the original `preferred_name_form` value of this row into the record as a non-preferred/variant name.**
 ok:: This just turns off warning highlighting in the spreadsheet. Only use this in particular instances described below. 
@@ -194,6 +195,54 @@ To clean up, ...TODO
 == How to
 
 NOTE: In the examples below, columns are omitted if they aren't relevant to the change you want to make.
+
+=== Add multiple contact persons to the same organization
+==== Row already added by migration process
+
+.Original data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         |                  | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+| TMS Constituents.org_with_contact_person |                  | Organization    | Misc Museum         | Jones, Ann     |              |
+....
+
+.Fixed data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         | main             | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+| TMS Constituents.org_with_contact_person | add_contact      | Organization    | Misc Museum         | Jones, Ann     | registrar    |
+....
+
+* In Organization row with `termsource`=`TMS Constituents`, set `migration_action`=`main`. (This ensures any data in other tables referring to this constituent Organization gets linked as expected and turns off warning highlighting of duplicate values)
+* In row with additional contact person info, set `migration_action`=`add_contact`
+* Optionally, I added the `contact_role` for the contact I was adding.
+
+==== Manually, as part of alt_names fix or for any other reason
+
+.Original data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         |                  | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+....
+
+Here, you want another contact person listed for Misc Museum.
+
+.Fixed data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         | main             | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+|                                          | add_contact      | Organization    | Misc Museum         | Jones, Ann     | registrar    |
+....
+
+* In the existing Organization row, set `migration_action`=`main`. (This ensures any data in other tables referring to this constituent Organization gets linked as expected and turns off warning highlighting of duplicate values when you add another field with same `preferred_name_form`)
+* Add new row with `migration_action`=`add_contact`, `constituenttype`=`Organization`, `preferred_name_form`= the name from the main row
+* In your new row, add the `contact_person` and optional `contact_role` value.
+
+IMPORTANT: The `contact_person` value should exist as the `preferred_name_form` of a row tagged as `constituenttype`=`Person`. If it does not, the spreadsheet should warning highlight it.
 
 === Change the form of name used
 ==== Change the form of name used (multiple rows involved)
