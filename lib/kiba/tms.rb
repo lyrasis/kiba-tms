@@ -59,6 +59,10 @@ module Kiba
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
 
+    setting :locations, reader: true do
+      setting :hierarchy_delim, default: ' >> ', reader: true
+    end
+
     TABLES = {
       '23'=>'Constituents',
       '47'=>'Exhibitions',

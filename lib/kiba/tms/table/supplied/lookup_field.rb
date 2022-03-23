@@ -24,7 +24,10 @@ module Kiba
 
           FIELDS = {
             constituents: :constituentid,
-            departments: :departmentid
+            departments: :departmentid,
+            obj_comp_statuses: :objcompstatusid,
+            obj_comp_types: :objcomptypeid,
+            objects: :objectid
           }
         end
       end

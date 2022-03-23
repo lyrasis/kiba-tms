@@ -7,18 +7,7 @@ module Kiba
         extend self
 
         def prep
-          Kiba::Extend::Jobs::Job.new(
-            files: {
-              source: :tms__objects,
-              destination: :prep__objects,
-              lookup: %i[prep__classifications prep__classification_xrefs prep__departments prep__object_statuses]
-            },
-            transformer: prep_xforms
-          )
-        end
-
-        def prep_xforms
-          Kiba.job_segment do
+          xforms = Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
             transform Delete::Fields,
               fields: %i[catalogueisodate conservationentityid
@@ -63,38 +52,43 @@ module Kiba
               delim: Tms.delim
             transform Delete::Fields, fields: :objectstatusid
           end
+          
+          Kiba::Extend::Jobs::Job.new(
+            files: {
+              source: :tms__objects,
+              destination: :prep__objects,
+              lookup: %i[prep__classifications prep__classification_xrefs prep__departments prep__object_statuses]
+            },
+            transformer: xforms
+          )
         end
-        
+
         def object_number_lookup
+          xforms = Kiba.job_segment do
+            transform Delete::FieldsExcept, keepfields: %i[objectid objectnumber]
+          end
+
           Kiba::Extend::Jobs::Job.new(
             files: {
               source: :tms__objects,
               destination: :prep__object_number_lookup
             },
-            transformer: object_number_lookup_xforms
+            transformer: xforms
           )
         end
 
-        def object_number_lookup_xforms
-          Kiba.job_segment do
-            transform Delete::FieldsExcept, keepfields: %i[objectid objectnumber]
-          end
-        end
-
         def object_numbers
+          xforms = Kiba.job_segment do
+            transform Delete::FieldsExcept, keepfields: %i[objectnumber]
+          end
+          
           Kiba::Extend::Jobs::Job.new(
             files: {
               source: :tms__objects,
               destination: :prep__object_numbers
             },
-            transformer: object_numbers_xforms
+            transformer: xforms
           )
-        end
-
-        def object_numbers_xforms
-          Kiba.job_segment do
-            transform Delete::FieldsExcept, keepfields: %i[objectnumber]
-          end
         end
       end
     end

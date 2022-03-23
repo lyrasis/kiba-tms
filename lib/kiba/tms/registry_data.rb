@@ -191,7 +191,16 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('names') do
+        Kiba::Tms.registry.namespace('name_cleanup') do
+          register :unfingerprinted, {
+            creator: Kiba::Tms::Jobs::InBetween::NameCleanup.method(:unfingerprinted),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_unfingerprinted.csv'),
+            desc: 'Unfingerprinted names',
+            tags: %i[names]
+          } 
+        end
+
+        Kiba::Tms.registry.namespace('names') do          
           register :compiled, {
             creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:compiled),
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
@@ -260,6 +269,24 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_components') do
+          register :with_object_numbers, {
+            creator: Kiba::Tms::Jobs::ObjComponents.method(:with_object_numbers),
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_with_object_numbers.csv'),
+            tags: %i[obj_components],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 objectid componentid
+                 objectnumber componentnumber is_top_object
+                 componentname
+                 component_type objcompstatus active
+                 physdesc
+                ] },
+            lookup_on: :componentid
+          }
+        end
+        
         Kiba::Tms.registry.namespace('terms') do
           register :descriptors, {
             creator: Kiba::Tms::Jobs::Terms.method(:descriptors),

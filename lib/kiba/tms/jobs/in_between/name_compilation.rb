@@ -177,10 +177,11 @@ module Kiba
             xforms = Kiba.job_segment do
               @deduper = {}
 
-              transform Tms::Transforms::AddFingerprint,
+              transform Fingerprint::Add,
                 fields: Tms::Services::FingerprintFields.names,
                 delim: '|||',
-                target: :fingerprint
+                target: :fingerprint,
+                override_app_delim_check: true
               transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper,
                 explicit_no: false
               transform Append::NilFields, fields: Tms.name_compilation.multi_source_normalizer.get_fields
