@@ -39,7 +39,7 @@ module Kiba
 
             { lookup_on: lookup_field }
           end
-        end
+         end
       end
     end
   end
