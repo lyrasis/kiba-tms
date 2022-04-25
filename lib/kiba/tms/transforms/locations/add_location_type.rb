@@ -22,6 +22,8 @@ module Kiba
               type = 'Room'
             elsif is_match?(%w[drawer], loc)
               type = 'Drawer'
+            elsif is_match?(%w[folder], loc)
+              type = 'Folder'
             elsif is_match?(%w[shelf], loc)
               type = 'Shelf'
             elsif is_match?(%w[tray], loc)
