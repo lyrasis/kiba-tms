@@ -9,9 +9,15 @@ module Kiba
         def prep
           xforms = Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
+            transform Delete::EmptyFields,
+              consider_blank: {
+                loclevel: '0',
+                tempticklerdate: '1900-01-01 00:00:00.000'
+              }
             transform Delete::FieldValueMatchingRegexp,
               fields: %i[approver handler requestedby],
               match: '^(\(|\[)[Nn]ot [Ee]ntered(\)|\])$'
+            transform Tms::Transforms::ObjLocations::AddFulllocid
           end
           
           Kiba::Extend::Jobs::Job.new(

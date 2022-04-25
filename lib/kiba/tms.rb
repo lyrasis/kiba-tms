@@ -61,6 +61,9 @@ module Kiba
 
     setting :locations, reader: true do
       setting :hierarchy_delim, default: ' >> ', reader: true
+      # Which fields in obj_locations need to be concatenated with the location value to create additional
+      #   location values (and thus need a unique id added to look them up)
+      setting :fulllocid_fields, default: %i[locationid loclevel searchcontainer temptext shipmentid crateid sublevel], reader: true
     end
 
     TABLES = {

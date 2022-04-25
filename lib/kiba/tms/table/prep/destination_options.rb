@@ -38,6 +38,10 @@ module Kiba
                  datebegsearch monthbegsearch daybegsearch
                  dateendsearch monthendsearch dayendsearch]
             },
+            obj_locations: {
+              initial_headers:
+              %i[objlocationid componentid locationid fulllocid]
+            },
             objects: {
               initial_headers:
               %i[objectnumber department classification classificationxref objectname objectstatus title]
