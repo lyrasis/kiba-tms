@@ -13,16 +13,20 @@ module Kiba
           def initialize(table)
             @filename = table.filename.delete_suffix('.csv')
             @filekey = table.filekey
+            @meth = Kiba::Extend.default_job_method_name
           end
 
           def call
             return abstract if klass.nil?
-            return abstract unless has_prep_method?
-
-            klass.method(:prep)
+            return prep_klass.constantize.method(meth) if has_prep_class?
+            return klass.method(:prep) if has_prep_method?
+            
+            abstract
           end
         
           private
+
+          attr_reader :filename, :filekey, :meth
 
           def abstract
             Kiba::Tms::Jobs::AbstractPrep.new(filekey).method(:prep)
@@ -38,20 +42,29 @@ module Kiba
             klass_name.constantize
           rescue NameError
             nil
-            # define_klass            
-            # klass_name.constantize
           end
 
           def klass_name
             "Kiba::Tms::Jobs::#{filename}"
           end
 
+          def has_prep_class?
+            prep_klass.constantize
+          rescue NameError
+            false
+          else
+            return true if prep_klass.constantize.methods.any?(meth)
+
+            false
+          end
+          
           def has_prep_method?
             klass.methods.any?(:prep)
           end
-          
 
-          attr_reader :filename, :filekey
+          def prep_klass
+            "Kiba::Tms::Jobs::#{filename}::Prep"
+          end
         end
       end
     end
