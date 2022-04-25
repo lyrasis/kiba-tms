@@ -182,6 +182,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('locs') do
+          register :from_obj_locs_temptext, {
+            creator: Kiba::Tms::Jobs::Locations::FromObjLocsTemptext,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locs_from_obj_locs_temptext.csv'),
+            desc: 'Locations created by appending temp text to location id location',
+            tags: %i[locations]
+          }
+        end
+        
         Kiba::Tms.registry.namespace('media_files') do
           register :file_names, {
             creator: Kiba::Tms::Jobs::MediaFiles.method(:file_names),
