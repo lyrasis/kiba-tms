@@ -286,6 +286,19 @@ module Kiba
             lookup_on: :componentid
           }
         end
+
+        Kiba::Tms.registry.namespace('obj_locations') do
+          register :not_matching_components, {
+            creator: Kiba::Tms::Jobs::ObjLocations.method(:not_matching_components),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_locations_not_matching_obj_components.csv'),
+            tags: %i[obj_locations obj_components reports]
+          }
+          register :not_matching_locations, {
+            creator: Kiba::Tms::Jobs::ObjLocations.method(:not_matching_locations),
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_locations_not_matching_locations.csv'),
+            tags: %i[obj_locations reports]
+          }
+        end
         
         Kiba::Tms.registry.namespace('terms') do
           register :descriptors, {
