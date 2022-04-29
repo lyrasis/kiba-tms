@@ -32,7 +32,7 @@ At the beginning of the final phase of the migration, when you send us the final
 usage_ct:: Number of object location records this location is used in.
 location_name:: maps to Display name field of storage location term record
 storage_location_authority:: as coded in TMS; more on this below
-locationtype:: derived from final segment of `location_name` -- maps to Storage location type field. Some values may need to be added to your CS instance.
+locationtype:: derived from final segment of `location_name` -- maps to Storage location type field. Values are managed in Tools > Term Lists > Location Type
 address:: derived from TMS
 term_source:: where the term came from in TMS (explained below)
 fulllocid:: id for merging changes back into the migration
@@ -80,11 +80,13 @@ Please read https://github.com/lyrasis/collectionspace-migration-explainers/blob
 
 **If you want them split into Local and Offsite**, correct the values in the column as necessary.
 
-**If any of them are actually _Organizations_ that are represented in TMS Constituents**, you can put `Organization` in the column. Please make sure the `location_name` value exactly matches whatever you have in the names cleanup spreadsheet!
+**If any of them are actually _Organizations_**, you can put `Organization` in the column. Make sure the `location_name` value exactly matches whatever you have as the `use_name` in the names cleanup spreadsheet, or a new Organization record will be added.
+
+It is fine to tag locations that don't exist in the names sheet as Organizations, if you do want an additional Organization record to be created. 
 
 === Review/revise location names for consistency, with an eye to shortening them
 
-Please see https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#review-location-names-for-consistency-with-an-eye-to-shortening-them[] for reasoning and examples.
+Please see https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#review-location-names-for-consistency-with-an-eye-to-shortening-them[this section] for reasoning and examples.
 
 Make any corrections/changes directly in the `location_name` column.
 
