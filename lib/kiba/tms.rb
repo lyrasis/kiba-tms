@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'active_support'
-require 'active_support/core_ext/object'
-require 'dry-configurable'
-require 'kiba'
-require 'kiba-common/destinations/csv'
-require 'kiba-common/dsl_extensions/show_me'
-require 'kiba-common/sources/csv'
+#require 'active_support'
+#require 'active_support/core_ext/object'
+#require 'dry-configurable'
+#require 'kiba'
+#require 'kiba-common/destinations/csv'
+#require 'kiba-common/dsl_extensions/show_me'
+#require 'kiba-common/sources/csv'
 require 'kiba/extend'
 require 'zeitwerk'
 
@@ -38,7 +38,35 @@ module Kiba
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
       setting :alt_name_field, default: :alphasort, reader: true
-
+      # inactive addresses are excluded from migration
+      setting :omit_inactive_address, default: false, reader: true
+      # ConAddress columns to include in address value
+      setting :address_fields,
+        default: %i[displayname1 displayname2 streetline1 streetline2 streetline3 city state zipcode],
+        reader: true
+      # ConAddress columns that will be combined into CS addressplace1, if present
+      setting :addressplace1_fields,
+        default: %i[displayname1 displayname2],
+        reader: true
+      # ConAddress columns that will be combined into CS addressplace2.
+      # If no values in addressplace1_fields, the first of these becomes addressplace1
+      setting :addressplace2_fields,
+        default: %i[streetline1 streetline2 streetline3],
+        reader: true
+      setting :addressplace1_delim, default: ' -- ', reader: true
+      setting :addressplace2_delim, default: ', ', reader: true
+      # The next four settings are whether to generate notes about address type/status, eg. "Is default mailing address"
+      #   Default to no since CS doesn't have any note field associated with a given address
+      setting :address_shipping, default: false, reader: true
+      setting :address_billing, default: false, reader: true
+      setting :address_mailing, default: false, reader: true
+      setting :address_active, default: false, reader: true
+      setting :address_dates, default: false, reader: true
+      # What to do with address remarks:
+      #  - :plain - will go into authority record's note field
+      #  - :specific - will go into a note tagged with the specific address it applies to
+      setting :address_remarks_handling, default: :plain, reader: true
+      
       # The following are useful if there are duplicate preferred names that have different date values that
       #   can disambiguate the names
       setting :date_append, reader: true do
@@ -55,11 +83,27 @@ module Kiba
       end
     end
 
+    setting :names, reader: true do
+      setting :cleanup_iteration, default: 0, reader: true
+      # whether to add "variant form" to name term flag field
+      setting :flag_variant_form, default: true, reader: true
+      setting :set_term_pref_for_lang, default: true, reader: true
+      setting :set_term_source, default: true, reader: true
+    end
+    
+    setting :name_cleanup0, reader: true do
+      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+    end
+    
     setting :name_compilation, reader: true do
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+      # fields to delete from name compilation report
+      setting :delete_fields, default: [], reader: true
     end
 
     setting :locations, reader: true do
+      # Whether client wants the migration to include construction of a location hierarchy
+      setting :hierarchy, default: true, reader: true
       setting :hierarchy_delim, default: ' >> ', reader: true
       # Which fields in obj_locations need to be concatenated with the location value to create additional
       #   location values (and thus need a unique id added to look them up)

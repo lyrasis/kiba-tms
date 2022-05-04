@@ -121,15 +121,107 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('con_address') do
+          register :to_merge, {
+            creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_address_to_merge.csv'),
+            desc: 'Removes rows with no address data, merges in coded values, shapes for CS',
+            tags: %i[con con_address],
+            lookup_on: :constituentid
+          }
+          register :for_persons, {
+            creator: Kiba::Tms::Jobs::ConAddress::ForPersons,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_address_for_persons.csv'),
+            tags: %i[con con_address],
+            lookup_on: :person
+          }
+          register :for_orgs, {
+            creator: Kiba::Tms::Jobs::ConAddress::ForOrgs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_address_for_orgs.csv'),
+            tags: %i[con con_address],
+            lookup_on: :org
+          }
+          register :dropping, {
+            creator: Kiba::Tms::Jobs::ConAddress::Dropping,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_address_dropping.csv'),
+            tags: %i[con con_address not_migrating reports]
+          }
+        end
+
         Kiba::Tms.registry.namespace('con_alt_names') do
           register :by_constituent, {
-            creator: Kiba::Tms::Jobs::ConAltNames.method(:prep),
+            creator: Kiba::Tms::Jobs::ConAltNames::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
             tags: %i[con prep],
             lookup_on: :constituentid
           }
+          register :only_alt, {
+            creator: Kiba::Tms::Jobs::ConAltNames::OnlyAlt,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_only_alt.csv'),
+            desc: 'Removes ConAltNames rows that duplicate Constituent names',
+            tags: %i[con conaltnames],
+            lookup_on: :constituentid
+          }
+          register :to_merge_org, {
+            creator: Kiba::Tms::Jobs::ConAltNames::ToMergeIntoOrg,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_to_merge_into_org.csv'),
+            desc: 'ConAltNames data to merge into Org Constituents',
+            tags: %i[con conaltnames],
+            lookup_on: :org
+          }
+          register :to_merge_person, {
+            creator: Kiba::Tms::Jobs::ConAltNames::ToMergeIntoPerson,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_to_merge_into_person.csv'),
+            desc: 'ConAltNames data to merge into Person Constituents',
+            tags: %i[con conaltnames],
+            lookup_on: :person
+          }
+          register :dropping, {
+            creator: Kiba::Tms::Jobs::ConAltNames::Dropping,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_alt_names_dropping.csv'),
+            desc: 'ConAltNames data being removed from migration',
+            tags: %i[con conaltnames reports not_migrating]
+          }
         end
-        
+
+        Kiba::Tms.registry.namespace('con_email') do
+          register :dropping, {
+            creator: Kiba::Tms::Jobs::ConEMail::Dropping,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_email_dropping.csv'),
+            tags: %i[con conemail prep not_migrating reports]
+          }
+          register :for_persons, {
+            creator: Kiba::Tms::Jobs::ConEMail::ForPersons,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_email_for_persons.csv'),
+            tags: %i[con conemail],
+            lookup_on: :person
+          }
+          register :for_orgs, {
+            creator: Kiba::Tms::Jobs::ConEMail::ForOrgs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_email_for_orgs.csv'),
+            tags: %i[con conemail]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('con_phones') do
+          register :dropping, {
+            creator: Kiba::Tms::Jobs::ConPhones::Dropping,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_phones_dropping.csv'),
+            tags: %i[con conphones prep not_migrating reports]
+          }
+          register :for_persons, {
+            creator: Kiba::Tms::Jobs::ConPhones::ForPersons,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_phones_for_persons.csv'),
+            tags: %i[con conphones],
+            lookup_on: :person
+          }
+          register :for_orgs, {
+            creator: Kiba::Tms::Jobs::ConPhones::ForOrgs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_phones_for_orgs.csv'),
+            tags: %i[con conphones]
+          }
+        end
+
         Kiba::Tms.registry.namespace('constituents') do
           register :alt_name_mismatch, {
             creator: Kiba::Tms::Jobs::Constituents.method(:alt_name_mismatch),
@@ -183,10 +275,46 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('locs') do
+          register :from_locations, {
+            creator: Kiba::Tms::Jobs::Locations::FromLocations,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locs_from_locations.csv'),
+            desc: 'Locations extracted from TMS Locations',
+            tags: %i[locations]
+          }
           register :from_obj_locs_temptext, {
             creator: Kiba::Tms::Jobs::Locations::FromObjLocsTemptext,
             path: File.join(Kiba::Tms.datadir, 'working', 'locs_from_obj_locs_temptext.csv'),
             desc: 'Locations created by appending temp text to location id location',
+            tags: %i[locations]
+          }
+          register :compiled_0, {
+            creator: Kiba::Tms::Jobs::Locations::Compiled0,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled_0.csv'),
+            desc: 'Locations from different sources, compiled, round 0',
+            tags: %i[locations],
+          }
+          register :compiled_hier_0, {
+            creator: Kiba::Tms::Jobs::Locations::CompiledHier0,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled_hier_0.csv'),
+            desc: 'Locations from different sources, compiled, hierarchy levels added, round 0',
+            tags: %i[locations]
+          }
+          register :compiled, {
+            creator: Kiba::Tms::Jobs::Locations::Compiled,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled.csv'),
+            desc: 'Locations from different sources, compiled, final',
+            tags: %i[locations],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 usage_ct location_name parent_location storage_location_authority current_location_note address term_source fulllocid
+                ] },
+            lookup_on: :fulllocid
+          }
+          register :to_client_0, {
+            creator: Kiba::Tms::Jobs::Locations::ToClient0,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'location_review_0.csv'),
+            desc: 'Locations for client review',
             tags: %i[locations]
           }
         end
@@ -200,18 +328,95 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('name_cleanup') do
-          register :unfingerprinted, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCleanup.method(:unfingerprinted),
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_unfingerprinted.csv'),
-            desc: 'Unfingerprinted names',
-            tags: %i[names]
-          } 
+        Kiba::Tms.registry.namespace('nameclean') do
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
+            path: File.join(Kiba::Tms.datadir, 'working', 'by_constituent_id.csv'),
+            desc: 'Lookup authorized form by constituent id',
+            tags: %i[names],
+            lookup_on: :constituentid
+          }
         end
-
+        
+        Kiba::Tms.registry.namespace('nameclean0') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_cleaned_up.csv'),
+            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip',
+            tags: %i[names],
+            lookup_on: :norm
+          }
+          register :kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::Kept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_kept.csv'),
+            desc: 'Names which are marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }          
+          register :constituents_kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::ConstituentsKept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituent_names_kept.csv'),
+            desc: 'Names with constituent IDs which are marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }
+          register :orgs_kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsKept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'org_names_kept.csv'),
+            desc: 'Organization names which are marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }          
+          register :persons_kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsKept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'person_names_kept.csv'),
+            desc: 'Person names which are marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }
+          register :orgs_not_kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'org_names_not_kept.csv'),
+            desc: 'Organization names which are NOT marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }          
+          register :persons_not_kept, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKept,
+            path: File.join(Kiba::Tms.datadir, 'working', 'person_names_not_kept.csv'),
+            desc: 'Person names which are NOT marked to be used as authority terms',
+            tags: %i[names],
+            lookup_on: :norm
+          }
+          register :orgs_not_kept_missing_target, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKeptMissingTarget,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_not_kept_missing_target.csv'),
+            desc: 'Organization names which are NOT marked to be used as authority terms, but have no term to be merged into',
+            tags: %i[names]
+          }
+          register :persons_not_kept_missing_target, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKeptMissingTarget,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_not_kept_missing_target.csv'),
+            desc: 'Person names which are NOT marked to be used as authority terms, but have no term to be merged into',
+            tags: %i[names]
+          }
+          register :org_duplicates, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgDuplicates,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_duplicates.csv'),
+            desc: 'Organization names which, once normalized, are duplicates',
+            tags: %i[names]
+          }          
+          register :persons_duplicates, {
+            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsDuplicates,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_duplicates.csv'),
+            desc: 'Person names which, once normalized, are duplicates',
+            tags: %i[names]
+          }
+        end
+        
         Kiba::Tms.registry.namespace('names') do          
           register :compiled, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:compiled),
+            creator: Kiba::Tms::Jobs::Names::CompiledData,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
             desc: 'Compiled names',
             tags: %i[names],
@@ -228,50 +433,50 @@ module Kiba
               ] }
           }
           register :flagged_duplicates, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:flagged_duplicates),
+            creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_flagged_duplicates.csv'),
             desc: 'Names extracted from constituents table and flagged as duplicates',
             tags: %i[names con],
             lookup_on: :norm
           }
           register :initial_compile, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:initial_compile),
+            creator: Kiba::Tms::Jobs::Names::CompiledDataRaw,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_initial_compile.csv'),
             desc: 'Names extracted from constituents table, with only subsequent duplicates flagged',
             tags: %i[names con]
           }
           register :from_constituents, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents),
+            creator: Kiba::Tms::Jobs::Names::FromConstituents,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents.csv'),
             desc: 'Names extracted from constituents table',
             tags: %i[names con]
           }
           register :from_constituents_orgs_from_persons, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents_orgs_from_persons),
+            creator: Kiba::Tms::Jobs::Names::OrgsFromConstituentPersons,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_orgs_from_persons.csv'),
             desc: 'Names extracted from institution field of Person constituents',
             tags: %i[names con]
           }
           register :from_constituents_persons_from_orgs, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_constituents_persons_from_orgs),
+            creator: Kiba::Tms::Jobs::Names::PersonsFromConstituentOrgs,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_persons_from_orgs.csv'),
             desc: 'Names extracted from Organization constituents when the name part values are populated',
             tags: %i[names con]
           }
           register :from_loans, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_loans),
+            creator: Kiba::Tms::Jobs::Names::FromLoans,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loans.csv'),
             desc: 'Names extracted from loans table',
             tags: %i[names loans]
           }
           register :from_obj_accession, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_obj_accession),
+            creator: Kiba::Tms::Jobs::Names::FromObjAccession,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),
             desc: 'Names extracted from obj_accession table',
             tags: %i[names obj_accession]
           }
           register :from_obj_locations, {
-            creator: Kiba::Tms::Jobs::InBetween::NameCompilation.method(:from_obj_locations),
+            creator: Kiba::Tms::Jobs::Names::FromObjLocations,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
             desc: 'Names extracted from obj_locations table',
             tags: %i[names obj_locations]
@@ -297,18 +502,78 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('obj_locations') do
+          register :location_names_merged, {
+            creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_location_names_merged.csv'),
+            tags: %i[obj_locations],
+            desc: 'Merges location names (using fulllocid) into location, prevloc, nextloc, and scheduled loc fields',
+            lookup_on: :objectnumber
+          }
+          register :fulllocid_lookup, {
+            creator: Kiba::Tms::Jobs::ObjLocations::FulllocidLookup,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_by_fulllocid.csv'),
+            tags: %i[obj_locations],
+            desc: 'Deletes everything else. Used to get counts of location usages',
+            lookup_on: :fulllocid
+          }
           register :not_matching_components, {
-            creator: Kiba::Tms::Jobs::ObjLocations.method(:not_matching_components),
+            creator: Kiba::Tms::Jobs::ObjLocations::NotMatchingComponents,
             path: File.join(Kiba::Tms.datadir, 'reports', 'obj_locations_not_matching_obj_components.csv'),
             tags: %i[obj_locations obj_components reports]
           }
-          register :not_matching_locations, {
-            creator: Kiba::Tms::Jobs::ObjLocations.method(:not_matching_locations),
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_locations_not_matching_locations.csv'),
-            tags: %i[obj_locations reports]
+          register :flag_not_matching_locations, {
+            creator: Kiba::Tms::Jobs::ObjLocations::FlagNotMatchingLocations,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_flag_not_matching_locations.csv'),
+            tags: %i[obj_locations],
+            dest_special_opts: {
+              initial_headers: %i[no_loc_data action] },
+          }
+          register :prev_next_sched_loc_merge, {
+            creator: Kiba::Tms::Jobs::ObjLocations::PrevNextSchedLocMerge,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_prev_next_sched_merged.csv'),
+            tags: %i[obj_locations obj_components reports]
           }
         end
         
+        Kiba::Tms.registry.namespace('orgs') do
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
+            path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
+            desc: 'Org authority values lookup by constituentid',
+            lookup_on: :fp_constituentid,
+            tags: %i[orgs]
+          }
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Orgs::ByNorm,
+            path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_norm.csv'),
+            desc: 'Org authority values lookup by normalized value',
+            lookup_on: :norm,
+            tags: %i[orgs]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('persons') do
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Persons::ByConstituentId,
+            path: File.join(Kiba::Tms.datadir, 'working', 'persons_by_constituent_id.csv'),
+            desc: 'Person authority values lookup by constituentid',
+            lookup_on: :fp_constituentid,
+            tags: %i[persons]
+          }
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Persons::ByNorm,
+            path: File.join(Kiba::Tms.datadir, 'working', 'persons_by_norm.csv'),
+            desc: 'Person authority values lookup by normalized value',
+            lookup_on: :norm,
+            tags: %i[persons]
+          }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::Persons::Cspace,
+            path: File.join(Kiba::Tms.datadir, 'cspace', 'persons.csv'),
+            tags: %i[persons cspace]
+          }
+        end
+
         Kiba::Tms.registry.namespace('terms') do
           register :descriptors, {
             creator: Kiba::Tms::Jobs::Terms.method(:descriptors),

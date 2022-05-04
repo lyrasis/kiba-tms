@@ -32,9 +32,8 @@ module Kiba
               parent_location: arr[0..-2].join(delim),
               storage_location_authority: row[:storage_location_authority],
               address: row[:address],
-              term_source: 'EnsureHierarchy',
-              fulllocid: nil,
-              locationtype: nil
+              term_source: 'Migration.ensureHierarchy',
+              fulllocid: nil
             }
           end
           

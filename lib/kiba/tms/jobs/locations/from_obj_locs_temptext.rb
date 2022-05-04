@@ -8,7 +8,19 @@ module Kiba
           module_function
 
           def job
-            xforms = Kiba.job_segment do
+            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+              files: {
+                source: :prep__obj_locations,
+                destination: :locs__from_obj_locs_temptext,
+                lookup: :prep__locations
+              },
+              transformer: xforms,
+              helper: Tms.locations.multi_source_normalizer
+            )
+          end
+
+          def xforms
+            Kiba.job_segment do
               transform FilterRows::FieldPopulated, action: :keep, field: :temptext
               
               transform Merge::MultiRowLookup,
@@ -25,17 +37,11 @@ module Kiba
                 target: :location_name,
                 sep: Tms.locations.hierarchy_delim,
                 delete_sources: false
+              transform Delete::FieldsExcept,
+                fields: %i[fulllocid location_name parent_location storage_location_authority address]
+              transform Deduplicate::Table, field: :fulllocid, delete_field: false
+              transform Merge::ConstantValue, target: :term_source, value: 'ObjLocations.temptext'
             end
-            
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
-              files: {
-                source: :prep__obj_locations,
-                destination: :locs__from_obj_locs_temptext,
-                lookup: :prep__locations
-              },
-              transformer: xforms,
-              helper: Tms.locations.multi_source_normalizer
-            )
           end
         end
       end

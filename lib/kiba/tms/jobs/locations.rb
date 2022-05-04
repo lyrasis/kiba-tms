@@ -59,7 +59,6 @@ module Kiba
             
             transform Tms::Transforms::Locations::AddLocationName
             transform Tms::Transforms::Locations::AddParent
-            transform Tms::Transforms::Locations::AddLocationType
             transform Rename::Field, from: :locationstring, to: :tmslocationstring
           end
           

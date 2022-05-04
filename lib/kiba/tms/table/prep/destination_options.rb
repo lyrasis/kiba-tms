@@ -40,7 +40,7 @@ module Kiba
             },
             obj_locations: {
               initial_headers:
-              %i[objlocationid componentid locationid fulllocid]
+              %i[objlocationid objectnumber locationid fulllocid]
             },
             objects: {
               initial_headers:

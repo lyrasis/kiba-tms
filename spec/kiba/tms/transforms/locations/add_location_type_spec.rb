@@ -20,7 +20,6 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationType do
       {location_name: "a >> Director's Office"},
       {location_name: 'a >> Office of something'},
       {location_name: 'a >> Prep room'},
-      {location_name: 'a >> Prep room'},
       {location_name: "a >> Curator's Office >> Curator's Cabinet >> Bottom Drawer"},
       {location_name: "a >> Curator's Office >> Curator's Cabinet >> drawer a"},
       {location_name: "a >> Curator's Office >> Curator's Cabinet >> Top shelf"},
