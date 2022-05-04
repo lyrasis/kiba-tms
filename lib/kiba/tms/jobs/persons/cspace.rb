@@ -38,6 +38,7 @@ module Kiba
               transform Tms::Transforms::Names::CompilePrefVarAlt
               transform Tms::Transforms::ConAddress::MergeIntoAuthority, lookup: con_address__for_persons
               transform Tms::Transforms::ConEmail::MergeIntoAuthority, lookup: con_email__for_persons
+              transform Tms::Transforms::ConPhones::MergeIntoAuthority, lookup: con_phones__for_persons
             end
           end
         end
