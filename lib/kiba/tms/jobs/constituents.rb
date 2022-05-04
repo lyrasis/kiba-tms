@@ -44,14 +44,14 @@ module Kiba
 
             # remove non-preferred form name value if it is the same as what is in preferred name field
             transform Delete::FieldValueIfEqualsOtherField,
-              delete: Tms.constituents.alt_name_field,
+              delete: Tms.constituents.var_name_field,
               if_equal_to: prefname,
               casesensitive: false
 
             # remove institution value if it is the same as non-preferred form name value
             transform Delete::FieldValueIfEqualsOtherField,
               delete: :institution,
-              if_equal_to: Tms.constituents.alt_name_field,
+              if_equal_to: Tms.constituents.var_name_field,
               casesensitive: false
 
             transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
@@ -95,7 +95,7 @@ module Kiba
               casesensitive: false
             transform Delete::FieldValueIfEqualsOtherField,
               delete: :alt_names,
-              if_equal_to: Tms.config.constituents.alt_name_field,
+              if_equal_to: Tms.config.constituents.var_name_field,
               multival: true,
               delim: Mmm.delim,
               casesensitive: false

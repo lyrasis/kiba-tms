@@ -25,7 +25,7 @@ module Kiba
                   fields: %i[approx_normalized normalized_form duplicate inconsistent_org_names missing_last_name
                              matchpref orig_pref_name]
                 transform Rename::Field, from: :preferred_name_form, to: Tms.constituents.preferred_name_field
-                transform Rename::Field, from: :variant_name_form, to: Tms.constituents.alt_name_field
+                transform Rename::Field, from: :variant_name_form, to: Tms.constituents.var_name_field
                 transform Fingerprint::Decode,
                   fingerprint: :fingerprint,
                   source_fields: Tms::Services::FingerprintFields.names,

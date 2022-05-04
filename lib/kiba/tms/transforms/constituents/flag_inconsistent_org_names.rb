@@ -14,7 +14,7 @@ module Kiba
             @type = :constituenttype
             @inst = :institution
             @pref = Tms.constituents.preferred_name_field
-            @alt = Tms.constituents.alt_name_field
+            @alt = Tms.constituents.var_name_field
             @target = :inconsistent_org_names
           end
 

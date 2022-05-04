@@ -37,7 +37,7 @@ module Kiba
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
-      setting :alt_name_field, default: :alphasort, reader: true
+      setting :var_name_field, default: :alphasort, reader: true
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value
