@@ -6,8 +6,6 @@ module Kiba
       module Constituents
         # for use on tables to merge with constituents on constituentid
         class AddRetentionFlag
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
             @matches_field = :matches_constituent
             @target = :keeping
