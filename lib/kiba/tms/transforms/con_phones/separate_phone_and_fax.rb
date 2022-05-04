@@ -16,16 +16,16 @@ module Kiba
           def process(row)
             row[:phone] = nil
             row[:fax] = nil
+            row[:faxtype] = nil
             
             number = row[:phonenumber]
             desc = row[desc_field]
             if desc.blank?
-              row[:phone] = number
+              treat_as_phone(number, row)
             elsif desc =~ /^fax$/i
-              row[:description] = nil
-              row[:fax] = number
+              treat_as_fax(number, row, desc)
             else
-              row[:phone] = number
+              treat_as_phone(number, row)
             end
             
             row.delete(:phonenumber)
@@ -35,6 +35,17 @@ module Kiba
           private
 
           attr_reader :desc_field
+
+          def treat_as_phone(number, row)
+            row[:phone] = number
+          end
+
+          def treat_as_fax(number, row, desc)
+            row[:description] = nil if desc.downcase == 'fax'
+            row[:fax] = number
+            row[:faxtype] = row[:phonetype]
+            row[:phonetype] = nil
+          end
         end
       end
     end
