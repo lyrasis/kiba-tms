@@ -55,7 +55,7 @@ module Kiba
               end
 
               transform Tms::Transforms::ConPhones::SeparatePhoneAndFax
-              
+              transform Tms::Transforms::Constituents::PrefixMergeTableDescription, fields: %i[phone fax]
               transform Delete::Fields, fields: %i[conphoneid phonetypeid constituentid]
             end
           end

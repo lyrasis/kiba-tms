@@ -3,9 +3,13 @@
 module Kiba
   module Tms
     module Transforms
-      module ConEmail
-        class PrefixDescription
+      module Constituents
+        class PrefixMergeTableDescription
           include Kiba::Extend::Transforms::Helpers
+
+          def initialize(fields:)
+            @fields = fields
+          end
           
           # @private
           def process(row)
@@ -22,11 +26,11 @@ module Kiba
           end
           
           private
-
+          attr_reader :fields
+          
           def row_type(row)
             vals = field_values(row: row, fields: %i[email web])
-            return :email if vals.key?(:email)
-            return :web if vals.key?(:web)
+            return vals.keys.first
           end
         end
       end

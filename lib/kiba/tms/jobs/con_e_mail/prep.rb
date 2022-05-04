@@ -50,7 +50,7 @@ module Kiba
                 end
                 row
               end
-              transform Tms::Transforms::ConEmail::PrefixDescription              
+              transform Tms::Transforms::Constituents::PrefixMergeTableDescription, fields: %i[email web]
               transform Delete::Fields, fields: %i[conemailid emailtypeid constituentid]
             end
           end
