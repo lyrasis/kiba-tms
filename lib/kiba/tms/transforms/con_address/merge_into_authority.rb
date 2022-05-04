@@ -5,8 +5,6 @@ module Kiba
     module Transforms
       module ConAddress
         class MergeIntoAuthority
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize(lookup:)
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
@@ -19,8 +17,15 @@ module Kiba
                 addressmunicipality: :city,
                 addressstateorprovince: :state,
                 addresspostcode: :zipcode,
-                addresscountry: :country,
-                note_address: :address_notes
+                addresscountry: :country
+              }
+            )
+            @notemerger = Merge::MultiRowLookup.new(
+              lookup: lookup,
+              keycolumn: :norm,
+              delim: '%CR%%CR%',
+              fieldmap: {
+                address_namenote: :address_notes
               }
             )
           end
@@ -33,7 +38,7 @@ module Kiba
           
           private
 
-          attr_reader :merger
+          attr_reader :merger, :notemerger
         end
       end
     end
