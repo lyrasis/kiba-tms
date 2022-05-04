@@ -38,6 +38,14 @@ module Kiba
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
       setting :var_name_field, default: :alphasort, reader: true
+
+      # map these boolean, coded fields to text note values?
+      # IF a client wants these true, then you need to do work
+      setting :map_approved, default: false, reader: true
+      setting :map_active, default: false, reader: true
+      setting :map_isstaff, default: false, reader: true
+      setting :map_isprivate, default: false, reader: true
+
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value

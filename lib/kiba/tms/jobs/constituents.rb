@@ -60,7 +60,20 @@ module Kiba
             transform CombineValues::FromFieldsWithDelimiter,
               sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,
               sep: '', delete_sources: false
-            transform Rename::Field, from: :isprivate, to: :is_private_collector
+
+
+            boolfields = []
+            boolfields << :approved unless Tms.constituents.map_approved
+            boolfields << :active unless Tms.constituents.map_active
+            boolfields << :isstaff unless Tms.constituents.map_isstaff
+            boolfields << :isprivate unless Tms.constituents.map_isprivate
+            unless boolfields.empty?
+              transform Delete::Fields, fields: boolfields
+            end
+
+            if Tms.constituents.map_isprivate
+              transform Rename::Field, from: :isprivate, to: :is_private_collector
+            end
 
             transform do |row|
               row[:contact_person] = @contact_namer.call(row)
