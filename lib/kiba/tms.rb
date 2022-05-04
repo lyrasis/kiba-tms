@@ -65,7 +65,7 @@ module Kiba
       # What to do with address remarks:
       #  - :plain - will go into authority record's note field
       #  - :specific - will go into a note tagged with the specific address it applies to
-      setting :address_remarks_handling, default: :plain, reader: true
+      setting :address_remarks_handling, default: :specific, reader: true
       
       # The following are useful if there are duplicate preferred names that have different date values that
       #   can disambiguate the names
@@ -86,9 +86,9 @@ module Kiba
     setting :names, reader: true do
       setting :cleanup_iteration, default: 0, reader: true
       # whether to add "variant form" to name term flag field
-      setting :flag_variant_form, default: true, reader: true
-      setting :set_term_pref_for_lang, default: true, reader: true
-      setting :set_term_source, default: true, reader: true
+      setting :flag_variant_form, default: false, reader: true
+      setting :set_term_pref_for_lang, default: false, reader: true
+      setting :set_term_source, default: false, reader: true
     end
     
     setting :name_cleanup0, reader: true do

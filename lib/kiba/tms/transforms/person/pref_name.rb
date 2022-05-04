@@ -13,6 +13,7 @@ module Kiba
             @null = '%NULLVALUE%'
             map = {
               pref_name => :pref_termdisplayname,
+              salutation: :pref_salutation,
               nametitle: :pref_title,
               firstname: :pref_forename,
               middlename: :pref_middlename,
@@ -21,6 +22,7 @@ module Kiba
             }
             
             @renamers = map.map{ |from, to| Rename::Field.new(from: from, to: to) }
+
             @nullvaluer = Replace::EmptyFieldValues.new(
               fields: map.values,
               value: null
@@ -33,6 +35,7 @@ module Kiba
             renamers.each{ |renamer| renamer.process(row) }
             nullvaluer.process(row)
             row[:pref_termflag] = null
+            row[:pref_termsourcenote] = null
             if Tms.names.set_term_pref_for_lang
               row[:pref_termprefforlang] = 'true'
             end

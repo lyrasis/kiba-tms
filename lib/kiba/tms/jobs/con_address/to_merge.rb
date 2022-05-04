@@ -156,6 +156,8 @@ module Kiba
                   sep: ': '
               end
 
+              transform Prepend::ToFieldValue, field: :address_notes, value: 'Address note:'
+
               transform Delete::EmptyFields, consider_blank: {addresstypeid: '0'}
             end
           end
