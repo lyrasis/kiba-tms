@@ -27,7 +27,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :emailtype,
                 find: 'Home',
-                replace: 'home' 
+                replace: 'personal' 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :emailtype,
                 find: 'Work',
