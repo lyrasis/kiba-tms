@@ -7,24 +7,15 @@ module Kiba
         class MergeIntoAuthority
           include Kiba::Extend::Transforms::Helpers
           
-          def initialize(lookup:)
+          def initialize(lookup:, authority_type:)
+            @type = authority_type
             @pref_name_field = Tms.constituents.preferred_name_field
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :norm,
               delim: Tms.delim,
               null_placeholder: '%NULLVALUE%',
-              fieldmap: {
-                alt_termdisplayname: pref_name_field,
-                alt_salutation: :salutation,
-                alt_title: :nametitle,
-                alt_forename: :firstname,
-                alt_middlename: :middlename,
-                alt_surname: :lastname,
-                alt_nameadditions: :suffix,
-                alt_termsourcenote: :remarks,
-                alt_termflag: :nametype
-              }
+              fieldmap: fieldmap
             )
           end
 
@@ -35,7 +26,31 @@ module Kiba
           
           private
 
-          attr_reader :pref_name_field, :merger
+          attr_reader :type, :pref_name_field, :merger
+
+          def fieldmap
+            base = {
+              alt_termdisplayname: pref_name_field,
+              alt_termsourcenote: :remarks,
+              alt_termflag: :nametype
+            }
+            person? ? base.merge(person_fieldmap) : base
+          end
+
+          def person?
+            type == :person
+          end
+          
+          def person_fieldmap
+            {
+              alt_salutation: :salutation,
+              alt_title: :nametitle,
+              alt_forename: :firstname,
+              alt_middlename: :middlename,
+              alt_surname: :lastname,
+              alt_nameadditions: :suffix
+            }
+          end
         end
       end
     end
