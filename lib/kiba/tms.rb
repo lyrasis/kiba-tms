@@ -46,6 +46,9 @@ module Kiba
       setting :map_isstaff, default: false, reader: true
       setting :map_isprivate, default: false, reader: true
 
+      # what cs field to map :culturegroup into
+      setting :culturegroup_target, default: :group, reader: true
+
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value
