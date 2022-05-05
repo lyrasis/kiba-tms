@@ -98,6 +98,11 @@ module Kiba
                 row[:kept] = 'y'
                 row
               end
+
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :nametitle,
+                find: '\.',
+                replace: ''
             end
           end
         end
