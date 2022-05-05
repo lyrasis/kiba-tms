@@ -199,7 +199,8 @@ module Kiba
           register :for_orgs, {
             creator: Kiba::Tms::Jobs::ConEMail::ForOrgs,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_email_for_orgs.csv'),
-            tags: %i[con conemail]
+            tags: %i[con conemail],
+            lookup_on: :org
           }
         end
 
@@ -218,7 +219,8 @@ module Kiba
           register :for_orgs, {
             creator: Kiba::Tms::Jobs::ConPhones::ForOrgs,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_phones_for_orgs.csv'),
-            tags: %i[con conphones]
+            tags: %i[con conphones],
+            lookup_on: :org
           }
         end
 
@@ -342,7 +344,7 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_cleaned_up.csv'),
-            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip',
+            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip, normalizzes cleaned up forms',
             tags: %i[names],
             lookup_on: :norm
           }
@@ -550,6 +552,14 @@ module Kiba
             lookup_on: :norm,
             tags: %i[orgs]
           }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::Orgs::Cspace,
+            path: File.join(Kiba::Tms.datadir, 'cspace', 'orgs_ingested.csv'),
+            tags: %i[orgs cspace],
+            dest_special_opts: {initial_headers: %i[termdisplayname]},
+          }
+        end
+
         Kiba::Tms.registry.namespace('org_contacts') do
           register :prep, {
             creator: Kiba::Tms::Jobs::OrgContacts::Prep,
@@ -567,6 +577,7 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'org_contacts_to_merge.csv'),
             tags: %i[orgs cspace],
             lookup_on: :norm
+          }
         end
 
         Kiba::Tms.registry.namespace('persons') do
@@ -586,7 +597,7 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Persons::Cspace,
-            path: File.join(Kiba::Tms.datadir, 'cspace', 'persons.csv'),
+            path: File.join(Kiba::Tms.datadir, 'cspace', 'persons_ingested.csv'),
             tags: %i[persons cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
           }
