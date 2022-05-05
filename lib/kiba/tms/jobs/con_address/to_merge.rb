@@ -58,9 +58,10 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: prep__countries,
                 keycolumn: :countryid,
-                fieldmap: {country: :country}
+                fieldmap: {addresscountry: :country}
               transform Delete::Fields, fields: :countryid
-
+              transform Cspace::AddressCountry
+              
               if Tms.constituents.address_active
                 transform Replace::FieldValueWithStaticMapping, source: :active, target: :addressstatus,
                   mapping: ACTIVE

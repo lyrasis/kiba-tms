@@ -17,7 +17,7 @@ module Kiba
                 addressmunicipality: :city,
                 addressstateorprovince: :state,
                 addresspostcode: :zipcode,
-                addresscountry: :country
+                addresscountry: :addresscountry
               }
             )
             @notemerger = Merge::MultiRowLookup.new(
