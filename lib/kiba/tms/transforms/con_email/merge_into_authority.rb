@@ -6,14 +6,22 @@ module Kiba
       module ConEmail
         class MergeIntoAuthority
           def initialize(lookup:)
-            @merger = Merge::MultiRowLookup.new(
+            @emailmerger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :norm,
               delim: Tms.delim,
               null_placeholder: '%NULLVALUE%',
               fieldmap: {
                 email: :email,
-                emailtype: :emailtype,
+                emailtype: :emailtype
+              }
+            )
+            @webmerger = Merge::MultiRowLookup.new(
+              lookup: lookup,
+              keycolumn: :norm,
+              delim: Tms.delim,
+              null_placeholder: '%NULLVALUE%',
+              fieldmap: {
                 webaddress: :web,
                 webaddresstype: :webtype
               }
@@ -30,13 +38,14 @@ module Kiba
 
           # @private
           def process(row)
-            merger.process(row)
+            emailmerger.process(row)
+            webmerger.process(row)
             notemerger.process(row)
           end
           
           private
 
-          attr_reader :merger, :notemerger
+          attr_reader :emailmerger, :webmerger, :notemerger
         end
       end
     end

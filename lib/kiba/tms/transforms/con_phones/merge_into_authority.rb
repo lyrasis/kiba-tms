@@ -6,14 +6,22 @@ module Kiba
       module ConPhones
         class MergeIntoAuthority
           def initialize(lookup:)
-            @merger = Merge::MultiRowLookup.new(
+            @phonemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :norm,
               delim: Tms.delim,
               null_placeholder: '%NULLVALUE%',
               fieldmap: {
                 telephonenumber: :phone,
-                telephonenumbertype: :phonetype,
+                telephonenumbertype: :phonetype
+              }
+            )
+            @faxmerger = Merge::MultiRowLookup.new(
+              lookup: lookup,
+              keycolumn: :norm,
+              delim: Tms.delim,
+              null_placeholder: '%NULLVALUE%',
+              fieldmap: {
                 faxnumber: :fax,
                 faxnumbertype: :faxtype
               }
@@ -30,13 +38,14 @@ module Kiba
 
           # @private
           def process(row)
-            merger.process(row)
+            phonemerger.process(row)
+            faxmerger.process(row)
             notemerger.process(row)
           end
           
           private
 
-          attr_reader :merger, :notemerger
+          attr_reader :phonemerger, :faxmerger, :notemerger
         end
       end
     end
