@@ -57,6 +57,11 @@ module Kiba
                 delete_sources: true
 
               transform Delete::Fields, fields: %i[termsource norm]
+
+              transform Clean::DelimiterOnlyFields, delim: Tms.delim, use_nullvalue: true
+              transform Delete::EmptyFields, usenull: true
+              transform Clean::RegexpFindReplaceFieldVals, fields: :all, find: '%CR%%CR%', replace: "\n\n"
+              transform Clean::RegexpFindReplaceFieldVals, fields: :all, find: '%QUOT%', replace: '"'
             end
           end
         end
