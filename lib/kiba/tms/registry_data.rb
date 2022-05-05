@@ -550,6 +550,23 @@ module Kiba
             lookup_on: :norm,
             tags: %i[orgs]
           }
+        Kiba::Tms.registry.namespace('org_contacts') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::OrgContacts::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'org_contacts_prepped.csv'),
+            tags: %i[orgs cspace],
+            dest_special_opts: {initial_headers: %i[norm contact_person contact_norm merge_contact contact_role]},
+          }
+          register :without_person, {
+            creator: Kiba::Tms::Jobs::OrgContacts::WithoutPerson,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'org_contacts_without_person.csv'),
+            tags: %i[orgs cspace reports]
+          }
+          register :to_merge, {
+            creator: Kiba::Tms::Jobs::OrgContacts::ToMerge,
+            path: File.join(Kiba::Tms.datadir, 'working', 'org_contacts_to_merge.csv'),
+            tags: %i[orgs cspace],
+            lookup_on: :norm
         end
 
         Kiba::Tms.registry.namespace('persons') do
