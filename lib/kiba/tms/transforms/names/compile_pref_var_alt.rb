@@ -5,11 +5,9 @@ module Kiba
     module Transforms
       module Names
         class CompilePrefVarAlt
-          def initialize
+          def initialize(authority_type:)
+            @type = authority_type
             @prefixes = %w[pref var alt]
-            @fields = %w[termdisplayname salutation title forename middlename surname nameadditions termflag termsourcenote]
-            @fields << 'termprefforlang' if Tms.names.set_term_pref_for_lang
-            @fields << 'termsource' if Tms.names.set_term_source
             @combiners = generate_combiners
           end
 
@@ -21,7 +19,23 @@ module Kiba
           
           private
 
-          attr_reader :prefixes, :fields, :combiners
+          attr_reader :type, :prefixes, :combiners
+
+          def base_fields
+            %w[termdisplayname termflag termsourcenote]
+          end
+          
+          def fields
+            case type
+            when :person
+              list = [base_fields, person_fields].flatten
+            when :org
+              list = base_fields
+            end
+            list << 'termprefforlang' if Tms.names.set_term_pref_for_lang
+            list << 'termsource' if Tms.names.set_term_source
+            list
+          end
 
           def generate_combiners
             fields.map do |field|
@@ -32,6 +46,10 @@ module Kiba
                 delete_sources: true
               )
             end
+          end
+
+          def person_fields
+            %w[salutation title forename middlename surname nameadditions]
           end
 
           def prefixed(field)

@@ -39,7 +39,7 @@ module Kiba
               transform Tms::Transforms::Person::PrefName
               transform Tms::Transforms::Person::VariantName
               transform Tms::Transforms::Person::AltName, lookup: con_alt_names__to_merge_person
-              transform Tms::Transforms::Names::CompilePrefVarAlt
+              transform Tms::Transforms::Names::CompilePrefVarAlt, authority_type: :person
 
               transform Rename::Field, from: :begindateiso, to: :birthdategroup
               transform Rename::Field, from: :enddateiso, to: :deathdategroup
