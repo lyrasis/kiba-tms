@@ -570,7 +570,8 @@ module Kiba
           register :cspace, {
             creator: Kiba::Tms::Jobs::Persons::Cspace,
             path: File.join(Kiba::Tms.datadir, 'cspace', 'persons.csv'),
-            tags: %i[persons cspace]
+            tags: %i[persons cspace],
+            dest_special_opts: {initial_headers: %i[termdisplayname]},
           }
         end
 

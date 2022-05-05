@@ -32,13 +32,31 @@ module Kiba
                            fingerprint fp_termsource fp_constituenttype fp_constituentid fp_norm fp_alphasort
                            fp_displayname]
 
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :nametitle,
+                find: '\.',
+                replace: ''
               transform Tms::Transforms::Person::PrefName
               transform Tms::Transforms::Person::VariantName
               transform Tms::Transforms::Person::AltName, lookup: con_alt_names__to_merge_person
               transform Tms::Transforms::Names::CompilePrefVarAlt
+
+              transform Rename::Field, from: :begindateiso, to: :birthdategroup
+              transform Rename::Field, from: :enddateiso, to: :deathdategroup
+              transform Rename::Field, from: :biography, to: :bionote
+              transform Rename::Field, from: :culturegroup, to: Tms.constituents.culturegroup_target
+              
               transform Tms::Transforms::ConAddress::MergeIntoAuthority, lookup: con_address__for_persons
               transform Tms::Transforms::ConEmail::MergeIntoAuthority, lookup: con_email__for_persons
               transform Tms::Transforms::ConPhones::MergeIntoAuthority, lookup: con_phones__for_persons
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[remarks address_namenote email_web_namenote phone_fax_namenote],
+                target: :namenote,
+                sep: '%CR%%CR%',
+                delete_sources: true
+
+              transform Delete::Fields, fields: %i[termsource norm]
             end
           end
         end
