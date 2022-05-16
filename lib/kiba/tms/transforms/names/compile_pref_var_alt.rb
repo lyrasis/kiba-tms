@@ -5,9 +5,9 @@ module Kiba
     module Transforms
       module Names
         class CompilePrefVarAlt
-          def initialize(authority_type:)
+          def initialize(authority_type:, prefixes: nil)
             @type = authority_type
-            @prefixes = get_prefixes
+            @prefixes = get_prefixes(prefixes)
             @combiners = generate_combiners
           end
 
@@ -57,7 +57,8 @@ module Kiba
             end
           end
 
-          def get_prefixes
+          def get_prefixes(prefixes)
+            return prefixes if prefixes
             return %w[pref alt] if type == :person && Tms.constituents.include_flipped_as_variant == false
             
             %w[pref var alt]
@@ -68,7 +69,7 @@ module Kiba
           end
 
           def prefixed(field)
-            prefixes.map{ |prefix| "#{prefix}_#{field}".to_sym }
+            prefixes.map{ |prefix| "#{prefix}_#{field}".delete_prefix('_').to_sym }
           end
         end
       end
