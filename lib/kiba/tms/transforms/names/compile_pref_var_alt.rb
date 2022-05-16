@@ -7,13 +7,14 @@ module Kiba
         class CompilePrefVarAlt
           def initialize(authority_type:)
             @type = authority_type
-            @prefixes = %w[pref var alt]
+            @prefixes = get_prefixes
             @combiners = generate_combiners
           end
 
           # @private
           def process(row)
             combiners.each{ |combiner| combiner.process(row) }
+            clean_up_variants(row)
             row
           end
           
@@ -23,6 +24,14 @@ module Kiba
 
           def base_fields
             %w[termdisplayname termflag termsourcenote]
+          end
+
+          def clean_up_variants(row)
+            return unless type == :person
+            return if Tms.constituents.include_flipped_as_variant
+
+            fields.map{ |field| "var_#{field}".to_sym}
+              .each{ |field| row.delete(field) }
           end
           
           def fields
@@ -46,6 +55,12 @@ module Kiba
                 delete_sources: true
               )
             end
+          end
+
+          def get_prefixes
+            return %w[pref alt] if type == :person && Tms.constituents.include_flipped_as_variant == false
+            
+            %w[pref var alt]
           end
 
           def person_fields
