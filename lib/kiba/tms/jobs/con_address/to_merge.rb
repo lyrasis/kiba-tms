@@ -39,7 +39,7 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :keep, field: :keeping, value: 'y'
               transform Delete::Fields, fields: %i[kept keeping conaddressid countryold lastsalestaxid
-                                                   rank addressformatid islocation]
+                                                   addressformatid islocation]
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: Tms.constituents.address_fields,

@@ -6,6 +6,7 @@ module Kiba
       module ConAddress
         class MergeIntoAuthority
           def initialize(lookup:)
+            sorter = Lookup::RowSorter.new(on: :rank)
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :norm,
@@ -18,7 +19,8 @@ module Kiba
                 addressstateorprovince: :state,
                 addresspostcode: :zipcode,
                 addresscountry: :addresscountry
-              }
+              },
+              sorter: sorter
             )
             @notemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
@@ -26,7 +28,8 @@ module Kiba
               delim: '%CR%%CR%',
               fieldmap: {
                 address_namenote: :address_notes
-              }
+              },
+              sorter: sorter
             )
           end
 
