@@ -12,6 +12,11 @@ endif::[]
 
 = Name cleanup worksheet for TMS-to-CS migration
 
+TO-DO:
+
+* add more/better example(s) of `merge_variant` migration_action
+* better explanation/clarification of alt_name column
+
 toc::[]
 
 == Important things re: working with the worksheet
