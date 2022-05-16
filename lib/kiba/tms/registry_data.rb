@@ -554,7 +554,7 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Orgs::Cspace,
-            path: File.join(Kiba::Tms.datadir, 'cspace', 'orgs_ingested.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working', 'orgs_for_cspace.csv'),
             tags: %i[orgs cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
           }
@@ -597,7 +597,7 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Persons::Cspace,
-            path: File.join(Kiba::Tms.datadir, 'cspace', 'persons_ingested.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working', 'persons_for_cspace.csv'),
             tags: %i[persons cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
           }
