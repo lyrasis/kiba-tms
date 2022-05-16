@@ -6,8 +6,11 @@ module Kiba
       module Locations
         class EnsureHierarchy
           # @param lookup [Hash]; should be created with csv_to_multi_hash
-          def initialize(lookup:)
+          # @param inherit [Array<Symbol>] fields that should be populated with the values of the row from which
+          #   new hierarchy level is derived
+          def initialize(lookup:, inherited: %i[storage_location_authority address])
             @lookup = lookup
+            @inherited = inherited
             @handled = {}
             @delim = Tms.locations.hierarchy_delim
           end
@@ -24,17 +27,20 @@ module Kiba
 
           private
 
-          attr_reader :lookup, :handled, :delim
+          attr_reader :lookup, :inherited, :handled, :delim
 
-          def generate_row(row, arr)
+          def base_row(row, arr)
             {
               location_name: arr.join(delim),
               parent_location: arr[0..-2].join(delim),
-              storage_location_authority: row[:storage_location_authority],
-              address: row[:address],
-              term_source: 'Migration.ensureHierarchy',
-              fulllocid: nil
+              term_source: 'Migration.ensureHierarchy'
             }
+          end
+
+          def generate_row(row, arr)
+            base = base_row(row, arr)
+            with_inherited_data = inherit(row, base)
+            pad_remaining_fields(row, with_inherited_data)
           end
           
           # [a b c d] -> [ [a b c d], [a b c], [a b], [a] ]
@@ -63,7 +69,15 @@ module Kiba
             generate_row(row, arr)
           end
           
-          
+          def inherit(row, hash)
+            inherited.each{ |field| hash[field] = row.fetch(field, nil) }
+            hash
+          end
+
+          def pad_remaining_fields(row, hash)
+            row.keys.each{ |field| hash[field] = nil unless hash.key?(field) }
+            hash
+          end
         end
       end
     end

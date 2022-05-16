@@ -320,7 +320,58 @@ module Kiba
             tags: %i[locations]
           }
         end
-        
+
+        Kiba::Tms.registry.namespace('locclean') do
+          %i[local offsite organization].each do |loc_type|
+            register loc_type, {
+              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}.csv"),
+              creator: {callee: Kiba::Tms::Jobs::LocsClean::Splitter, args: {type: loc_type}},
+              tags: %i[locations],
+              lookup_on: :location_name
+            }
+          end
+
+          Kiba::Tms.locations.authorities.each do |loc_type|
+            register "#{loc_type}_hier".to_sym, {
+              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_hier.csv"),
+              creator: {callee: Kiba::Tms::Jobs::LocsClean::HierarchyAdder, args: {type: loc_type}},
+              tags: %i[locations],
+            }
+          end
+
+          Kiba::Tms.locations.authorities.each do |loc_type|
+            register "#{loc_type}_cspace".to_sym, {
+              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_cspace.csv"),
+              creator: {callee: Kiba::Tms::Jobs::LocsClean::Cspace, args: {type: loc_type}},
+              tags: %i[locations cspace],
+            }
+          end
+
+          Kiba::Tms.locations.authorities.each do |loc_type|
+            register "#{loc_type}_hier_cspace".to_sym, {
+              path: File.join(Kiba::Tms.datadir, 'cspace', "locations_#{loc_type}_hier.csv"),
+              creator: {callee: Kiba::Tms::Jobs::LocsClean::HierCspace, args: {type: loc_type}},
+              tags: %i[locations cspace relations],
+            }
+          end
+
+          register :unknown_types, {
+            creator: Kiba::Tms::Jobs::LocsClean::UnknownTypes,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'locations_unknown_types.csv'),
+            desc: 'Cleaned locations with unrecognized authority type',
+            tags: %i[locations reports todochk]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('locclean0') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::LocsClean0::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locations_cleaned_0.csv'),
+            desc: 'Initial cleaned location data with info-only fields removed',
+            tags: %i[locations]
+          }
+        end
+
         Kiba::Tms.registry.namespace('media_files') do
           register :file_names, {
             creator: Kiba::Tms::Jobs::MediaFiles.method(:file_names),
