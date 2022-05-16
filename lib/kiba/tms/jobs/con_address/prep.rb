@@ -27,7 +27,6 @@ module Kiba
                 fieldmap: { matches_constituent: :constituentid }
               transform Tms::Transforms::ConAddress::AddRetentionFlag
             end
-            
           end
         end
       end
