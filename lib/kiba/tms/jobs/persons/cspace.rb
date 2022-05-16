@@ -56,7 +56,7 @@ module Kiba
                 sep: '%CR%%CR%',
                 delete_sources: true
 
-              transform Delete::Fields, fields: %i[termsource norm]
+              transform Delete::Fields, fields: :termsource
 
               transform Clean::DelimiterOnlyFields, delim: Tms.delim, use_nullvalue: true
               transform Delete::EmptyFields, usenull: true
