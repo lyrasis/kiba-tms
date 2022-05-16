@@ -38,6 +38,7 @@ module Kiba
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
       setting :var_name_field, default: :alphasort, reader: true
+      setting :include_flipped_as_variant, default: true, reader: true
 
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
