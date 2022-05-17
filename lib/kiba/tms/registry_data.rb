@@ -694,6 +694,15 @@ module Kiba
           }
         end
         
+        Kiba::Tms.registry.namespace('text_entries') do
+          register :unknown_table, {
+            creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),
+            desc: 'TextEntries rows with tableid not in Tms::TABLES lookup',
+            tags: %i[textentries todochk reports]
+          }
+        end
+
         Kiba::Tms.registry.namespace('thes_xrefs') do
           register :for_term_report, {
             creator: Kiba::Tms::Jobs::ThesXrefs.method(:for_term_report),
