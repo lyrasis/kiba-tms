@@ -146,6 +146,24 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_address_dropping.csv'),
             tags: %i[con con_address not_migrating reports]
           }
+          register :add_counts, {
+            creator: Kiba::Tms::Jobs::ConAddress::AddCounts,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_with_address_counts.csv'),
+            desc: 'Merge in count of how many addresses for each constituent',
+            tags: %i[con con_address],
+            lookup_on: :constituentid
+          }
+          register :multi, {
+            creator: Kiba::Tms::Jobs::ConAddress::Multi,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_multiple_address.csv'),
+            tags: %i[con con_address reports],
+                        dest_special_opts: {
+              initial_headers:
+              %i[
+                 addresscount type termdisplayname rank address_notes
+                 addressplace1 addressplace2 city state zipcode addresscountry
+              ] }
+          }
         end
 
         Kiba::Tms.registry.namespace('con_alt_names') do
