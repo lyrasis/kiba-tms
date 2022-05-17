@@ -361,6 +361,18 @@ module Kiba
             desc: 'Cleaned locations with unrecognized authority type',
             tags: %i[locations reports todochk]
           }
+          register :org_lookup, {
+            creator: Kiba::Tms::Jobs::LocsClean::OrgLookup,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locations_org_lookup.csv'),
+            desc: 'Organization locations matched to existing organization termdisplaynames',
+            tags: %i[locations orgs]
+          }
+          register :new_orgs, {
+            creator: Kiba::Tms::Jobs::LocsClean::NewOrgs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'locations_new_orgs.csv'),
+            desc: 'Organization locations that need to be added',
+            tags: %i[locations orgs]
+          }
         end
 
         Kiba::Tms.registry.namespace('locclean0') do
