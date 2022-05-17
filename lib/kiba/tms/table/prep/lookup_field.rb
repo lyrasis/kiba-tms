@@ -47,6 +47,7 @@ module Kiba
             term_master_geo: :termmastergeoid,
             term_types: :termtypeid,
             terms: :termid,
+            text_types: :texttypeid,
             thes_xref_types: :thesxreftypeid
           }
         end
