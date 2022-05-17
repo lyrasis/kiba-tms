@@ -168,10 +168,15 @@ module Kiba
     TABLES = {
       '23'=>'Constituents',
       '47'=>'Exhibitions',
+      '49'=>'ExhObjXrefs',
       '51'=>'ExhVenuesXrefs',
+      '79'=>'LoanObjXrefs',
       '81'=>'Loans',
+      '94'=>'ObjComponents',
+      '95'=>'Conditions',
       '108'=>'Objects',
-      '143'=>'ReferenceMaster'
+      '143'=>'ReferenceMaster',
+      '287'=>'TermMasterThes'
     }
   end
 end
