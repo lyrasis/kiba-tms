@@ -36,6 +36,10 @@ module Kiba
 
     setting :cspace_profile, default: :fcart, reader: true
     
+    # whether conservation entity data has actually been used/augmented (true) or whether it looks like the
+    #   default field data had been populated automatically by TMS (false)
+    setting :conservationentity_used, default: false, reader: true
+    
     setting :constituents, reader: true do
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
