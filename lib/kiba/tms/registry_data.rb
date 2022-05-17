@@ -415,7 +415,7 @@ module Kiba
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
             path: File.join(Kiba::Tms.datadir, 'working', 'by_constituent_id.csv'),
-            desc: 'Lookup authorized form by constituent id',
+            desc: 'Lookup authorized form by constituent id. Additional fields: person, org, alphasort, displayname',
             tags: %i[names],
             lookup_on: :constituentid
           }
