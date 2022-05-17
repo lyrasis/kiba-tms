@@ -95,6 +95,20 @@ module Kiba
       end
     end
 
+    setting :locations, reader: true do
+      setting :cleanup_iteration, default: 0, reader: true
+      # Whether client wants the migration to include construction of a location hierarchy
+      setting :hierarchy, default: true, reader: true
+      setting :hierarchy_delim, default: ' > ', reader: true
+      # Which fields in obj_locations need to be concatenated with the location value to create additional
+      #   location values (and thus need a unique id added to look them up)
+      setting :fulllocid_fields, default: %i[locationid loclevel searchcontainer temptext shipmentid crateid sublevel], reader: true
+      # which authority types to process records and hierarchies for (organizations used as locations are
+      #   handled a bit separately
+      setting :authorities, default: %i[local offsite], reader: true
+      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+    end
+
     setting :names, reader: true do
       setting :cleanup_iteration, default: 0, reader: true
       # whether to add "variant form" to name term flag field
@@ -125,6 +139,24 @@ module Kiba
       #   handled a bit separately
       setting :authorities, default: %i[local offsite], reader: true
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+    end
+    
+    setting :objects, reader: true do
+      # client-specfic fields to delete
+      setting :delete_fields, default: [], reader: true
+
+      # whether to map the following TMS fields to CS
+      setting :map, reader: true do
+        setting :catalogueisodate, default: false, reader: true
+        setting :cataloguer, default: false, reader: true
+        setting :curator, default: false, reader: true
+        setting :dateeffectiveisodate, default: false, reader: true
+      end
+    end
+
+    setting :obj_context, reader: true do
+      # client-specfic fields to delete
+      setting :delete_fields, default: [], reader: true
     end
 
     TABLES = {
