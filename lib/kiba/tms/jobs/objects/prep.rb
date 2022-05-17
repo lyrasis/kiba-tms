@@ -12,7 +12,13 @@ module Kiba
               files: {
                 source: :tms__objects,
                 destination: :prep__objects,
-                lookup: %i[prep__classifications prep__classification_xrefs prep__departments prep__object_statuses]
+                lookup: %i[
+                           prep__classifications
+                           prep__classification_xrefs
+                           prep__departments
+                           prep__object_statuses
+                           prep__obj_context
+                          ]
               },
               transformer: xforms
             )
@@ -21,12 +27,30 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
+              unless Tms.conservationentity_used
+                transform Delete::Fields, fields: :conservationentityid
+              end
+
+              # tms internal and data model omissionfields
               transform Delete::Fields,
-                fields: %i[catalogueisodate conservationentityid
-                           curatorapproved curatorrevisodate dateeffectiveisodate injurisdiction
-                           istemplate objectnamealtid objectnameid
-                           objectscreenid searchobjectnumber sortnumber sortnumber2
-                           sortsearchnumber]
+                fields: %i[curatorapproved injurisdiction istemplate isvirtual
+                           curatorrevisodate
+                           searchobjectnumber sortnumber sortnumber2 sortsearchnumber usernumber3
+                           objectscreenid textsearchid]
+              transform Delete::EmptyFields, consider_blank: {
+                loanclassid: '0',
+                objectlevelid: '0',
+                objecttypeid: '0',
+                publicaccess: '0',
+                subclassid: '0',
+                type: '0',
+              }
+
+              client_specific_delete_fields = Tms.objects.delete_fields
+              unless client_specific_delete_fields.empty?
+                transform Delete::Fields, fields: client_specific_delete_fields
+              end
+              
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
               transform Merge::MultiRowLookup,
@@ -63,6 +87,35 @@ module Kiba
                 },
                 delim: Tms.delim
               transform Delete::Fields, fields: :objectstatusid
+
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: prep__obj_context,
+                fieldmap: {
+                  culture: :culture
+                },
+                delim: Tms.delim
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: prep__obj_context,
+                fieldmap: {
+                  period: :period
+                },
+                delim: Tms.delim
+
+
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '^(%CR%)+',
+                replace: ''
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '(%CR%)+$',
+                replace: ''
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '(%CR%){3,}',
+                replace: '%CR%%CR%'
             end
           end
         end
