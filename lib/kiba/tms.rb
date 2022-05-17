@@ -33,6 +33,9 @@ module Kiba
 
     # These weird, specific settings are included here instead of in individual job or transform code
     #   because it may be necessary to override them per client project using this library.
+
+    setting :cspace_profile, default: :fcart, reader: true
+    
     setting :constituents, reader: true do
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
