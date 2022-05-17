@@ -21,6 +21,11 @@ module Kiba
             def xforms
               Kiba.job_segment do
                 transform Tms::Transforms::Names::Kept
+                transform do |row|
+                  row.keys.each{ |field| row.delete(field) if field.to_s.start_with?('fp_') }
+                  row
+                end
+                transform Rename::Field, from: Tms.constituents.preferred_name_field, to: :termdisplayname
               end
             end
           end
