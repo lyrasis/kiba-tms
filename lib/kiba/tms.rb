@@ -108,7 +108,6 @@ module Kiba
       setting :authorities, default: %i[local offsite], reader: true
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
-
     setting :names, reader: true do
       setting :cleanup_iteration, default: 0, reader: true
       # whether to add "variant form" to name term flag field
