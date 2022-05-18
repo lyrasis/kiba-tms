@@ -69,7 +69,6 @@ module Kiba
               if Tms.data_cleaner
                 transform Tms.data_cleaner
               end
-              
             end
           end
         end
