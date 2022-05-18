@@ -18,6 +18,7 @@ module Kiba
                            prep__departments
                            prep__object_statuses
                            prep__obj_context
+                           text_entries__for_objects
                           ]
               },
               transformer: xforms
@@ -95,6 +96,7 @@ module Kiba
                   culture: :culture
                 },
                 delim: Tms.delim
+
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
                 lookup: prep__obj_context,
@@ -103,6 +105,15 @@ module Kiba
                 },
                 delim: Tms.delim
 
+              te_sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
+              transform Merge::MultiRowLookup,
+                lookup: text_entries__for_objects,
+                keycolumn: :objectid,
+                fieldmap: {
+                  text_entry: :text_entry
+                },
+                delim: '%CR%%CR%----%CR%%CR%',
+                sorter: te_sorter
 
               if Tms.data_cleaner
                 transform Tms.data_cleaner
