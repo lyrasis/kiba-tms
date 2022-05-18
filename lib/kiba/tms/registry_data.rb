@@ -695,6 +695,13 @@ module Kiba
         end
         
         Kiba::Tms.registry.namespace('text_entries') do
+          register :for_constituents, {
+            creator: Kiba::Tms::Jobs::TextEntries::ForConstituents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_constituents.csv'),
+            desc: 'Merges purpose, textdate, org_author, person_author, remarks, and text entry into one field for merge into person or org records',
+            tags: %i[textentries con],
+            lookup_on: :tablerowid
+          }
           register :unknown_table, {
             creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
             path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),
