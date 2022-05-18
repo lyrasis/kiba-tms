@@ -167,6 +167,11 @@ module Kiba
       setting :delete_fields, default: [], reader: true
     end
 
+    setting :text_entries, reader: true do
+      # pass in client-specific transform classes to prepare text_entry rows for merging
+      setting :for_object_transform, default: nil, reader: true
+    end
+
     TABLES = {
       '23'=>'Constituents',
       '47'=>'Exhibitions',
