@@ -702,6 +702,13 @@ module Kiba
             tags: %i[textentries con],
             lookup_on: :tablerowid
           }
+          register :for_objects, {
+            creator: Kiba::Tms::Jobs::TextEntries::ForObjects,
+            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_objects.csv'),
+            desc: 'Selects text entries for objects (does not merge text entry fields, as handling may be different per entry type)',
+            tags: %i[textentries objects],
+            lookup_on: :tablerowid
+          }
           register :unknown_table, {
             creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
             path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),
