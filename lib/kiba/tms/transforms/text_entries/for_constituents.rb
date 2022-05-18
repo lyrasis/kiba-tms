@@ -5,11 +5,15 @@ module Kiba
     module Transforms
       module TextEntries
         class ForConstituents
+          def initialize
+            @target = :text_entry
+          end
+          
           # @private
           def process(row)
             label_and_note = [label(row), note(row)].compact.join(': ')
             final = [label_and_note, author(row)].compact.join(' --')
-            row[:text_entry] = final
+            row[target] = final
             %i[purpose textdate textentry remarks texttype org_author person_author].each do |field|
               next unless row.key?(field)
 
@@ -21,6 +25,8 @@ module Kiba
 
           private
 
+          attr_reader :target
+          
           def author(row)
             vals = [row.fetch(:person_author, nil), row.fetch(:org_author, nil)]
               .reject{ |val| val.blank? }
