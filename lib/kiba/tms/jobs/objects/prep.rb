@@ -104,18 +104,9 @@ module Kiba
                 delim: Tms.delim
 
 
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '^(%CR%)+',
-                replace: ''
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '(%CR%)+$',
-                replace: ''
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '(%CR%){3,}',
-                replace: '%CR%%CR%'
+              if Tms.data_cleaner
+                transform Tms.data_cleaner
+              end
             end
           end
         end
