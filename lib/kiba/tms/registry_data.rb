@@ -716,6 +716,12 @@ module Kiba
             lookup_on: :termid,
             tags: %i[termdata terms reference]
           }
+          register :preferred, {
+            creator: Kiba::Tms::Jobs::Terms::Preferred,
+            path: File.join(Kiba::Tms.datadir, 'working', 'terms_preferred.csv'),
+            lookup_on: :termid,
+            tags: %i[termdata terms]
+          }
         end
 
         Kiba::Tms.registry.namespace('term_master_thes') do
