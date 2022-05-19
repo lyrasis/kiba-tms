@@ -685,13 +685,20 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('terms') do
-          register :descriptors, {
-            creator: Kiba::Tms::Jobs::Terms.method(:descriptors),
-            path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
-            desc: 'Thesaurus terms with type 1 = descriptor',
-            lookup_on: :termid,
-            tags: %i[termdata terms prep]
-          }
+          # register :descriptors, {
+          #   creator: Kiba::Tms::Jobs::Terms.method(:descriptors),
+          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
+          #   desc: 'Thesaurus terms with type 1 = descriptor',
+          #   lookup_on: :termid,
+          #   tags: %i[termdata terms prep]
+          # }
+          # register :descriptors, {
+          #   creator: Kiba::Tms::Jobs::Terms.method(:descriptors),
+          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
+          #   desc: 'Thesaurus terms with type 1 = descriptor',
+          #   lookup_on: :termid,
+          #   tags: %i[termdata terms prep]
+          # }
         end
         
         Kiba::Tms.registry.namespace('text_entries') do
@@ -718,66 +725,66 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('thes_xrefs') do
-          register :for_term_report, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:for_term_report),
-            path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xrefs_for_term_report.csv'),
-            desc: 'Thesaurus xrefs prepped for term report',
-            tags: %i[termdata thesxrefs prep]
-          }
-          register :with_notation, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation.csv'),
-            desc: 'Thesaurus xrefs with notation values',
-            tags: %i[termdata thesxrefs]
-          }
-          register :without_notation, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation.csv'),
-            desc: 'Thesaurus xrefs without notation values',
-            tags: %i[termdata thesxrefs]
-          }
-          register :with_notation_usage_type_lookup, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_usage_type_lookup),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_usage_type_lookup.csv'),
-            lookup_on: :notation,
-            tags: %i[termdata thesxrefs]
-          }
-          register :without_notation_usage_type_lookup, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_usage_type_lookup),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_usage_type_lookup.csv'),
-            lookup_on: :term,
-            tags: %i[termdata thesxrefs]
-          }
-          register :with_notation_uniq, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_uniq),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq.csv'),
-            desc: 'Thesaurus xrefs with notation values, deduplicated',
-            tags: %i[termdata thesxrefs]
-          }
-          register :without_notation_uniq, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_uniq),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq.csv'),
-            desc: 'Thesaurus xrefs without notation values, deduplicated',
-            tags: %i[termdata thesxrefs]
-          }
-          register :with_notation_uniq_typed, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_uniq_typed),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq_typed.csv'),
-            desc: 'Thesaurus xrefs with notation values, deduplicated',
-            tags: %i[termdata thesxrefs]
-          }
-          register :without_notation_uniq_typed, {
-            creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_uniq_typed),
-            path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq_typed.csv'),
-            desc: 'Thesaurus xrefs without notation values, deduplicated',
-            tags: %i[termdata thesxrefs]
-          }
           register :term_ids_used, {
             creator: Kiba::Tms::Jobs::ThesXrefs::TermIdsUsed,
             path: File.join(Kiba::Tms.datadir, 'reference', 'term_ids_used_in_thes_xrefs.csv'),
             desc: 'List of term ids used in ThesXrefs.',
             tags: %i[termdata thesxrefs terms reference]
           }
+          # register :for_term_report, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:for_term_report),
+          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'thes_xrefs_for_term_report.csv'),
+          #   desc: 'Thesaurus xrefs prepped for term report',
+          #   tags: %i[termdata thesxrefs prep]
+          # }
+          # register :with_notation, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation.csv'),
+          #   desc: 'Thesaurus xrefs with notation values',
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :without_notation, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation.csv'),
+          #   desc: 'Thesaurus xrefs without notation values',
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :with_notation_usage_type_lookup, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_usage_type_lookup),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_usage_type_lookup.csv'),
+          #   lookup_on: :notation,
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :without_notation_usage_type_lookup, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_usage_type_lookup),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_usage_type_lookup.csv'),
+          #   lookup_on: :term,
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :with_notation_uniq, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_uniq),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq.csv'),
+          #   desc: 'Thesaurus xrefs with notation values, deduplicated',
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :without_notation_uniq, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_uniq),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq.csv'),
+          #   desc: 'Thesaurus xrefs without notation values, deduplicated',
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :with_notation_uniq_typed, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:with_notation_uniq_typed),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_with_notation_uniq_typed.csv'),
+          #   desc: 'Thesaurus xrefs with notation values, deduplicated',
+          #   tags: %i[termdata thesxrefs]
+          # }
+          # register :without_notation_uniq_typed, {
+          #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:without_notation_uniq_typed),
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'thes_xrefs_without_notation_uniq_typed.csv'),
+          #   desc: 'Thesaurus xrefs without notation values, deduplicated',
+          #   tags: %i[termdata thesxrefs]
+          # }
         end
       end
     end
