@@ -41,6 +41,17 @@ module Kiba
     # whether conservation entity data has actually been used/augmented (true) or whether it looks like the
     #   default field data had been populated automatically by TMS (false)
     setting :conservationentity_used, default: false, reader: true
+    setting :classifications, reader: true do
+      # how to map/merge fields from Classifications table into objects
+      setting :fieldmap,
+        default: {
+          classification: :classification,
+          subclassification: :subclassification,
+          subclassification2: :subclassification2,
+          subclassification3: :subclassification3,
+        },
+        reader: true
+    end
     
     setting :constituents, reader: true do
       # field to use as initial/preferred form
