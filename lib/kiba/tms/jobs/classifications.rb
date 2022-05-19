@@ -19,8 +19,7 @@ module Kiba
         def prep_xforms
           Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
-            transform Delete::Fields, fields: %i[aatid aatcn sourceid subclassification
-                                                 subclassification2 subclassification3]
+            transform Delete::EmptyFields
             transform FilterRows::FieldEqualTo, action: :reject, field: :classification, value: '(not assigned)'
           end
         end
