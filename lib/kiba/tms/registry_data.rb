@@ -121,6 +121,23 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('classification_notations') do
+          register :ids_used, {
+            creator: Kiba::Tms::Jobs::ClassificationNotations::IdsUsed,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'classification_notation_ids_used.csv'),
+            desc: 'Extracts list of unique classification notation ids in used TermMasterThes rows',
+            lookup_on: :primarycnid,
+            tags: %i[termdata terms reference]
+          }
+          register :used, {
+            creator: Kiba::Tms::Jobs::ClassificationNotations::Used,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'classification_notation_ids_used.csv'),
+            desc: 'ClassificationNotation rows in used TermMasterThes rows',
+            lookup_on: :classificationnotationid,
+            tags: %i[termdata terms reference]
+          }
+        end
+
         Kiba::Tms.registry.namespace('con_address') do
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
@@ -696,7 +713,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::Terms::UsedRowData,
             path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_row_data.csv'),
             desc: 'All Terms rows having termmasterid that appears in Terms row used in ThesXrefs. (Allowing merging of alternate terms, etc.)',
-            lookup_on: :termmasterid,
+            lookup_on: :termid,
             tags: %i[termdata terms reference]
           }
         end

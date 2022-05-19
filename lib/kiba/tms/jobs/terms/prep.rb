@@ -12,7 +12,11 @@ module Kiba
               files: {
                 source: :terms__used_row_data,
                 destination: :prep__terms,
-                lookup: %i[prep__term_types term_master_thes__used_in_xrefs]
+                lookup: %i[
+                           prep__term_types
+                           term_master_thes__used_in_xrefs
+                           classification_notations__used
+                          ]
               },
               transformer: xforms
             )
@@ -38,6 +42,16 @@ module Kiba
                   preferredtermid: :preferredtermid,
                   termsource: :termsource,
                   sourcetermid: :sourcetermid
+                }
+              transform Merge::MultiRowLookup,
+                keycolumn: :primarycnid,
+                lookup: classification_notations__used,
+                fieldmap: {
+                  cn: :cn,
+                  cn_nodedepth: :nodedepth,
+                  cn_children: :children,
+                  cn_rootleveltmid: :rootleveltmid,
+                  cn_thesaurusbaseid: :thesaurusbaseid
                 }
             end
           end
