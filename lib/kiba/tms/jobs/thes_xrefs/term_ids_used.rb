@@ -23,6 +23,7 @@ module Kiba
             @deduper = {}
             transform Deduplicate::Flag, on_field: :termid, in_field: :duplicate, using: @deduper
             transform FilterRows::FieldEqualTo, action: :reject, field: :duplicate, value: 'y'
+            transform Delete::Fields, fields: :duplicate
           end
         end
         end

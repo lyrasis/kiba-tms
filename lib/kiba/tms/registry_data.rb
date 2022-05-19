@@ -685,20 +685,30 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('terms') do
-          # register :descriptors, {
-          #   creator: Kiba::Tms::Jobs::Terms.method(:descriptors),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
-          #   desc: 'Thesaurus terms with type 1 = descriptor',
-          #   lookup_on: :termid,
-          #   tags: %i[termdata terms prep]
-          # }
-          # register :descriptors, {
-          #   creator: Kiba::Tms::Jobs::Terms.method(:descriptors),
-          #   path: File.join(Kiba::Tms.datadir, 'prepped', 'terms_descriptors.csv'),
-          #   desc: 'Thesaurus terms with type 1 = descriptor',
-          #   lookup_on: :termid,
-          #   tags: %i[termdata terms prep]
-          # }
+          register :used_in_xrefs, {
+            creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_in_xrefs.csv'),
+            desc: 'Terms table rows for term IDs used in ThesXrefs',
+            lookup_on: :termid,
+            tags: %i[termdata terms reference]
+          }
+          register :used_row_data, {
+            creator: Kiba::Tms::Jobs::Terms::UsedRowData,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_row_data.csv'),
+            desc: 'All Terms rows having termmasterid that appears in Terms row used in ThesXrefs. (Allowing merging of alternate terms, etc.)',
+            lookup_on: :termmasterid,
+            tags: %i[termdata terms reference]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('term_master_thes') do
+          register :used_in_xrefs, {
+            creator: Kiba::Tms::Jobs::TermMasterThes::UsedInXrefs,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'term_master_thes_used_in_xrefs.csv'),
+            desc: 'TermMasterThes table rows referenced by Terms referenced in ThesXrefs',
+            lookup_on: :termmasterid,
+            tags: %i[termdata terms reference]
+          }
         end
         
         Kiba::Tms.registry.namespace('text_entries') do
@@ -729,7 +739,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::ThesXrefs::TermIdsUsed,
             path: File.join(Kiba::Tms.datadir, 'reference', 'term_ids_used_in_thes_xrefs.csv'),
             desc: 'List of term ids used in ThesXrefs.',
-            tags: %i[termdata thesxrefs terms reference]
+            tags: %i[termdata thesxrefs terms reference],
+            lookup_on: :termid
           }
           # register :for_term_report, {
           #   creator: Kiba::Tms::Jobs::ThesXrefs.method(:for_term_report),
