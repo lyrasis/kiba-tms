@@ -772,6 +772,12 @@ module Kiba
             desc: 'Thesaurus xrefs without notation values, deduplicated',
             tags: %i[termdata thesxrefs]
           }
+          register :term_ids_used, {
+            creator: Kiba::Tms::Jobs::ThesXrefs::TermIdsUsed,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'term_ids_used_in_thes_xrefs.csv'),
+            desc: 'List of term ids used in ThesXrefs.',
+            tags: %i[termdata thesxrefs terms reference]
+          }
         end
       end
     end
