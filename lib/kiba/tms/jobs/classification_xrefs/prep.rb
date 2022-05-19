@@ -30,14 +30,14 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :tableid, target: :table, mapping: Tms::TABLES, fallback_val: nil, delete_source: false
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :classificationid,
-                lookup: prep__classifications,
-                fieldmap: Tms.classifications.fieldmap,
-                null_placeholder: '%NULLVALUE%',
-                delim: Kiba::Tms.delim
-              transform Delete::Fields, fields: :classificationid
-              transform FilterRows::FieldPopulated, action: :keep, field: :classification
+              # transform Merge::MultiRowLookup,
+              #   keycolumn: :classificationid,
+              #   lookup: prep__classifications,
+              #   fieldmap: Tms.classifications.fieldmap,
+              #   null_placeholder: '%NULLVALUE%',
+              #   delim: Kiba::Tms.delim
+              # transform Delete::Fields, fields: :classificationid
+              # transform FilterRows::FieldPopulated, action: :keep, field: :classification
             end
           end
         end

@@ -50,7 +50,7 @@ module Kiba
             },
             objects: {
               initial_headers:
-              %i[objectnumber department classification classificationxref objectname objectstatus title]
+              [:objectnumber, :title, :objectname, classification_fields].flatten
             },
             terms: { initial_headers: %i[termid prefterm termtype term thesaurus_name termsource sourcetermid] }
           }

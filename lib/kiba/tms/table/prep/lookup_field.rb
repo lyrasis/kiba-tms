@@ -25,7 +25,7 @@ module Kiba
           FIELDS = {
             classifications: :classificationid,
             classification_notations: :classificationnotationid,
-            classification_xrefs: :classificationxrefid,
+            classification_xrefs: :tablerowid,
             constituents: :constituentid,
             con_address: :conaddressid,
             con_types: :constituenttypeid,

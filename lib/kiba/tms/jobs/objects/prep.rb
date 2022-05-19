@@ -55,21 +55,48 @@ module Kiba
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
               transform Merge::MultiRowLookup,
-                keycolumn: :classificationid,
-                lookup: prep__classifications,
-                fieldmap: {
-                  classification: :classification
-                },
-                delim: Tms.delim
-              transform Delete::Fields, fields: :classificationid
-
-              transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
                 lookup: prep__classification_xrefs,
-                fieldmap: {
-                  classificationxref: :classification
-                },
+                fieldmap: {xrefclassid: :classificationid},
                 delim: Tms.delim
+
+              transform do |row|
+                row[:cids] = nil
+                cid = row[:classificationid]
+                xcid = row[:xrefclassid]
+                if xcid.blank?
+                  row[:cids] = cid
+                  next row
+                end
+                
+                added = xcid.split(Tms.delim)
+                  .reject{ |val| val == cid }
+                  .join(Tms.delim)
+                row[:cids] = [cid, added].reject{ |val| val.blank? }
+                  .join(Tms.delim)
+                row
+              end
+              transform Delete::Fields, fields: %i[classificationid xrefclassid]
+              
+              transform Merge::MultiRowLookup,
+                keycolumn: :cids,
+                lookup: prep__classifications,
+                fieldmap: Tms.classifications.fieldmap,
+                delim: Tms.delim,
+                null_placeholder: '%NULLVALUE%',
+                multikey: true
+              transform Delete::Fields, fields: :cids
+
+              # cxrefmap = Tms.classifications.fieldmap
+              # cxrefmap.transform_keys!{ |key| "xref_#{key}" }
+              
+              # sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
+              # transform Merge::MultiRowLookup,
+              #   keycolumn: :objectid,
+              #   lookup: prep__classification_xrefs,
+              #   fieldmap: cxrefmap,
+              #   delim: Tms.delim,
+              #   sorter: sorter
               
               transform Merge::MultiRowLookup,
                 keycolumn: :departmentid,
@@ -115,6 +142,15 @@ module Kiba
                 delim: '%CR%%CR%----%CR%%CR%',
                 sorter: te_sorter
 
+              rename_map = {
+                chat: :viewerscontributionnote,
+                description: :briefdescription,
+                medium: :materialtechniquedescription,
+                notes: :comment
+              }
+              Tms.objects.custom_map_fields.each{ |field| rename_map.delete(field) }
+              transform Rename::Fields, fieldmap: rename_map
+              
               if Tms.data_cleaner
                 transform Tms.data_cleaner
               end

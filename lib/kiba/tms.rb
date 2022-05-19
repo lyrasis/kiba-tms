@@ -41,6 +41,7 @@ module Kiba
     # whether conservation entity data has actually been used/augmented (true) or whether it looks like the
     #   default field data had been populated automatically by TMS (false)
     setting :conservationentity_used, default: false, reader: true
+
     setting :classifications, reader: true do
       # how to map/merge fields from Classifications table into objects
       setting :fieldmap,
@@ -164,7 +165,11 @@ module Kiba
       # client-specfic fields to delete
       setting :delete_fields, default: [], reader: true
 
-      # whether to map the following TMS fields to CS
+      # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
+      #  in client project
+      setting :custom_map_fields, default: [], reader: true
+
+      # whether to map the given field
       setting :map, reader: true do
         setting :catalogueisodate, default: false, reader: true
         setting :cataloguer, default: false, reader: true
