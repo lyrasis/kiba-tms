@@ -46,7 +46,7 @@ module Kiba
               initial_headers:
               %i[objectnumber department classification classificationxref objectname objectstatus title]
             },
-            terms: { initial_headers: %i[termid termmasterid termtype term termsource termsourceid] }
+            terms: { initial_headers: %i[termid termmasterid termtype term termsource sourcetermid] }
           }
         end
       end
