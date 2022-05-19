@@ -16,6 +16,7 @@ module Kiba
                            prep__term_types
                            term_master_thes__used_in_xrefs
                            classification_notations__used
+                           tms__thesaurus_bases
                           ]
               },
               transformer: xforms
@@ -31,6 +32,7 @@ module Kiba
                 lookup: prep__term_types,
                 fieldmap: { termtype: :termtype }
               transform Delete::Fields, fields: :termtypeid
+              
               transform Merge::MultiRowLookup,
                 keycolumn: :termmasterid,
                 lookup: term_master_thes__used_in_xrefs,
@@ -43,6 +45,8 @@ module Kiba
                   termsource: :termsource,
                   sourcetermid: :sourcetermid
                 }
+              transform Delete::Fields, fields: :termmasterid
+              
               transform Merge::MultiRowLookup,
                 keycolumn: :primarycnid,
                 lookup: classification_notations__used,
@@ -53,6 +57,25 @@ module Kiba
                   cn_rootleveltmid: :rootleveltmid,
                   cn_thesaurusbaseid: :thesaurusbaseid
                 }
+              transform Delete::Fields, fields: :primarycnid
+
+              transform Merge::MultiRowLookup,
+                keycolumn: :cn_thesaurusbaseid,
+                lookup: tms__thesaurus_bases,
+                fieldmap: {
+                  thesaurus_name: :thesaurusbase,
+                  thesaurus_version: :installedversion
+                }
+              transform Delete::Fields, fields: :cn_thesaurusbaseid
+
+              transform do |row|
+                row[:prefterm] = nil
+                pref = row.fetch(:preferredtermid, nil)
+                id = row.fetch(:termid, nil)
+
+                row[:prefterm] = 'y' if pref == id
+                row
+              end
             end
           end
         end

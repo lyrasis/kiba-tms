@@ -30,7 +30,8 @@ module Kiba
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,
             obj_components: :componentid,
-            objects: :objectid
+            objects: :objectid,
+            thesaurus_bases: :thesaurusbaseid
           }
         end
       end
