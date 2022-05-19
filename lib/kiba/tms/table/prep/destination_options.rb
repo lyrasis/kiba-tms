@@ -22,7 +22,13 @@ module Kiba
 
           attr_reader :table_key
 
+          classification_fields = Tms.classifications.fieldmap.keys.map(&:to_sym)
+          
           OPTS = {
+            classification_xrefs: {
+              initial_headers:
+              [:table, :tablerowid, classification_fields ].flatten
+            },
             constituents: {
               initial_headers:
               [:constituentid, :constituenttype, Tms.config.constituents.preferred_name_field,

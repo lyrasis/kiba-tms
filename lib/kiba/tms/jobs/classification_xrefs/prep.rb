@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ClassificationXrefs
+      module ClassificationXRefs
         module Prep
           module_function
           
@@ -14,7 +14,7 @@ module Kiba
                 destination: :prep__classification_xrefs,
                 lookup: :prep__classifications
               },
-              transformer: prep_xforms
+              transformer: xforms
             )
           end
 
@@ -33,9 +33,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 keycolumn: :classificationid,
                 lookup: prep__classifications,
-                fieldmap: {
-                  classification: Tms.classifications.fieldmap
-                },
+                fieldmap: Tms.classifications.fieldmap,
                 null_placeholder: '%NULLVALUE%',
                 delim: Kiba::Tms.delim
               transform Delete::Fields, fields: :classificationid
