@@ -73,7 +73,6 @@ module Kiba
                PhoneTypes.csv
                Relationships.csv
                RegistrationSets.csv
-               ReportIDBackup.csv
                RoleTypes.csv
                Roles.csv
                StatusFlags.csv
@@ -88,7 +87,36 @@ module Kiba
                ThesXrefs.csv
                ThesaurusBases.csv
                TitleTypes.csv
-              ]
+               AddressTypes.csv
+               Associations.csv
+               AssocParents.csv
+               ConDisplayBios.csv
+               ConGeoCodes.csv
+               ConGeography.csv
+               ConveyanceTypes.csv
+               ConXrefSets.csv
+               CrateProjects.csv
+               Crates.csv
+               CrateTypes.csv
+               DimensionMethods.csv
+               GeoCodes.csv
+               ObjDates.csv
+               ObjectLevels.csv
+               ObjectNames.csv
+               ObjectNameTypes.csv
+               ObjectTypes.csv
+               ObjGeography.csv
+               ObjIncoming.csv
+               ObjIncPurposes.csv
+               ObjRights.csv
+               ObjRightsTypes.csv
+               ObjTitles.csv
+               ReferenceMaster.csv
+               RefFormats.csv
+               RefXRefs.csv
+               TextStatuses.csv
+               TreatmentPriorities.csv
+               ValuationPurposes.csv              ]
           end
         end
       end
