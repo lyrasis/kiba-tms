@@ -28,6 +28,14 @@ module Kiba
     setting :delim, default: Kiba::Extend.delim, reader: true
     # TMS tables not used in a given project. Override in project application
     setting :excluded_tables, default: [], reader: true
+    # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
+    #   this application) vs. EnvironmentalRequirementTypes (as found in another TMS instance). The Hash given as the
+    #   following setting can be used to override table names:
+    #
+    # ```
+    # { 
+    setting :table_name_overrides, default: {}, reader: true
+
     # File registry - best to just leave this as-is
     setting :registry, default: Kiba::Extend.registry, reader: true
 
@@ -58,22 +66,21 @@ module Kiba
     end
     
     setting :constituents, reader: true do
+      # transform run at the beginning of prep__constituents to force client-specific changes
+      setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
-
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
       setting :map_approved, default: false, reader: true
       setting :map_active, default: false, reader: true
       setting :map_isstaff, default: false, reader: true
       setting :map_isprivate, default: false, reader: true
-
       # what cs field to map :culturegroup into
       setting :culturegroup_target, default: :group, reader: true
-
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value
@@ -91,8 +98,9 @@ module Kiba
         reader: true
       setting :addressplace1_delim, default: ' -- ', reader: true
       setting :addressplace2_delim, default: ', ', reader: true
-      # The next four settings are whether to generate notes about address type/status, eg. "Is default mailing address"
-      #   Default to no since CS doesn't have any note field associated with a given address
+      # The next four settings are whether to generate notes about address type/status, eg. "Is
+      # default mailing address". Default to no since CS doesn't have any note field associated with
+      # a given address
       setting :address_shipping, default: false, reader: true
       setting :address_billing, default: false, reader: true
       setting :address_mailing, default: false, reader: true
@@ -102,7 +110,6 @@ module Kiba
       #  - :plain - will go into authority record's note field
       #  - :specific - will go into a note tagged with the specific address it applies to
       setting :address_remarks_handling, default: :specific, reader: true
-      
       # The following are useful if there are duplicate preferred names that have different date values that
       #   can disambiguate the names
       setting :date_append, reader: true do
@@ -181,6 +188,12 @@ module Kiba
       end
     end
 
+    setting :obj_components, reader: true do
+      # whether or not ObjComponents is used to record information about actual object components
+      #   (sub-objects). Either way TMS provides linkage to Locations through ObjComponents
+      setting :used, default: false, reader: true
+    end
+    
     setting :obj_context, reader: true do
       # client-specfic fields to delete
       setting :delete_fields, default: [], reader: true
