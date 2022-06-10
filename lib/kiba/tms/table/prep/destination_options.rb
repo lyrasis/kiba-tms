@@ -40,9 +40,7 @@ module Kiba
             },
             con_dates: {
               initial_headers:
-              %i[constituentdisplayname constituenttype datedescription remarks
-                 datebegsearch monthbegsearch daybegsearch
-                 dateendsearch monthendsearch dayendsearch]
+              %i[datedescription remarks date]
             },
             obj_locations: {
               initial_headers:

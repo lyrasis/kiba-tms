@@ -219,7 +219,15 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('con_email') do
+        Kiba::Tms.registry.namespace('con_dates') do
+          register :for_review, {
+            creator: Kiba::Tms::Jobs::ConDates::ForReview,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_dates_for_review.csv'),
+            tags: %i[con condates reports cleanup]
+          }
+        end
+        
+          Kiba::Tms.registry.namespace('con_email') do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_email_dropping.csv'),

@@ -1,0 +1,51 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= ConDates (constituent dates) data cleanup worksheet for TMS-to-CS migration
+
+toc::[]
+
+[IMPORTANT]
+====
+The spreadsheet you have been given is for your review, and use in cleaning up existing data in TMS as desired.
+
+It is *not* a worksheet in which you can make changes that will be merged back into the migration.
+====
+
+== Dates in CS Person/Organization records
+
+TIP: We recommend you familiarize yourself with the Person and Organization records in your CS staging/training instance. Go to `Create New` and choose `Local` under Person and/or Organization.
+
+The options for recording _structured_ date data in these records are presently fairly simple:
+
+=== Person
+
+* one birth date
+* one death date
+
+Other date information can be massaged into a textual note and include in the Biographical note
+
+=== Organization
+
+* one foundation date
+* one dissolution date
+
+In TMS constituents mapped to organization records, "birth" dates will be mapped to foundation date, and "death" dates will be mapped to dissolution date.
+
+Other date information can be massaged into a textual note and include in the History note
+
+
+== Categories of things to look at in review/cleanup
+
+=== `warn` column contains `No date value`
+
+We couldn't 
