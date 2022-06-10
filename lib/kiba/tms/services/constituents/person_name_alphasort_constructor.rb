@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Services
       module Constituents
-        # Creates a direct order name from person name parts
+        # Creates an inverted direct order name from person name parts
         class PersonNameAlphasortConstructor
           include Kiba::Extend::Transforms::Helpers
           
