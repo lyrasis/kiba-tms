@@ -261,50 +261,50 @@ module Kiba
 
         Kiba::Tms.registry.namespace('constituents') do
           register :alt_name_mismatch, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:alt_name_mismatch),
+            creator: Kiba::Tms::Jobs::Constituents::AltNameMismatch,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_alt_name_mismatch.csv'),
             desc: 'Constituents where value looked up on defaultnameid (in con_alt_names table) does
                    not match value of preferred name field in constituents table',
             tags: %i[con reports]
           }
           register :alt_names_merged, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:alt_names_merged),
+            creator: Kiba::Tms::Jobs::Constituents::AltNamesMerged,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituents_alt_names_merged.csv'),
             desc: 'Constituents with non-default form of name merged in',
             tags: %i[con]
           }
           register :with_type, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:with_type),
+            creator: Kiba::Tms::Jobs::Constituents::WithType,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_type.csv'),
             desc: 'Constituents with a constituent type entered',
             tags: %i[con reports]
           }
           register :without_type, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:without_type),
+            creator: Kiba::Tms::Jobs::Constituents::WithoutType,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituents_without_type.csv'),
             desc: 'Constituents without a constituent type entered',
             tags: %i[con]
           }
           register :with_name_data, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:with_name_data),
+            creator: Kiba::Tms::Jobs::Constituents::WithNameData,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituents_with_name_data.csv'),
             desc: 'Constituents with displayname or alphasort name',
             tags: %i[con]
           }
           register :without_name_data, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:without_name_data),
+            creator: Kiba::Tms::Jobs::Constituents::WithoutNameData,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_without_name_data.csv'),
             desc: 'Constituents without displayname or alphasort name',
             tags: %i[con reports]
           }
           register :derived_type, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:derived_type),
+            creator: Kiba::Tms::Jobs::Constituents::DerivedType,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_derived_type.csv'),
             desc: 'Constituents with a derived type',
             tags: %i[con reports]
           }
           register :no_derived_type, {
-            creator: Kiba::Tms::Jobs::Constituents.method(:no_derived_type),
+            creator: Kiba::Tms::Jobs::Constituents::NoDerivedType,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_without_derived_type.csv'),
             desc: 'Constituents without a derived type',
             tags: %i[con reports]
