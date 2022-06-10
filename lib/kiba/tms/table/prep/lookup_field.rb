@@ -40,6 +40,7 @@ module Kiba
             obj_context: :objectid,
             obj_ins_indem_resp: :objinsindemrespid,
             obj_locations: :objlocationid,
+            obj_rights_types: :objrightstypeid,
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             phone_types: :phonetypeid,
