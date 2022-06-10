@@ -19,10 +19,7 @@ module Kiba
         def prep_xforms
           Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
-            transform FilterRows::FieldMatchRegexp,
-              action: :reject,
-              field: :objecttype,
-              match: '^(\(|\[)[Nn]ot [Dd]efined(\)|\])$'
+            transform Tms::Transforms::DeleteNoValueTypes, field: :objecttype
           end
         end
       end

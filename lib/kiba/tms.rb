@@ -41,6 +41,9 @@ module Kiba
     # whether conservation entity data has actually been used/augmented (true) or whether it looks like the
     #   default field data had been populated automatically by TMS (false)
     setting :conservationentity_used, default: false, reader: true
+    # if true, do not delete (not assigned) and (not entered) and other similar values from type lookup tables
+    #   before merging in
+    setting :migrate_no_value_types, default: false, reader: true
 
     setting :classifications, reader: true do
       # how to map/merge fields from Classifications table into objects

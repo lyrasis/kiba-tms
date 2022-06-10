@@ -20,10 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform FilterRows::FieldMatchRegexp,
-                action: :reject,
-                field: :phonetype,
-                match: '\([Nn]ot [Aa]ssigned\)'
+              transform Tms::Transforms::DeleteNoValueTypes, field: :phonetype
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
                 find: 'Home',

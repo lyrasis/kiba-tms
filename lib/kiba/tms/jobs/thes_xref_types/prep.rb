@@ -22,11 +22,7 @@ module Kiba
               transform Tms::Transforms::DeleteTmsFields
               transform Delete::Fields, fields: %i[multiselect archivedeletes showguideterms broadesttermfirst
                                                    numlevels alwaysdisplayfullpath]
-              transform FilterRows::FieldMatchRegexp,
-                action: :reject,
-                field: :thesxreftype,
-                match: '^\(not assigned\)$',
-                ignore_case: true
+              transform Tms::Transforms::DeleteNoValueTypes, field: :thesxreftype
             end
           end
         end
