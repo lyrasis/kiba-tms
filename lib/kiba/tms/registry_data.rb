@@ -585,7 +585,7 @@ module Kiba
 
         Kiba::Tms.registry.namespace('obj_components') do
           register :with_object_numbers, {
-            creator: Kiba::Tms::Jobs::ObjComponents.method(:with_object_numbers),
+            creator: Kiba::Tms::Jobs::ObjComponents::WithObjectNumbers,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_with_object_numbers.csv'),
             tags: %i[obj_components],
             dest_special_opts: {
