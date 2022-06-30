@@ -13,6 +13,14 @@ require 'zeitwerk'
 # dev
 require 'pry'
 
+loader = Zeitwerk::Loader.new
+loader.inflector.inflect(
+  'classification_xrefs' => 'ClassificationXRefs'
+  )
+loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
+#loader.logger = method(:puts)
+loader.setup
+
 
 # Namespace for the overall project
 module Kiba
@@ -221,11 +229,4 @@ module Kiba
   end
 end
 
-loader = Zeitwerk::Loader.new
-loader.inflector.inflect(
-  'classification_xrefs' => 'ClassificationXRefs'
-  )
-loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
-#loader.logger = method(:puts)
-loader.setup
 
