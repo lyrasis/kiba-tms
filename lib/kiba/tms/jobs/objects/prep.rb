@@ -162,7 +162,10 @@ module Kiba
               if !ntisources.empty? && !ntitargets.empty?
                 transform Tms::Transforms::Objects::NonTextInscriptionCombiner
               end
-              
+
+              transform Tms.objects.source_xform.creditline if Tms.objects.source_xform.creditline
+              transform Tms.objects.source_xform.curatorialremarks if Tms.objects.source_xform.curatorialremarks
+                
               rename_map = {
                 chat: :viewerscontributionnote,
                 description: :briefdescription,
@@ -172,6 +175,9 @@ module Kiba
               custom_handled_fields.each{ |field| rename_map.delete(field) }
               transform Rename::Fields, fieldmap: rename_map.merge(Tms.objects.custom_rename_fieldmap)
 
+              if !Tms.objects.annotation_source_fields.empty? && !Tms.objects.annotation_target_fields.empty?
+                transform Tms::Transforms::Objects::AnnotationCombiner
+              end
               
               if Tms.data_cleaner
                 transform Tms.data_cleaner

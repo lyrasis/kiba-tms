@@ -205,16 +205,23 @@ module Kiba
 
       # transformers to transform data in the source field
       setting :source_xform, reader: true do
-        setting :signed, default: Kiba::Tms::Transforms::Objects::SignedXform, reader: true
+        setting :classifications, default: nil, reader: true
+        setting :creditline, default: Kiba::Tms::Transforms::Objects::Creditline, reader: true
+        setting :curatorialremarks, default: nil, reader: true
         setting :inscribed, default: Kiba::Tms::Transforms::Objects::InscribedXform, reader: true
         setting :markings, default: Kiba::Tms::Transforms::Objects::MarkingsTextXform, reader: true
         setting :markings_type, default: nil, reader: true
+        setting :signed, default: Kiba::Tms::Transforms::Objects::SignedXform, reader: true
+        setting :text_entries, default: nil, reader: true
+        setting :text_entry_lookup, default: nil, reader: true
       end
 
-      setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
-      setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
+      setting :annotation_source_fields, default: %i[creditline], reader: true
+      setting :annotation_target_fields, default: %i[annotationtype annotationnote], reader: true
       setting :nontext_inscription_source_fields, default: %i[], reader: true
       setting :nontext_inscription_target_fields, default: %i[], reader: true
+      setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
+      setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
     end
 
     setting :obj_components, reader: true do
