@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module Objects
-        class TextInscriptionCombiner < AbstractInscriptionCombiner
+        class TextInscriptionCombiner < Kiba::Extend::Transforms::Cspace::AbstractFieldGroupCombiner
           def initialize
             @sources = Tms.objects.text_inscription_source_fields
             @targets = Tms.objects.text_inscription_target_fields
