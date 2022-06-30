@@ -143,6 +143,15 @@ module Kiba
                 delim: '%CR%%CR%----%CR%%CR%',
                 sorter: te_sorter
 
+              transform Tms.objects.source_xform.inscribed if Tms.objects.source_xform.inscribed
+              transform Tms.objects.source_xform.signed if Tms.objects.source_xform.signed
+              transform Tms.objects.source_xform.markings if Tms.objects.source_xform.markings
+              tisources = Tms.objects.text_inscription_source_fields
+              titargets = Tms.objects.text_inscription_target_fields
+              if !tisources.empty? && !titargets.empty?
+                transform Tms::Transforms::Objects::TextInscriptionCombiner
+              end
+              
               rename_map = {
                 chat: :viewerscontributionnote,
                 description: :briefdescription,

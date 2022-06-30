@@ -195,6 +195,24 @@ module Kiba
         setting :curator, default: false, reader: true
         setting :dateeffectiveisodate, default: false, reader: true
       end
+
+      # transformers to do cleaning/prep of the data in the field
+      setting :cleaner, reader: true do
+        setting :signed, default: nil, reader: true
+        setting :inscribed, default: nil, reader: true
+        setting :markings, default: nil, reader: true
+      end
+
+      # transformers to transform data in the source field
+      setting :source_xform, reader: true do
+        setting :signed, default: Kiba::Tms::Transforms::Objects::SignedXform, reader: true
+        setting :inscribed, default: Kiba::Tms::Transforms::Objects::InscribedXform, reader: true
+        setting :markings, default: Kiba::Tms::Transforms::Objects::MarkingsTextXform, reader: true
+        setting :markings_type, default: nil, reader: true
+      end
+
+      setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
+      setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
     end
 
     setting :obj_components, reader: true do
