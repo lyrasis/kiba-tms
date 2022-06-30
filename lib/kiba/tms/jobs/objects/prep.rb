@@ -143,13 +143,21 @@ module Kiba
                 delim: '%CR%%CR%----%CR%%CR%',
                 sorter: te_sorter
 
+              transform Tms.objects.cleaner.inscribed if Tms.objects.cleaner.inscribed
               transform Tms.objects.source_xform.inscribed if Tms.objects.source_xform.inscribed
+              transform Tms.objects.cleaner.signed if Tms.objects.cleaner.signed
               transform Tms.objects.source_xform.signed if Tms.objects.source_xform.signed
+              transform Tms.objects.cleaner.markings if Tms.objects.cleaner.markings
               transform Tms.objects.source_xform.markings if Tms.objects.source_xform.markings
               tisources = Tms.objects.text_inscription_source_fields
               titargets = Tms.objects.text_inscription_target_fields
               if !tisources.empty? && !titargets.empty?
                 transform Tms::Transforms::Objects::TextInscriptionCombiner
+              end
+              ntisources = Tms.objects.nontext_inscription_source_fields
+              ntitargets = Tms.objects.nontext_inscription_target_fields
+              if !ntisources.empty? && !ntitargets.empty?
+                transform Tms::Transforms::Objects::NonTextInscriptionCombiner
               end
               
               rename_map = {

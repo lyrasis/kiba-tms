@@ -213,6 +213,8 @@ module Kiba
 
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
+      setting :nontext_inscription_source_fields, default: %i[], reader: true
+      setting :nontext_inscription_target_fields, default: %i[], reader: true
     end
 
     setting :obj_components, reader: true do
