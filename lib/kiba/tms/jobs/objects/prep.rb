@@ -27,6 +27,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              custom_handled_fields = Tms.objects.custom_map_fields
               transform Tms::Transforms::DeleteTmsFields
               unless Tms.conservationentity_used
                 transform Delete::Fields, fields: :conservationentityid
@@ -148,8 +149,9 @@ module Kiba
                 medium: :materialtechniquedescription,
                 notes: :comment
               }
-              Tms.objects.custom_map_fields.each{ |field| rename_map.delete(field) }
-              transform Rename::Fields, fieldmap: rename_map
+              custom_handled_fields.each{ |field| rename_map.delete(field) }
+              transform Rename::Fields, fieldmap: rename_map.merge(Tms.objects.custom_rename_fieldmap)
+
               
               if Tms.data_cleaner
                 transform Tms.data_cleaner

@@ -178,7 +178,8 @@ module Kiba
       # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
       #  in client project
       setting :custom_map_fields, default: [], reader: true
-
+      setting :custom_rename_fieldmap, default: {}, reader: true
+      
       # whether to map the given field
       setting :map, reader: true do
         setting :catalogueisodate, default: false, reader: true
