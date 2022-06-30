@@ -13,15 +13,23 @@ module Kiba
             def job
               Kiba::Extend::Jobs::Job.new(
                 files: {
-                  source: [
-                    "nameclean#{ITERATION}__constituents_kept".to_sym,
-                    "nameclean#{ITERATION}__orgs_not_kept".to_sym,
-                    "nameclean#{ITERATION}__persons_not_kept".to_sym
-                  ],
+                  source: sources,
                   destination: :nameclean__by_constituentid
                 },
                 transformer: xforms
               )
+            end
+
+            def sources
+              if ITERATION
+                [
+                  "nameclean#{ITERATION}__constituents_kept".to_sym,
+                  "nameclean#{ITERATION}__orgs_not_kept".to_sym,
+                  "nameclean#{ITERATION}__persons_not_kept".to_sym
+                ]
+              else
+                :prep__constituents
+              end
             end
 
             def xforms

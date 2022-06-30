@@ -6,7 +6,7 @@ module Kiba
       module Names
         class ExtractConstituentIds
           def initialize
-            @orig_id = :fp_constituentid
+            @orig_id = Tms.names.cleanup_iteration ? :fp_constituentid : :constituentid
           end
 
           # @private
