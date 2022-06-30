@@ -12,19 +12,25 @@ module Kiba
               files: {
                 source: :tms__objects,
                 destination: :prep__objects,
-                lookup: %i[
-                           prep__classifications
-                           prep__classification_xrefs
-                           prep__departments
-                           prep__object_statuses
-                           prep__obj_context
-                           text_entries__for_objects
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            result = %i[
+               prep__departments
+               prep__object_statuses
+               prep__obj_context
+                       ]
+            if Tms.objects.source_xform.classifications
+              %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
+            end
+            result << :text_entries__for_objects if Tms.objects.source_xform.text_entries
+            result
+          end
+          
           def xforms
             Kiba.job_segment do
               custom_handled_fields = Tms.objects.custom_map_fields
@@ -55,49 +61,51 @@ module Kiba
               
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :objectid,
-                lookup: prep__classification_xrefs,
-                fieldmap: {xrefclassid: :classificationid},
-                delim: Tms.delim
+              if Tms.objects.source_xform.classifications
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: prep__classification_xrefs,
+                  fieldmap: {xrefclassid: :classificationid},
+                  delim: Tms.delim
 
-              transform do |row|
-                row[:cids] = nil
-                cid = row[:classificationid]
-                xcid = row[:xrefclassid]
-                if xcid.blank?
-                  row[:cids] = cid
-                  next row
+                transform do |row|
+                  row[:cids] = nil
+                  cid = row[:classificationid]
+                  xcid = row[:xrefclassid]
+                  if xcid.blank?
+                    row[:cids] = cid
+                    next row
+                  end
+                  
+                  added = xcid.split(Tms.delim)
+                    .reject{ |val| val == cid }
+                    .join(Tms.delim)
+                  row[:cids] = [cid, added].reject{ |val| val.blank? }
+                    .join(Tms.delim)
+                  row
                 end
+                transform Delete::Fields, fields: %i[classificationid xrefclassid]
                 
-                added = xcid.split(Tms.delim)
-                  .reject{ |val| val == cid }
-                  .join(Tms.delim)
-                row[:cids] = [cid, added].reject{ |val| val.blank? }
-                  .join(Tms.delim)
-                row
-              end
-              transform Delete::Fields, fields: %i[classificationid xrefclassid]
-              
-              transform Merge::MultiRowLookup,
-                keycolumn: :cids,
-                lookup: prep__classifications,
-                fieldmap: Tms.classifications.fieldmap,
-                delim: Tms.delim,
-                null_placeholder: '%NULLVALUE%',
-                multikey: true
-              transform Delete::Fields, fields: :cids
+                transform Merge::MultiRowLookup,
+                  keycolumn: :cids,
+                  lookup: prep__classifications,
+                  fieldmap: Tms.classifications.fieldmap,
+                  delim: Tms.delim,
+                  null_placeholder: '%NULLVALUE%',
+                  multikey: true
+                transform Delete::Fields, fields: :cids
 
-              # cxrefmap = Tms.classifications.fieldmap
-              # cxrefmap.transform_keys!{ |key| "xref_#{key}" }
-              
-              # sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :objectid,
-              #   lookup: prep__classification_xrefs,
-              #   fieldmap: cxrefmap,
-              #   delim: Tms.delim,
-              #   sorter: sorter
+                # cxrefmap = Tms.classifications.fieldmap
+                # cxrefmap.transform_keys!{ |key| "xref_#{key}" }
+                
+                # sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
+                # transform Merge::MultiRowLookup,
+                #   keycolumn: :objectid,
+                #   lookup: prep__classification_xrefs,
+                #   fieldmap: cxrefmap,
+                #   delim: Tms.delim,
+                #   sorter: sorter
+              end
               
               transform Merge::MultiRowLookup,
                 keycolumn: :departmentid,
@@ -133,16 +141,11 @@ module Kiba
                 },
                 delim: Tms.delim
 
-              te_sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
-              transform Merge::MultiRowLookup,
-                lookup: text_entries__for_objects,
-                keycolumn: :objectid,
-                fieldmap: {
-                  text_entry: :text_entry
-                },
-                delim: '%CR%%CR%----%CR%%CR%',
-                sorter: te_sorter
-
+              if Tms.objects.source_xform.text_entries
+                Tms.objects.source_xform.text_entry_lookup = text_entries__for_objects
+                transform Tms.objects.source_xform.text_entries
+              end
+              
               transform Tms.objects.cleaner.inscribed if Tms.objects.cleaner.inscribed
               transform Tms.objects.source_xform.inscribed if Tms.objects.source_xform.inscribed
               transform Tms.objects.cleaner.signed if Tms.objects.cleaner.signed
