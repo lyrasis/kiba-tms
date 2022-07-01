@@ -30,6 +30,7 @@ module Kiba
             con_address: :conaddressid,
             con_types: :constituenttypeid,
             con_alt_names: :altnameid,
+            con_xrefs: :conxrefid,
             countries: :countryid,
             departments: :departmentid,
             email_types: :emailtypeid,
