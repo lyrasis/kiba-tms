@@ -42,6 +42,10 @@ module Kiba
               initial_headers:
               %i[datedescription remarks date]
             },
+            con_xref_details: {
+              initial_headers:
+              %i[tablename recordid role roletype person org displayorder]
+            },
             obj_locations: {
               initial_headers:
               %i[objlocationid objectnumber locationid fulllocid]
