@@ -1,0 +1,36 @@
+# frozen_string_literal: true
+
+require 'dry-configurable'
+
+module Kiba
+  module Tms
+    module Objects
+      module Config
+        extend Dry::Configurable
+        setting :annotation_source_fields, default: %i[creditline], reader: true
+        setting :annotation_target_fields, default: %i[annotationtype annotationnote], reader: true
+        setting :consider_blank, default: {
+                loanclassid: '0',
+                objectlevelid: '0',
+                objecttypeid: '0',
+                publicaccess: '0',
+                subclassid: '0',
+                type: '0',
+              },
+          reader: true
+        # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
+        #  in client project
+        setting :custom_map_fields, default: [], reader: true
+        # will be merged into `Rename::Fields` fieldmap
+        setting :custom_rename_fieldmap, default: {}, reader: true
+        # client-specfic fields to delete
+        setting :delete_fields, default: [], reader: true
+        setting :nontext_inscription_source_fields, default: %i[], reader: true
+        setting :nontext_inscription_target_fields, default: %i[], reader: true
+        setting :text_entry_lookup, default: nil, reader: true
+        setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
+        setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
+      end
+    end
+  end
+end

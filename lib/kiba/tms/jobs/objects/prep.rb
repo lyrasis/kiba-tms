@@ -25,16 +25,16 @@ module Kiba
                         prep__obj_context
                         con_xref_details__for_objects
                        ]
-            if Tms.objects.source_xform.classifications
+            if Tms::Objects::FieldXforms.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
             end
-            result << :text_entries__for_objects if Tms.objects.source_xform.text_entries
+            result << :text_entries__for_objects if Tms::Objects::FieldXforms.text_entries
             result
           end
           
           def xforms
             Kiba.job_segment do
-              custom_handled_fields = Tms.objects.custom_map_fields
+              custom_handled_fields = Tms::Objects::Config.custom_map_fields
               transform Tms::Transforms::DeleteTmsFields
               unless Tms.conservationentity_used
                 transform Delete::Fields, fields: :conservationentityid
@@ -46,23 +46,16 @@ module Kiba
                            curatorrevisodate
                            searchobjectnumber sortnumber sortnumber2 sortsearchnumber usernumber3
                            objectscreenid textsearchid]
-              transform Delete::EmptyFields, consider_blank: {
-                loanclassid: '0',
-                objectlevelid: '0',
-                objecttypeid: '0',
-                publicaccess: '0',
-                subclassid: '0',
-                type: '0',
-              }
+              transform Delete::EmptyFields, consider_blank: Tms::Objects::Config.consider_blank
 
-              client_specific_delete_fields = Tms.objects.delete_fields
+              client_specific_delete_fields = Tms::Objects::Config.delete_fields
               unless client_specific_delete_fields.empty?
                 transform Delete::Fields, fields: client_specific_delete_fields
               end
               
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
-              if Tms.objects.source_xform.classifications
+              if Tms::Objects::FieldXforms.classifications
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: prep__classification_xrefs,
@@ -151,7 +144,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:person].blank? }
-                    .select{ |row| Tms.objects.production_roles.any?(row[:role]) }
+                    .select{ |row| Tms::ConXrefDetails.for_objects.production_con_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -169,7 +162,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:org].blank? }
-                    .select{ |row| Tms.objects.production_roles.any?(row[:role]) }
+                    .select{ |row| Tms::ConXrefDetails.for_objects.production_con_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:org]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -188,7 +181,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:person].blank? }
-                    .select{ |row| Tms.objects.assoc_roles.any?(row[:role]) }
+                    .select{ |row| Tms::ConXrefDetails.for_objects.assoc_con_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -206,7 +199,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:org].blank? }
-                    .select{ |row| Tms.objects.assoc_roles.any?(row[:role]) }
+                    .select{ |row| Tms::ConXrefDetails.for_objects.assoc_con_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -215,14 +208,14 @@ module Kiba
                 delim: Tms.delim,
                 null_placeholder: '%NULLVALUE%'
 
-              if Tms.objects.source_xform.text_entries
-                Tms.objects.source_xform.text_entry_lookup = text_entries__for_objects
-                transform Tms.objects.source_xform.text_entries
+              if Tms::Objects::FieldXforms.text_entries
+                Tms::Objects::Config.config.text_entry_lookup = text_entries__for_objects
+                transform Tms::Objects::FieldXforms.text_entries
               end
 
 
               %i[inscribed signed markings].each do |source|
-                xform = Tms.objects.cleaner.send(source)
+                xform = Tms::Objects::Cleaners.send(source)
                 if xform
                   transform do |row|
                     xform.process(row)
@@ -230,7 +223,7 @@ module Kiba
                 end
               end
               %i[creditline curatorialremarks inscribed markings signed].each do |source|
-                xform = Tms.objects.source_xform.send(source)
+                xform = Tms::Objects::FieldXforms.send(source)
                 if xform
                   transform do |row|
                     xform.process(row)
@@ -247,11 +240,11 @@ module Kiba
                 dimensions: :dimensionsummary
               }
               custom_handled_fields.each{ |field| rename_map.delete(field) }
-              transform Rename::Fields, fieldmap: rename_map.merge(Tms.objects.custom_rename_fieldmap)
+              transform Rename::Fields, fieldmap: rename_map.merge(Tms::Objects::Config.custom_rename_fieldmap)
 
               %w[annotation nontext_inscription text_inscription].each do |type|
-                sources = Tms.objects.send("#{type}_source_fields".to_sym)
-                targets = Tms.objects.send("#{type}_target_fields".to_sym)
+                sources = Tms::Objects::Config.send("#{type}_source_fields".to_sym)
+                targets = Tms::Objects::Config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
                   transform Kiba::Extend::Transforms::Cspace::FieldGroupCombiner,
                     sources: sources,
