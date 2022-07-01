@@ -44,6 +44,7 @@ module Kiba
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             phone_types: :phonetypeid,
+            role_types: :roletypeid,
             term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
             term_types: :termtypeid,
