@@ -20,9 +20,10 @@ module Kiba
 
           def lookups
             result = %i[
-               prep__departments
-               prep__object_statuses
-               prep__obj_context
+                        prep__departments
+                        prep__object_statuses
+                        prep__obj_context
+                        con_xref_details__for_objects
                        ]
             if Tms.objects.source_xform.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
@@ -141,6 +142,79 @@ module Kiba
                 },
                 delim: Tms.delim
 
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: con_xref_details__for_objects,
+                fieldmap: {
+                  objectproductionperson: :person,
+                  objectproductionpersonrole: :role
+                },
+                conditions: ->(_origrow, mergerows) do
+                  mergerows.reject{ |row| row[:person].blank? }
+                    .select{ |row| Tms.objects.production_roles.any?(row[:role]) }
+                    .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
+                    .to_h
+                    .values
+                end,
+                sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                delim: Tms.delim,
+                null_placeholder: '%NULLVALUE%'
+
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: con_xref_details__for_objects,
+                fieldmap: {
+                  objectproductionorganization: :org,
+                  objectproductionorganizationrole: :role
+                },
+                conditions: ->(_origrow, mergerows) do
+                  mergerows.reject{ |row| row[:org].blank? }
+                    .select{ |row| Tms.objects.production_roles.any?(row[:role]) }
+                    .map{ |row| ["#{row[:org]} #{row[:role]}", row] }
+                    .to_h
+                    .values
+                end,
+                sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                delim: Tms.delim,
+                null_placeholder: '%NULLVALUE%'
+
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: con_xref_details__for_objects,
+                fieldmap: {
+                  assocperson: :person,
+                  assocpersontype: :role,
+                  assocpersonnote: :assoc_con_note
+                },
+                conditions: ->(_origrow, mergerows) do
+                  mergerows.reject{ |row| row[:person].blank? }
+                    .select{ |row| Tms.objects.assoc_roles.any?(row[:role]) }
+                    .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
+                    .to_h
+                    .values
+                end,
+                sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                delim: Tms.delim,
+                null_placeholder: '%NULLVALUE%'
+              transform Merge::MultiRowLookup,
+                keycolumn: :objectid,
+                lookup: con_xref_details__for_objects,
+                fieldmap: {
+                  assocorganization: :org,
+                  assocorganizationtype: :role,
+                  assocorganizationnote: :assoc_con_note
+                },
+                conditions: ->(_origrow, mergerows) do
+                  mergerows.reject{ |row| row[:org].blank? }
+                    .select{ |row| Tms.objects.assoc_roles.any?(row[:role]) }
+                    .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
+                    .to_h
+                    .values
+                end,
+                sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                delim: Tms.delim,
+                null_placeholder: '%NULLVALUE%'
+
               if Tms.objects.source_xform.text_entries
                 Tms.objects.source_xform.text_entry_lookup = text_entries__for_objects
                 transform Tms.objects.source_xform.text_entries
@@ -163,12 +237,14 @@ module Kiba
                   end
                 end
               end
-	
+              
               rename_map = {
                 chat: :viewerscontributionnote,
                 description: :briefdescription,
                 medium: :materialtechniquedescription,
-                notes: :comment
+                notes: :comment,
+                objectcount: :numberofobjects,
+                dimensions: :dimensionsummary
               }
               custom_handled_fields.each{ |field| rename_map.delete(field) }
               transform Rename::Fields, fieldmap: rename_map.merge(Tms.objects.custom_rename_fieldmap)

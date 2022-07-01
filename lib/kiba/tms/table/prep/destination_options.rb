@@ -44,7 +44,7 @@ module Kiba
             },
             con_xref_details: {
               initial_headers:
-              %i[tablename recordid role roletype person org displayorder]
+              %i[tablename recordid role roletype person org altname displayorder]
             },
             obj_locations: {
               initial_headers:

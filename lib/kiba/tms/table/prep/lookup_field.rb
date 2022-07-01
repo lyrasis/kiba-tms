@@ -31,6 +31,7 @@ module Kiba
             con_alt_names: :altnameid,
             con_types: :constituenttypeid,
             con_xrefs: :conxrefid,
+            con_xref_details: :recordid,
             countries: :countryid,
             departments: :departmentid,
             email_types: :emailtypeid,

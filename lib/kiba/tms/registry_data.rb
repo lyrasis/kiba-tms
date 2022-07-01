@@ -267,6 +267,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('con_xref_details') do
+          register :for_objects, {
+            creator: Kiba::Tms::Jobs::ConXrefDetails::ForObjects,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_objects.csv'),
+            tags: %i[con_xref_details objects],
+            lookup_on: :recordid
+          }
+        end
+
         Kiba::Tms.registry.namespace('constituents') do
           register :alt_name_mismatch, {
             creator: Kiba::Tms::Jobs::Constituents::AltNameMismatch,

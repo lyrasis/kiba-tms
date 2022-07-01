@@ -16,6 +16,7 @@ module Kiba
                            persons__by_constituentid
                            orgs__by_constituentid
                            prep__con_xrefs
+                           prep__con_alt_names
                           ]
               },
               transformer: xforms
@@ -47,6 +48,23 @@ module Kiba
                   recordid: :recordid
                 }
               transform Delete::Fields, fields: :conxrefid
+              transform Merge::MultiRowLookup,
+                lookup: prep__con_alt_names,
+                keycolumn: :nameid,
+                fieldmap: {altname: Tms.constituents.preferred_name_field}
+              transform Delete::Fields, fields: :nameid
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[person org],
+                target: :name,
+                sep: '',
+                delete_sources: false
+              transform Delete::FieldValueIfEqualsOtherField, delete: :altname, if_equal_to: :name
+
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: %i[datebegin dateend],
+                find: '^0$',
+                replace: ''
             end
           end
         end
