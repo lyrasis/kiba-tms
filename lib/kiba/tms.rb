@@ -16,7 +16,7 @@ require 'pry'
 loader = Zeitwerk::Loader.new
 loader.inflector.inflect(
   'classification_xrefs' => 'ClassificationXRefs'
-  )
+)
 loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
 #loader.logger = method(:puts)
 loader.setup
@@ -206,12 +206,44 @@ module Kiba
       # transformers to transform data in the source field
       setting :source_xform, reader: true do
         setting :classifications, default: nil, reader: true
-        setting :creditline, default: Kiba::Tms::Transforms::Objects::Creditline, reader: true
-        setting :curatorialremarks, default: nil, reader: true
-        setting :inscribed, default: Kiba::Tms::Transforms::Objects::InscribedXform, reader: true
-        setting :markings, default: Kiba::Tms::Transforms::Objects::MarkingsTextXform, reader: true
-        setting :markings_type, default: nil, reader: true
-        setting :signed, default: Kiba::Tms::Transforms::Objects::SignedXform, reader: true
+        setting :creditline,
+          default: Tms::Transforms::DeriveFieldPair.new(
+            source: :creditline,
+            newfield: :annotationtype,
+            value: 'Credit Line',
+            sourcebecomes: :annotationnote
+          ),
+          reader: true        
+        setting :curatorialremarks,
+          default: Kiba::Extend::Transforms::Rename::Field.new(
+            from: :curatorialremarks,
+            to: :curatorialremarks_comment
+          ),
+          reader: true
+        setting :inscribed,
+          default: Tms::Transforms::DeriveFieldPair.new(
+            source: :inscribed,
+            newfield: :inscriptioncontenttype,
+            value: 'inscribed',
+            sourcebecomes: :inscriptioncontent
+          ),
+          reader: true
+        setting :markings,
+          default: Tms::Transforms::DeriveFieldPair.new(
+            source: :markings,
+            newfield: :inscriptioncontenttype,
+            value: '',
+            sourcebecomes: :inscriptioncontent
+          ),
+          reader: true
+        setting :signed,
+          default: Tms::Transforms::DeriveFieldPair.new(
+            source: :signed,
+            newfield: :inscriptioncontenttype,
+            value: 'signature',
+            sourcebecomes: :inscriptioncontent
+          ),
+          reader: true
         setting :text_entries, default: nil, reader: true
         setting :text_entry_lookup, default: nil, reader: true
       end
