@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: "nameclean#{ITERATION}__orgs_kept".to_sym,
-                destination: :persons__by_constituentid
+                destination: :orgs__by_constituentid
               },
               transformer: xforms
             )
