@@ -15,7 +15,9 @@ module Kiba
             '81'=>'Loans',
             '108'=>'Objects',
             '143'=>'ReferenceMaster',
-            '187'=>'HistEvents'
+            '187'=>'HistEvents',
+            '631'=>'AccessionLot',
+            '632'=>'RegistrationSets'
           }
         end
 
