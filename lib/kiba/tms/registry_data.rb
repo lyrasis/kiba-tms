@@ -76,18 +76,21 @@ module Kiba
             creator: Kiba::Tms::Jobs::AltNums::ForConstituents,
             path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_constituents.csv'),
             desc: 'AltNums to be merged into Constituents',
-            tags: %i[altnums constituents]
+            tags: %i[altnums constituents],
+            lookup_on: :recordid
           }
           register :for_objects, {
             creator: Kiba::Tms::Jobs::AltNums::ForObjects,
             path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects.csv'),
-            tags: %i[altnums objects]
+            tags: %i[altnums objects],
+            lookup_on: :recordid
           }
           register :for_reference_master, {
             creator: Kiba::Tms::Jobs::AltNums::ForReferenceMaster,
             path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs.csv'),
             desc: 'AltNums to be merged into ReferenceMaster',
-            tags: %i[altnums reference_master]
+            tags: %i[altnums reference_master],
+            lookup_on: :recordid
           }
           register :for_objects_todo, {
             creator: Kiba::Tms::Jobs::AltNums::ForObjectsTodo,
