@@ -40,6 +40,7 @@ module Kiba
               sourcebecomes: :inscriptioncontent
             ),
             reader: true
+          setting :medium, default: nil, reader: true
           setting :signed,
             default: Tms::Transforms::DeriveFieldPair.new(
               source: :signed,
