@@ -93,13 +93,13 @@ module Kiba
             creator: Kiba::Tms::Jobs::AltNums::ForObjectsTodo,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_objects_todo.csv'),
             desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
-            tags: %i[altnums reports todochk]
+            tags: %i[altnums todochk]
           }
           register :for_reference_master_todo, {
             creator: Kiba::Tms::Jobs::AltNums::ForReferenceMasterTodo,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_refs_todo.csv'),
             desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
-            tags: %i[altnums todochk reports]
+            tags: %i[altnums todochk]
           }
           register :description_single_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
@@ -110,8 +110,8 @@ module Kiba
           register :description_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_occs.csv'),
-            desc: 'AltNums with count of description occurrences',
-            tags: %i[altnums reports]
+            desc: 'AltNums with count of description occurrences - source data for other reports',
+            tags: %i[altnums]
           }
           register :no_description, {
             creator: Kiba::Tms::Jobs::AltNums::NoDescription,
