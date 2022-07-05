@@ -183,12 +183,12 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConAddress::Multi,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_with_multiple_address.csv'),
             tags: %i[con con_address reports],
-                        dest_special_opts: {
+            dest_special_opts: {
               initial_headers:
               %i[
                  addresscount type termdisplayname rank address_notes
                  addressplace1 addressplace2 city state zipcode addresscountry
-              ] }
+                ] }
           }
         end
 
@@ -236,7 +236,7 @@ module Kiba
           }
         end
         
-          Kiba::Tms.registry.namespace('con_email') do
+        Kiba::Tms.registry.namespace('con_email') do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_email_dropping.csv'),
@@ -558,14 +558,14 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-               termsource normalized_form approx_normalized duplicate inconsistent_org_names missing_last_name
-               migration_action constituenttype preferred_name_form variant_name_form alt_names
-               institution contact_person contact_role
-               salutation nametitle firstname middlename lastname suffix
-               begindateiso enddateiso nationality culturegroup school
-               biography remarks
-               approved active isstaff is_private_collector code
-              ] }
+                 termsource normalized_form approx_normalized duplicate inconsistent_org_names missing_last_name
+                 migration_action constituenttype preferred_name_form variant_name_form alt_names
+                 institution contact_person contact_role
+                 salutation nametitle firstname middlename lastname suffix
+                 begindateiso enddateiso nationality culturegroup school
+                 biography remarks
+                 approved active isstaff is_private_collector code
+                ] }
           }
           register :flagged_duplicates, {
             creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,
