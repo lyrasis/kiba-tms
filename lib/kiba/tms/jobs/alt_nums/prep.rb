@@ -55,6 +55,9 @@ module Kiba
                 target: :targetrecord,
                 sep: '',
                 delete_sources: true
+
+              
+              transform Tms::AltNums.description_cleaner if Tms::AltNums.description_cleaner
             end
           end
         end

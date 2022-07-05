@@ -29,6 +29,7 @@ module Kiba
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
             end
             result << :text_entries__for_objects if Tms::Objects::FieldXforms.text_entries
+            result << :alt_nums__for_objects if Tms::AltNums.target_tables.any?('Objects')
             result
           end
           
@@ -208,6 +209,26 @@ module Kiba
                 delim: Tms.delim,
                 null_placeholder: '%NULLVALUE%'
 
+              if Tms::AltNums.target_tables.any?('Objects')
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: alt_nums__for_objects,
+                  fieldmap: {
+                    numbervalue: :altnum,
+                    numbertype: :description
+                  },
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
+                  delim: Tms.delim,
+                  null_placeholder: '%NULLVALUE%'
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: alt_nums__for_objects,
+                  fieldmap: {alt_num_comment: :remarks},
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
+                  delim: Tms.delim
+                transform Prepend::ToFieldValue, field: :alt_num_comment, value: 'Other number note: '
+              end
+
               if Tms::Objects::FieldXforms.text_entries
                 Tms::Objects::Config.config.text_entry_lookup = text_entries__for_objects
                 transform Tms::Objects::FieldXforms.text_entries
@@ -251,6 +272,14 @@ module Kiba
                     sources: sources,
                     targets: targets
                 end
+              end
+
+              if Tms::AltNums.target_tables.any?('Objects')
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[comment alt_num_comment],
+                  target: :comment,
+                  sep: Tms.delim,
+                  delete_sources: true
               end
               
               if Tms.data_cleaner
