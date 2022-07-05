@@ -36,6 +36,7 @@ module Kiba
             countries: :countryid,
             departments: :departmentid,
             email_types: :emailtypeid,
+            flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
             locations: :locationid,

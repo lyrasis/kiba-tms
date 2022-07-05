@@ -337,6 +337,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('flag_labels') do
+          register :unmapped, {
+            creator: Kiba::Tms::Jobs::FlagLabels::Unmapped,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'flag_labels_unmapped.csv'),
+            desc: 'FlagLabel values needing to be added to Tms::FlagLabels.inventory_status_mapping. Non-zero count means work to do!',
+            tags: %i[flag_labels todochk]
+          }
+        end
+        
         Kiba::Tms.registry.namespace('locs') do
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
