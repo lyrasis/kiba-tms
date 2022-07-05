@@ -50,6 +50,7 @@ module Kiba
             phone_types: :phonetypeid,
             role_types: :roletypeid,
             roles: :roleid,
+            status_flags: :recordid,
             term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
             term_types: :termtypeid,
