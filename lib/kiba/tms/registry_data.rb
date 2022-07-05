@@ -66,55 +66,61 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('alt_nums') do
-          register :for_objects, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:for_objects),
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects.csv'),
-            desc: 'AltNums to be merged into Objects',
-            tags: %i[altnums mergeable]
-          }
-          register :for_refs, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:for_refs),
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs.csv'),
-            desc: 'AltNums to be merged into ReferenceMaster',
-            tags: %i[altnums mergeable]
-          }
-          register :for_objects_todo, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:for_objects_todo),
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects_todo.csv'),
-            desc: 'Reference AltNums with date values - need to map',
-            tags: %i[altnums todochk]
-          }
-          register :for_refs_todo, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:for_refs_todo),
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs_todo.csv'),
-            desc: 'Reference AltNums with date values - need to map',
-            tags: %i[altnums todochk]
+          register :new_tables, {
+            creator: Kiba::Tms::Jobs::AltNums::NewTables,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_new_tables.csv'),
+            desc: 'Tables with alt nums where table handling is not yet set up. Non-zero means work to do!',
+            tags: %i[altnums todochk reports]
           }
           register :for_constituents, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:for_constituents),
+            creator: Kiba::Tms::Jobs::AltNums::ForConstituents,
             path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_constituents.csv'),
             desc: 'AltNums to be merged into Constituents',
-            tags: %i[altnums mergeable]
+            tags: %i[altnums constituents]
           }
-          register :single_occ_description, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:single_occ_description),
+          register :for_objects, {
+            creator: Kiba::Tms::Jobs::AltNums::ForObjects,
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects.csv'),
+            tags: %i[altnums objects]
+          }
+          register :for_reference_master, {
+            creator: Kiba::Tms::Jobs::AltNums::ForReferenceMaster,
+            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs.csv'),
+            desc: 'AltNums to be merged into ReferenceMaster',
+            tags: %i[altnums reference_master]
+          }
+          register :for_objects_todo, {
+            creator: Kiba::Tms::Jobs::AltNums::ForObjectsTodo,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_objects_todo.csv'),
+            desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
+            tags: %i[altnums reports todochk]
+          }
+          register :for_reference_master_todo, {
+            creator: Kiba::Tms::Jobs::AltNums::ForReferenceMasterTodo,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_refs_todo.csv'),
+            desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
+            tags: %i[altnums todochk reports]
+          }
+          register :description_single_occs, {
+            creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_single_occ.csv'),
-            desc: 'AltNums with a description only used once'
+            desc: 'AltNums with a description only used once',
+            tags: %i[altnums reports]
           }
           register :description_occs, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:description_occs),
-            path: File.join(Kiba::Tms.datadir, 'prepped', 'alt_nums_description_occs.csv'),
+            creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_occs.csv'),
             desc: 'AltNums with count of description occurrences',
-            tags: %i[altnums prep]
+            tags: %i[altnums reports]
           }
           register :no_description, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:no_description),
+            creator: Kiba::Tms::Jobs::AltNums::NoDescription,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_no_description.csv'),
             desc: 'AltNums without a description value',
             tags: %i[altnums reports]
           }
           register :types, {
-            creator: Kiba::Tms::Jobs::AltNums.method(:types),
+            creator: Kiba::Tms::Jobs::AltNums::Types,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_num_types.csv'),
             desc: 'AltNumber types',
             tags: %i[altnums reports]
