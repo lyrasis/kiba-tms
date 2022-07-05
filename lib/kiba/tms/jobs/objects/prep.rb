@@ -233,11 +233,12 @@ module Kiba
               
               rename_map = {
                 chat: :viewerscontributionnote,
+                culture: :objectproductionpeople,
                 description: :briefdescription,
+                dimensions: :dimensionsummary,
                 medium: :materialtechniquedescription,
                 notes: :comment,
                 objectcount: :numberofobjects,
-                dimensions: :dimensionsummary
               }
               custom_handled_fields.each{ |field| rename_map.delete(field) }
               transform Rename::Fields, fieldmap: rename_map.merge(Tms::Objects::Config.custom_rename_fieldmap)
