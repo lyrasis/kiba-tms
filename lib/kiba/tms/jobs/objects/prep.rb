@@ -30,6 +30,7 @@ module Kiba
             end
             result << :text_entries__for_objects if Tms::Objects::FieldXforms.text_entries
             result << :alt_nums__for_objects if Tms::AltNums.target_tables.any?('Objects')
+            result << :prep__status_flags if Tms::StatusFlags.target_tables.any?('Objects')
             result
           end
           
@@ -229,6 +230,16 @@ module Kiba
                 transform Prepend::ToFieldValue, field: :alt_num_comment, value: 'Other number note: '
               end
 
+              if Tms::StatusFlags.target_tables.any?('Objects')
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: prep__status_flags,
+                  fieldmap: {status_flag_inventorystatus: :flaglabel},
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
+                  delim: Tms.delim,
+                  conditions: ->(_origrow, mergerows){ mergerows.select{ |row| row[:tablename] == 'Objects' } }
+              end
+              
               if Tms::Objects::FieldXforms.text_entries
                 Tms::Objects::Config.config.text_entry_lookup = text_entries__for_objects
                 transform Tms::Objects::FieldXforms.text_entries
@@ -281,7 +292,7 @@ module Kiba
                   sep: Tms.delim,
                   delete_sources: true
               end
-              
+
               if Tms.data_cleaner
                 transform Tms.data_cleaner
               end
