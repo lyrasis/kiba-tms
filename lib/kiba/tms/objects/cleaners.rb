@@ -7,9 +7,11 @@ module Kiba
     module Objects
       module Cleaners
         extend Dry::Configurable
-          setting :signed, default: nil, reader: true
-          setting :inscribed, default: nil, reader: true
-          setting :markings, default: nil, reader: true
+        setting :culture, default: nil, reader: true
+        setting :inscribed, default: nil, reader: true
+        setting :markings, default: nil, reader: true
+        setting :medium, default: nil, reader: true
+        setting :signed, default: nil, reader: true
       end
     end
   end

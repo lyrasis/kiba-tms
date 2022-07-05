@@ -214,7 +214,7 @@ module Kiba
               end
 
 
-              %i[inscribed signed markings].each do |source|
+              %i[culture inscribed markings medium signed].each do |source|
                 xform = Tms::Objects::Cleaners.send(source)
                 if xform
                   transform do |row|
