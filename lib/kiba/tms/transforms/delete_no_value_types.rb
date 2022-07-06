@@ -11,7 +11,7 @@ module Kiba
             action: :reject,
             field: field,
             ignore_case: true,
-            match: '^(\(|\[)?(not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$'
+            match: '^(\(|\[)?(none assigned|not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$'
             )
         end
 
