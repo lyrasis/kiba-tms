@@ -20,9 +20,14 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldPopulated, action: :reject, field: :is_top_object
-              transform Delete::Fields, fields: :is_top_object
+              transform FilterRows::FieldPopulated, action: :reject, field: :problemcomponent
+              
+              
+              transform Delete::Fields,
+                fields: %i[is_top_object problemcomponent existingobject duplicate
+                           parentname parenttitle parentdesc]
               transform Rename::Fields, fieldmap: {
-                objectnumber: :parentobject,
+                parentobjectnumber: :parentobject,
                 componentname: :title
               }
             end
