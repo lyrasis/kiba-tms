@@ -17,7 +17,6 @@ module Kiba
               .map{ |str| str.split(Tms.delim) }
               .flatten
               .uniq
-            return row if values.empty?
             combine(values, row)
             row
           end
@@ -31,6 +30,7 @@ module Kiba
               fix(values)
             end
             row[target] = values.sort.join(Tms.delim)
+            fields.each{ |field| row.delete(field) }
           end
 
           def fix(values)
@@ -47,6 +47,7 @@ module Kiba
           end
           
           def fixable?(values)
+            return false if values.empty?
             return false if values.length == 1
             return true if values.any?('unknown')
             return true if values.any?('potential return') && values.any?('returned')
