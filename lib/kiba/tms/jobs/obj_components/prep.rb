@@ -25,11 +25,9 @@ module Kiba
           end
 
           def lookups
-            if Tms.obj_components.used
-              %i[tms__obj_comp_types tms__obj_comp_statuses]
-            else
-              []
-            end
+            base = []
+            base << %i[tms__obj_comp_types tms__obj_comp_statuses] if Tms::ObjComponents.actual_components
+            base.flatten
           end
           
           def xforms
@@ -38,7 +36,7 @@ module Kiba
               transform Delete::Fields, fields: %i[sortnumber injurisdiction]
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
 
-              if Tms.obj_components.used
+              if Tms::ObjComponents.actual_components
                 transform Merge::MultiRowLookup,
                   lookup: tms__obj_comp_types,
                   keycolumn: :componenttype,

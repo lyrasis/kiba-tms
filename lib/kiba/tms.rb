@@ -179,14 +179,6 @@ module Kiba
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
     
-
-
-    setting :obj_components, reader: true do
-      # whether or not ObjComponents is used to record information about actual object components
-      #   (sub-objects). Either way TMS provides linkage to Locations through ObjComponents
-      setting :used, default: false, reader: true
-    end
-    
     setting :obj_context, reader: true do
       # client-specfic fields to delete
       setting :delete_fields, default: [], reader: true
