@@ -661,6 +661,11 @@ module Kiba
             tags: %i[obj_components],
             lookup_on: :componentid
           }
+          register :objects, {
+            creator: Kiba::Tms::Jobs::ObjComponents::Objects,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_objects.csv'),
+            tags: %i[obj_components objects]
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_locations') do
