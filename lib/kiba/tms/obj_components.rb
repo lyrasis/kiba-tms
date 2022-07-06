@@ -9,6 +9,12 @@ module Kiba
       # whether or not ObjComponents is used to record information about actual object components
       #   (sub-objects). Either way TMS provides linkage to Locations through ObjComponents
       setting :actual_components, default: false, reader: true
+      setting :unhandled_fields,
+        default: %i[
+                    storagemethodid storageformatid homelevel searchhomecontainer tobecombined
+                    readystorage readyexhibit prepcomments costmethodid receiveddate homecrateid
+                   ],
+        reader: true
     end
   end
 end

@@ -20,10 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
-              chkfields = %i[
-                             storagemethodid storageformatid homelevel searchhomecontainer tobecombined
-                             readystorage readyexhibit prepcomments costmethodid receiveddate homecrateid
-                            ]
+              chkfields = Tms::ObjComponents.unhandled_fields
               transform Delete::FieldsExcept, fields: chkfields
               transform Clean::RegexpFindReplaceFieldVals, fields: chkfields, find: '^0$', replace: ''
               transform CombineValues::FromFieldsWithDelimiter,
