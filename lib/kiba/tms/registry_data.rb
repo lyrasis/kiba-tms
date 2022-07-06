@@ -720,6 +720,14 @@ module Kiba
           }
         end
         
+        Kiba::Tms.registry.namespace('objecthierarchy') do
+          register :from_obj_components, {
+            creator: Kiba::Tms::Jobs::Objecthierarchy::FromObjComponents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'objecthierarchy_from_obj_components.csv'),
+            tags: %i[objecthierarchy obj_components]
+          }
+        end
+
         Kiba::Tms.registry.namespace('objects') do
           register :by_number, {
             creator: Kiba::Tms::Jobs::Objects::ByNumber,
