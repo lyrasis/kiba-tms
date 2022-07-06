@@ -634,6 +634,18 @@ module Kiba
                 ] },
             lookup_on: :componentid
           }
+          register :actual_components, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_actual.csv'),
+            tags: %i[obj_components],
+            lookup_on: :componentid
+          }
+          register :parent_objects, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_parent_objects.csv'),
+            tags: %i[obj_components],
+            lookup_on: :componentid
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_locations') do
