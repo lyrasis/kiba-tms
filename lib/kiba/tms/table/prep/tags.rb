@@ -25,15 +25,14 @@ module Kiba
           def default_tag
             table_key
               .to_s
-              .delete('_')
               .to_sym
           end
           
           TAGS = {
             constituents: %i[con],
-            con_types: %i[con],
-            con_alt_names: %i[con],
-            con_dates: %i[con],
+            con_types: %i[con con_types],
+            con_alt_names: %i[con con_alt_names],
+            con_dates: %i[con con_dates],
             exh_ven_obj_xrefs: %i[exhibitions objects venues rels],
             indemnity_responsibilities: %i[ins],
             insurance_responsibilities: %i[ins],
