@@ -14,6 +14,10 @@ module Kiba
           }
 
           def job
+            unless Tms.excluded_tables.any?('StorageMethods.csv')
+              warn('Set up StorageMethods processing')
+            end
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_components,
@@ -55,6 +59,7 @@ module Kiba
                   delim: Tms.delim
                 transform Delete::Fields, fields: :objcompstatusid
               end
+
               
               transform Replace::FieldValueWithStaticMapping,
                 source: :inactive,
