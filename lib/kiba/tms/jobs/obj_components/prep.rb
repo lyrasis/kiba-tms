@@ -33,7 +33,14 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[sortnumber injurisdiction]
+              delete_fields = [
+                  Tms::ObjComponents.out_of_scope_fields,
+                  Tms::ObjComponents.unhandled_fields,
+                  Tms::ObjComponents.other_delete_fields
+                ].flatten
+              delete_fields << :conservationentityid unless Tms.conservationentity_used
+              transform Delete::Fields,
+                fields: delete_fields
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
 
               if Tms::ObjComponents.actual_components
@@ -44,8 +51,6 @@ module Kiba
                     component_type: :objcomptype,
                   },
                   delim: Tms.delim
-                transform Delete::Fields, fields: :componenttype
-
                 transform Merge::MultiRowLookup,
                   lookup: tms__obj_comp_statuses,
                   keycolumn: :objcompstatusid,
@@ -53,8 +58,8 @@ module Kiba
                     objcompstatus: :objcompstatus,
                   },
                   delim: Tms.delim
-                transform Delete::Fields, fields: :objcompstatusid
               end
+              transform Delete::Fields, fields: %i[componenttype objcompstatusid]
 
               
               transform Replace::FieldValueWithStaticMapping,
