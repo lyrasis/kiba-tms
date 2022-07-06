@@ -41,6 +41,7 @@ module Kiba
             insurance_responsibilities: :responsibilityid,
             locations: :locationid,
             obj_comp_statuses: :objcompstatusid,
+            obj_comp_types: :objcomptypeid,
             obj_components: :component_id,
             obj_context: :objectid,
             obj_ins_indem_resp: :objinsindemrespid,
