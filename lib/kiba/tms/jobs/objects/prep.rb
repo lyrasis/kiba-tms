@@ -238,6 +238,7 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
                   delim: Tms.delim,
                   conditions: ->(_origrow, mergerows){ mergerows.select{ |row| row[:tablename] == 'Objects' } }
+                transform Tms::Transforms::Objects::CombineObjectStatusAndStatusFlags
               end
               
               if Tms::Objects::FieldXforms.text_entries
