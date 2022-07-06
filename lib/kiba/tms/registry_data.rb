@@ -634,6 +634,12 @@ module Kiba
                 ] },
             lookup_on: :componentid
           }
+          register :unhandled, {
+            creator: Kiba::Tms::Jobs::ObjComponents::Unhandled,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_components_unhandled_fields.csv'),
+            tags: %i[obj_components todochk],
+            desc: 'Rows where any fields expected to be empty are not. These fields are not yet handled by the code, so non-zero count means work to do!'
+          }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_actual.csv'),
