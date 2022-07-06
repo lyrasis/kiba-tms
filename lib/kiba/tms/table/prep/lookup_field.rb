@@ -35,6 +35,7 @@ module Kiba
             con_xref_details: :recordid,
             countries: :countryid,
             departments: :departmentid,
+            dimension_units: :unitid,
             email_types: :emailtypeid,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,

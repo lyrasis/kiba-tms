@@ -337,6 +337,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('dimension_units') do
+          register :unmapped, {
+            creator: Kiba::Tms::Jobs::DimensionUnits::Unmapped,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'dimension_units_unmapped.csv'),
+            desc: 'DimensionUnits values needing to be added to Tms::DimensionUnits.unit_mapping. Non-zero count means work to do!',
+            tags: %i[dimension_units todochk]
+          }
+        end
+
         Kiba::Tms.registry.namespace('flag_labels') do
           register :unmapped, {
             creator: Kiba::Tms::Jobs::FlagLabels::Unmapped,
