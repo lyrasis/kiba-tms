@@ -629,19 +629,19 @@ module Kiba
         
         Kiba::Tms.registry.namespace('obj_components') do
           register :with_object_numbers, {
+            desc: %q{Merges in the human-readable :objectnumber value for each row; Flags "top objects", i.e. not separate components, i.e. :objectnumber = :componentnumber; Adds :existingobject field, which, if populated, means there is an object in Objects table with the same ID as the component (this is expected for "top objects" but not other rows.},
             creator: Kiba::Tms::Jobs::ObjComponents::WithObjectNumbers,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_with_object_numbers.csv'),
-            tags: %i[obj_components],
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_components_with_object_numbers.csv'),
+            tags: %i[obj_components reports cleanup],
             dest_special_opts: {
               initial_headers:
               %i[
-                 objectid componentid
-                 objectnumber componentnumber is_top_object
-                 componentname
+                 parentobjectnumber componentnumber is_top_object problemcomponent existingobject duplicate
+                 componentname parentname parenttitle
+                 physdesc parentdesc
                  component_type objcompstatus active
                  physdesc
-                ] },
-            lookup_on: :componentid
+                ] }
           }
           register :unhandled, {
             creator: Kiba::Tms::Jobs::ObjComponents::Unhandled,

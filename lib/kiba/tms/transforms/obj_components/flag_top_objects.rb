@@ -14,7 +14,7 @@ module Kiba
           def process(row)
             row[target] = nil
 
-            nums = field_values(row: row, fields: %i[objectnumber componentnumber]).values.uniq.length
+            nums = field_values(row: row, fields: %i[parentobjectnumber componentnumber]).values.uniq.length
             return row if nums > 1
 
             row[target] = 'y'
