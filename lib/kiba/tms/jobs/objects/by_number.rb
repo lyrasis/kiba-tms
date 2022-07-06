@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Objects
-        module ObjectNumberLookup
+        module ByNumber
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__objects,
-                destination: :prep__object_numbers
+                destination: :objects__by_number
               },
               transformer: xforms
             )
@@ -19,7 +19,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, keepfields: %i[objectnumber]
             end
           end
         end

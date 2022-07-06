@@ -706,14 +706,24 @@ module Kiba
           }
         end
         
-          Kiba::Tms.registry.namespace('orgs') do
-            register :by_constituentid, {
-              creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
-              path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
-              desc: 'Org authority values lookup by constituentid',
-              lookup_on: :fp_constituentid,
-              tags: %i[orgs]
-            }
+        Kiba::Tms.registry.namespace('objects') do
+          register :by_number, {
+            creator: Kiba::Tms::Jobs::Objects::ByNumber,
+            path: File.join(Kiba::Tms.datadir, 'working', 'objects_by_number.csv'),
+            desc: 'Original TMS Objects table rows, lookedup by :objectnumber',
+            lookup_on: :objectnumber,
+            tags: %i[objects]
+          }
+        end
+        
+        Kiba::Tms.registry.namespace('orgs') do
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
+            path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
+            desc: 'Org authority values lookup by constituentid',
+            lookup_on: :fp_constituentid,
+            tags: %i[orgs]
+          }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Orgs::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_norm.csv'),
