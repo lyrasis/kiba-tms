@@ -26,7 +26,7 @@ module Kiba
 
           def lookups
             base = []
-            base << %i[tms__obj_comp_types tms__obj_comp_statuses] if Tms::ObjComponents.actual_components
+            base << %i[tms__obj_comp_types prep__obj_comp_statuses] if Tms::ObjComponents.actual_components
             base.flatten
           end
           
@@ -52,7 +52,7 @@ module Kiba
                   },
                   delim: Tms.delim
                 transform Merge::MultiRowLookup,
-                  lookup: tms__obj_comp_statuses,
+                  lookup: prep__obj_comp_statuses,
                   keycolumn: :objcompstatusid,
                   fieldmap: {
                     objcompstatus: :objcompstatus,

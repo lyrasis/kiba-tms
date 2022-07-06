@@ -618,6 +618,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_comp_statuses') do
+          register :unmapped, {
+            creator: Kiba::Tms::Jobs::ObjCompStatuses::Unmapped,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_comp_statuses_unmapped.csv'),
+            tags: %i[obj_comp_statuses todochk],
+            desc: 'Non-zero count means work to do!'
+          }
+        end
+        
         Kiba::Tms.registry.namespace('obj_components') do
           register :with_object_numbers, {
             creator: Kiba::Tms::Jobs::ObjComponents::WithObjectNumbers,
