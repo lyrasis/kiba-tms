@@ -114,9 +114,12 @@ module Kiba
                ReferenceMaster.csv
                RefFormats.csv
                RefXRefs.csv
+               StorageFormats.csv
+               StorageMethods.csv
                TextStatuses.csv
                TreatmentPriorities.csv
-               ValuationPurposes.csv              ]
+               ValuationPurposes.csv
+              ]
           end
         end
       end
