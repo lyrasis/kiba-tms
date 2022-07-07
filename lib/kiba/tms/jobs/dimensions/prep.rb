@@ -24,20 +24,21 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[displayed dimensionid]
+              transform Delete::Fields, fields: %i[displayed dimensionid secondaryunitid]
               transform FilterRows::FieldEqualTo, action: :reject, field: :dimension, value: '.0000000000'
               transform Merge::MultiRowLookup,
                 lookup: prep__dimension_units,
                 keycolumn: :primaryunitid,
                 fieldmap: {measurementunit: :unitname}
               transform Delete::Fields, fields: :primaryunitid
-              transform Merge::MultiRowLookup,
-                lookup: prep__dimension_units,
-                keycolumn: :secondaryunitid,
-                fieldmap: {measurementunit_secondary: :unitname}
-              transform Delete::Fields, fields: :secondaryunitid
 
               transform Rename::Field, from: :dimension, to: :value
+              transform Append::ConvertedValueAndUnit,
+                value: :value,
+                unit: :measurementunit,
+                delim: Tms.sgdelim,
+                places: 10
+
               transform Merge::MultiRowLookup,
                 lookup: prep__dimension_types,
                 keycolumn: :dimensiontypeid,
