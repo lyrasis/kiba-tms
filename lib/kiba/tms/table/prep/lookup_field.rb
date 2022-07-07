@@ -35,6 +35,7 @@ module Kiba
             con_xref_details: :recordid,
             countries: :countryid,
             departments: :departmentid,
+            dim_item_elem_xrefs: :dimitemelemxrefid,
             dimension_elements: :elementid,
             dimension_types: :dimensiontypeid,
             dimension_units: :unitid,
