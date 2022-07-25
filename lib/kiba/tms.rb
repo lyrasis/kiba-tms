@@ -34,6 +34,7 @@ module Kiba
     # you will want to override the following in any application using this extension
     setting :datadir, default: "#{__dir__}/data", reader: true
     setting :delim, default: Kiba::Extend.delim, reader: true
+    setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
     # TMS tables not used in a given project. Override in project application
     setting :excluded_tables, default: [], reader: true
     # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
