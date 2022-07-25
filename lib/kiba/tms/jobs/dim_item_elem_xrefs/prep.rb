@@ -20,8 +20,8 @@ module Kiba
           end
 
           def lookups
-            base = %i[prep__dimension_elements]
-            #            base << :prep__dimension_methods if Tms::DimensionMethods.used
+            base = %i[prep__dimension_elements prep__dimensions]
+            # base << :prep__dimension_methods if Tms::DimensionMethods.used
             base
           end
           
