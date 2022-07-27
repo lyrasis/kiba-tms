@@ -658,6 +658,12 @@ module Kiba
             desc: 'Names extracted from obj_locations table',
             tags: %i[names obj_locations]
           }
+          register :from_assoc_parents_for_con, {
+            creator: Kiba::Tms::Jobs::Names::FromAssocParentsForCon,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_assoc_parents_for_con.csv'),
+            desc: 'Names extracted from AssocParents (for constituents) table',
+            tags: %i[names assoc_parents]
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_comp_statuses') do

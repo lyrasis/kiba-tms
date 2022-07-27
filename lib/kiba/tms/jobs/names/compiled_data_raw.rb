@@ -10,9 +10,15 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: %i[names__from_constituents names__from_constituents_orgs_from_persons
-                           names__from_constituents_persons_from_orgs names__from_loans
-                           names__from_obj_accession names__from_obj_locations],
+                source: %i[
+                           names__from_constituents
+                           names__from_constituents_orgs_from_persons
+                           names__from_constituents_persons_from_orgs
+                           names__from_loans
+                           names__from_obj_accession
+                           names__from_obj_locations
+                           names__from_assoc_parents_for_con
+                          ],
                 destination: :names__initial_compile
               },
               transformer: xforms
