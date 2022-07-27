@@ -43,8 +43,7 @@ module Kiba
                 id: :tablerowid,
                 textentryid: :sort
               }
-              transform Replace::FieldValueWithStaticMapping,
-                source: :tableid, target: :table, mapping: Tms::TABLES, fallback_val: nil, delete_source: false
+              transform Tms::Transforms::TmsTableNames
               transform Merge::MultiRowLookup,
                 lookup: prep__text_types,
                 keycolumn: :texttypeid,
