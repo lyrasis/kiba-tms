@@ -619,7 +619,7 @@ module Kiba
           register :initial_compile, {
             creator: Kiba::Tms::Jobs::Names::CompiledDataRaw,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_initial_compile.csv'),
-            desc: 'Names extracted from constituents table, with only subsequent duplicates flagged',
+            desc: 'Names extracted from constituents table and other sources, with only subsequent duplicates flagged',
             tags: %i[names con]
           }
           register :from_constituents, {
