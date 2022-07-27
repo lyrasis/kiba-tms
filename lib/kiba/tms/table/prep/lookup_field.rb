@@ -50,6 +50,7 @@ module Kiba
             obj_comp_types: :objcomptypeid,
             obj_components: :component_id,
             obj_context: :objectid,
+            obj_inc_purposes: :inpurposeid,
             obj_ins_indem_resp: :objinsindemrespid,
             obj_locations: :objlocationid,
             obj_rights_types: :objrightstypeid,
