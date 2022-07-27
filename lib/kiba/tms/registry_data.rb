@@ -831,6 +831,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('relationships') do
+          register :unknown_tables, {
+            creator: Kiba::Tms::Jobs::Relationships::UnknownTables,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'relationships_unknown_tables.csv'),
+            desc: 'Check for tables we do not have set up yet. Non-zero count means work to do!',
+            tags: %i[relationships todochk]
+          }
+        end
+
         Kiba::Tms.registry.namespace('status_flags') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::StatusFlags::NewTables,
@@ -840,14 +849,14 @@ module Kiba
           }
         end
         
-          Kiba::Tms.registry.namespace('terms') do
-            register :used_in_xrefs, {
-              creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
-              path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_in_xrefs.csv'),
-              desc: 'Terms table rows for term IDs used in ThesXrefs',
-              lookup_on: :termid,
-              tags: %i[termdata terms reference]
-            }
+        Kiba::Tms.registry.namespace('terms') do
+          register :used_in_xrefs, {
+            creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
+            path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_in_xrefs.csv'),
+            desc: 'Terms table rows for term IDs used in ThesXrefs',
+            lookup_on: :termid,
+            tags: %i[termdata terms reference]
+          }
           register :used_row_data, {
             creator: Kiba::Tms::Jobs::Terms::UsedRowData,
             path: File.join(Kiba::Tms.datadir, 'reference', 'terms_used_row_data.csv'),
