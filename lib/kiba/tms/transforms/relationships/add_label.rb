@@ -5,23 +5,24 @@ module Kiba
     module Transforms
       module Relationships
         class AddLabel
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
             @sources = %i[relation1 relation2]
             @target = :relationship_label
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: sources)
           end
 
           def process(row)
-            row[@target] = nil
-            vals = field_values(row: row, fields: @sources)
+            row[target] = nil
+            vals = getter.call(row)
             return row if vals.empty?
             
-            row[@target] = get_label(vals)  
+            row[target] = get_label(vals)  
             row
           end
 
           private
+
+          attr_reader :sources, :target, :getter
 
           def different?(vals)
             !same?(vals)

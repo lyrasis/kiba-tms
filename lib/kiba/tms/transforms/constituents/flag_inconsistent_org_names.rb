@@ -8,14 +8,13 @@ module Kiba
         # - :constituenttype = Organization
         # - :institution value is present (indicating it is not equal to preferred or non-preferred name type)
         class FlagInconsistentOrgNames
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
             @type = :constituenttype
             @inst = :institution
             @pref = Tms::Constituents.preferred_name_field
             @alt = Tms::Constituents.var_name_field
             @target = :inconsistent_org_names
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [pref, alt])
           end
 
           # @private
@@ -31,7 +30,7 @@ module Kiba
               return row
             end
 
-            vals = field_values(row: row, fields: [pref, alt]).values.uniq
+            vals = getter.call(row).values.uniq
             return row if vals.length == 1
 
             row[target] = 'y'
@@ -40,7 +39,7 @@ module Kiba
 
           private
 
-          attr_reader :type, :inst, :pref, :alt, :target
+          attr_reader :type, :inst, :pref, :alt, :target, :getter
         end
       end
     end
