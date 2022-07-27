@@ -130,6 +130,21 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('assoc_parents') do
+          register :for_constituents, {
+            creator: Kiba::Tms::Jobs::AssocParents::ForConstituents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'assoc_parents_for_con.csv'),
+            lookup_on: :recordid,
+            tags: %i[assoc_parents con]
+          }
+          register :new_tables, {
+            creator: Kiba::Tms::Jobs::AssocParents::NewTables,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'assoc_parents_new_tables.csv'),
+            tags: %i[assoc_parents reports todochk],
+            desc: 'Non-zero means work to do'
+          }
+        end
+
         Kiba::Tms.registry.namespace('classification_notations') do
           register :ids_used, {
             creator: Kiba::Tms::Jobs::ClassificationNotations::IdsUsed,
