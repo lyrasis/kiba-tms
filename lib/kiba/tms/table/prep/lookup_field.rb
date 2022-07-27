@@ -54,6 +54,7 @@ module Kiba
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             phone_types: :phonetypeid,
+            relationships: :relationshipid,
             role_types: :roletypeid,
             roles: :roleid,
             status_flags: :recordid,
