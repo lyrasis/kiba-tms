@@ -10,7 +10,7 @@ module Kiba
           def initialize
             @null = '%NULLVALUE%'
             @pref_name_field = :pref_termdisplayname
-            @var_name_field = Tms.constituents.var_name_field
+            @var_name_field = Tms::Constituents.var_name_field
             @target = :var_termdisplayname
             @renamers = {
                var_name_field => target

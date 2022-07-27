@@ -20,7 +20,7 @@ module Kiba
           
           def xforms
             Kiba.job_segment do
-              prefname = Tms.config.constituents.preferred_name_field
+              prefname = Tms::Constituents.preferred_name_field
               transform Merge::MultiRowLookup,
                 fieldmap: {alt_names: prefname},
                 lookup: con_alt_names__by_constituent,

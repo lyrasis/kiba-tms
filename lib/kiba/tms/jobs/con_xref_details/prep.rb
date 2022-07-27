@@ -30,11 +30,11 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: persons__by_constituentid,
                 keycolumn: :constituentid,
-                fieldmap: {person: Tms.constituents.preferred_name_field}
+                fieldmap: {person: Tms::Constituents.preferred_name_field}
               transform Merge::MultiRowLookup,
                 lookup: orgs__by_constituentid,
                 keycolumn: :constituentid,
-                fieldmap: {org: Tms.constituents.preferred_name_field}
+                fieldmap: {org: Tms::Constituents.preferred_name_field}
               transform Delete::Fields, fields: :constituentid
 
               transform Merge::MultiRowLookup,
@@ -51,7 +51,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: prep__con_alt_names,
                 keycolumn: :nameid,
-                fieldmap: {altname: Tms.constituents.preferred_name_field}
+                fieldmap: {altname: Tms::Constituents.preferred_name_field}
               transform Delete::Fields, fields: :nameid
 
               transform CombineValues::FromFieldsWithDelimiter,

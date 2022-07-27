@@ -61,7 +61,7 @@ module Kiba
               transform Rename::Field, from: :begindateiso, to: :foundingdategroup
               transform Rename::Field, from: :enddateiso, to: :dissolutiondategroup
               transform Rename::Field, from: :nationality, to: :foundingplace
-              transform Rename::Field, from: :culturegroup, to: Tms.constituents.culturegroup_target
+              transform Rename::Field, from: :culturegroup, to: Tms::Constituents.culturegroup_target
               
               transform Tms::Transforms::ConAddress::MergeIntoAuthority, lookup: con_address__for_orgs
               transform Tms::Transforms::ConEmail::MergeIntoAuthority, lookup: con_email__for_orgs

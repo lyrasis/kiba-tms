@@ -42,12 +42,12 @@ module Kiba
                                                    addressformatid islocation]
 
               transform Clean::RegexpFindReplaceFieldVals,
-                fields: Tms.constituents.address_fields,
+                fields: Tms::Constituents.address_fields,
                 find: '^n\/a$', replace: ''
               
               # SECTION remove rows with no address info
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: Tms.constituents.address_fields,
+                sources: Tms::Constituents.address_fields,
                 target: :concat,
                 sep: '',
                 delete_sources: false
@@ -62,35 +62,35 @@ module Kiba
               transform Delete::Fields, fields: :countryid
               transform Cspace::AddressCountry
               
-              if Tms.constituents.address_active
+              if Tms::Constituents.address_active
                 transform Replace::FieldValueWithStaticMapping, source: :active, target: :addressstatus,
                   mapping: ACTIVE
               else
                 transform Delete::Fields, fields: :active
               end
 
-              if Tms.constituents.address_shipping
+              if Tms::Constituents.address_shipping
               transform Replace::FieldValueWithStaticMapping, source: :defaultshipping, target: :shipping,
                 mapping: SHIPPING
               else
                 transform Delete::Fields, fields: :defaultshipping
               end
 
-              if Tms.constituents.address_billing
+              if Tms::Constituents.address_billing
               transform Replace::FieldValueWithStaticMapping, source: :defaultbilling, target: :billing,
                 mapping: BILLING
               else
                 transform Delete::Fields, fields: :defaultbilling
               end
 
-              if Tms.constituents.address_mailing
+              if Tms::Constituents.address_mailing
               transform Replace::FieldValueWithStaticMapping, source: :defaultmailing, target: :mailing,
                 mapping: MAILING
               else
                 transform Delete::Fields, fields: :defaultmailing
               end
 
-              if Tms.constituents.address_dates
+              if Tms::Constituents.address_dates
                 # todo if required - combine into one :address_dates field
               else
                 transform Delete::Fields, fields: %i[begindate enddate]
@@ -150,7 +150,7 @@ module Kiba
                 sep: '; ',
                 delete_sources: true
 
-              if Tms.constituents.address_remarks_handling == :specific
+              if Tms::Constituents.address_remarks_handling == :specific
                 transform Prepend::FieldToFieldValue,
                   target_field: :address_notes,
                   prepended_field: :shortname,

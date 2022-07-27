@@ -9,7 +9,7 @@ module Kiba
 
           # @param target [Symbol] new field name
           def initialize(target:)
-            @name = Kiba::Tms.config.constituents.preferred_name_field
+            @name = Kiba::Tms::Constituents.preferred_name_field
             @target = target
           end
 

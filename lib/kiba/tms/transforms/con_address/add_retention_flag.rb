@@ -9,8 +9,8 @@ module Kiba
           
           def initialize
             @matches_field = :matches_constituent
-            @addr_fields = Tms.constituents.address_fields
-            @omit_inactive = Tms.constituents.omit_inactive_address
+            @addr_fields = Tms::Constituents.address_fields
+            @omit_inactive = Tms::Constituents.omit_inactive_address
             @target = :keeping
           end
 

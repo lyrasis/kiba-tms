@@ -43,7 +43,7 @@ module Kiba
               
               transform Merge::ConstantValue, target: :constituenttype, value: 'Person'
               transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_with_person_names'
-              transform Cspace::NormalizeForID, source: Tms.constituents.preferred_name_field, target: :norm
+              transform Cspace::NormalizeForID, source: Tms::Constituents.preferred_name_field, target: :norm
             end
           end
         end

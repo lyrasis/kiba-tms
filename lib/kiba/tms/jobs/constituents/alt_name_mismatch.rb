@@ -21,7 +21,7 @@ module Kiba
           
           def xforms
             Kiba.job_segment do
-              prefname = Tms.config.constituents.preferred_name_field
+              prefname = Tms::Constituents.preferred_name_field
               
               # Merge in the default name from the alternate name table and add a column comparing it
               #   to the preferred name. We expect this to be 

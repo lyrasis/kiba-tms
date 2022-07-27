@@ -24,8 +24,8 @@ module Kiba
                 transform Delete::Fields,
                   fields: %i[approx_normalized normalized_form duplicate inconsistent_org_names missing_last_name
                              matchpref orig_pref_name]
-                transform Rename::Field, from: :preferred_name_form, to: Tms.constituents.preferred_name_field
-                transform Rename::Field, from: :variant_name_form, to: Tms.constituents.var_name_field
+                transform Rename::Field, from: :preferred_name_form, to: Tms::Constituents.preferred_name_field
+                transform Rename::Field, from: :variant_name_form, to: Tms::Constituents.var_name_field
                 transform Fingerprint::Decode,
                   fingerprint: :fingerprint,
                   source_fields: Tms::Services::FingerprintFields.names,
@@ -34,7 +34,7 @@ module Kiba
 
                 transform FilterRows::FieldEqualTo, action: :reject, field: :migration_action, value: 'skip'
                 transform Cspace::NormalizeForID,
-                  source: Tms.constituents.preferred_name_field,
+                  source: Tms::Constituents.preferred_name_field,
                   target: :norm
               end
             end

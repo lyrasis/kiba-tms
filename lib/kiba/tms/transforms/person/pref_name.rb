@@ -8,7 +8,7 @@ module Kiba
           include Kiba::Extend::Transforms::Helpers
           
           def initialize
-            @pref_name = Tms.constituents.preferred_name_field
+            @pref_name = Tms::Constituents.preferred_name_field
             @set_term_source = Tms.names.set_term_source
             @null = '%NULLVALUE%'
             map = {

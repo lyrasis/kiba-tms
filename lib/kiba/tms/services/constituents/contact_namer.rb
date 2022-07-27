@@ -27,7 +27,7 @@ module Kiba
           end
 
           def set_name_builder
-            if Tms.constituents.preferred_name_field == :displayname
+            if Tms::Constituents.preferred_name_field == :displayname
               Tms::Services::Constituents::PersonDisplaynameConstructor.new
             else
               Tms::Services::Constituents::PersonNameAlphasortConstructor.new

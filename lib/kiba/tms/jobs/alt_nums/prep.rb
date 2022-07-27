@@ -35,7 +35,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: tms__constituents,
                 keycolumn: :recordid,
-                fieldmap: {constituent: Tms.constituents.preferred_name_field},
+                fieldmap: {constituent: Tms::Constituents.preferred_name_field},
                 conditions: ->(origrow, mergerows) do
                   return [] unless origrow[:tablename] == 'Constituents'
                   

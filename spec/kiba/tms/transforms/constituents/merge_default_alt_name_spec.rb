@@ -36,8 +36,8 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::MergeDefaultAltName do
     end
   end
 
-  context 'with preferred name field = alphasort' do
-    before{ Kiba::Tms.config.constituents.preferred_name_field = :alphasort }
+  context 'with preferred name field = alpHasort' do
+    before{ Kiba::Tms::Constituents.config.preferred_name_field = :alphasort }
     let(:expected) do
       [
         'b a',

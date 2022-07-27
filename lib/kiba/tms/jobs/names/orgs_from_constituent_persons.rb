@@ -20,7 +20,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              prefname = Tms.constituents.preferred_name_field
+              prefname = Tms::Constituents.preferred_name_field
               transform Delete::FieldsExcept, fields: [:institution, prefname, :contact_role, :constituenttype]
               transform FilterRows::FieldPopulated, action: :keep, field: :institution
               transform FilterRows::FieldEqualTo, action: :keep, field: :constituenttype, value: 'Person'

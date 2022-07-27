@@ -30,7 +30,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               @contact_namer = Tms::Services::Constituents::ContactNamer.new
-              prefname = Tms.config.constituents.preferred_name_field
+              prefname = Tms::Constituents.preferred_name_field
               
               transform Tms::Transforms::DeleteTmsFields
               transform Delete::Fields,
@@ -44,8 +44,8 @@ module Kiba
                 fieldmap: {constituenttype: :constituenttype}
               transform Delete::Fields, fields: :constituenttypeid
 
-              if Tms.constituents.prep_transform_pre
-                transform Tms.constituents.prep_transform_pre
+              if Tms::Constituents.prep_transform_pre
+                transform Tms::Constituents.prep_transform_pre
               end
               
               transform Replace::FieldValueWithStaticMapping,
@@ -63,14 +63,14 @@ module Kiba
 
               # remove non-preferred form name value if it is the same as what is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,
-                delete: Tms.constituents.var_name_field,
+                delete: Tms::Constituents.var_name_field,
                 if_equal_to: prefname,
                 casesensitive: false
 
               # remove institution value if it is the same as non-preferred form name value
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: :institution,
-                if_equal_to: Tms.constituents.var_name_field,
+                if_equal_to: Tms::Constituents.var_name_field,
                 casesensitive: false
 
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
@@ -82,15 +82,15 @@ module Kiba
 
 
               boolfields = []
-              boolfields << :approved unless Tms.constituents.map_approved
-              boolfields << :active unless Tms.constituents.map_active
-              boolfields << :isstaff unless Tms.constituents.map_isstaff
-              boolfields << :isprivate unless Tms.constituents.map_isprivate
+              boolfields << :approved unless Tms::Constituents.map_approved
+              boolfields << :active unless Tms::Constituents.map_active
+              boolfields << :isstaff unless Tms::Constituents.map_isstaff
+              boolfields << :isprivate unless Tms::Constituents.map_isprivate
               unless boolfields.empty?
                 transform Delete::Fields, fields: boolfields
               end
 
-              if Tms.constituents.map_isprivate
+              if Tms::Constituents.map_isprivate
                 transform Rename::Field, from: :isprivate, to: :is_private_collector
               end
 

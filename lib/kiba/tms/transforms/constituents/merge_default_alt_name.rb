@@ -8,7 +8,7 @@ module Kiba
           include Kiba::Extend::Transforms::Helpers
 
           def initialize(alt_names:)
-            @name = Kiba::Tms.config.constituents.preferred_name_field
+            @name = Kiba::Tms::Constituents.preferred_name_field
             @alt_name = "alt_#{name}".to_sym
             @alt_names = alt_names
           end

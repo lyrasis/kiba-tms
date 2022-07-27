@@ -10,7 +10,7 @@ module Kiba
           def names
             [
               :termsource, :constituenttype, :constituentid, :norm,
-              Tms.constituents.preferred_name_field, Tms.constituents.var_name_field
+              Tms::Constituents.preferred_name_field, Tms::Constituents.var_name_field
             ]
           end
         end

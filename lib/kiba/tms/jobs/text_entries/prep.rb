@@ -55,14 +55,14 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: nameclean__by_constituentid,
                 keycolumn: :authorconid,
-                fieldmap: { org_author: Tms.constituents.preferred_name_field },
+                fieldmap: { org_author: Tms::Constituents.preferred_name_field },
                 conditions: org_cond
 
               person_cond = ->(_x, rows){ rows.reject{ |row| row[:person].blank? } }
               transform Merge::MultiRowLookup,
                 lookup: nameclean__by_constituentid,
                 keycolumn: :authorconid,
-                fieldmap: { person_author: Tms.constituents.preferred_name_field },
+                fieldmap: { person_author: Tms::Constituents.preferred_name_field },
                 conditions: person_cond
               transform Delete::Fields, fields: :authorconid
 

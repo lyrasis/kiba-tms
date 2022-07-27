@@ -24,7 +24,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: tms__constituents,
                 keycolumn: :constituentid,
-                fieldmap: { constituentname: Tms.constituents.preferred_name_field }
+                fieldmap: { constituentname: Tms::Constituents.preferred_name_field }
             end
           end
         end

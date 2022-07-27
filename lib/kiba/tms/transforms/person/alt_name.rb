@@ -9,7 +9,7 @@ module Kiba
           
           def initialize(lookup:)
             @merger = Tms::Transforms::ConAltNames::MergeIntoAuthority.new(lookup: lookup, authority_type: :person)
-            @pref_name_field = Tms.constituents.preferred_name_field
+            @pref_name_field = Tms::Constituents.preferred_name_field
           end
 
           # @private

@@ -28,7 +28,7 @@ module Kiba
 
           def clean_up_variants(row)
             return unless type == :person
-            return if Tms.constituents.include_flipped_as_variant
+            return if Tms::Constituents.include_flipped_as_variant
 
             fields.map{ |field| "var_#{field}".to_sym}
               .each{ |field| row.delete(field) }
@@ -59,7 +59,7 @@ module Kiba
 
           def get_prefixes(prefixes)
             return prefixes if prefixes
-            return %w[pref alt] if type == :person && Tms.constituents.include_flipped_as_variant == false
+            return %w[pref alt] if type == :person && Tms::Constituents.include_flipped_as_variant == false
             
             %w[pref var alt]
           end

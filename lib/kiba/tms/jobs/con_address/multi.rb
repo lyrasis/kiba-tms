@@ -28,7 +28,7 @@ module Kiba
                 fieldmap: {
                   person: :person,
                   org: :org,
-                  termdisplayname: Tms.constituents.preferred_name_field,
+                  termdisplayname: Tms::Constituents.preferred_name_field,
                   addresscount: :addresscount
                 }
 

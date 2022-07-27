@@ -31,7 +31,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: persons__by_norm,
                 keycolumn: :contact_norm,
-                fieldmap: { merge_contact: Tms.constituents.preferred_name_field }
+                fieldmap: { merge_contact: Tms::Constituents.preferred_name_field }
             end
           end
         end

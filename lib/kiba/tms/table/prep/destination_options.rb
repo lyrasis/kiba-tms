@@ -31,8 +31,8 @@ module Kiba
             },
             constituents: {
               initial_headers:
-              [:constituentid, :constituenttype, Tms.config.constituents.preferred_name_field,
-               Tms.config.constituents.var_name_field, :institution, :inconsistent_org_names]
+              [:constituentid, :constituenttype, Tms::Constituents.preferred_name_field,
+               Tms::Constituents.var_name_field, :institution, :inconsistent_org_names]
             },
             con_alt_names: {
               initial_headers:

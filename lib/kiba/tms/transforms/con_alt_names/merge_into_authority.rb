@@ -9,7 +9,7 @@ module Kiba
           
           def initialize(lookup:, authority_type:)
             @type = authority_type
-            @pref_name_field = Tms.constituents.preferred_name_field
+            @pref_name_field = Tms::Constituents.preferred_name_field
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :norm,

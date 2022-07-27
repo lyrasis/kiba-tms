@@ -8,10 +8,10 @@ module Kiba
           include Kiba::Extend::Transforms::Helpers
           
           def initialize
-            @fields1 = Tms.constituents.addressplace1_fields
-            @fields2 = Tms.constituents.addressplace2_fields
-            @delim1 = Tms.constituents.addressplace1_delim
-            @delim2 = Tms.constituents.addressplace2_delim
+            @fields1 = Tms::Constituents.addressplace1_fields
+            @fields2 = Tms::Constituents.addressplace2_fields
+            @delim1 = Tms::Constituents.addressplace1_delim
+            @delim2 = Tms::Constituents.addressplace2_delim
           end
 
           # @private

@@ -39,7 +39,7 @@ module Kiba
               end
 
               # if preferred name field = alphasort, move org names from displayname to alphasort
-              if Tms.constituents.preferred_name_field == :alphasort
+              if Tms::Constituents.preferred_name_field == :alphasort
                 transform do |row|
                   alphasort = row[:alphasort]
                   next row unless alphasort.blank?
@@ -83,7 +83,7 @@ module Kiba
                 end
 
                 retained = retained_val.split('|')
-                alt = row[Tms.constituents.preferred_name_field]
+                alt = row[Tms::Constituents.preferred_name_field]
                 if alt.blank?
                   row[:kept] = 'n - no usable altname value in ConAltNames'
                   next row

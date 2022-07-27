@@ -32,8 +32,8 @@ module Kiba
                 constantmap: {duplicate: 'y'}
               transform Delete::Fields, fields: %i[normnew constituentid]
 
-              transform Rename::Field, from: Kiba::Tms.constituents.preferred_name_field, to: :preferred_name_form
-              transform Rename::Field, from: Kiba::Tms.constituents.var_name_field, to: :variant_name_form
+              transform Rename::Field, from: Kiba::Tms::Constituents.preferred_name_field, to: :preferred_name_form
+              transform Rename::Field, from: Kiba::Tms::Constituents.var_name_field, to: :variant_name_form
               transform Rename::Field, from: :norm, to: :normalized_form
               transform Delete::EmptyFields
             end

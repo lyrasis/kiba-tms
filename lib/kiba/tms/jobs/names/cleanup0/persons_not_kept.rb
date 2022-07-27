@@ -27,7 +27,7 @@ module Kiba
                   lookup: nameclean0__persons_kept,
                   keycolumn: :norm,
                   fieldmap: {
-                    keptname: Tms.constituents.preferred_name_field,
+                    keptname: Tms::Constituents.preferred_name_field,
                     target_id: :fp_constituentid
                   }
               end

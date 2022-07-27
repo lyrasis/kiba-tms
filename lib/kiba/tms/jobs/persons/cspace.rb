@@ -53,7 +53,7 @@ module Kiba
               transform Rename::Field, from: :begindateiso, to: :birthdategroup
               transform Rename::Field, from: :enddateiso, to: :deathdategroup
               transform Rename::Field, from: :biography, to: :bionote
-              transform Rename::Field, from: :culturegroup, to: Tms.constituents.culturegroup_target
+              transform Rename::Field, from: :culturegroup, to: Tms::Constituents.culturegroup_target
               
               transform Tms::Transforms::ConAddress::MergeIntoAuthority, lookup: con_address__for_persons
               transform Tms::Transforms::ConEmail::MergeIntoAuthority, lookup: con_email__for_persons
