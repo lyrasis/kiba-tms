@@ -10,7 +10,7 @@ module Kiba
         def initialize(filename)
           @filename = filename
           @filekey = Tms::Table::RegistryKeyCreator.call(filename)
-          @included = Tms.excluded_tables.any?(filename) ? false : true
+          @included = Tms.excluded_tables.any?(filename.delete_suffix('.csv')) ? false : true
         end
       end
     end

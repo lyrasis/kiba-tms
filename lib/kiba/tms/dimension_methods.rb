@@ -7,7 +7,7 @@ module Kiba
     module DimensionMethods
       extend Dry::Configurable
       # whether or not table is used
-      setting :used, default: ->{ Tms.excluded_tables.none?('DimensionMethods.csv') }, reader: true
+      setting :used, default: ->{ Tms.excluded_tables.none?('DimensionMethods') }, reader: true
       # # map values in TMS table to CS measurementUnits optionlist
       # setting :type_mapping,
       #   default: {

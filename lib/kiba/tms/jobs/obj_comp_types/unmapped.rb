@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return if Tms.excluded_tables.any?('ObjCompTypes.csv')
+            return if Tms.excluded_tables.any?('ObjCompTypes')
             
             Kiba::Extend::Jobs::Job.new(
               files: {
