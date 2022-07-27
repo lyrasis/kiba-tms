@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjIncPurposes
+      module ShippingMethods
         module Prep
           module_function
           
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_inc_purposes,
-                destination: :prep__obj_inc_purposes
+                source: :tms__shipping_methods,
+                destination: :prep__shipping_methods
               },
               transformer: xforms
             )
@@ -20,7 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :objincomingpurpose
+              transform Tms::Transforms::DeleteNoValueTypes, field: :shippingmethod
             end
           end
         end

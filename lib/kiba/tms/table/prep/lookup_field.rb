@@ -60,6 +60,7 @@ module Kiba
             relationships: :relationshipid,
             role_types: :roletypeid,
             roles: :roleid,
+            shipping_methods: :shippingmethodid,
             status_flags: :recordid,
             term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
