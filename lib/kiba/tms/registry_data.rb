@@ -652,6 +652,18 @@ module Kiba
             desc: 'Names extracted from loans table',
             tags: %i[names loans]
           }
+          register :from_loc_approvers, {
+            creator: Kiba::Tms::Jobs::Names::FromLocApprovers,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_approvers.csv'),
+            desc: 'Names extracted from LocApprovers table',
+            tags: %i[names loc_approvers]
+          }
+          register :from_loc_handlers, {
+            creator: Kiba::Tms::Jobs::Names::FromLocHandlers,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_handlers.csv'),
+            desc: 'Names extracted from LocHandlers table',
+            tags: %i[names loc_handlers]
+          }
           register :from_obj_accession, {
             creator: Kiba::Tms::Jobs::Names::FromObjAccession,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),

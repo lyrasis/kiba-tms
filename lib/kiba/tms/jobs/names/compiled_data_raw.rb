@@ -27,8 +27,11 @@ module Kiba
             base << :names__from_obj_accession if Tms::ObjAccession.used
             base << :names__from_obj_locations if Tms::ObjLocations.used
             base << :names__from_assoc_parents_for_con if Tms::AssocParents.used && Tms::AssocParents.for_constituents 
+            base << :names__from_loc_approvers unless Tms.excluded_tables.any?('LocApprovers')
+            base << :names__from_loc_handlers unless Tms.excluded_tables.any?('LocHandlers')
             base
           end
+
           def xforms
             Kiba.job_segment do
               @deduper = {}

@@ -43,6 +43,8 @@ module Kiba
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
+            loc_approvers: :approverid,
+            loc_handlers: :handlerid,
             locations: :locationid,
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,

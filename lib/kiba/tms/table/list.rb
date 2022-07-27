@@ -51,7 +51,9 @@ module Kiba
                LoanPurposes.csv
                LoanStatuses.csv
                Loans.csv
+               LocApprovers.csv
                Locations.csv
+               LocHandlers.csv
                LocPurposes.csv
                MediaFiles.csv
                MediaMaster.csv
