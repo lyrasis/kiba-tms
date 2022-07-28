@@ -46,6 +46,9 @@ module Kiba
               initial_headers:
               %i[tablename recordid role roletype person org altname displayorder]
             },
+            obj_incoming: {
+              initial_headers: Tms::ObjIncoming.all_fields
+            },
             obj_locations: {
               initial_headers:
               %i[objlocationid objectnumber locationid fulllocid]

@@ -743,6 +743,17 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_incoming') do
+          register :for_initial_review, {
+            creator: Kiba::Tms::Jobs::ObjIncoming::ForInitialReview,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_incoming_initial_review.csv'),
+            tags: %i[obj_incoming reports],
+            desc: 'Merges object number from object table into prepped obj_incoming table',
+            dest_special_opts: {
+              initial_headers: %i[objincomingid objectnumber] }
+          }
+        end
+        
         Kiba::Tms.registry.namespace('obj_locations') do
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,

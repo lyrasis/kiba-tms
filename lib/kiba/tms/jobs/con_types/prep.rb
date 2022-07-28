@@ -7,17 +7,17 @@ module Kiba
         module Prep
           module_function
           
-          def prep
+          def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_types,
                 destination: :prep__con_types
               },
-              transformer: prep_xforms
+              transformer: xforms
             )
           end
 
-          def prep_xforms
+          def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteNoValueTypes, field: :constituenttype

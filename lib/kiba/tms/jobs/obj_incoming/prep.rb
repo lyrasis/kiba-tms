@@ -51,12 +51,12 @@ module Kiba
                            displaybegdate displayenddate entereddate expectedindate expectedoutdate loanbegdate
                            loanenddate requestdate]
 
-              moneyfields = %i[cratingactual cratingestimate ininsuractual ininsurestimate ininsurvalue shippingestimate]
+              moneyfields = %i[cratingactual cratingestimate ininsuractual ininsurestimate ininsurvalue
+                               shippingactual shippingestimate]
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: moneyfields
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: moneyfields, find: '^0$', replace: ''
-              transform Delete::EmptyFields
             end
           end
         end
