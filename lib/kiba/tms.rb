@@ -13,28 +13,43 @@ require 'zeitwerk'
 # dev
 require 'pry'
 
-loader = Zeitwerk::Loader.new
-loader.inflector.inflect(
-  'classification_xrefs' => 'ClassificationXRefs'
-)
-loader.push_dir("#{__dir__}/tms", namespace: Kiba::Tms)
-#loader.logger = method(:puts)
-loader.setup
-
-
 # Namespace for the overall project
 module Kiba
   module Tms
     ::Tms = Kiba::Tms
+    module_function
     
     extend Dry::Configurable
 
     puts "LOADING KIBA-TMS"
+
+    def loader
+      @loader ||= setup_loader
+    end
+
+    private def setup_loader
+              @loader = Zeitwerk::Loader.new
+              ktms_dir = Gem.loaded_specs['kiba-tms'].full_gem_path
+              @loader.push_dir(File.join(ktms_dir, 'lib', 'kiba', 'tms'), namespace: Kiba::Tms)
+              @loader.inflector.inflect(
+                'classification_xrefs' => 'ClassificationXRefs',
+                "version"   => "VERSION"
+              )
+              @loader.enable_reloading
+              @loader.setup
+              @loader.eager_load
+              @loader
+            end
+
+    def reload!
+      @loader.reload
+    end
     
     # you will want to override the following in any application using this extension
     setting :datadir, default: "#{__dir__}/data", reader: true
     setting :delim, default: Kiba::Extend.delim, reader: true
     setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
+    setting :nullvalue, default: '%NULLVALUE%', reader: true
     # TMS tables not used in a given project. Override in project application
     setting :excluded_tables, default: [], reader: true
     # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
@@ -125,11 +140,6 @@ module Kiba
     setting :obj_context, reader: true do
       # client-specfic fields to delete
       setting :delete_fields, default: [], reader: true
-    end
-
-    setting :text_entries, reader: true do
-      # pass in client-specific transform classes to prepare text_entry rows for merging
-      setting :for_object_transform, default: nil, reader: true
     end
   end
 end

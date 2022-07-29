@@ -19,11 +19,11 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :table, value: 'Objects'
+              transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: 'Objects'
               transform Delete::Fields, fields: %i[tableid table]
               
-              if Tms.text_entries.for_object_transform
-                transform Tms.text_entries.for_object_transform
+              if Tms::TextEntries.for_object_transform
+                transform Tms::TextEntries.for_object_transform
               end
             end
           end

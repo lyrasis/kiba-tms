@@ -54,6 +54,7 @@ module Kiba
                 mapping: CONTYPES,
                 fallback_val: :orig,
                 delete_source: false
+              transform Tms::Transforms::Constituents::DeriveType
 
               # remove institution value if it is the same as what is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,

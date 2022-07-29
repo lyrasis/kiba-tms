@@ -8,8 +8,6 @@ module Kiba
           module ByConstituentId
             module_function
 
-            ITERATION = Tms.names.cleanup_iteration
-
             def job
               Kiba::Extend::Jobs::Job.new(
                 files: {
@@ -21,11 +19,12 @@ module Kiba
             end
 
             def sources
-              if ITERATION
+              if Tms.names.cleanup_iteration
+                iter = Tms.names.cleanup_iteration
                 [
-                  "nameclean#{ITERATION}__constituents_kept".to_sym,
-                  "nameclean#{ITERATION}__orgs_not_kept".to_sym,
-                  "nameclean#{ITERATION}__persons_not_kept".to_sym
+                  "nameclean#{iter}__constituents_kept".to_sym,
+                  "nameclean#{iter}__orgs_not_kept".to_sym,
+                  "nameclean#{iter}__persons_not_kept".to_sym
                 ]
               else
                 :prep__constituents

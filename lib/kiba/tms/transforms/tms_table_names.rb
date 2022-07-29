@@ -22,12 +22,17 @@ module Kiba
             '126'=>'ObjRights',
             '143'=>'ReferenceMaster',
             '187'=>'HistEvents',
+            '189'=>'Sites',
             '287'=>'TermMasterThes',
+            '318'=>'MediaMaster',
+            '322'=>'MediaRenditions',
             '345'=>'Shipments',
             '355'=>'ShipmentSteps',
             '631'=>'AccessionLot',
             '632'=>'RegistrationSets',
-            '726'=>'ObjContext'
+            '726'=>'ObjContext',
+            '790'=>'Projects',
+            '792'=>'ConservationReports'
           }
         end
 

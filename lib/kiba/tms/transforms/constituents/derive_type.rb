@@ -5,26 +5,32 @@ module Kiba
     module Transforms
       module Constituents
         class DeriveType
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
-            @person = %i[lastname firstname]
-            @org = :institution
+            @type = :constituenttype
+            @pgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[lastname firstname])
+            @ogetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [:institution])
             @target = :derivedcontype
           end
 
           def process(row)
-            row[@target] = nil
-            p_name = field_values(row: row, fields: @person)
-            o_name = field_values(row: row, fields: [@org])
+            row[:target] = nil
+            typeval = row[type]
+            return row unless typeval.blank?
+            
+            p_name = pgetter.call(row)
+            o_name = ogetter.call(row)
             return row if p_name.empty? && o_name.empty?
             return row if !p_name.empty? && !o_name.empty?
 
-            row[@target] = 'person' unless p_name.empty?
-            row[@target] = 'organization' if p_name.empty?
+            row[target] = 'Person' unless p_name.empty?
+            row[target] = 'Organization' if p_name.empty?
 
             row
           end
+
+          private
+
+          attr_reader :type, :pgetter, :ogetter, :target
         end
       end
     end

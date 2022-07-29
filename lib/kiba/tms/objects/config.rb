@@ -25,6 +25,13 @@ module Kiba
         setting :custom_rename_fieldmap, default: {}, reader: true
         # client-specfic fields to delete
         setting :delete_fields, default: [], reader: true
+        # other supported values: :dept_namedcollection
+        # If setting to :dept_namedcollection, see also the following configs:
+        #   department_coll_prefix, named_coll_fields
+        setting :department_target, default: :responsibledepartment, reader: true
+        # necessary if :department_target = :dept_namedcollection. Should be a String value if populated
+        setting :department_coll_prefix, default: nil, reader: true
+        setting :named_coll_fields, default: [], reader: true
         setting :nontext_inscription_source_fields, default: %i[], reader: true
         setting :nontext_inscription_target_fields, default: %i[], reader: true
         setting :text_entry_lookup, default: nil, reader: true

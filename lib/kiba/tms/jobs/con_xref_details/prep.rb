@@ -12,29 +12,53 @@ module Kiba
               files: {
                 source: :tms__con_xref_details,
                 destination: :prep__con_xref_details,
-                lookup: %i[
-                           persons__by_constituentid
-                           orgs__by_constituentid
-                           prep__con_xrefs
-                           prep__con_alt_names
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = %i[
+                      prep__con_xrefs
+                     ]
+
+            if Tms.names.cleanup_iteration
+              base << :persons__by_constituentid
+              base << :orgs__by_constituentid
+            else
+              base << :constituents__persons
+              base << :constituents__orgs
+            end
+            base
+          end
+
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[conxrefdetailid roletypeid addressid]
-              transform Merge::MultiRowLookup,
-                lookup: persons__by_constituentid,
-                keycolumn: :constituentid,
-                fieldmap: {person: Tms::Constituents.preferred_name_field}
-              transform Merge::MultiRowLookup,
-                lookup: orgs__by_constituentid,
-                keycolumn: :constituentid,
-                fieldmap: {org: Tms::Constituents.preferred_name_field}
+              # :nameid links to ConAltNames table. We don't deal with alt names at the point of merging
+              #   authorized forms of names into records
+              transform Delete::Fields, fields: %i[conxrefdetailid roletypeid addressid nameid]
+
+              if Tms.names.cleanup_iteration
+                transform Merge::MultiRowLookup,
+                  lookup: persons__by_constituentid,
+                  keycolumn: :constituentid,
+                  fieldmap: {person: Tms::Constituents.preferred_name_field}
+                transform Merge::MultiRowLookup,
+                  lookup: orgs__by_constituentid,
+                  keycolumn: :constituentid,
+                  fieldmap: {org: Tms::Constituents.preferred_name_field}
+              else
+                transform Merge::MultiRowLookup,
+                  lookup: constituents__persons,
+                  keycolumn: :constituentid,
+                  fieldmap: {person: Tms::Constituents.preferred_name_field}
+                transform Merge::MultiRowLookup,
+                  lookup: constituents__orgs,
+                  keycolumn: :constituentid,
+                  fieldmap: {org: Tms::Constituents.preferred_name_field}
+              end
               transform Delete::Fields, fields: :constituentid
 
               transform Merge::MultiRowLookup,
@@ -48,21 +72,9 @@ module Kiba
                   recordid: :recordid
                 }
               transform Delete::Fields, fields: :conxrefid
-              transform Merge::MultiRowLookup,
-                lookup: prep__con_alt_names,
-                keycolumn: :nameid,
-                fieldmap: {altname: Tms::Constituents.preferred_name_field}
-              transform Delete::Fields, fields: :nameid
-
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[person org],
-                target: :name,
-                sep: '',
-                delete_sources: false
-              transform Delete::FieldValueIfEqualsOtherField, delete: :altname, if_equal_to: :name
 
               transform Clean::RegexpFindReplaceFieldVals,
-                fields: %i[datebegin dateend],
+                fields: %i[datebegin dateend amount],
                 find: '^0$',
                 replace: ''
             end

@@ -298,6 +298,12 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('con_xref_details') do
+          register :for_loans, {
+            creator: Kiba::Tms::Jobs::ConXrefDetails::ForLoans,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_loans.csv'),
+            tags: %i[con_xref_details loans],
+            lookup_on: :recordid
+          }
           register :for_objects, {
             creator: Kiba::Tms::Jobs::ConXrefDetails::ForObjects,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_objects.csv'),
@@ -307,6 +313,20 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('constituents') do
+          register :persons, {
+            creator: Kiba::Tms::Jobs::Constituents::Persons,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_persons.csv'),
+            desc: 'Orig (not cleaned up) constituent values mapped to :constituenttype or :derivedcontype = Person',
+            tags: %i[con],
+            lookup_on: :constituentid
+          }
+          register :orgs, {
+            creator: Kiba::Tms::Jobs::Constituents::Orgs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_orgs.csv'),
+            desc: 'Orig (not cleaned up) constituent values mapped to :constituenttype or :derivedcontype = Organization',
+            tags: %i[con],
+            lookup_on: :constituentid
+          }
           register :alt_name_mismatch, {
             creator: Kiba::Tms::Jobs::Constituents::AltNameMismatch,
             path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_alt_name_mismatch.csv'),
@@ -515,7 +535,7 @@ module Kiba
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
             path: File.join(Kiba::Tms.datadir, 'working', 'by_constituent_id.csv'),
-            desc: 'Lookup authorized form by constituent id. Additional fields: person, org, alphasort, displayname',
+            desc: 'Lookup authorized form by constituent id. Additional fields: person, org, alphasort, displayname. Person and Org columns contain the normalized form of the constituent name',
             tags: %i[names],
             lookup_on: :constituentid
           }
@@ -962,6 +982,19 @@ module Kiba
             desc: 'List of term ids used in ThesXrefs.',
             tags: %i[termdata thesxrefs terms reference],
             lookup_on: :termid
+          }
+        end
+
+        Kiba::Tms.registry.namespace('works') do
+          register :compiled, {
+            creator: Kiba::Tms::Jobs::Works::Compiled,
+            path: File.join(Kiba::Tms.datadir, 'working', 'works_compiled.csv'),
+            tags: %i[works]
+          }
+          register :from_object_departments, {
+            creator: Kiba::Tms::Jobs::Works::FromObjectDepartments,
+            path: File.join(Kiba::Tms.datadir, 'working', 'works_from_obj_depts.csv'),
+            tags: %i[works]
           }
         end
       end

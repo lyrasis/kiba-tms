@@ -28,7 +28,7 @@ module Kiba
             if Tms::Objects::FieldXforms.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
             end
-            result << :text_entries__for_objects if Tms::Objects::FieldXforms.text_entries
+            result << :text_entries__for_objects if Tms::TextEntries.target_tables.any?('Objects')
             result << :alt_nums__for_objects if Tms::AltNums.target_tables.any?('Objects')
             result << :prep__status_flags if Tms::StatusFlags.target_tables.any?('Objects')
             result
@@ -102,16 +102,22 @@ module Kiba
                 #   delim: Tms.delim,
                 #   sorter: sorter
               end
-              
+
               transform Merge::MultiRowLookup,
                 keycolumn: :departmentid,
                 lookup: prep__departments,
                 fieldmap: {
-                  department: :department
+                  Tms::Objects::Config.department_target => :department
                 },
                 delim: Tms.delim
               transform Delete::Fields, fields: :departmentid
 
+              if Tms::Objects::Config.department_coll_prefix
+                transform Prepend::ToFieldValue,
+                  field: Tms::Objects::Config.department_target,
+                  value: Tms::Objects::Config.department_coll_prefix
+              end
+              
               transform Merge::MultiRowLookup,
                 keycolumn: :objectstatusid,
                 lookup: prep__object_statuses,
@@ -280,9 +286,10 @@ module Kiba
                 sources = Tms::Objects::Config.send("#{type}_source_fields".to_sym)
                 targets = Tms::Objects::Config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
-                  transform Kiba::Extend::Transforms::Cspace::FieldGroupCombiner,
+                  transform Collapse::FieldsToRepeatableFieldGroup,
                     sources: sources,
-                    targets: targets
+                    targets: targets,
+                    delim: Tms.delim
                 end
               end
 
@@ -290,6 +297,14 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[comment alt_num_comment],
                   target: :comment,
+                  sep: Tms.delim,
+                  delete_sources: true
+              end
+
+              unless Tms::Objects::Config.named_coll_fields.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: Tms::Objects::Config.named_coll_fields,
+                  target: :namedcollection,
                   sep: Tms.delim,
                   delete_sources: true
               end

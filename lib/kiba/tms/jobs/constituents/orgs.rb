@@ -4,22 +4,24 @@ module Kiba
   module Tms
     module Jobs
       module Constituents
-        module WithoutType
+        module Orgs
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__with_name_data,
-                destination: :constituents__without_type
+                destination: :constituents__orgs
               },
               transformer: xforms
             )
           end
-
+          
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :reject, field: :constituenttype
+              transform FilterRows::WithLambda,
+                action: :keep,
+                lambda: ->(row){ row[:constituenttype] == 'Organization' || row[:derivedcontype] == 'Organization' }
             end
           end
         end

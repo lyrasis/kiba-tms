@@ -12,11 +12,19 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: "nameclean#{ITERATION}__persons_kept".to_sym,
+                source: source,
                 destination: :persons__by_constituentid
               },
               transformer: xforms
             )
+          end
+
+          def source
+            if Tms.names.cleanup_iteration
+              "nameclean#{Tms.names.cleanup_iteration}__persons_kept".to_sym
+            else
+              :prep__constituents
+            end
           end
 
           def xforms

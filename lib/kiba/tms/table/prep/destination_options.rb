@@ -44,7 +44,7 @@ module Kiba
             },
             con_xref_details: {
               initial_headers:
-              %i[tablename recordid role roletype person org altname displayorder]
+              %i[tablename recordid role roletype person org displayorder]
             },
             obj_incoming: {
               initial_headers: Tms::ObjIncoming.all_fields
