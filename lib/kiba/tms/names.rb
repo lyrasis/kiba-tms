@@ -19,8 +19,10 @@ module Kiba
       end
       
       setting :compilation, reader: true do
-        # compile :stmtresponsibility field from ReferenceMaster in names list
-        setting :include_ref_stmt_resp, default: true, reader: true
+        # Whether to compile :stmtresponsibility field from ReferenceMaster in names list
+        # You probably only want to set this to true if ConXrefDetails target tables do not include
+        #   ReferenceMaster
+        setting :include_ref_stmt_resp, default: false, reader: true
         setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # fields to delete from name compilation report
         setting :delete_fields, default: [], reader: true

@@ -702,6 +702,12 @@ module Kiba
             desc: 'Names extracted from obj_locations table',
             tags: %i[names obj_locations]
           }
+          register :from_reference_master, {
+            creator: Kiba::Tms::Jobs::Names::FromReferenceMaster,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_reference_master.csv'),
+            desc: 'Names extracted from reference_master table',
+            tags: %i[names reference_master]
+          }
           register :from_assoc_parents_for_con, {
             creator: Kiba::Tms::Jobs::Names::FromAssocParentsForCon,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_assoc_parents_for_con.csv'),
