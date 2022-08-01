@@ -20,11 +20,12 @@ module Kiba
            shippingmethod shipper shippingestimate shippingactual shippingpaidby shipbilllading
            courierin courierout cratingestimate cratingactual cratepaidby
            ininsurvalue ininsurestimate ininsuractual ininsurpaidby
-           depositortext depositordesignee makertext specialconditions remarks]
+           depositortext depositordesignee makertext specialconditions remarks] - delete_fields
       end
 
       def content_fields
-        all_fields[2..-1]
+        fields = all_fields.dup
+        fields - %i[objincomingid objectid]
       end
     end
   end
