@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::TextEntries.target_tables.any?('Objects')
+            return unless Tms::TextEntries.for?('Objects')
             
             Kiba::Extend::Jobs::Job.new(
               files: {

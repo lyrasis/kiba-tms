@@ -28,9 +28,9 @@ module Kiba
             if Tms::Objects::FieldXforms.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
             end
-            result << :text_entries__for_objects if Tms::TextEntries.target_tables.any?('Objects')
-            result << :alt_nums__for_objects if Tms::AltNums.target_tables.any?('Objects')
-            result << :prep__status_flags if Tms::StatusFlags.target_tables.any?('Objects')
+            result << :text_entries__for_objects if Tms::TextEntries.for?('Objects')
+            result << :alt_nums__for_objects if Tms::AltNums.for?('Objects')
+            result << :prep__status_flags if Tms::StatusFlags.for?('Objects')
             result
           end
           
@@ -216,7 +216,7 @@ module Kiba
                 delim: Tms.delim,
                 null_placeholder: '%NULLVALUE%'
 
-              if Tms::AltNums.target_tables.any?('Objects')
+              if Tms::AltNums.for?('Objects')
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: alt_nums__for_objects,
@@ -236,7 +236,7 @@ module Kiba
                 transform Prepend::ToFieldValue, field: :alt_num_comment, value: 'Other number note: '
               end
 
-              if Tms::StatusFlags.target_tables.any?('Objects')
+              if Tms::StatusFlags.for?('Objects')
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: prep__status_flags,
@@ -293,7 +293,7 @@ module Kiba
                 end
               end
 
-              if Tms::AltNums.target_tables.any?('Objects')
+              if Tms::AltNums.for?('Objects')
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[comment alt_num_comment],
                   target: :comment,

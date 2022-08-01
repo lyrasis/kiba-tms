@@ -23,7 +23,7 @@ module Kiba
                       prep__departments
                      ]
             base << :prep__loan_purposes if Tms::LoanPurposes.used
-            if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for_loans.any
+            if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
               base << :con_xref_details__for_loans
             else
               warn('Implement other Tms::Loans.con_link_field')
@@ -60,7 +60,7 @@ module Kiba
                 fieldmap: {department: :department}
               transform Delete::Fields, fields: :departmentid
 
-              if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for_loans.any
+              if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
                 transform Merge::MultiRowLookup,
                   lookup: con_xref_details__for_loans,
                   keycolumn: :loanid,

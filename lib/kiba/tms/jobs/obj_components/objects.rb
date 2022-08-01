@@ -20,7 +20,7 @@ module Kiba
 
           def lookups
             base = []
-            base << :text_entries__for_obj_components if Tms::TextEntries.target_tables.any?('ObjComponents')
+            base << :text_entries__for_obj_components if Tms::TextEntries.for?('ObjComponents')
             base
           end
 
@@ -41,7 +41,7 @@ module Kiba
                 sep: Tms.delim,
                 delete_sources: true
 
-              if Tms::TextEntries.target_tables.any?('ObjComponents') && Tms::ObjComponents.text_entries_xform
+              if Tms::TextEntries.for?('ObjComponents') && Tms::ObjComponents.text_entries_xform
                 Tms::ObjComponents.config.text_entries_lookup = text_entries__for_obj_components
                 transform Tms::ObjComponents.text_entries_xform
               end

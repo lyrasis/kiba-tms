@@ -5,6 +5,8 @@ require 'dry-configurable'
 module Kiba
   module Tms
     module StatusFlags
+      module_function
+      extend MultiTableMergeable
       extend Dry::Configurable
 
       setting :target_tables, default: %w[Objects], reader: true
