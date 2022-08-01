@@ -29,6 +29,7 @@ module Kiba
             base << :names__from_assoc_parents_for_con if Tms::AssocParents.used && Tms::AssocParents.for_constituents 
             base << :names__from_loc_approvers unless Tms.excluded_tables.any?('LocApprovers')
             base << :names__from_loc_handlers unless Tms.excluded_tables.any?('LocHandlers')
+            base << :names__from_obj_incoming if Tms::ObjIncoming.used
             base
           end
 

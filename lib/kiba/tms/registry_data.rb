@@ -690,6 +690,12 @@ module Kiba
             desc: 'Names extracted from obj_accession table',
             tags: %i[names obj_accession]
           }
+          register :from_obj_incoming, {
+            creator: Kiba::Tms::Jobs::Names::FromObjIncoming,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_incoming.csv'),
+            desc: 'Names extracted from obj_incoming table',
+            tags: %i[names obj_incoming]
+          }
           register :from_obj_locations, {
             creator: Kiba::Tms::Jobs::Names::FromObjLocations,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
