@@ -41,8 +41,8 @@ module Kiba
             when :org
               list = base_fields
             end
-            list << 'termprefforlang' if Tms.names.set_term_pref_for_lang
-            list << 'termsource' if Tms.names.set_term_source
+            list << 'termprefforlang' if Tms::Names.set_term_pref_for_lang
+            list << 'termsource' if Tms::Names.set_term_source
             list
           end
 

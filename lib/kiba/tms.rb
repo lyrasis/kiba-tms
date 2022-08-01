@@ -106,23 +106,6 @@ module Kiba
       setting :authorities, default: %i[local offsite], reader: true
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
-    setting :names, reader: true do
-      setting :cleanup_iteration, default: 0, reader: true
-      # whether to add "variant form" to name term flag field
-      setting :flag_variant_form, default: false, reader: true
-      setting :set_term_pref_for_lang, default: false, reader: true
-      setting :set_term_source, default: false, reader: true
-    end
-    
-    setting :name_cleanup0, reader: true do
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
-    end
-    
-    setting :name_compilation, reader: true do
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
-      # fields to delete from name compilation report
-      setting :delete_fields, default: [], reader: true
-    end
 
     setting :locations, reader: true do
       setting :cleanup_iteration, default: 0, reader: true

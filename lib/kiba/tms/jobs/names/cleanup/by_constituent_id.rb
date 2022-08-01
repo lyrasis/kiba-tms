@@ -19,8 +19,8 @@ module Kiba
             end
 
             def sources
-              if Tms.names.cleanup_iteration
-                iter = Tms.names.cleanup_iteration
+              if Tms::Names.cleanup_iteration
+                iter = Tms::Names.cleanup_iteration
                 [
                   "nameclean#{iter}__constituents_kept".to_sym,
                   "nameclean#{iter}__orgs_not_kept".to_sym,

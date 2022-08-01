@@ -7,7 +7,7 @@ module Kiba
         module ByConstituentId
           module_function
 
-          ITERATION = Tms.names.cleanup_iteration
+          ITERATION = Tms::Names.cleanup_iteration
 
           def job
             Kiba::Extend::Jobs::Job.new(
@@ -20,8 +20,8 @@ module Kiba
           end
 
           def source
-            if Tms.names.cleanup_iteration
-              "nameclean#{Tms.names.cleanup_iteration}__persons_kept".to_sym
+            if Tms::Names.cleanup_iteration
+              "nameclean#{Tms::Names.cleanup_iteration}__persons_kept".to_sym
             else
               :prep__constituents
             end

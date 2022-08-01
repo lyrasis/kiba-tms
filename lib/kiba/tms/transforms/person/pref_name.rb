@@ -9,7 +9,7 @@ module Kiba
           
           def initialize
             @pref_name = Tms::Constituents.preferred_name_field
-            @set_term_source = Tms.names.set_term_source
+            @set_term_source = Tms::Names.set_term_source
             @null = '%NULLVALUE%'
             map = {
               pref_name => :pref_termdisplayname,
@@ -36,7 +36,7 @@ module Kiba
             nullvaluer.process(row)
             row[:pref_termflag] = null
             row[:pref_termsourcenote] = null
-            if Tms.names.set_term_pref_for_lang
+            if Tms::Names.set_term_pref_for_lang
               row[:pref_termprefforlang] = 'true'
             end
             row

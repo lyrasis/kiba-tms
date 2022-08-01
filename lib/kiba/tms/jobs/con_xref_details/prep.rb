@@ -23,7 +23,7 @@ module Kiba
                       prep__con_xrefs
                      ]
 
-            if Tms.names.cleanup_iteration
+            if Tms::Names.cleanup_iteration
               base << :persons__by_constituentid
               base << :orgs__by_constituentid
             else
@@ -40,7 +40,7 @@ module Kiba
               #   authorized forms of names into records
               transform Delete::Fields, fields: %i[conxrefdetailid roletypeid addressid nameid]
 
-              if Tms.names.cleanup_iteration
+              if Tms::Names.cleanup_iteration
                 transform Merge::MultiRowLookup,
                   lookup: persons__by_constituentid,
                   keycolumn: :constituentid,

@@ -7,7 +7,7 @@ module Kiba
         module Prep
           module_function
 
-          ITERATION = Tms.names.cleanup_iteration
+          ITERATION = Tms::Names.cleanup_iteration
 
           def job
             Kiba::Extend::Jobs::Job.new(

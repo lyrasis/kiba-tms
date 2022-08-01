@@ -17,8 +17,8 @@ module Kiba
              }.map{ |from, to| Rename::Field.new(from: from, to: to) }
 
             fields = [:var_termflag, :var_termsourcenote, target]
-            fields << :var_termprefforlang if Tms.names.set_term_pref_for_lang
-            fields << :var_termsource if Tms.names.set_term_source
+            fields << :var_termprefforlang if Tms::Names.set_term_pref_for_lang
+            fields << :var_termsource if Tms::Names.set_term_source
             
             @constanters = fields.map{ |field| Merge::ConstantValue.new(target: field, value: nil) }
           end
@@ -40,10 +40,10 @@ module Kiba
             renamers.each{ |renamer| renamer.process(row) }
 
             row[:var_termsourcenote] = null
-            flag = Tms.names.flag_variant_form ? 'variant form of name' : null
+            flag = Tms::Names.flag_variant_form ? 'variant form of name' : null
             row[:var_termflag] = flag
-            row[:var_termprefforlang] = null if Tms.names.set_term_pref_for_lang
-            row[:var_termsource] = term_source(row) if Tms.names.set_term_source
+            row[:var_termprefforlang] = null if Tms::Names.set_term_pref_for_lang
+            row[:var_termsource] = term_source(row) if Tms::Names.set_term_source
             row
           end
           

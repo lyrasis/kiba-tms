@@ -44,7 +44,7 @@ module Kiba
                 override_app_delim_check: false
               transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper,
                 explicit_no: false
-              transform Append::NilFields, fields: Tms.name_compilation.multi_source_normalizer.get_fields
+              transform Append::NilFields, fields: Tms::Names.compilation.multi_source_normalizer.get_fields
               transform Append::NilFields, fields: %i[migration_action approx_normalized]
             end
           end

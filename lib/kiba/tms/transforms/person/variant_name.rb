@@ -24,8 +24,8 @@ module Kiba
             }
             @copiers = copier_map.map{ |from, to| Copy::Field.new(from: from, to: to) }
             fields = [copier_map.values, :var_termflag, :var_termsourcenote, target].flatten
-            fields << :var_termprefforlang if Tms.names.set_term_pref_for_lang
-            fields << :var_termsource if Tms.names.set_term_source
+            fields << :var_termprefforlang if Tms::Names.set_term_pref_for_lang
+            fields << :var_termsource if Tms::Names.set_term_source
             
             @constanters = fields.map{ |field| Merge::ConstantValue.new(target: field, value: null) }
           end
@@ -41,10 +41,10 @@ module Kiba
             renamers.each{ |renamer| renamer.process(row) }
             copiers.each{ |copier| copier.process(row) }
             row[:var_termsourcenote] = null
-            flag = Tms.names.flag_variant_form ? 'variant form of name' : null
+            flag = Tms::Names.flag_variant_form ? 'variant form of name' : null
             row[:var_termflag] = flag
-            row[:var_termprefforlang] = null if Tms.names.set_term_pref_for_lang
-            row[:var_termsource] = term_source(row) if Tms.names.set_term_source
+            row[:var_termprefforlang] = null if Tms::Names.set_term_pref_for_lang
+            row[:var_termsource] = term_source(row) if Tms::Names.set_term_source
             row
           end
           

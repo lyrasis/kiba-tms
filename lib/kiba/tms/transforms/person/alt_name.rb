@@ -15,8 +15,8 @@ module Kiba
           # @private
           def process(row)
             merger.process(row)
-            row[:var_termprefforlang] = '%NULLVALUE%' if Tms.names.set_term_pref_for_lang
-            row[:var_termsource] = "TMS ConAltNames.#{pref_name_field}" if Tms.names.set_term_source
+            row[:var_termprefforlang] = '%NULLVALUE%' if Tms::Names.set_term_pref_for_lang
+            row[:var_termsource] = "TMS ConAltNames.#{pref_name_field}" if Tms::Names.set_term_source
             row
           end
           

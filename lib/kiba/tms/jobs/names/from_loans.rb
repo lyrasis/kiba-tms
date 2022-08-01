@@ -14,7 +14,7 @@ module Kiba
                 destination: :names__from_loans
               },
               transformer: xforms,
-              helper: Kiba::Tms.name_compilation.multi_source_normalizer
+              helper: Kiba::Tms::Names.compilation.multi_source_normalizer
             )
           end
 
