@@ -71,7 +71,8 @@ module Kiba
             terms: :termid,
             text_entries: :tablerowid,
             text_types: :texttypeid,
-            thes_xref_types: :thesxreftypeid
+            thes_xref_types: :thesxreftypeid,
+            title_types: :titletypeid
           }
         end
       end
