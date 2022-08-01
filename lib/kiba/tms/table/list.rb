@@ -17,6 +17,10 @@ module Kiba
           def as_filenames
             call.map{ |table| "#{table}.csv" }
           end
+
+          def include?(tablename)
+            call.any?(tablename)
+          end
           
           private
 
