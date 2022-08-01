@@ -14,6 +14,7 @@ module Kiba
       setting :target_tables, default: [], reader: true
       # pass in client-specific transform classes to prepare text_entry rows for merging
       setting :for_object_transform, default: nil, reader: true
+      setting :for_obj_components_transform, default: nil, reader: true
     end
   end
 end
