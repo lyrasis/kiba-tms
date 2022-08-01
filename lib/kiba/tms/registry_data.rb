@@ -765,7 +765,8 @@ module Kiba
           register :objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::Objects,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_objects.csv'),
-            tags: %i[obj_components objects]
+            tags: %i[obj_components objects],
+            desc: 'Converts rows from :actual_components to object records'
           }
         end
 
