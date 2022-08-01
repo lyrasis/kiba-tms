@@ -69,7 +69,6 @@ module Kiba
 
     # These weird, specific settings are included here instead of in individual job or transform code
     #   because it may be necessary to override them per client project using this library.
-
     setting :cspace_profile, default: :fcart, reader: true
 
     # client-specific cleanup of whitespace, special characters, etc. to be generically applied
@@ -91,9 +90,6 @@ module Kiba
           subclassification3: :subclassification3,
         },
         reader: true
-    end
-
-    setting :constituents, reader: true do
     end
 
     setting :locations, reader: true do

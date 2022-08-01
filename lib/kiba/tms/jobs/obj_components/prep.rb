@@ -26,7 +26,9 @@ module Kiba
 
           def lookups
             base = []
-            base << %i[prep__obj_comp_types prep__obj_comp_statuses] if Tms::ObjComponents.actual_components
+            if Tms::ObjComponents.actual_components
+              base << %i[prep__obj_comp_types prep__obj_comp_statuses]
+            end
             base.flatten
           end
           
@@ -42,7 +44,7 @@ module Kiba
               transform Delete::Fields,
                 fields: delete_fields
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
-
+              
               if Tms::ObjComponents.actual_components
                 transform Merge::MultiRowLookup,
                   lookup: prep__obj_comp_types,
@@ -58,10 +60,10 @@ module Kiba
                     objcompstatus: :objcompstatus,
                   },
                   delim: Tms.delim
+
               end
               transform Delete::Fields, fields: %i[componenttype objcompstatusid]
 
-              
               transform Replace::FieldValueWithStaticMapping,
                 source: :inactive,
                 target: :active,
