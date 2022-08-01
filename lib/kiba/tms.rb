@@ -46,11 +46,15 @@ module Kiba
     end
     
     # you will want to override the following in any application using this extension
+    setting :empty_table_list_path, default: "#{__dir__}/empty_tables.txt", reader: true
+    setting :tms_table_dir_path, default: "#{__dir__}/data/tms", reader: true
     setting :datadir, default: "#{__dir__}/data", reader: true
     setting :delim, default: Kiba::Extend.delim, reader: true
     setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
     setting :nullvalue, default: '%NULLVALUE%', reader: true
     # TMS tables not used in a given project. Override in project application
+    #   These should be tables that are not literally empty. Empty tables are listed in the file found
+    #   at Tms.empty_table_list_path
     setting :excluded_tables, default: [], reader: true
     # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
     #   this application) vs. EnvironmentalRequirementTypes (as found in another TMS instance). The Hash given as the

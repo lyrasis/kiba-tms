@@ -11,7 +11,7 @@ module Kiba
           end
 
           def initialize(table)
-            @filename = table.filename.delete_suffix('.csv')
+            @tablename = table.tablename
             @filekey = table.filekey
             @meth = Kiba::Extend.default_job_method_name
           end
@@ -26,7 +26,7 @@ module Kiba
         
           private
 
-          attr_reader :filename, :filekey, :meth
+          attr_reader :tablename, :filekey, :meth
 
           def abstract
             Kiba::Tms::Jobs::AbstractPrep.new(filekey).method(:prep)
@@ -45,7 +45,7 @@ module Kiba
           end
 
           def klass_name
-            "Kiba::Tms::Jobs::#{filename}"
+            "Kiba::Tms::Jobs::#{tablename}"
           end
 
           def has_prep_class?
@@ -63,7 +63,7 @@ module Kiba
           end
 
           def prep_klass
-            "Kiba::Tms::Jobs::#{filename}::Prep"
+            "Kiba::Tms::Jobs::#{tablename}::Prep"
           end
         end
       end

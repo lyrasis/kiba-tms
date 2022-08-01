@@ -6,123 +6,23 @@ module Kiba
       class List
         class << self
           def call
-            %w[
-               AccessionLot
-               AccessionMethods
-               AltNums
-               ClassificationNotations
-               ClassificationXRefs
-               Classifications
-               ConAddress
-               ConAltNames
-               ConDates
-               ConEMail
-               ConPhones
-               ConTypes
-               ConXrefDetails
-               ConXrefs
-               CondLineItems
-               Conditions
-               Constituents
-               Countries
-               Currencies
-               Departments
-               DimItemElemXrefs
-               DimensionElements
-               DimensionTypes
-               DimensionUnits
-               Dimensions
-               DispositionMethods
-               EMailTypes
-               EnvironmentalReqExt
-               EnvironmentalReqTypes
-               ExhLoanXrefs
-               ExhObjLoanObjXrefs
-               ExhObjXrefs
-               ExhVenObjXrefs
-               ExhVenuesXrefs
-               ExhibitionTitles
-               Exhibitions
-               FlagLabels
-               IndemnityResponsibilities
-               InsuranceResponsibilities
-               LoanObjStatuses
-               LoanObjXrefs
-               LoanPurposes
-               LoanStatuses
-               Loans
-               LocApprovers
-               Locations
-               LocHandlers
-               LocPurposes
-               MediaFiles
-               MediaMaster
-               MediaRenditions
-               MediaTypes
-               MediaXrefs
-               ObjAccession
-               ObjCompStatuses
-               ObjCompTypes
-               ObjComponents
-               ObjContext
-               ObjDeaccession
-               ObjInsIndemResp
-               ObjInsurance
-               ObjLocations
-               ObjectStatuses
-               Objects
-               OverallConditions
-               PhoneTypes
-               Relationships
-               RegistrationSets
-               RoleTypes
-               Roles
-               StatusFlags
-               SurveyTypes
-               TermMasterGeo
-               TermMasterThes
-               TermTypes
-               Terms
-               TextEntries
-               TextTypes
-               ThesXrefTypes
-               ThesXrefs
-               ThesaurusBases
-               TitleTypes
-               AddressTypes
-               Associations
-               AssocParents
-               ConDisplayBios
-               ConGeoCodes
-               ConGeography
-               ConveyanceTypes
-               ConXrefSets
-               CrateProjects
-               Crates
-               CrateTypes
-               DimensionMethods
-               GeoCodes
-               ObjDates
-               ObjectLevels
-               ObjectNames
-               ObjectNameTypes
-               ObjectTypes
-               ObjGeography
-               ObjIncoming
-               ObjIncPurposes
-               ObjRights
-               ObjRightsTypes
-               ObjTitles
-               ReferenceMaster
-               RefFormats
-               RefXRefs
-               ShippingMethods
-               StorageFormats
-               StorageMethods
-               TextStatuses
-               TreatmentPriorities
-               ValuationPurposes
-              ].map{ |table| "#{table}.csv" }
+            dirlist = Dir.new(Tms.tms_table_dir_path)
+              .children
+              .map{ |table| table.delete_suffix('.csv') }
+              .reject{ |table| table['~lock.'] }
+              .reject{ |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
+            dirlist - empty_tables - Tms.excluded_tables
+          end
+
+          def as_filenames
+            call.map{ |table| "#{table}.csv" }
+          end
+          
+          private
+
+          def empty_tables
+            File.read(Tms.empty_table_list_path)
+              .split("\n")
           end
         end
       end

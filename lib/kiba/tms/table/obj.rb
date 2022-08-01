@@ -5,12 +5,13 @@ module Kiba
     # value object bundling table attributes, given table file
     module Table
       class Obj
-        attr_reader :filename, :filekey, :included
+        attr_reader :tablename, :filename, :filekey, :included
         
-        def initialize(filename)
-          @filename = filename
-          @filekey = Tms::Table::RegistryKeyCreator.call(filename)
-          @included = Tms.excluded_tables.any?(filename.delete_suffix('.csv')) ? false : true
+        def initialize(tablename)
+          @tablename = tablename
+          @filename = "#{tablename}.csv"
+          @filekey = Tms::Table::RegistryKeyCreator.call(tablename)
+          @included = Tms::Table::List.call.any?(tablename)
         end
       end
     end

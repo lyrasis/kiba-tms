@@ -5,19 +5,19 @@ module Kiba
     module Table
       # Convert table filename to registry hash key
       class RegistryKeyCreator
-        def self.call(filename)
-          self.new(filename).call
+        def self.call(tablename)
+          self.new(tablename).call
         end
 
-        def initialize(filename)
-          @filename = filename
+        def initialize(tablename)
+          @tablename = tablename
         end
 
         def call
-          filename
-            .delete_suffix('.csv')
+          tablename
             .sub(/X[Rr]ef/, '_xref')
             .sub('EMail', 'Email')
+            .sub(/^DD/, 'Dd')
             .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
             .gsub(/([a-z\d])([A-Z])/,'\1_\2')
             .tr("-", "_")
@@ -27,7 +27,7 @@ module Kiba
 
         private
 
-        attr_reader :filename
+        attr_reader :tablename
       end
     end
   end
