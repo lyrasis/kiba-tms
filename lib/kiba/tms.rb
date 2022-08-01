@@ -33,7 +33,8 @@ module Kiba
               @loader.push_dir(File.join(ktms_dir, 'lib', 'kiba', 'tms'), namespace: Kiba::Tms)
               @loader.inflector.inflect(
                 'classification_xrefs' => 'ClassificationXRefs',
-                "version"   => "VERSION"
+                'dd_languages' => 'DDLanguages',
+                'version'   => 'VERSION'
               )
               @loader.enable_reloading
               @loader.setup
