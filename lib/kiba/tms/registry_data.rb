@@ -973,6 +973,12 @@ module Kiba
             tags: %i[textentries objects],
             lookup_on: :tablerowid
           }
+          register :for_obj_components, {
+            creator: Kiba::Tms::Jobs::TextEntries::ForObjComponents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_obj_components.csv'),
+            tags: %i[textentries obj_components],
+            lookup_on: :tablerowid
+          }
           register :unknown_table, {
             creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
             path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),

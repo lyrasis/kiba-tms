@@ -25,6 +25,8 @@ module Kiba
         reader: true
       # Any other fields to be deleted
       setting :other_delete_fields, default: [], reader: true
+      setting :text_entries_lookup, default: {}, reader: true
+      setting :text_entries_xform, default: nil, reader: true
       setting :inventorystatus_fields, default: %i[objcompstatus active], reader: true
       setting :comment_fields, default: %i[storagecomments installcomments], reader: true
     end
