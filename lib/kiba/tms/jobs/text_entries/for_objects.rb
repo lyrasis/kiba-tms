@@ -8,6 +8,8 @@ module Kiba
           module_function
 
           def job
+            return unless Tms::TextEntries.target_tables.any?('Objects')
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__text_entries,
