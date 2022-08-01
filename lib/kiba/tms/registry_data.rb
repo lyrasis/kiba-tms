@@ -980,6 +980,12 @@ module Kiba
             tags: %i[textentries obj_components],
             lookup_on: :tablerowid
           }
+          register :for_reference_master, {
+            creator: Kiba::Tms::Jobs::TextEntries::ForReferenceMaster,
+            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_reference_master.csv'),
+            tags: %i[textentries reference_master],
+            lookup_on: :tablerowid
+          }
           register :unknown_table, {
             creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
             path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),
