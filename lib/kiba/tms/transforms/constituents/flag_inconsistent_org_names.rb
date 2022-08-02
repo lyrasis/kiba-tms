@@ -7,6 +7,7 @@ module Kiba
         # Adds :check_org_names field when:
         # - :constituenttype = Organization
         # - :institution value is present (indicating it is not equal to preferred or non-preferred name type)
+        # - :preferred name field value and var name field (not blanked) are different
         class FlagInconsistentOrgNames
           def initialize
             @type = :constituenttype
@@ -20,11 +21,11 @@ module Kiba
           # @private
           def process(row)
             row[target] = nil
-            type_val = row.fetch(type, nil)
+            type_val = row[type]
             return row if type_val.blank?
             return row unless type_val == 'Organization'
 
-            inst_val = row.fetch(inst, nil)
+            inst_val = row[inst]
             unless inst_val.blank?
               row[target] = 'y'
               return row
