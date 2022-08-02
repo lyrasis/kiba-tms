@@ -7,9 +7,9 @@ module Kiba
         # Creates :contact_person_displayname and contact_person_alphasort fields using
         #   name part fields 
         class KeepOrgsWithPersonNameParts
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
+            @fields = %i[lastname firstname nametitle middlename suffix salutation]
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: fields)
           end
 
           # @private
@@ -17,11 +17,15 @@ module Kiba
             type = row.fetch(:constituenttype, nil)
             return unless type == 'Organization'
             
-            vals = field_values(row: row, fields: %i[lastname firstname nametitle middlename suffix salutation])
+            vals = getter.call(row)
             return if vals.empty?
                                 
             row
           end
+
+          private
+
+          attr_reader :fields, :getter
         end
       end
     end
