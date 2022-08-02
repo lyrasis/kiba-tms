@@ -13,7 +13,7 @@ module Kiba
           end
 
           def process(row)
-            row[:target] = nil
+            row[target] = nil
             typeval = row[type]
             return row unless typeval.blank?
             

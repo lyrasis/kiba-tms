@@ -35,7 +35,7 @@ module Kiba
                 casesensitive: false
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: :alt_names,
-                if_equal_to: Tms.config.constituents.var_name_field,
+                if_equal_to: Tms::Constituents.var_name_field,
                 multival: true,
                 delim: Tms.delim,
                 casesensitive: false

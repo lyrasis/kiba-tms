@@ -20,7 +20,7 @@ module Kiba
             return row unless type_val == 'Person'
 
             val = row.fetch(:lastname, nil)
-            return row unless val.empty?
+            return row unless val.blank?
 
             row[target] = 'y'
             row
