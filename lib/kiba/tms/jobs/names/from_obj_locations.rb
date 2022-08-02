@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__obj_locations,
+                source: :tms__obj_locations,
                 destination: :names__from_obj_locations
               },
               transformer: xforms,

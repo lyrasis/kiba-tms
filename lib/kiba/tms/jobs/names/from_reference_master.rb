@@ -12,7 +12,7 @@ module Kiba
             
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__reference_master,
+                source: :tms__reference_master,
                 destination: :names__from_reference_master
               },
               transformer: xforms,
