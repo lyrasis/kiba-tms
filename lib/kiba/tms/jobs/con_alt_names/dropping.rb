@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :con_alt_names__only_alt,
+                source: :con_alt_names__categorized_post_cleanup,
                 destination: :con_alt_names__dropping
               },
               transformer: xforms

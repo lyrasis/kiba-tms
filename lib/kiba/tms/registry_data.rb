@@ -221,10 +221,10 @@ module Kiba
             lookup_on: :constituentid,
             desc: 'Removes rows where altname is the same as linked name in constituents table. If preferred name field = alphasort, move org names from displayname to alphasort.'
           }
-          register :only_alt, {
-            creator: Kiba::Tms::Jobs::ConAltNames::OnlyAlt,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_only_alt.csv'),
-            desc: 'Removes ConAltNames rows that duplicate Constituent names',
+          register :categorized_post_cleanup, {
+            creator: Kiba::Tms::Jobs::ConAltNames::CategorizedPostCleanup,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_categorized_post_cleanup.csv'),
+            desc: 'Categorizes prepped data into handling categories using cleanup data',
             tags: %i[con con_alt_names],
             lookup_on: :constituentid
           }
