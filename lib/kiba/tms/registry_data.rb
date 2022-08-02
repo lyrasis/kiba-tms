@@ -1018,6 +1018,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('title_types') do
+          register :unmapped, {
+            creator: Kiba::Tms::Jobs::TitleTypes::Unmapped,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'title_types_unmapped.csv'),
+            tags: %i[title_types todochk],
+            desc: 'Non-zero value means work to do in TitleTypes::Prep'
+          }
+        end
+        
         Kiba::Tms.registry.namespace('works') do
           register :compiled, {
             creator: Kiba::Tms::Jobs::Works::Compiled,
