@@ -39,7 +39,7 @@ module Kiba
 
               transform Fingerprint::Add,
                 fields: Tms::Services::FingerprintFields.names,
-                delim: '|||',
+                delim: '␟', # Unicode Character 'SYMBOL FOR UNIT SEPARATOR' (U+241F)
                 target: :fingerprint,
                 override_app_delim_check: false
               transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper,
