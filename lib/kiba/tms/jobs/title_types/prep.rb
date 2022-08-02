@@ -21,6 +21,12 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteNoValueTypes, field: :titletype
+
+              transform Replace::FieldValueWithStaticMapping,
+                source: :titletype,
+                target: :titletype,
+                mapping: Tms::TitleTypes.type_mapping,
+                fallback_val: 'UNMAPPED'
             end
           end
         end
