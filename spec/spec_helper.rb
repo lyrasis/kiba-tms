@@ -2,8 +2,15 @@
 
 require 'bundler/setup'
 require_relative '../lib/kiba/tms'
+require 'dry/configurable/test_interface'
 
 Tms.loader
+
+module Tms
+  module Constituents
+    enable_test_interface
+  end
+end
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing methods for setting up and running
 #   transform tests
@@ -13,7 +20,6 @@ kiba_spec_dir = "#{Gem.loaded_specs['kiba-extend'].full_gem_path}/spec"
   require rbfile
 end
 
-require_relative '../lib/kiba/tms'
 
 RSpec.configure do |config|
   config.extend Kiba::Tms
