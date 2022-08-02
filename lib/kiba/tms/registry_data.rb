@@ -829,6 +829,15 @@ module Kiba
           }
         end
         
+        Kiba::Tms.registry.namespace('obj_titles') do
+          register :note_review, {
+            creator: Kiba::Tms::Jobs::ObjTitles::NoteReview,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_titles_note_review.csv'),
+            desc: 'Object title notes for client review/cleanup',
+            tags: %i[obj_titles objects postmigcleanup]
+          }
+        end
+        
         Kiba::Tms.registry.namespace('object_statuses') do
           register :unmapped, {
             creator: Kiba::Tms::Jobs::ObjectStatuses::Unmapped,
@@ -837,7 +846,7 @@ module Kiba
             tags: %i[object_statuses todochk]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('objecthierarchy') do
           register :from_obj_components, {
             creator: Kiba::Tms::Jobs::Objecthierarchy::FromObjComponents,
