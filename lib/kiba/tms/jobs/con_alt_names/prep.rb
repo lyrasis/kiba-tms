@@ -31,8 +31,8 @@ module Kiba
                 keycolumn: :constituentid,
                 fieldmap: {
                   chkid: :defaultnameid,
-                  mainname: Tms::Constituents.preferred_name_field,
-                  maintype: :contype}
+                  conname: Tms::Constituents.preferred_name_field,
+                  conauthtype: :constituenttype}
 
               transform do |row|
                 altid = row[:altnameid]
@@ -67,47 +67,54 @@ module Kiba
                 source: Tms::Constituents.preferred_name_field,
                 target: :altnorm
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: :mainname,
-                target: :mainnorm              
+                source: :conname,
+                target: :connorm              
               transform do |row|
                 altnorm = row[:altnorm]
-                mainnorm = row[:mainnorm]
-                next row unless altnorm == mainnorm
+                connorm = row[:connorm]
+                next row unless altnorm == connorm
               end
               
               transform Merge::MultiRowLookup,
                 lookup: constituents__by_norm,
                 keycolumn: :altnorm,
                 fieldmap: {
-                  is_separate_constituent: Tms::Constituents.preferred_name_field,
-                  sepcontype: :contype
+                  altconname: Tms::Constituents.preferred_name_field,
+                  sepconauthtype: :conauthtype,
+                  altnameconid: :constituentid
                 }
-              transform Delete::Fields, fields: %i[altnorm mainnorm]
+              transform Delete::Fields, fields: %i[altnorm connorm]
 
               transform Tms::Transforms::ConAltNames::DeriveType
 
-              # force separate constituent type value as altnametype where available
+              # force separate constituent type value as altauthtype where available
               transform do |row|
-                contype = row[:sepcontype]
-                next row if contype.blank?
+                conauthtype = row[:sepconauthtype]
+                next row if conauthtype.blank?
 
-                row[:altnametype] = contype.split(Tms.delim).uniq.join(Tms.delim)
+                row[:altauthtype] = conauthtype.split(Tms.delim).uniq.join(Tms.delim)
                 row
               end
-              transform Delete::Fields, fields: %i[sepcontype]
+              transform Delete::Fields, fields: %i[sepconauthtype]
               
               # add :typematch column
               transform do |row|
-                main = row[:maintype]
-                alt = row[:altnametype]
+                con = row[:conauthtype]
+                alt = row[:altauthtype]
 
-                if main == alt
+                if con == alt
                   row[:typematch] = 'y'
                 else
                   row[:typematch] = 'n'
                 end
                 row
               end
+
+              transform Rename::Fields, fieldmap: {
+                Tms::Constituents.preferred_name_field => :altname,
+                constituentid: :mainconid,
+                nametype: :altnametype
+              }
             end
           end
         end

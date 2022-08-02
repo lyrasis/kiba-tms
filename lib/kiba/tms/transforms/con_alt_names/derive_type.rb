@@ -9,7 +9,7 @@ module Kiba
             @pgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[lastname firstname])
             @ogetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [:institution])
             @ochecker = Tms::Services::Names::OrgNameChecker.new(field: Tms::Constituents.preferred_name_field)
-            @target = :altnametype
+            @target = :altauthtype
           end
 
           def process(row)
