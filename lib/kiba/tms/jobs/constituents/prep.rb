@@ -80,11 +80,17 @@ module Kiba
                 casesensitive: false
 
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
+              transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
               
               # tag rows as to whether they do or do not actually contain any name data
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,
                 sep: '', delete_sources: false
+
+              # remove non-preferred form of name if not including flipped as variant
+              unless Tms::Constituents.include_flipped_as_variant
+                transform Delete::Fields, fields: Tms::Constituents.var_name_field
+              end
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
