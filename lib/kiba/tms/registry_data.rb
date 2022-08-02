@@ -314,6 +314,13 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('constituents') do
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Constituents::Prep,
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
+            desc: 'Orig (not cleaned up) constituent table lookup by norm',
+            tags: %i[con],
+            lookup_on: :norm
+          }
           register :persons, {
             creator: Kiba::Tms::Jobs::Constituents::Persons,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituents_persons.csv'),
