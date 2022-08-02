@@ -55,6 +55,11 @@ module Kiba
                 fallback_val: :orig,
                 delete_source: false
               transform Tms::Transforms::Constituents::DeriveType
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[constituenttype derivedcontype],
+                target: :contype,
+                sep: '',
+                delete_sources: false
 
               # remove institution value if it is the same as what is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,
@@ -80,6 +85,10 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,
                 sep: '', delete_sources: false
+
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: Tms::Constituents.preferred_name_field,
+                target: :norm 
 
 
               boolfields = []
