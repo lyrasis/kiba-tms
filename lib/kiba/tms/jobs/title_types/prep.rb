@@ -8,6 +8,8 @@ module Kiba
           module_function
           
           def job
+            return unless Tms::Table::List.include?('TitleTypes')
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__title_types,
