@@ -36,7 +36,10 @@ module Kiba
             },
             con_alt_names: {
               initial_headers:
-              %i[constituentid altnameid nametype displayname]
+              [
+                :nametype, :mainname, Tms::Constituents.preferred_name_field, :maintype, :altnametype,
+                :typematch, :is_separate_constituent, :position
+              ]
             },
             con_dates: {
               initial_headers:

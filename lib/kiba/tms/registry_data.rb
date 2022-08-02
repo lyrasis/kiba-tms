@@ -218,7 +218,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConAltNames::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
             tags: %i[con prep],
-            lookup_on: :constituentid
+            lookup_on: :constituentid,
+            desc: 'Removes rows where altname is the same as linked name in constituents table. If preferred name field = alphasort, move org names from displayname to alphasort.'
           }
           register :only_alt, {
             creator: Kiba::Tms::Jobs::ConAltNames::OnlyAlt,
