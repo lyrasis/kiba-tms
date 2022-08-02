@@ -29,8 +29,7 @@ module Kiba
 
     private def setup_loader
               @loader = Zeitwerk::Loader.new
-              ktms_dir = Gem.loaded_specs['kiba-tms'].full_gem_path
-              @loader.push_dir(File.join(ktms_dir, 'lib', 'kiba', 'tms'), namespace: Kiba::Tms)
+              @loader.push_dir(File.expand_path(__FILE__).delete_suffix('.rb'), namespace: Kiba::Tms)
               @loader.inflector.inflect(
                 'classification_xrefs' => 'ClassificationXRefs',
                 'dd_languages' => 'DDLanguages',

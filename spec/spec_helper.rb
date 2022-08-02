@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+require_relative '../lib/kiba/tms'
+
+Tms.loader
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing methods for setting up and running
 #   transform tests
