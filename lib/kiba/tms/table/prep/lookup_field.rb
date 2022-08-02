@@ -56,6 +56,7 @@ module Kiba
             obj_ins_indem_resp: :objinsindemrespid,
             obj_locations: :objlocationid,
             obj_rights_types: :objrightstypeid,
+            obj_titles: :objectid,
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             phone_types: :phonetypeid,
