@@ -6,7 +6,9 @@ module Kiba
   module Tms
     module Objects
       module Config
+        module_function
         extend Dry::Configurable
+
         setting :annotation_source_fields, default: %i[creditline], reader: true
         setting :annotation_target_fields, default: %i[annotationtype annotationnote], reader: true
         setting :consider_blank, default: {
@@ -18,6 +20,15 @@ module Kiba
                 type: '0',
               },
           reader: true
+        setting :comment_fields,
+          reader: true,
+          default: %i[comment],
+          constructor: ->(default) do
+            default << :alt_num_comment if Tms::AltNums.for?('Objects')
+            default << :title_comment if Tms::Table::List.include?('ObjTitles')
+            default
+          end
+          
         # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
         #  in client project
         setting :custom_map_fields, default: [], reader: true

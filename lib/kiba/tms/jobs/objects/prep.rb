@@ -19,19 +19,20 @@ module Kiba
           end
 
           def lookups
-            result = %i[
+            base = %i[
                         prep__departments
                         prep__object_statuses
                         prep__obj_context
                         con_xref_details__for_objects
                        ]
             if Tms::Objects::FieldXforms.classifications
-              %i[prep__classifications prep__classification_xrefs].each{ |lkup| result << lkup }
+              %i[prep__classifications prep__classification_xrefs].each{ |lkup| base << lkup }
             end
-            result << :text_entries__for_objects if Tms::TextEntries.for?('Objects')
-            result << :alt_nums__for_objects if Tms::AltNums.for?('Objects')
-            result << :prep__status_flags if Tms::StatusFlags.for?('Objects')
-            result
+            base << :text_entries__for_objects if Tms::TextEntries.for?('Objects')
+            base << :alt_nums__for_objects if Tms::AltNums.for?('Objects')
+            base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
+            base << :prep__obj_titles if Tms::Table::List.include?('ObjTitles')
+            base
           end
           
           def xforms
@@ -126,6 +127,32 @@ module Kiba
                 },
                 delim: Tms.delim
               transform Delete::Fields, fields: :objectstatusid
+
+              if Tms::Table::List.include?('ObjTitles')
+                transform Merge::MultiRowLookup,
+                  lookup: prep__obj_titles,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    obj_title: :title,
+                    titletype: :titletype,
+                    titlelanguage: :language,
+                    title_comment: :titlenote
+                  },
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
+                
+                # if no title merged in from ObjTitles, move :title to :obj_title
+                transform do |row|
+                  ot = row[:obj_title]
+                  next row unless ot.blank?
+
+                  row[:obj_title] = row[:title]
+                  row
+                end
+
+                transform Delete::Fields, fields: :title
+                transform Rename::Field, from: :obj_title, to: :title
+              end
 
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
@@ -293,13 +320,12 @@ module Kiba
                 end
               end
 
-              if Tms::AltNums.for?('Objects')
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: %i[comment alt_num_comment],
-                  target: :comment,
-                  sep: Tms.delim,
-                  delete_sources: true
-              end
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: Tms::Objects::Config.comment_fields,
+                target: :comment,
+                sep: Tms.delim,
+                delete_sources: true
+
 
               unless Tms::Objects::Config.named_coll_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
