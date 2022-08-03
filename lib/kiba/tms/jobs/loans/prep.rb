@@ -23,6 +23,7 @@ module Kiba
                       prep__departments
                      ]
             base << :prep__loan_purposes if Tms::LoanPurposes.used
+            base << :prep__loan_statuses if Tms::LoanStatuses.used
             if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
               base << :con_xref_details__for_loans
             else
@@ -48,6 +49,14 @@ module Kiba
                   fieldmap: {loanpurpose: :loanpurpose}
               end
               transform Delete::Fields, fields: :loanpurposeid
+
+              if Tms::LoanStatuses.used
+                transform Merge::MultiRowLookup,
+                  lookup: prep__loan_statuses,
+                  keycolumn: :loanstatusid,
+                  fieldmap: {loanstatus: :loanstatus}
+              end
+              transform Delete::Fields, fields: :loanstatusid
 
               transform Replace::FieldValueWithStaticMapping,
                 source: :loanin,
