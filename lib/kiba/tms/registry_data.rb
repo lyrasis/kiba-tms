@@ -422,6 +422,15 @@ module Kiba
           }
         end
         
+        Kiba::Tms.registry.namespace('loans') do
+          register :in, {
+            creator: Kiba::Tms::Jobs::Loans::In,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loans_in.csv'),
+            desc: 'Loans with :loantype = `loan in`',
+            tags: %i[loans loansin]
+          }
+        end
+
         Kiba::Tms.registry.namespace('locs') do
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
