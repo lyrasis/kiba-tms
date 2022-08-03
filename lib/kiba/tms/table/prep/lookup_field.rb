@@ -45,6 +45,7 @@ module Kiba
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
             loan_purposes: :loanpurposeid,
+            loan_statuses: :loanstatusid,
             loc_approvers: :approverid,
             loc_handlers: :handlerid,
             locations: :locationid,
