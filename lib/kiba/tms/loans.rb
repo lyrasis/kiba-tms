@@ -15,6 +15,8 @@ module Kiba
       setting :empty_fields, default: %i[], reader: true
       # Some TMS installs use :constituentidold, which is a direct constituent table lookup and must be merged in
       #   differently
+      # If :primaryconxrefid, this should be ignored and ConXrefDetails used to merge in all names, not
+      #   just a primary name
       setting :con_link_field, default: :primaryconxrefid, reader: true
       def omitted_fields
         ( delete_fields + empty_fields ).uniq

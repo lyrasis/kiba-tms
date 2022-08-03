@@ -24,6 +24,8 @@ module Kiba
                      ]
             base << :prep__loan_purposes if Tms::LoanPurposes.used
             base << :prep__loan_statuses if Tms::LoanStatuses.used
+            base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used
+            base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used
             if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
               base << :con_xref_details__for_loans
             else
@@ -57,6 +59,34 @@ module Kiba
                   fieldmap: {loanstatus: :loanstatus}
               end
               transform Delete::Fields, fields: :loanstatusid
+
+              indfields = %i[indemnityfromlender indemnityfrompreviousvenue indemnityatvenue indemnityreturn]
+              if Tms::IndemnityResponsibilities.used
+                indfields.each do |field|
+                  next if Tms::Loans.omitted_fields.any?(field)
+
+                  transform Merge::MultiRowLookup,
+                    lookup: prep__indemnity_responsibilities,
+                    keycolumn: field,
+                    fieldmap: {field => :responsibility}
+                end
+              else
+                transform Delete::Fields, fields: indfields
+              end
+
+              insfields = %i[insurancefromlender insurancefrompreviousvenue insuranceatvenue insurancereturn]
+              if Tms::InsuranceResponsibilities.used
+                insfields.each do |field|
+                  next if Tms::Loans.omitted_fields.any?(field)
+
+                  transform Merge::MultiRowLookup,
+                    lookup: prep__insurance_responsibilities,
+                    keycolumn: field,
+                    fieldmap: {field => :responsibility}
+                end
+              else
+                transform Delete::Fields, fields: insfields
+              end
 
               transform Replace::FieldValueWithStaticMapping,
                 source: :loanin,
