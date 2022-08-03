@@ -7,16 +7,23 @@ module Kiba
         module ByConstituentId
           module_function
 
-          ITERATION = Tms::Names.cleanup_iteration
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: "nameclean#{ITERATION}__orgs_kept".to_sym,
+                source: source,
                 destination: :orgs__by_constituentid
               },
               transformer: xforms
             )
+          end
+
+          def source
+            iteration = Tms::Names.cleanup_iteration
+            if iteration
+              "nameclean#{iteration}__orgs_kept".to_sym
+            else
+              :constituents__orgs
+            end
           end
 
           def xforms
