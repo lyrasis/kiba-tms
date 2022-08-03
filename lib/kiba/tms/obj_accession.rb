@@ -7,7 +7,7 @@ module Kiba
     module ObjAccession
       extend Dry::Configurable
       # whether or not table is used
-      setting :used, default: ->{ Tms.excluded_tables.none?('ObjAccession') }, reader: true
+      setting :used, default: ->{ Tms::Table::List.include?('ObjAccession') }, reader: true
       # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[], reader: true
     end

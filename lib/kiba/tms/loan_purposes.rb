@@ -7,9 +7,9 @@ module Kiba
     module LoanPurposes
       extend Dry::Configurable
       module_function
-      
+
       # whether or not table is used
-      setting :used, default: ->{ Tms.excluded_tables.none?('LoanPurposes') }, reader: true
+      setting :used, default: ->{ Tms::Table::List.include?('LoanPurposes') }, reader: true
       # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[], reader: true
     end

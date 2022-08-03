@@ -8,7 +8,7 @@ module Kiba
       module_function
       extend Dry::Configurable
       # whether or not table is used
-      setting :used, default: ->{ Tms.excluded_tables.none?('AssocParents') }, reader: true
+      setting :used, default: ->{ Tms::Table::List.include?('AssocParents') }, reader: true
       # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[complete mixed], reader: true
       setting :for_constituents, default: false, reader: true
