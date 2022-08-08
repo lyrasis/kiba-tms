@@ -5,19 +5,20 @@ module Kiba
     module Transforms
       # Given fields containing year, month, and day parts, returns target field combining those values
       class DateFromParts
-        include Kiba::Extend::Transforms::Helpers
         
         def initialize(year:, month:, day:, target:)
           @year_f = year
           @month_f = month
           @day_f = day
           @target = target
+          @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+            fields: [year_f, month_f, day_f], discard: []
+          )
         end
 
         def process(row)
-          @vals = {}
           row[target] = nil
-          @vals = field_values(row: row, fields: [year_f, month_f, day_f], discard: [])
+          @vals = getter.call(row)
           return delete_sources(row) unless date_data?
 
           year = vals[year_f]
@@ -49,7 +50,7 @@ module Kiba
 
         private
 
-        attr_reader :year_f, :month_f, :day_f, :target, :vals
+        attr_reader :year_f, :month_f, :day_f, :target, :vals, :getter
 
         def date_data?
           vals.reject{ |_key, val| val.blank? }.empty? ? false : true
