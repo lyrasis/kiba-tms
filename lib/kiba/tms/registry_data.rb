@@ -429,6 +429,18 @@ module Kiba
             desc: 'Loans with :loantype = `loan in`',
             tags: %i[loans loansin]
           }
+          register :out, {
+            creator: Kiba::Tms::Jobs::Loans::Out,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loans_out.csv'),
+            desc: 'Loans with :loantype = `loan out`',
+            tags: %i[loans loansout]
+          }
+          register :unexpected_type, {
+            creator: Kiba::Tms::Jobs::Loans::UnexpectedType,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'loans_unexpected_type.csv'),
+            desc: 'Loans with :loantype not `loan in` or `loan out`. Non-zero means work to do!',
+            tags: %i[loans todochk]
+          }
         end
 
         Kiba::Tms.registry.namespace('locs') do
