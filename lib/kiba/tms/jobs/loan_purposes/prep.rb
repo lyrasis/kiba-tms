@@ -21,6 +21,12 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteNoValueTypes, field: :loanpurpose
+              transform do |row|
+                purpose = row[:loanpurpose]
+                next if Tms::LoanPurposes.unused_values.any?(purpose)
+
+                row
+              end
             end
           end
         end
