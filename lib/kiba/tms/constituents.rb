@@ -67,6 +67,10 @@ module Kiba
         # String that will be appended to the end of result, closing the date value
         setting :date_suffix, default: ')', reader: true
       end
+      # config for processing ConDates table
+      setting :dates, reader: true do
+        setting :known_types, default: %w[birth death active], reader: true
+      end
     end
   end
 end

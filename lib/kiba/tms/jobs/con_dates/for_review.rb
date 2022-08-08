@@ -7,8 +7,9 @@ module Kiba
         module ForReview
           module_function
 
-          KNOWN_TYPES = %w[birth death active]
           def job
+            return unless Tms::Table::List.include?('ConDates')
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__con_dates,
