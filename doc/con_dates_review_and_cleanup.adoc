@@ -16,9 +16,11 @@ toc::[]
 
 [IMPORTANT]
 ====
-The spreadsheet you have been given is for your review, and use in cleaning up existing data in TMS as desired.
+The spreadsheet you have been given is for your review only.
 
-It is *not* a worksheet in which you can make changes that will be merged back into the migration.
+You may use it to clean up existing data in TMS prior to providing data for the production migration phase. Or you can use the version of this report provided during the production migration to inform cleanup in CollectionSpace after migration as desired.
+
+*It is _not_ a worksheet in which you can make changes that will be merged back into the migration.*
 ====
 
 == Dates in CS Person/Organization records
@@ -43,9 +45,46 @@ In TMS constituents mapped to organization records, "birth" dates will be mapped
 
 Other date information can be massaged into a textual note and include in the History note
 
+== How this data was prepared
+
+* We take the structured start and end dates entered in TMS and convert them to a single date value. If the start/end dates differ, this results in a single _date range_ value
+* We reconcile variant forms of `datedescription` (i.e. "birth", "birthday", "birth year", "began", etc.) into one consistent value ("birth") to inform how to map date data into CS persons and organization.
+* We derive a :datenote value for data that can't map cleanly into available structured CollectionSpace person/organization date fields. These include:
+** dates other than birth/death dates (person) or foundation/dissolution dates (organization)
+** date remarks
+
+== Structure of report spreadsheet
+
+The following columns reflect how the data is structured in TMS' database tables: `constituentname`, `constituentid`, `date`, `remarks`.
+
+The following columns indicate how each row will map into the relevant CS Person or Organization authority, given the current TMS data: `birth_foundation_date`, `death_dissolution_date`, `datenote`.
+
+The following columns indicate how the date will be interpreted into structured date data in CS (see Person > Birth date field and click into it as an example): `parsed_date_start`, `parsed_date_end`.
+
+The following columns are informational, to help you in reviewing the data: `warn`, `date_parser_warnings`
+
+
 
 == Categories of things to look at in review/cleanup
 
-=== `warn` column contains `No date value`
+=== rows with warnings
 
-We couldn't 
+Limit to rows with `warn` column not empty. The meanings of the warnings are explained below:
+
+
+no date type in datedescription:: no date type information is available to indicate how we should map date data
+unknown/unmapped date type in datedescription:: we could not map the date type information to a standard date type for mapping. Basic standard date types are: birth, death, active.
+no date value:: that there is no date value indicates possible malformed/mis-entered data in ConDates table
+date value is range:: this should not show up when date type is "active", because range is expected then. Otherwise, the fact that a range was entered may indicate both birth and death were entered under birth date.
+multiple values for birth or death date for constituent id:: more than one birth date and/or death date entry in table for a single constituent. CS takes only a single value for each of these date fields.
+unparseable date value:: the date value mapped to `birth_foundation_date` or `death_dissolution_date` cannot be parsed into a valid date for ingest into CS. "unparseable date value" is followed by more detailed information your Migration Specialist can use to determine why a date isn't parseable. The most common reason (indicated by additional "Emendate untokenizable") is that extra information (not part of an actual date value) has been included in the date value. For these we recommend that the extra information be moved to remarks field if it needs to be retained. 
+
+=== rows with `datedescription` = birth or death, AND a `datenote` value
+
+These indicate that redundant informatiobn may have been recorded, or that place or other information that does not belong in ConDates may have been recorded here.
+
+=== rows with `date_parser_warnings` values
+
+These warnings are from the date processing tool, and indicate that a date was successfully parsed, but a particular https://github.com/kspurgin/emendate/blob/main/docs/options.adoc[date parsing option] was applied, interpreting the date in a certain way. You will want to review that the dates are being parsed as expected, and let your Migration Specialist know if a different date interpretation option should be used.
+
+Note that date parser options apply across the board to all date value being parsed. (Example: It is not possible to sometimes interpret "03/04/2001" as March 4 and sometimes as April 3.) If your dates have inconsistent formatting, we will want to use the option/interpretation that is correct for the majority of the values. The other values will need to be manually cleaned up. 
