@@ -34,7 +34,7 @@ The options for recording _structured_ date data in these records are presently 
 * one birth date
 * one death date
 
-Other date information can be massaged into a textual note and include in the Biographical note
+Other date information can be massaged into a textual note and mapped into the Biographical note
 
 === Organization
 
@@ -43,7 +43,7 @@ Other date information can be massaged into a textual note and include in the Bi
 
 In TMS constituents mapped to organization records, "birth" dates will be mapped to foundation date, and "death" dates will be mapped to dissolution date.
 
-Other date information can be massaged into a textual note and include in the History note
+Other date information can be massaged into a textual note and mapped to the History note
 
 == How this data was prepared
 
@@ -52,6 +52,7 @@ Other date information can be massaged into a textual note and include in the Hi
 * We derive a :datenote value for data that can't map cleanly into available structured CollectionSpace person/organization date fields. These include:
 ** dates other than birth/death dates (person) or foundation/dissolution dates (organization)
 ** date remarks
+* We run our date parser on the date values that will be mapped to birth/foundation and death/dissolution date fields in CS, in order to identify unrecognized date formats and other issues
 
 == Structure of report spreadsheet
 
@@ -61,7 +62,7 @@ The following columns indicate how each row will map into the relevant CS Person
 
 The following columns indicate how the date will be interpreted into structured date data in CS (see Person > Birth date field and click into it as an example): `parsed_date_start`, `parsed_date_end`.
 
-The following columns are informational, to help you in reviewing the data: `warn`, `date_parser_warnings`
+The following columns are informational for the review/cleanup process: `warn`, `date_parser_warnings`
 
 
 
@@ -81,7 +82,7 @@ unparseable date value:: the date value mapped to `birth_foundation_date` or `de
 
 === rows with `datedescription` = birth or death, AND a `datenote` value
 
-These indicate that redundant informatiobn may have been recorded, or that place or other information that does not belong in ConDates may have been recorded here.
+These indicate that redundant information may have been recorded, or that place or other information that does not belong in ConDates may have been recorded here.
 
 === rows with `date_parser_warnings` values
 
