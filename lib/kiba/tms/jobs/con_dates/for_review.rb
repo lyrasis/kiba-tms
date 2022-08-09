@@ -26,6 +26,10 @@ module Kiba
                 lookup: tms__constituents,
                 keycolumn: :constituentid,
                 fieldmap: { constituentname: Tms::Constituents.preferred_name_field }
+
+              if Tms::Constituents.dates.date_parser
+                transform Tms::Constituents.dates.date_parser
+              end
             end
           end
         end

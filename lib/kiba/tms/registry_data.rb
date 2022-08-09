@@ -254,7 +254,12 @@ module Kiba
           register :for_review, {
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_dates_for_review.csv'),
-            tags: %i[con condates reports cleanup]
+            tags: %i[con condates reports cleanup],
+            dest_special_opts: {
+              initial_headers:
+              %i[constituentname constituentid warn datedescription date remarks
+                 birth_foundation_date death_dissolution_date datenote	]
+            }
           }
         end
         

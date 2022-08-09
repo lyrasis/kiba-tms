@@ -54,7 +54,8 @@ module Kiba
       #  - :specific - will go into a note tagged with the specific address it applies to
       setting :address_remarks_handling, default: :specific, reader: true
       # The following are useful if there are duplicate preferred names that have different date values that
-      #   can disambiguate the names
+      #   can disambiguate the names. Note that this refers to date fields in the Constituents table or
+      #   merged into such during its prep. It does not control anything about processing ConDates
       setting :date_append, reader: true do
         # constituenttype values to add dates to. Should be: [:all], [:none], or Array of String values
         setting :to_types, default: [:all], reader: true
@@ -69,7 +70,42 @@ module Kiba
       end
       # config for processing ConDates table
       setting :dates, reader: true do
+        # custom transform to clean up remarks before any other processing
+        setting :initial_remarks_cleaner, default: nil, reader: true
         setting :known_types, default: %w[birth death active], reader: true
+        setting :cleaners, default: [], reader: true
+        setting :warning_generators,
+          default: [
+            Tms::Transforms::ConDates::WarnNoDateValue,
+            Tms::Transforms::ConDates::WarnDateRangeValue,
+            Tms::Transforms::ConDates::WarnNoDateType,
+            Tms::Transforms::ConDates::WarnUnknownDateType,
+            Tms::Transforms::ConDates::WarnMultiBirthDeathDate
+          ],
+          reader: true
+        # used by DateFromRemarkStartingWithYr transform
+        setting :yr_remark_start, default: '^(\d{4}|\d{1,2}(\/|-))', reader: true
+        # used by ActiveDateFromRemarks transform
+        setting :active_remark_match, default: Regexp.new('^active', Regexp::IGNORECASE), reader: true
+        setting :active_remark_clean_match, default: Regexp.new('^active ', Regexp::IGNORECASE), reader: true
+        # used by DateFromRemarkStartWithPartialInd transform
+        setting :partial_date_indicators,
+          default: %w[after approximately around before c. ca. circa],
+          reader: true
+        # used by MakeDatedescriptionConsistent and DateFromDatedescRemarkCombo transforms
+        # should have one key per :known_types element
+        # value should be array of variants (including the expected term)
+        setting :datedescription_variants,
+          default: {
+            'active' => ['active', 'active dates', 'fl.', 'flourished'],
+            'birth' => ['b.', 'birth', 'birth date', 'birth year', 'birthdate', 'birthday', 'birthplace', 'born', 'founded'],
+            'death' => ['d.', 'dead', 'death', 'death date', 'death day', 'death year', 'deathdate', 'deathday', 'died']
+          },
+          reader: true
+        # Transform that creates a date-related note (in :datenote field) mergeable into Person/Org record
+        setting :note_creator, default: Tms::Transforms::ConDates::NoteCreator, reader: true
+        # Transform that adds parsed date columns and warnings about date values that cannot be parsed
+        setting :date_parser, default: Tms::Transforms::ConDates::DateParser, reader: true
       end
     end
   end
