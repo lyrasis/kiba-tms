@@ -271,9 +271,14 @@ module Kiba
               initial_headers:
               %i[constituentid datasource warn datedescription date remarks
                  birth_foundation_date death_dissolution_date datenote	]
-            },
+            }
+          }
+          register :to_merge, {
+            creator: Kiba::Tms::Jobs::ConDates::ToMerge,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_to_merge.csv'),
+            tags: %i[con condates],
+            desc: 'Keeps only fields from :prep_compiled to be merged back into Constituents.',
             lookup_on: :constituentid
-
           }
           register :for_review, {
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
