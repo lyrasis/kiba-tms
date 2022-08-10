@@ -21,13 +21,13 @@ module Kiba
     
     extend Dry::Configurable
 
-    puts "LOADING KIBA-TMS"
 
     def loader
       @loader ||= setup_loader
     end
 
     private def setup_loader
+              puts "LOADING KIBA-TMS"
               @loader = Zeitwerk::Loader.new
               @loader.push_dir(File.expand_path(__FILE__).delete_suffix('.rb'), namespace: Kiba::Tms)
               @loader.inflector.inflect(
