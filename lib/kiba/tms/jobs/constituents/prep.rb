@@ -109,6 +109,11 @@ module Kiba
                 transform Delete::Fields, fields: Tms::Constituents.var_name_field
               end
 
+
+              unless Kiba::Tms::Constituents.date_append.to_types == [:none]
+                transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
+              end
+
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
                 target: :norm 

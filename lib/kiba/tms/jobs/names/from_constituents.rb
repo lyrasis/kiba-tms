@@ -21,9 +21,6 @@ module Kiba
           def xforms
             Kiba.job_segment do              
               transform Delete::Fields, fields: %i[namedata defaultdisplaybioid defaultnameid displaydate]
-              unless Kiba::Tms::Constituents.date_append.to_types == [:none]
-                transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
-              end
               transform Rename::Field, from: :position, to: :contact_role
               transform Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
