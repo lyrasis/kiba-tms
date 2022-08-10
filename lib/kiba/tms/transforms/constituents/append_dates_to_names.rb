@@ -9,46 +9,96 @@ module Kiba
           
           def initialize
             @name = Kiba::Tms::Constituents.preferred_name_field
-            @appendable = Kiba::Tms::Constituents.date_append.to_types
+            @mode = Kiba::Tms::Constituents.date_append.to_types
             @date_sep = Kiba::Tms::Constituents.date_append.date_sep
             @name_date_sep = Kiba::Tms::Constituents.date_append.name_date_sep
             @date_suffix = Kiba::Tms::Constituents.date_append.date_suffix
+            @date_getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: %i[birth_foundation_date death_dissolution_date]
+              )
           end
 
           def process(row)
+            @datevals = {}
             # prefer to skip running this transform in your job instead of passing all rows through
             #   a transform that is not going to do anything.
-            return row if appendable == [:none]
+            return row if mode == [:none]
 
-            return append_dates(row) if appendable == [:all]
+            append_dates(row) if appendable?(row)
 
-            appendable?(row) ? append_dates(row) : row
+            if mode == :duplicate
+              %i[norm combined duplicate].each{ |field| row.delete(field) }
+            end
+
+            row
           end
 
           private
 
-          attr_reader :name, :appendable, :date_sep, :name_date_sep, :date_suffix
+          attr_reader :name, :mode, :date_sep, :name_date_sep, :date_suffix, :date_getter, :datevals
 
           def append_dates(row)
-            name_val = row.fetch(name, nil)
-            return row if name_val.blank?
-            
-            dates = field_values(row: row, fields: %i[begindateiso enddateiso])
-            return row if dates.empty?
-
-            date = construct_date(dates)
-            row[name] = "#{name_val}#{date}"
+            nameval = row[name]
+            date = construct_date(datevals)
+            row[name] = "#{nameval}#{date}"
             row
           end
           
+          def appendable?(row)
+            name_appendable?(row) && type_appendable?(row) && date_appendable?(row)
+          end
+
           def construct_date(dates)
-            date_range = "#{dates[:begindateiso]}#{date_sep}#{dates[:enddateiso]}".strip
+            date_range = "#{dates[:birth_foundation_date]}#{date_sep}#{dates[:death_dissolution_date]}".strip
             "#{name_date_sep}#{date_range}#{date_suffix}"
           end
 
-          def appendable?(row)
-            type = row.fetch(:constituenttype, nil)
-            appendable.any?(type)
+          def date_appendable?(row)
+            @datevals = date_getter.call(row)
+            return false if datevals.empty?
+
+            true
+          end
+
+          def duplicate_appendable?(row)
+            duplicate = row[:duplicate]
+            return false if duplicate.blank?
+
+            true if duplicate == 'y'
+          end
+
+          def name_appendable?(row)
+            nameval = row[name]
+            return false if nameval.blank?
+
+            true
+          end
+
+          def org?(row)
+            type = row[:contype]
+            return false if type.blank?
+
+            true if type == 'Organization'
+          end
+
+          def person?(row)
+            type = row[:contype]
+            return false if type.blank?
+
+            true if type == 'Person'
+          end
+
+          def type_appendable?(row)
+            case mode
+            when :all
+              true
+            when :duplicate
+              duplicate_appendable?(row)
+            when :person
+              person?(row)
+            when :org
+              org?(row)
+            end
           end
         end
       end

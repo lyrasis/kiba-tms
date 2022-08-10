@@ -29,7 +29,7 @@ module Kiba
 
           def lookups
             base = %i[prep__con_types]
-            base << :prep__con_dates if Tms::Table::List.include?('ConDates')
+            base << :con_dates__to_merge if Tms::Constituents.dates.merging
             base
           end
           
@@ -109,6 +109,34 @@ module Kiba
                 transform Delete::Fields, fields: Tms::Constituents.var_name_field
               end
 
+              if Tms::Constituents.dates.merging
+                transform Merge::MultiRowLookup,
+                  lookup: con_dates__to_merge,
+                  keycolumn: :constituentid,
+                  fieldmap: {birth_foundation_date: :birth_foundation_date}
+                transform Merge::MultiRowLookup,
+                  lookup: con_dates__to_merge,
+                  keycolumn: :constituentid,
+                  fieldmap: {death_dissolution_date: :death_dissolution_date}
+                transform Merge::MultiRowLookup,
+                  lookup: con_dates__to_merge,
+                  keycolumn: :constituentid,
+                  fieldmap: {datenote: :datenote},
+                  delim: '%CR%%CR%',
+                  sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
+              end
+              
+              if Kiba::Tms::Constituents.date_append.to_types == [:duplicate]
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: Tms::Constituents.preferred_name_field,
+                  target: :norm
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[contype norm],
+                  target: :combined,
+                  sep: ' ',
+                  delete_sources: false
+                transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate
+              end
 
               unless Kiba::Tms::Constituents.date_append.to_types == [:none]
                 transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
@@ -116,8 +144,13 @@ module Kiba
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
-                target: :norm 
-
+                target: :norm
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[contype norm],
+                target: :combined,
+                sep: ' ',
+                delete_sources: false
+              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
 
               boolfields = []
               boolfields << :approved unless Tms::Constituents.map_approved

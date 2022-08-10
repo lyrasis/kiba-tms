@@ -66,8 +66,15 @@ module Kiba
       #   can disambiguate the names. Note that this refers to date fields in the Constituents table or
       #   merged into such during its prep. It does not control anything about processing ConDates
       setting :date_append, reader: true do
-        # constituenttype values to add dates to. Should be: [:all], [:none], or Array of String values
-        setting :to_types, default: [:all], reader: true
+        # constituenttype values to add dates to. Should be one of:
+        #
+        # - :none - no dates will be added to constituent preferred names
+        # - :all - will add available dates to all constituent preferred names
+        # - :duplicate - will add available dates to any Person/Org constituent preferred names that
+        #   are duplicates when normalized
+        # - :person - will add available dates to all Person constituent preferred names
+        # - :org  - will add available dates to all Organization constituent preferred names
+        setting :to_types, default: :duplicate, reader: true
         # String that will separate the two dates. Will be appended to start date if there is no end date.
         #   Will be prepended to end date if there is no start date.
         setting :date_sep, default: ' - ', reader: true
@@ -79,6 +86,9 @@ module Kiba
       end
       # config for processing ConDates table
       setting :dates, reader: true do
+        # whether there is constituent date data to be merged into Constituents
+        # set to false if running con_dates__to_merge results in an empty table
+        setting :merging, default: true, reader: true
         setting :multisource_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # custom transform to clean up remarks before any other processing
         setting :initial_remarks_cleaner, default: nil, reader: true
@@ -120,10 +130,14 @@ module Kiba
 
       def initial_headers
         base = [:constituentid, :constituenttype, :derivedcontype, :contype, preferred_name_field]
-        base << var_name_field if include_flipped_as_variant
-        %i[institution inconsistent_org_names displaydate begindateiso enddateiso].each do |field|
+        puts 'Setting initial_headers for Constituent'
+        puts "TMS: include_flipped_as_variant = #{Tms::Constituents.include_flipped_as_variant}"
+        base << var_name_field if Tms::Constituents.include_flipped_as_variant
+        %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
+institution inconsistent_org_names].each do |field|
           base << field
         end
+        puts "initial headers: #{base.inspect}"
         base
       end
       
