@@ -30,6 +30,12 @@ module Kiba
                 transform Tms::Constituents.dates.note_creator
               end
 
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[datenote datenote_created],
+                target: :datenote,
+                sep: '%CR%%CR%',
+                delete_sources: true
+
               transform do |row|
                 row[:birth_foundation_date] = nil
                 row[:death_dissolution_date] = nil
