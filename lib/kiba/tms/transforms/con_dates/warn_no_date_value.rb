@@ -15,6 +15,9 @@ module Kiba
 
           # @private
           def process(row)
+            source = row[:datasource]
+            return row unless source == 'ConDates'
+            
             date = row[:date]
             return row unless date.blank?
 
