@@ -12,7 +12,7 @@ module Kiba
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__con_dates,
+                source: :con_dates__prep_compiled,
                 destination: :con_dates__for_review,
                 lookup: :tms__constituents
               },

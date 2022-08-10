@@ -9,19 +9,20 @@ module Kiba
 
           KNOWN_TYPES = %w[birth death active]
           def job
-            Kiba::Extend::Jobs::Job.new(
+            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :tms__con_dates,
-                destination: :prep__con_dates
+                destination: :prep__con_dates,
+                lookup: :tms__constituents
               },
-              transformer: xforms
+              transformer: xforms,
+              helper: Tms::Constituents.dates.multisource_normalizer
             )
           end
 
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: :condateid
               
               if Tms::Constituents.dates.initial_remarks_cleaner
                 transform Tms::Constituents.dates.initial_remarks_cleaner
@@ -46,41 +47,7 @@ module Kiba
                 transform cleaner
               end
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[constituentid datedescription],
-                target: :combined,
-                sep: ' ',
-                delete_sources: false
-              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
-              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate_subsequent, explicit_no: false, using: {}
-              
-              Tms::Constituents.dates.warning_generators.each do |warner|
-                transform warner
-              end
-
-              
-              if Tms::Constituents.dates.note_creator
-                transform Tms::Constituents.dates.note_creator
-              end
-
-              transform do |row|
-                row[:birth_foundation_date] = nil
-                row[:death_dissolution_date] = nil
-                duplicate = row[:duplicate_subsequent]
-                next row unless duplicate.blank?
-                
-                type = row[:datedescription]
-                next row if type.blank?
-                next row unless type == 'birth' || type == 'death'
-
-                date = row[:date]
-                next row if date.blank?
-
-                type == 'birth' ? row[:birth_foundation_date] = date : row[:death_dissolution_date] = date
-                row
-              end
-
-              transform Delete::Fields, fields: %i[combined duplicate duplicate_subsequent]
+              transform Merge::ConstantValue, target: :datasource, value: 'ConDates'
             end
           end
         end

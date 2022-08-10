@@ -9,6 +9,8 @@ module Kiba
     module Constituents
       extend Dry::Configurable
 
+      module_function
+      
       # transform run at the beginning of prep__constituents to force client-specific changes
       setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
@@ -24,6 +26,13 @@ module Kiba
       setting :map_isprivate, default: false, reader: true
       # what cs field to map :culturegroup into
       setting :culturegroup_target, default: :group, reader: true
+      setting :displaydate_cleaners,
+        default: [
+        ],
+        reader: true
+      # used by Constituents::DeletePrefixesFromDisplayDate
+      setting :displaydate_deletable_prefixes, default: [], reader: true
+      
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value
@@ -70,6 +79,7 @@ module Kiba
       end
       # config for processing ConDates table
       setting :dates, reader: true do
+        setting :multisource_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # custom transform to clean up remarks before any other processing
         setting :initial_remarks_cleaner, default: nil, reader: true
         setting :known_types, default: %w[birth death active], reader: true
@@ -107,6 +117,16 @@ module Kiba
         # Transform that adds parsed date columns and warnings about date values that cannot be parsed
         setting :date_parser, default: Tms::Transforms::ConDates::DateParser, reader: true
       end
+
+      def initial_headers
+        base = [:constituentid, :constituenttype, :derivedcontype, :contype, preferred_name_field]
+        base << var_name_field if include_flipped_as_variant
+        %i[institution inconsistent_org_names displaydate begindateiso enddateiso].each do |field|
+          base << field
+        end
+        base
+      end
+      
     end
   end
 end

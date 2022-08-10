@@ -21,10 +21,16 @@ module Kiba
               files: {
                 source: :tms__constituents,
                 destination: :prep__constituents,
-                lookup: %i[prep__con_types]
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = %i[prep__con_types]
+            base << :prep__con_dates if Tms::Table::List.include?('ConDates')
+            base
           end
           
           def xforms
@@ -33,9 +39,12 @@ module Kiba
               prefname = Tms::Constituents.preferred_name_field
               
               transform Tms::Transforms::DeleteTmsFields
+
+              # the final 3 date fields are deleted because they are handled in Constituents::CleanDates
               transform Delete::Fields,
                 fields: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
-                           begindate enddate systemflag internalstatus islocked publicaccess]
+                           begindate enddate systemflag internalstatus islocked publicaccess
+                           displaydate begindateiso enddateiso]
               transform Delete::FieldValueContainingString, fields: %i[defaultdisplaybioid], match: '-1'
               
               transform Merge::MultiRowLookup,
@@ -60,6 +69,14 @@ module Kiba
                 target: :contype,
                 sep: '',
                 delete_sources: false
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: [:contype, prefname],
+                target: :combined,
+                sep: ' ',
+                delete_sources: false
+              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
+              transform Delete::Fields, fields: :combined
 
               # remove institution value if it is the same as what is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,

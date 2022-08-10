@@ -30,9 +30,7 @@ module Kiba
               [:table, :tablerowid, classification_fields ].flatten
             },
             constituents: {
-              initial_headers:
-              [:constituentid, :constituenttype, Tms::Constituents.preferred_name_field,
-               Tms::Constituents.var_name_field, :institution, :inconsistent_org_names]
+              initial_headers: Tms::Constituents.initial_headers
             },
             con_alt_names: {
               initial_headers:

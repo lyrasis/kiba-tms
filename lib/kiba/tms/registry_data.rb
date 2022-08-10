@@ -251,13 +251,37 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('con_dates') do
+          register :compiled, {
+            creator: Kiba::Tms::Jobs::ConDates::Compiled,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_compiled.csv'),
+            tags: %i[con condates],
+            desc: 'Combines data from constituents__clean_dates and, if used, prep__con_dates; Reduces to unique value per date type, as much as possible',
+            dest_special_opts: {
+              initial_headers:
+              %i[constituentid datasource datedescription date remarks]
+            }
+
+          }
+          register :prep_compiled, {
+            creator: Kiba::Tms::Jobs::ConDates::PrepCompiled,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_compiled_prep.csv'),
+            tags: %i[con condates],
+            desc: 'Adds warnings to be pulled into review; creates :datenotes; adds CS mappable fields',
+            dest_special_opts: {
+              initial_headers:
+              %i[constituentid datasource warn datedescription date remarks
+                 birth_foundation_date death_dissolution_date datenote	]
+            },
+            lookup_on: :constituentid
+
+          }
           register :for_review, {
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_dates_for_review.csv'),
             tags: %i[con condates reports cleanup],
             dest_special_opts: {
               initial_headers:
-              %i[constituentname constituentid warn datedescription date remarks
+              %i[constituentname constituentid datasource warn datedescription date remarks
                  birth_foundation_date death_dissolution_date datenote	]
             }
           }
@@ -325,6 +349,13 @@ module Kiba
             desc: 'Orig (not cleaned up) constituent table lookup by norm',
             tags: %i[con],
             lookup_on: :norm
+          }
+          register :clean_dates, {
+            creator: Kiba::Tms::Jobs::Constituents::CleanDates,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_clean_dates.csv'),
+            desc: 'Just begin/end dates extracted from displaydate, and resulting :datenote values, for reconciliation with ConDates, if using, or otherwise merging back into Constituents',
+            tags: %i[con],
+            lookup_on: :constituentid
           }
           register :persons, {
             creator: Kiba::Tms::Jobs::Constituents::Persons,

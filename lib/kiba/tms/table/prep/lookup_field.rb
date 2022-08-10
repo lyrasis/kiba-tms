@@ -30,6 +30,7 @@ module Kiba
             constituents: :constituentid,
             con_address: :conaddressid,
             con_alt_names: :altnameid,
+            con_dates: :constituentid,
             con_types: :constituenttypeid,
             con_xrefs: :conxrefid,
             con_xref_details: :recordid,

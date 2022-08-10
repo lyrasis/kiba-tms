@@ -7,7 +7,7 @@ module Kiba
         # creates a date-related note field for merge into person/org records
         class NoteCreator
           def initialize
-            @target = :datenote
+            @target = :datenote_created
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[remarks date])
             @bdgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[datedescription remarks date])
           end
