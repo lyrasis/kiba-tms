@@ -47,12 +47,25 @@ Other date information can be massaged into a textual note and mapped to the His
 
 == How this data was prepared
 
-* We take the structured start and end dates entered in TMS and convert them to a single date value. If the start/end dates differ, this results in a single _date range_ value
-* We reconcile variant forms of `datedescription` (i.e. "birth", "birthday", "birth year", "began", etc.) into one consistent value ("birth") to inform how to map date data into CS persons and organization.
-* We derive a :datenote value for data that can't map cleanly into available structured CollectionSpace person/organization date fields. These include:
+=== Constituents table
+* strings matching `nationality` field are removed from `displaydate` field
+* best reasonable programmatic attempt made to convert `displaydate` values into parseable dates and determine date type intended
+* compare the values derived from `displaydate` with `begindateiso` and `enddateiso` values. If the same, `displaydate` value is dropped. If one contains the other (ie. "1975" and "Jun 20 1975", then the fuller date is kept in the appropriate `*dateiso` field. If different (other than a fuller date), a `datenote` value is created from `displaydate` value
+
+=== ConDates table (not used by all TMS clients)
+* Structured start and end dates entered in TMS are converted to a single date value. If the start/end dates differ, this results in a single _date range_ value
+* Variant forms of `datedescription` (i.e. "birth", "birthday", "birth year", "began", etc.) are reconciled into one consistent value ("birth") to inform how to map date data into CS persons and organization.
+
+=== Combined data
+* Data from Constituents and ConDates tables are combined into one table
+* Identical date values for the same constituent appearing in both tables are removed
+* Less-full date values that partially match (are contained in) values for the same constituent are removed
+* `datenote` value is derived for data that does not map into available structured CollectionSpace person/organization date fields. These include:
 ** dates other than birth/death dates (person) or foundation/dissolution dates (organization)
 ** date remarks
-* We run our date parser on the date values that will be mapped to birth/foundation and death/dissolution date fields in CS, in order to identify unrecognized date formats and other issues
+** subsequent, different birth/death date values recorded for the same constituent
+* Data review/quality warnings are generated
+* Date parser is run on the date values that will be mapped to birth/foundation and death/dissolution date fields in CS, in order to identify unrecognized date formats and other issues
 
 == Structure of report spreadsheet
 
@@ -73,12 +86,43 @@ The following columns are informational for the review/cleanup process: `warn`, 
 Limit to rows with `warn` column not empty. The meanings of the warnings are explained below:
 
 
-no date type in datedescription:: no date type information is available to indicate how we should map date data
-unknown/unmapped date type in datedescription:: we could not map the date type information to a standard date type for mapping. Basic standard date types are: birth, death, active.
-no date value:: that there is no date value indicates possible malformed/mis-entered data in ConDates table
-date value is range:: this should not show up when date type is "active", because range is expected then. Otherwise, the fact that a range was entered may indicate both birth and death were entered under birth date.
-multiple values for birth or death date for constituent id:: more than one birth date and/or death date entry in table for a single constituent. CS takes only a single value for each of these date fields.
-unparseable date value:: the date value mapped to `birth_foundation_date` or `death_dissolution_date` cannot be parsed into a valid date for ingest into CS. "unparseable date value" is followed by more detailed information your Migration Specialist can use to determine why a date isn't parseable. The most common reason (indicated by additional "Emendate untokenizable") is that extra information (not part of an actual date value) has been included in the date value. For these we recommend that the extra information be moved to remarks field if it needs to be retained. 
+==== no date type in datedescription
+
+No date type information is available to indicate how we should map date data.
+
+If not fixed, will be migrated as a date note as shown in `datenote` field.
+
+==== unknown/unmapped date type in datedescription
+
+Date type information could not be programmatically mapped to a standard date type for mapping. Basic standard date types are: birth, death, active.
+
+If not fixed, will be migrated as a date note as shown in `datenote` field.
+
+==== no date value
+
+This often indicates possible malformed or mis-entered data.
+
+If not fixed, any data present will be migrated as a date note as shown in `datenote` field.
+
+==== date value is range
+
+Range is expected for "active" dates, so this warning should not appear on those. Otherwise, the fact that a range was entered may indicate both birth and death were entered under birth date.
+
+If not fixed, date will be migrated as the date range.
+
+==== multiple values for birth or death date for constituent id
+
+More than one birth date and/or death date entry exists for a single constituent. CS takes only a single value for each of these date fields.
+
+If the multiple values are in the data provided for the production migration, the first value (when sorted by `condateid`) will migrate into the relevant date field in CS Person/Org record. The subsequent values will be migrated as notes.
+
+==== unparseable date value
+
+The date value mapped to `birth_foundation_date` or `death_dissolution_date` cannot be parsed into a valid date for ingest into CS.
+
+"unparseable date value" is followed by more detailed information your Migration Specialist can use to determine why a date isn't parseable.
+
+The most common reason (indicated by additional "Emendate untokenizable") is that extra information (not part of an actual date value) has been included in the date value. For these we recommend that the extra information be moved to remarks field if it needs to be retained. 
 
 === rows with `datedescription` = birth or death, AND a `datenote` value
 
