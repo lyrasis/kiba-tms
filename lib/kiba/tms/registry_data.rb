@@ -737,6 +737,18 @@ module Kiba
             desc: 'Person MAIN TERMS from Constituents',
             tags: %i[names]
           }
+          register :from_con_person_with_inst, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithInst,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_person_with_inst.csv'),
+            desc: 'Person X TERMS from Constituents',
+            tags: %i[names]
+          }
+          register :from_con_person_with_position_no_inst, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithPositionNoInst,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_person_with_position_no_inst.csv'),
+            desc: 'Person X TERMS from Constituents',
+            tags: %i[names]
+          }
         end
 
         Kiba::Tms.registry.namespace('names') do          

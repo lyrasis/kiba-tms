@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module NameCompile
-        class RelatedPersonForOrg
+        class RelatedOrgForPerson
           def initialize(target:)
             @target = target
             @name = Tms::Constituents.preferred_name_field
@@ -26,23 +26,24 @@ module Kiba
           end
           
           def build_rows(row)
-            initial = [person_name_row(row.dup), org_rel_name_row(row.dup)]
-            initial.each{ |irow| irow.delete(:personname) }
+            initial = [org_name_row(row.dup), org_rel_name_row(row.dup)]
             fields = initial.map{ |irow| irow.keys }.flatten.uniq
             initial.map{ |irow| add_shared_fields(irow, fields) }
           end
 
-          def person_name_row(row)
-            row[:contype] = 'Person'
-            row[name] = row[:personname]
+          def org_name_row(row)
+            row[:contype] = 'Organization'
+            row[name] = row[:institution]
             row[:relation_type] = 'main term'
-            [Tms::NameCompile.person_nil, Tms::NameCompile.related_nil].flatten.each{ |field| row.delete(field) }
+            [Tms::NameCompile.org_nil, Tms::NameCompile.related_nil].flatten.each{ |field| row.delete(field) }
             row
           end
 
           def org_rel_name_row(row)
+            row[:contype] = 'Organization'
+            row[:related_term] = row[name]
+            row[name] = row[:institution]
             row[:relation_type] = target
-            row[:related_term] = row[:personname]
             row[:related_role] = row[:position]
             [Tms::NameCompile.org_nil, Tms::NameCompile.related_nil].flatten.each{ |field| row.delete(field) }
             row

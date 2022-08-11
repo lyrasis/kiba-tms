@@ -16,13 +16,20 @@ module Kiba
                     name_compile__from_con_org_with_name_parts
                     name_compile__from_con_org_with_single_name_part_no_position
                     name_compile__from_con_person_plain
+                    name_compile__from_con_person_with_inst
+                    name_compile__from_con_person_with_position_no_inst
                    ],
         reader: true
       setting :source_treatment,
         default: {
           name_compile__from_con_org_with_inst: :variant,
+          # alternates: :variant
           name_compile__from_con_org_with_name_parts: :related_contact_person,
-          name_compile__from_con_org_with_single_name_part_no_position: :variant
+          name_compile__from_con_org_with_single_name_part_no_position: :variant,
+          # alternates: :variant
+          name_compile__from_con_person_with_inst: :related_contact_person,
+          # alternates: :move_to_qualifier, :move_to_name_note
+          name_compile__from_con_person_with_position_no_inst: :move_to_bio_note
         },
         reader: true
       # fields that should be nil in person records

@@ -143,7 +143,7 @@ module Kiba
         puts "TMS: include_flipped_as_variant = #{Tms::Constituents.include_flipped_as_variant}"
         base << var_name_field if Tms::Constituents.include_flipped_as_variant
         %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
-           institution inconsistent_org_names].each do |field|
+           institution position inconsistent_org_names].each do |field|
           base << field
         end
         puts "initial headers: #{base.inspect}"
