@@ -119,6 +119,8 @@ module Kiba
                 constituentid: :mainconid,
                 nametype: :altnametype
               }
+
+              transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
             end
           end
         end
