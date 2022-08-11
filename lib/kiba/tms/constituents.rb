@@ -84,6 +84,15 @@ module Kiba
         # String that will be appended to the end of result, closing the date value
         setting :date_suffix, default: ')', reader: true
       end
+
+      # config for processing ConAltNames table
+      setting :altnames, reader: true do
+        # alt names to treat as anonymous - used by ConAltNames::QualifyAnonymous transform
+        setting :consider_anonymous, default: ['anonymous'], reader: true
+        # whether to run ConAltNames::QualifyAnonymous transform
+        setting :qualify_anonymous, default: true, reader: true
+      end
+      
       # config for processing ConDates table
       setting :dates, reader: true do
         # whether there is constituent date data to be merged into Constituents
@@ -134,7 +143,7 @@ module Kiba
         puts "TMS: include_flipped_as_variant = #{Tms::Constituents.include_flipped_as_variant}"
         base << var_name_field if Tms::Constituents.include_flipped_as_variant
         %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
-institution inconsistent_org_names].each do |field|
+           institution inconsistent_org_names].each do |field|
           base << field
         end
         puts "initial headers: #{base.inspect}"

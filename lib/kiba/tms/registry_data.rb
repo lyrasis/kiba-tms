@@ -362,6 +362,12 @@ module Kiba
             tags: %i[con],
             lookup_on: :constituentid
           }
+          register :for_compile, {
+            creator: Kiba::Tms::Jobs::Constituents::ForCompile,
+            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_for_compile.csv'),
+            desc: 'Removes fields not needed for NameCompile; removes fields with no name data',
+            tags: %i[con]
+          }
           register :persons, {
             creator: Kiba::Tms::Jobs::Constituents::Persons,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituents_persons.csv'),
@@ -687,6 +693,52 @@ module Kiba
           }
         end
         
+        Kiba::Tms.registry.namespace('name_compile') do          
+          register :raw, {
+            creator: Kiba::Tms::Jobs::NameCompile::Raw,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_raw.csv'),
+            desc: 'Initial compiled terms - no deduplication or normalization',
+            tags: %i[names],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 constituentid contype name termsource
+                 relation_type related_term_type related_term related_role
+                 variant_term variant_qualifier
+                ] }
+          }
+          register :from_con_org_plain, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConOrgPlain,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_plain.csv'),
+            desc: 'Org MAIN TERMS from Constituents',
+            tags: %i[names]
+          }
+          register :from_con_org_with_inst, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithInst,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_inst.csv'),
+            desc: 'Org X TERMS from Constituents orgs with institution field',
+            tags: %i[names]
+          }
+          register :from_con_org_with_name_parts, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithNameParts,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_name_parts.csv'),
+            desc: 'Org X TERMS from Constituents orgs with multipe core name detail elements OR (a single core name detail element AND a position value)',
+            tags: %i[names]
+          }
+          register :from_con_org_with_single_name_part_no_position, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithSingleNamePartNoPosition,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_single_name_part_no_position.csv'),
+            desc: 'Org X TERMS from Constituents orgs with a single core name detail element, and no position value',
+            tags: %i[names]
+          }
+          register :from_con_person_plain, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromConPersonPlain,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_person_plain.csv'),
+            desc: 'Person MAIN TERMS from Constituents',
+            tags: %i[names]
+          }
+        end
+
         Kiba::Tms.registry.namespace('names') do          
           register :compiled, {
             creator: Kiba::Tms::Jobs::Names::CompiledData,

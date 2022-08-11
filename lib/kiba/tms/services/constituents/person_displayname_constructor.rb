@@ -6,8 +6,6 @@ module Kiba
       module Constituents
         # Creates a direct order name from person name parts
         class PersonDisplaynameConstructor
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
             @value_getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: %i[lastname firstname middlename suffix]

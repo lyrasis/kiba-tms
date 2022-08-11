@@ -35,7 +35,7 @@ module Kiba
           
           def xforms
             Kiba.job_segment do
-              @contact_namer = Tms::Services::Constituents::ContactNamer.new
+#              @contact_namer = Tms::Services::Constituents::ContactNamer.new
               prefname = Tms::Constituents.preferred_name_field
               
               transform Tms::Transforms::DeleteTmsFields
@@ -165,15 +165,12 @@ module Kiba
                 transform Rename::Field, from: :isprivate, to: :is_private_collector
               end
 
-              transform do |row|
-                row[:contact_person] = @contact_namer.call(row)
-                row
-              end
+              # transform do |row|
+              #   row[:contact_person] = @contact_namer.call(row)
+              #   row
+              # end
             end
-            
           end
-
-
         end
       end
     end

@@ -32,7 +32,7 @@ module Kiba
                 fieldmap: {
                   chkid: :defaultnameid,
                   conname: Tms::Constituents.preferred_name_field,
-                  conauthtype: :constituenttype}
+                  conauthtype: :contype}
 
               transform do |row|
                 altid = row[:altnameid]
@@ -43,6 +43,10 @@ module Kiba
               end
               transform Delete::Fields, fields: :chkid
 
+              if Tms::Constituents.altnames.qualify_anonymous
+                transform Tms::Transforms::ConAltNames::QualifyAnonymous
+              end
+              
               # If preferred name field = alphasort, move org names from displayname to alphasort
               if Tms::Constituents.preferred_name_field == :alphasort
                 transform do |row|
