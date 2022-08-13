@@ -31,11 +31,11 @@ module Kiba
                 position: :note_text
               }
 
-              if treatment == :move_to_bio_note
-                transform Merge::ConstantValue, target: :relation_type, value: 'bio_note'
-              elsif treatment == :move_to_name_note
-                transform Merge::ConstantValue, target: :relation_type, value: 'name_note'
-              elsif treatment == :move_to_qualifier
+              if treatment == :bio_note
+                transform Merge::ConstantValue, target: :relation_type, value: treatment
+              elsif treatment == :name_note
+                transform Merge::ConstantValue, target: :relation_type, value: treatment
+              elsif treatment == :qualifier
                 transform Merge::ConstantValue, target: :relation_type, value: 'main term qualifier'
               end
               transform Delete::Fields, fields: Tms::NameCompile.variant_nil

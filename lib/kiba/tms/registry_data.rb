@@ -716,19 +716,19 @@ module Kiba
           register :from_con_org_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithInst,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_inst.csv'),
-            desc: 'Org X TERMS from Constituents orgs with institution field',
+            desc: 'From Constituents orgs with institution field',
             tags: %i[names]
           }
           register :from_con_org_with_name_parts, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithNameParts,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_name_parts.csv'),
-            desc: 'Org X TERMS from Constituents orgs with multipe core name detail elements OR (a single core name detail element AND a position value)',
+            desc: 'From Constituents orgs with multipe core name detail elements OR (a single core name detail element AND a position value)',
             tags: %i[names]
           }
           register :from_con_org_with_single_name_part_no_position, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithSingleNamePartNoPosition,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_org_with_single_name_part_no_position.csv'),
-            desc: 'Org X TERMS from Constituents orgs with a single core name detail element, and no position value',
+            desc: 'From Constituents orgs with a single core name detail element, and no position value',
             tags: %i[names]
           }
           register :from_con_person_plain, {
@@ -740,13 +740,79 @@ module Kiba
           register :from_con_person_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithInst,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_person_with_inst.csv'),
-            desc: 'Person X TERMS from Constituents',
+            desc: 'From Constituents persons with institution value',
             tags: %i[names]
           }
           register :from_con_person_with_position_no_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithPositionNoInst,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_person_with_position_no_inst.csv'),
-            desc: 'Person X TERMS from Constituents',
+            desc: 'From Constituents persons with position value but no institution value',
+            tags: %i[names]
+          }
+          register :from_can_typematch_alt_established, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchAltEstablished,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch_alt_established.csv'),
+            desc: 'From ConAltNames where type is same for main and alt name, and alt name matches an established constituent name',
+            tags: %i[names]
+          }
+          register :from_can_main_person_alt_org_established, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanMainPersonAltOrgEstablished,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_main_person_alt_org_established.csv'),
+            desc: 'From ConAltNames where main name is Person, and alt name matches an established organization name',
+            tags: %i[names]
+          }
+          register :from_can_main_org_alt_person_established, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanMainOrgAltPersonEstablished,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_main_org_alt_person_established.csv'),
+            desc: 'From ConAltNames where main name is Organization, and alt name matches an established person name',
+            tags: %i[names]
+          }
+          register :from_can_typematch, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematch,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch.csv'),
+            desc: 'Adds :treatment field to rows from ConAltNames where main and alt name types match AND altname is not established as separate constituent name',
+            tags: %i[names]
+          }
+          register :from_can_typematch_variant, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchVariant,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch_variant.csv'),
+            desc: 'name_compile__from_can_typematch variants',
+            tags: %i[names]
+          }
+          register :from_can_typematch_separate, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparate,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch_separate.csv'),
+            desc: 'name_compile__from_can_typematch separates',
+            tags: %i[names]
+          }
+          register :from_can_typematch_separate_names, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparateNames,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch_separate_names.csv'),
+            desc: 'output main name rows from alt names in name_compile__from_can_typematch separates',
+            tags: %i[names]
+          }
+          register :from_can_typematch_separate_notes, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparateNotes,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typematch_separate_notes.csv'),
+            desc: 'output related name note rows from alt names in name_compile__from_can_typematch separates',
+            tags: %i[names]
+          }
+          register :from_can_typemismatch_main_person, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypemismatchMainPerson,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typemismatch_main_person.csv'),
+            desc: 'ConAltNames rows where altname is not established, alt name type is Organization, and main name type is Person',
+            tags: %i[names]
+          }
+          register :from_can_typemismatch_main_org, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanTypemismatchMainOrg,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_typemismatch_main_org.csv'),
+            desc: 'ConAltNames rows where altname is not established, alt name type is Person, and main name type is Organization',
+            tags: %i[names]
+          }
+          register :from_can_no_altnametype, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromCanNoAltnametype,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_can_no_altnametype.csv'),
+            desc: 'ConAltNames rows where altname is not established, alt name type is empty',
             tags: %i[names]
           }
         end

@@ -76,7 +76,9 @@ module Kiba
               transform do |row|
                 altnorm = row[:altnorm]
                 connorm = row[:connorm]
-                next row unless altnorm == connorm
+                next if altnorm == connorm
+
+                row
               end
               
               transform Merge::MultiRowLookup,
@@ -84,7 +86,7 @@ module Kiba
                 keycolumn: :altnorm,
                 fieldmap: {
                   altconname: Tms::Constituents.preferred_name_field,
-                  sepconauthtype: :conauthtype,
+                  altconauthtype: :contype,
                   altnameconid: :constituentid
                 }
               transform Delete::Fields, fields: %i[altnorm connorm]
@@ -93,13 +95,12 @@ module Kiba
 
               # force separate constituent type value as altauthtype where available
               transform do |row|
-                conauthtype = row[:sepconauthtype]
-                next row if conauthtype.blank?
+                alttype = row[:altconauthtype]
+                next row if alttype.blank?
 
-                row[:altauthtype] = conauthtype.split(Tms.delim).uniq.join(Tms.delim)
+                row[:altauthtype] = alttype.split(Tms.delim).uniq.join(Tms.delim)
                 row
               end
-              transform Delete::Fields, fields: %i[sepconauthtype]
               
               # add :typematch column
               transform do |row|
@@ -121,6 +122,11 @@ module Kiba
               }
 
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
+
+              # remove non-preferred form of name if not including flipped as variant
+              unless Tms::Constituents.include_flipped_as_variant
+                transform Delete::Fields, fields: Tms::Constituents.var_name_field
+              end
             end
           end
         end

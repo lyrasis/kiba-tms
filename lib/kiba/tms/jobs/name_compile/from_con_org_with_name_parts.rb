@@ -24,23 +24,16 @@ module Kiba
               treatment = Tms::NameCompile.source_treatment[job]
               
               transform Tms::Transforms::NameCompile::SelectConOrgsWithNameParts
-              transform Tms::Transforms::Constituents::ExtractPersonFromNameParts, target: :personname
               
               transform Append::ToFieldValue, field: :constituentid, value: '.namedetail'
               transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_name_detail'
 
               if treatment == :variant
-                transform Merge::ConstantValue, target: :relation_type, value: 'variant term'
-                
-                transform Rename::Fields, fieldmap: {
-                  personname: :variant_term,
-                  position: :variant_qualifier
-                }
-                transform Delete::Fields, fields: Tms::NameCompile.variant_nil
-              elsif treatment.to_s.start_with?('related_')
-                targetfield = treatment.to_s.delete_prefix('related_').to_sym
-
-                transform Tms::Transforms::NameCompile::RelatedPersonForOrg, target: targetfield
+                transform Tms::Transforms::NameCompile::DeriveVariantName, mode: :main, from: :nameparts
+              elsif treatment == :contact_person
+                transform Tms::Transforms::NameCompile::DeriveAndSetContactFromOrg,
+                  mode: :main,
+                  person_name_from: :nameparts
               end
             end
           end

@@ -36,10 +36,8 @@ module Kiba
                   position: :variant_qualifier
                 }
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil
-              elsif treatment.to_s.start_with?('related_')
-                targetfield = treatment.to_s.delete_prefix('related_').to_sym
-
-                transform Tms::Transforms::NameCompile::RelatedOrgForPerson, target: targetfield
+              elsif treatment == :contact_person
+                transform Tms::Transforms::NameCompile::DeriveOrgWithContactFromPerson, mode: :main
               end
             end
           end
