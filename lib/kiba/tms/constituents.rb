@@ -74,7 +74,7 @@ module Kiba
         #   are duplicates when normalized
         # - :person - will add available dates to all Person constituent preferred names
         # - :org  - will add available dates to all Organization constituent preferred names
-        setting :to_types, default: :duplicate, reader: true
+        setting :to_type, default: :duplicate, reader: true
         # String that will separate the two dates. Will be appended to start date if there is no end date.
         #   Will be prepended to end date if there is no start date.
         setting :date_sep, default: ' - ', reader: true
@@ -138,18 +138,14 @@ module Kiba
       end
 
       def initial_headers
-        base = [:constituentid, :constituenttype, :derivedcontype, :contype, preferred_name_field]
-        puts 'Setting initial_headers for Constituent'
-        puts "TMS: include_flipped_as_variant = #{Tms::Constituents.include_flipped_as_variant}"
-        base << var_name_field if Tms::Constituents.include_flipped_as_variant
-        %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
-           institution position inconsistent_org_names].each do |field|
-          base << field
-        end
-        puts "initial headers: #{base.inspect}"
-        base
+          base = [:constituentid, :constituenttype, :derivedcontype, :contype, preferred_name_field]
+          base << var_name_field if Tms::Constituents.include_flipped_as_variant
+          %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
+             institution position inconsistent_org_names].each do |field|
+            base << field
+          end
+          base
       end
-      
     end
   end
 end

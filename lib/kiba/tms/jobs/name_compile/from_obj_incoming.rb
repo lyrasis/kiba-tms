@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module Names
+      module NameCompile
         module FromObjIncoming
           module_function
 
@@ -11,10 +11,10 @@ module Kiba
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :tms__obj_incoming,
-                destination: :names__from_obj_incoming
+                destination: :name_compile__from_obj_incoming
               },
               transformer: xforms,
-              helper: Kiba::Tms::Names.compilation.multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 
@@ -31,9 +31,9 @@ module Kiba
               transform FilterRows::FieldPopulated, action: :keep, field: :combined
               transform Explode::RowsFromMultivalField, field: :combined, delim: '|||'
               transform Deduplicate::Table, field: :combined
-              transform Cspace::NormalizeForID, source: :combined, target: :norm
               transform Rename::Field, from: :combined, to: Tms::Constituents.preferred_name_field
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ObjIncoming'
+              transform Merge::ConstantValue, target: :relation_type, value: 'main term'
             end
           end
         end

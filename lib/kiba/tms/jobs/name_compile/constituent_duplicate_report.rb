@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module NameCompile
-        module Raw
+        module ConstituentDuplicateReport
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: Tms::NameCompile.sources,
-                destination: :name_compile__raw
+                source: :name_compile__duplicates_flagged,
+                destination: :name_compile__constituent_duplicate_report
               },
               transformer: xforms
             )
@@ -19,13 +19,13 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Append::NilFields, fields: Tms::NameCompile.multi_source_normalizer.get_fields
-              transform Rename::Field, from: Tms::Constituents.preferred_name_field, to: :name 
+              transform FilterRows::FieldPopulated, action: :keep, field: :constituent_duplicate
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: :name, target: :norm
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[constituentid contype name relation_type termsource],
-                target: :fingerprint,
+                sources: %i[contype norm],
+                target: :normalized,
                 sep: ' ',
-                delete_sources: false
+                delete_sources: true
             end
           end
         end

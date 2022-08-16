@@ -9,7 +9,7 @@ module Kiba
           
           def initialize
             @name = Kiba::Tms::Constituents.preferred_name_field
-            @mode = Kiba::Tms::Constituents.date_append.to_types
+            @mode = Kiba::Tms::Constituents.date_append.to_type
             @date_sep = Kiba::Tms::Constituents.date_append.date_sep
             @name_date_sep = Kiba::Tms::Constituents.date_append.name_date_sep
             @date_suffix = Kiba::Tms::Constituents.date_append.date_suffix

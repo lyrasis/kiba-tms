@@ -48,16 +48,17 @@ module Kiba
               todelete = []
             end
             
+            todelete << Tms::NameCompile.derived_nil
             todelete << Tms::NameCompile.alt_nil if mode == :alt
             todelete.flatten.uniq
           end
           
          def variant_term(row)
-            if mode == :main && authtype == 'Organization' && from == :inst
-              row[:institution]
-            elsif mode == :main && authtype == 'Organization' && from == :nameparts
+            if mode == :main && authtype == 'Organization' && from == :nameparts
               personbuilder.call(row)
-            elsif mode == :main && authtype == 'Person'
+            elsif from
+              row[from]
+            elsif mode == :main
               row[:institution]
             elsif mode == :alt
               row[:altname]

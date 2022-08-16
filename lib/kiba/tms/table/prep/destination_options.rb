@@ -30,7 +30,7 @@ module Kiba
               [:table, :tablerowid, classification_fields ].flatten
             },
             constituents: {
-              initial_headers: Tms::Constituents.initial_headers
+              initial_headers: Proc.new{ Tms::Constituents.initial_headers }
             },
             con_alt_names: {
               initial_headers:

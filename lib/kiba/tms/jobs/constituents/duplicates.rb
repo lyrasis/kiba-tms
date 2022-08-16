@@ -4,25 +4,22 @@ module Kiba
   module Tms
     module Jobs
       module Constituents
-        module ForCompile
+        module Duplicates
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__constituents,
-                destination: :constituents__for_compile
+                source: :constituents__for_compile,
+                destination: :constituents__duplicates
               },
               transformer: xforms
             )
           end
-
+          
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :namedata
-              transform Delete::Fields,
-                fields: %i[constituenttype derivedcontype inconsistent_org_names defaultnameid
-                          defaultdisplaybioid namedata norm]
+              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
             end
           end
         end
