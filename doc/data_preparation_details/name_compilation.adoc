@@ -177,15 +177,15 @@ image::org_cp_d_p.png[2226]
 Two person authority records are created to represent the contact persons. Then the organization record records those persons and, if present, indication of their role/relationship to the organization.
 
 .Organization record
-image::org_cp_d_r_o.png[1126]
+image::org_cp_r_o.png[1126]
 +++&nbsp;+++
 
 .Person record (1)
-image::org_cp_d_r_p1.png[3306]
+image::org_cp_r_p1.png[3306]
 +++&nbsp;+++
 
 .Person record (2)
-image::org_cp_d_r_p2.png[3306]
+image::org_cp_r_p2.png[3306]
 +++&nbsp;+++
 
 
