@@ -1,0 +1,35 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Name compilation details
+
+This document explains how your TMS Constituents (and other name data) has been programmatically prepared for migration into CollectionSpace (CS), and options you have for changing how this has been handled.
+
+NOTE: This documentation covers TMS migrations in general, so may discuss data patterns not present in your data.
+
+toc::[]
+
+== Basic differences/assumptions to be aware of
+=== Conceptual/data model differences
+Your Contituent (and other) names will migrate into Person and Organization authorities in CS. The conceptual/data model for Constituents in TMS is very different from (and more complex than) the conceptual/data model for Person and Organization authorities. *We strongly recommend you log into your staging instance site and familiarize yourself with Person and Organization records*.
+
+See also https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality] documentation.
+
+In CS, the Person/Org authorities are used to ensure the consistency of names used in other records. Some additional information about a person or organization may be stored in the authority record for a name, but the fields available are less granular than in TMS.
+
+TMS builds a lot of functionality/behavior onto constituents (which is a more complex concept than "names") that isn't really supported in CS. 
+
+== Constituents
+
+=== Categorize each
+
