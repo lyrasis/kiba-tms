@@ -13,3 +13,4 @@ endif::[]
 
 = Constituents data processing details
 
+Refer to xref:name_compilation.adoc[Name compilation data preparation details] for the larger context of this document. 
