@@ -7,6 +7,7 @@ module Kiba
         module Prep
           module_function
 
+          # If this mapping changes, update it in doc/name_compilation.adoc
           CONTYPES = {
             'Business' => 'Organization',
             'Individual' => 'Person',
