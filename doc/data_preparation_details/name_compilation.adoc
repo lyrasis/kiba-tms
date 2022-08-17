@@ -29,7 +29,97 @@ In CS, the Person/Org authorities are used to ensure the consistency of names us
 
 TMS builds a lot of functionality/behavior onto constituents (which is a more complex concept than "names") that isn't really supported in CS. 
 
-== Constituents
+=== Categorization to Person vs. Organization authorities
+Ideally, all constituent names and names from other sources are categorized as either Person or Organization for migration into CS authorities.
 
-=== Categorize each
+If a given client has many uncategorized names in TMS and cannot assign them to Person or Organization prior to the migration, they can specify that all uncategorized names should be created as either Person or Organization records in CS. We can set a term status flag in these records so they may be identified in CS for post-migration review.
+
+== Name sources
+
+=== Included by default
+If client has no data in a table, it is excluded.
+
+Tables involving complex data preparation link to their own details pages.
+
+The names are compiled in this order. When deduplication is done later, the first value is kept. This ensures names from the Constituent table are kept, which is important since linkages/references to Constituent values are made from many other tables. 
+
+* xref:constituents.adoc[Constituents table]
+* xref:con_alt_names.adoc[ConAltNames table]
+* AssocParents table
+** keep only rows related to Constituents
+** keep unique `childstring` field values
+** categorized as Person names
+** treat as main term
+* Loans table
+** keep unique `approvedby`, `contact`, and `requestedby` field values
+** not categorized as Person/Organization
+** treat as main term
+* LocApprovers table
+** keep unique `approver` field values
+** categorized as Person names
+** treat as main term
+* LocHandlers table
+** keep unique `handler` field values
+** categorized as Person names
+** treat as main term
+* ObjAccession table
+** keep unique `authorizer` and `initiator` field values
+** not categorized as Person/Organization
+** treat as main term
+* ObjIncoming table
+** keep unique `approvedby`, `requestedby`, `courierin`, `courierout`, `cratepaidby`, `ininsurpaidby`, and `shippingpaidby` field values
+** not categorized as Person/Organization
+** treat as main term
+* ObjLocations table
+** keep unique `approver`, `handler`, and `requestedby` field values
+** not categorized as Person/Organization
+** treat as main term
+
+=== Not included by default
+
+* ReferenceMaster table
+** it is assumed that the controlled names used in references will be merged in via references to constituents, however there is name data in a more free text form included in the `stmtresponsibility` field of this table. Because it would require significantly more cleanup to make it appropriate for use as Person/Org authority terms, it is not included by default.
+** keep unique `stmtresponsibility` field values
+** not categorized as Person/Organization
+** treat as main term
+
+== Deduplication
+
+For different categories, certain field values are combined and the unique values are kept for review/cleanup.
+
+main terms:: only one row having the same `authority type + normalized form of name` value is kept
+variant terms:: under each `authority type + main term (normalized)`, only one row having the same `variant term (not normalized) + variant_qualifier` value is kept
+related terms:: under each `authority type + main term (normalized)`, only one row having the same `relation_type + related term (not normalized) + related_role` value is kept
+notes:: under each `authority type + main term (normalized)`, only one row having the same `relation_type + note_text` value is kept
+
+Rows where the authority type is unknown and the normalized form of name matches a normalized form of name for a known authority type are also removed.
+
+== Organization of the spreadsheet
+
+== What you see in the spreadsheet and how it translates to CS
+
+=== Organizations
+
+==== Main term only, with dates
+
+.Spreadsheet data
+image::org_plain_w_dates_d.png[2154]
++++&nbsp;+++
+
+.Resulting organization authority
+image::org_plain_w_dates_r.png[2098]
++++&nbsp;+++
+
+
+== More technical details
+=== `constituentid` values
+
+==== Plain number (ex: 1611)
+
+If `relation_type` = main term, the `name` value in the row came from the main/primary name in Constituent record with that id.
+
+If `relation_type` = variant_term, the `variant_term` value in the row came from the main/primary name in Constituent record with that id.
+
+==== Number + . + text (ex: 8775.insitution)
+
 
