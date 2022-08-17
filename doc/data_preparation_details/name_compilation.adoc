@@ -110,6 +110,85 @@ image::org_plain_w_dates_d.png[2154]
 image::org_plain_w_dates_r.png[2098]
 +++&nbsp;+++
 
+==== Variant terms
+
+.Spreadsheet data
+image::org_var_d.png[1178]
++++&nbsp;+++
+
+.Resulting organization authority
+image::org_var_r.png[1994]
++++&nbsp;+++
+
+==== Related organizations
+
+.Spreadsheet data
+image::org_rel_note_d.png[2098]
++++&nbsp;+++
+
+Since these are two separate, but related organizations, two Organization authority records are created.
+
+Since CS does not currently provide a way to relate two authority terms in anything but a hierarchical relationship, the fact that there is another related name is recorded in a note.
+
+.Resulting organization authority (1)
+image::org_rel_note_r1.png[2058]
++++&nbsp;+++
+
+.Resulting organization authority (2)
+image::org_rel_note_r2.png[2058]
++++&nbsp;+++
+
+NOTE: We have not yet run across TMS data that was structured such that we could create Organizational hierarchies by creating hierarchical relationships between authority terms in CS. We do sometimes see super/sub bodies recorded as variant or related names, and those will be handled according to how the given client has coded them in TMS. The client will be free to create hierarchical relationship between Organization names once in production, if they wish.
+
+Handling related terms this way means:
+
+* Since both terms contain "Getty" they both come up as options for populated fields in other records if we enter that string, and we can choose the correct one:
+
+.Both terms as options when populating a field
+image::org_rel_note_u.png[626]
++++&nbsp;+++
+
+* Since the name of each appears in the record of the other, a simple/keyword search for one returns both:
+
+.Keyword search
+image::org_rel_note_s1.png[2058]
++++&nbsp;+++
+
+* If you do an advanced search you can search for the name only in the _Display name_ field of a record
+
+.Advanced search on _Display name_: query
+image::org_rel_note_s2.png[1506]
++++&nbsp;+++
+
+.Advanced search on _Display name_: results
+image::org_rel_note_s2r.png[886]
++++&nbsp;+++
+
+==== Organization with contact person
+
+.Spreadsheet data (org)
+image::org_cp_d_o.png[1442]
++++&nbsp;+++
+
+.Spreadsheet data (person)
+image::org_cp_d_p.png[2226]
++++&nbsp;+++
+
+Two person authority records are created to represent the contact persons. Then the organization record records those persons and, if present, indication of their role/relationship to the organization.
+
+.Organization record
+image::org_cp_d_r_o.png[1126]
++++&nbsp;+++
+
+.Person record (1)
+image::org_cp_d_r_p1.png[3306]
++++&nbsp;+++
+
+.Person record (2)
+image::org_cp_d_r_p2.png[3306]
++++&nbsp;+++
+
+
 
 == More technical details
 === `constituentid` values
