@@ -13,4 +13,6 @@ endif::[]
 
 = Constituents data processing details
 
-Refer to xref:name_compilation.adoc[Name compilation data preparation details] for the larger context of this document. 
+Refer to xref:name_compilation.adoc[Name compilation data preparation details] for the larger context of this document.
+
+The result of name compilation is xref:../name_cleanup_worksheet.adoc[the name review and cleanup worksheet].
