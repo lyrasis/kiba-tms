@@ -188,6 +188,30 @@ image::org_cp_r_p1.png[3306]
 image::org_cp_r_p2.png[3306]
 +++&nbsp;+++
 
+=== Persons
+==== With variants, birth/death dates, and related person names
+
+.Spreadsheet data
+image::per_brassai_d.png[2660]
++++&nbsp;+++
+
+This data creates 3 Person authorities. Brassaï has two variant names, as well as two related people:
+
+.Person authority: Brassaï
+image::per_brassai_r_1a.png[1958]
++++&nbsp;+++
+
+.Person authority: Brassaï (continued)
+image::per_brassai_r_1b.png[1958]
++++&nbsp;+++
+
+.Person authority: Gilberte-Mercedes Brassaï
+image::per_brassai_r_2.png[1936]
++++&nbsp;+++
+
+.Person authority: Sophie Rochard-Fiblec
+image::per_brassai_r_3.png[1936]
++++&nbsp;+++
 
 
 == More technical details
