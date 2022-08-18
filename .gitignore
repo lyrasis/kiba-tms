@@ -5,3 +5,4 @@ Gemfile.lock
 docs
 data/backup
 **/*.csv#
+.DS_Store
