@@ -31,6 +31,7 @@ module Kiba
             con_address: :conaddressid,
             con_alt_names: :altnameid,
             con_dates: :constituentid,
+            con_geo_codes: :congeocodeid,
             con_types: :constituenttypeid,
             con_xrefs: :conxrefid,
             con_xref_details: :recordid,
