@@ -716,7 +716,8 @@ module Kiba
                  note_text
                  birth_foundation_date death_dissolution_date datenote
                  salutation nametitle firstname middlename lastname suffix
-                ] }
+                ] },
+            lookup_on: :norm
           }
           register :constituent_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::ConstituentDuplicates,
@@ -746,6 +747,20 @@ module Kiba
             tags: %i[names],
             lookup_on: :fingerprint
           }
+          register :typed_main_duplicates, {
+            creator: Kiba::Tms::Jobs::NameCompile::TypedMainDuplicates,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_typed_main_duplicates.csv'),
+            desc: 'Only typed (person/org) main terms from initial compiled terms flagged as duplicates',
+            tags: %i[names],
+            lookup_on: :fingerprint
+          }
+          register :untyped_main_duplicates, {
+            creator: Kiba::Tms::Jobs::NameCompile::UntypedMainDuplicates,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_untyped_main_duplicates.csv'),
+            desc: 'Only untyped main terms from initial compiled terms flagged as duplicates',
+            tags: %i[names],
+            lookup_on: :fingerprint
+          }
           register :variant_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::VariantDuplicates,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_variant_duplicates.csv'),
@@ -770,8 +785,16 @@ module Kiba
           register :duplicates_flagged, {
             creator: Kiba::Tms::Jobs::NameCompile::DuplicatesFlagged,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_duplicates_flagged.csv'),
-            desc: 'Initial compiled terms with duplicate terms flagged (according to :deduplicate_categories config. Normalized form of :name (:norm), :related_term (:related_norm) added.',
-            tags: %i[names]
+            desc: Kiba::Tms::Jobs::NameCompile::DuplicatesFlagged.send(:desc),
+            tags: %i[names],
+            dest_special_opts: {initial_headers: %i[sort]}
+          }
+          register :unique, {
+            creator: Kiba::Tms::Jobs::NameCompile::Unique,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_unique.csv'),
+            desc: Kiba::Tms::Jobs::NameCompile::Unique.send(:desc),
+            tags: %i[names],
+            dest_special_opts: {initial_headers: %i[sort]}
           }
           register :from_con_org_plain, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgPlain,

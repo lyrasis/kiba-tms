@@ -25,7 +25,7 @@ module Kiba
               transform Rename::Field, from: :handler, to: Tms::Constituents.preferred_name_field
               transform Merge::ConstantValue, target: :contype, value: 'Person'
               transform Merge::ConstantValue, target: :termsource, value: 'TMS LocHandlers'
-              transform Merge::ConstantValue, target: :relation_type, value: 'main term'
+              transform Merge::ConstantValue, target: :relation_type, value: '_main term'
             end
           end
         end

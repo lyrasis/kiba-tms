@@ -8,8 +8,6 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::Names.compilation.include_ref_stmt_resp
-            
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :tms__reference_master,

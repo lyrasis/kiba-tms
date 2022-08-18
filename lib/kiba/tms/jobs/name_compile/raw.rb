@@ -26,6 +26,7 @@ module Kiba
                 target: :fingerprint,
                 sep: ' ',
                 delete_sources: false
+              transform Cspace::NormalizeForID, source: :name, target: :norm
             end
           end
         end

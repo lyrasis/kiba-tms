@@ -8,8 +8,6 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::NameCompile.include_ref_stmt_resp
-            
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :tms__reference_master,
@@ -27,7 +25,7 @@ module Kiba
               transform Deduplicate::Table, field: :stmtresponsibility
               transform Rename::Field, from: :stmtresponsibility, to: Tms::Constituents.preferred_name_field
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ReferenceMaster.stmtresponsibility'
-              transform Merge::ConstantValue, target: :relation_type, value: 'main term'
+              transform Merge::ConstantValue, target: :relation_type, value: '_main term'
             end
           end
         end

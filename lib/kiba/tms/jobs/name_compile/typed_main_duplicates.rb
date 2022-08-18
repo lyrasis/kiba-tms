@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module NameCompile
-        module ConstituentDuplicates
+        module TypedMainDuplicates
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :name_compile__raw,
-                destination: :name_compile__constituent_duplicates
+                destination: :name_compile__typed_main_duplicates
               },
               transformer: xforms
             )
@@ -20,10 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: '_main term'
-              transform FilterRows::FieldMatchRegexp,
-                action: :keep,
-                field: :termsource,
-                match: '^TMS Constituents\.(orgs|persons)$'
+              transform FilterRows::FieldPopulated, action: :keep, field: :contype
               transform Delete::FieldsExcept, fields: %i[fingerprint contype norm]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype norm],

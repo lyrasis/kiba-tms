@@ -20,15 +20,17 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldMatchRegexp, action: :keep, field: :relation_type, match: '_note$'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype name relation_type note_text]
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm relation_type note_text]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype name relation_type note_text],
+                sources: %i[contype norm relation_type note_text],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
-              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
-              transform Delete::FieldsExcept, fields: %i[fingerprint duplicate]
+              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate_all, explicit_no: false
+              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate_all
+              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate,
+                using: {}, explicit_no: false
+              transform Delete::FieldsExcept, fields: %i[fingerprint duplicate_all duplicate]
             end
           end
         end

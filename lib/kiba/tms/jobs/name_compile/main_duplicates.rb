@@ -10,7 +10,10 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_compile__raw,
+                source: %i[
+                           name_compile__typed_main_duplicates
+                           name_compile__untyped_main_duplicates
+                          ],
                 destination: :name_compile__main_duplicates
               },
               transformer: xforms
@@ -19,17 +22,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: 'main term'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype name]
-              transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: :name, target: :norm
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm],
-                target: :combined,
-                sep: ' ',
-                delete_sources: false
-              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
-              transform Delete::FieldsExcept, fields: %i[fingerprint duplicate]
             end
           end
         end

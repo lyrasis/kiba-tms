@@ -29,8 +29,18 @@ module Kiba
                     name_compile__from_can_typemismatch_main_org
                     name_compile__from_can_no_altnametype
                     name_compile__from_assoc_parents_for_con
+                    name_compile__from_loans
+                    name_compile__from_loc_approvers
+                    name_compile__from_loc_handlers
+                    name_compile__from_obj_accession
+                    name_compile__from_obj_incoming
+                    name_compile__from_obj_locations
                    ],
         reader: true
+
+      # potential sources not included by default:
+      #   name_compile__from_reference_master
+      
       setting :source_treatment,
         default: {
           name_compile__from_con_org_with_inst: :variant,
@@ -110,7 +120,6 @@ module Kiba
       # Whether to compile :stmtresponsibility field from ReferenceMaster in names list
       # You probably only want to set this to true if ConXrefDetails target tables do not include
       #   ReferenceMaster
-      setting :include_ref_stmt_resp, default: false, reader: true
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
       # fields to delete from name compilation report
       setting :delete_fields, default: [], reader: true

@@ -24,7 +24,7 @@ module Kiba
               transform Delete::Fields, fields: Tms::NameCompile.person_nil
               transform Merge::ConstantValues,
                 constantmap: {
-                  relation_type: 'main term',
+                  relation_type: '_main term',
                   termsource: 'TMS Constituents.persons'
                 }
             end

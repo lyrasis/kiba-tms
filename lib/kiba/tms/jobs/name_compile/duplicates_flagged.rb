@@ -7,6 +7,15 @@ module Kiba
         module DuplicatesFlagged
           module_function
 
+          def desc
+            <<~DESC
+            Intermediate file for review and generating reports
+
+            - Initial compiled terms with duplicate terms flagged according to :deduplicate_categories config
+            - :sort field added (contype + norm + relation type
+            DESC
+          end
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -34,35 +43,57 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: name_compile__constituent_duplicates,
                 keycolumn: :fingerprint,
-                fieldmap: {constituent_duplicate: :duplicate}
+                fieldmap: {
+                  constituent_duplicate_all: :duplicate_all,
+                  constituent_duplicate: :duplicate
+                }
 
               transform Merge::MultiRowLookup,
                 lookup: name_compile__main_duplicates,
                 keycolumn: :fingerprint,
-                fieldmap: {name_duplicate: :duplicate}
+                fieldmap: {
+                  name_duplicate_all: :duplicate_all,
+                  name_duplicate: :duplicate
+                }
 
               if Tms::NameCompile.deduplicate_categories.any?(:variant)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__variant_duplicates,
                   keycolumn: :fingerprint,
-                  fieldmap: {variant_duplicate: :duplicate}
+                  fieldmap: {
+                    variant_duplicate_all: :duplicate_all,
+                    variant_duplicate: :duplicate
+                  }
               end
 
               if Tms::NameCompile.deduplicate_categories.any?(:related)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__related_duplicates,
                   keycolumn: :fingerprint,
-                  fieldmap: {related_duplicate: :duplicate}
+                  fieldmap: {
+                    related_duplicate_all: :duplicate_all,
+                    related_duplicate: :duplicate
+                  }
               end
 
               if Tms::NameCompile.deduplicate_categories.any?(:note)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__note_duplicates,
                   keycolumn: :fingerprint,
-                  fieldmap: {note_duplicate: :duplicate}
+                  fieldmap: {
+                    note_duplicate_all: :duplicate_all,
+                    note_duplicate: :duplicate
+                  }
               end
 
-              transform Delete::Fields, fields: :fingerprint
+
+              transform Cspace::NormalizeForID, source: :name, target: :norm
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[contype norm relation_type],
+                target: :sort,
+                sep: ' ',
+                delete_sources: false
+              transform Delete::Fields, fields: %i[fingerprint norm]
             end
           end
         end
