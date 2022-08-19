@@ -28,7 +28,7 @@ module Kiba
                 delete_sources: false
               transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate_all, explicit_no: false
               transform FilterRows::FieldPopulated, action: :keep, field: :duplicate_all
-              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate, explicit_no: false
+              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate, explicit_no: false, using: {}
               transform Delete::FieldsExcept, fields: %i[fingerprint duplicate_all duplicate]
             end
           end
