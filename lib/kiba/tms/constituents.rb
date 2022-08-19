@@ -18,6 +18,20 @@ module Kiba
       # field to use as alt form
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
+
+      # If this mapping changes, update it in doc/name_compilation.adoc
+      setting :type_mapping,
+        default: {
+#            'Business' => 'Organization',
+            'Individual' => 'Person',
+            'Foundation' => 'Organization',
+            'Institution' => 'Organization',
+            'Organization' => 'Organization',
+            'Venue' => 'Organization'
+          },
+        reader: true
+      setting :untyped_default, default: 'Person', reader: true
+      
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
       setting :map_approved, default: false, reader: true

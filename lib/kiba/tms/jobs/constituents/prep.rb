@@ -7,16 +7,6 @@ module Kiba
         module Prep
           module_function
 
-          # If this mapping changes, update it in doc/name_compilation.adoc
-          CONTYPES = {
-            'Business' => 'Organization',
-            'Individual' => 'Person',
-            'Foundation' => 'Organization',
-            'Institution' => 'Organization',
-            'Organization' => 'Organization',
-            'Venue' => 'Organization'
-          }
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -60,7 +50,7 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :constituenttype,
                 target: :constituenttype,
-                mapping: CONTYPES,
+                mapping: Tms::Constituents.type_mapping,
                 fallback_val: :orig,
                 delete_source: false
               transform Tms::Transforms::Constituents::DeriveType
