@@ -719,6 +719,21 @@ module Kiba
                 ] },
             lookup_on: :norm
           }
+          register :worksheet, {
+            creator: Kiba::Tms::Jobs::NameCompile::Worksheet,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'names_worksheet.csv'),
+            desc: Proc.new{ Kiba::Tms::Jobs::NameCompile::Worksheet.desc },
+            tags: %i[names],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 authority name relation_type variant_term variant_qualifier related_term related_role
+                 note_text birth_foundation_date death_dissolution_date datenote
+                 salutation nametitle firstname middlename lastname suffix
+                 biography code nationality school remarks culturegroup
+                 constituentid termsource fp sort
+                ] }
+          }
           register :constituent_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::ConstituentDuplicates,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_constituent_duplicates.csv'),
