@@ -40,7 +40,8 @@ module Kiba
 
       # potential sources not included by default:
       #   name_compile__from_reference_master
-      
+
+      setting :empty_sources, default: %i[], reader: true
       setting :source_treatment,
         default: {
           name_compile__from_con_org_with_inst: :variant,
