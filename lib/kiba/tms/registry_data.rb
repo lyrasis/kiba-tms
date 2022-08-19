@@ -498,6 +498,14 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('loansin') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::Loansin::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loansin__prep.csv'),
+            tags: %i[loans loansin]
+          }
+        end
+
         Kiba::Tms.registry.namespace('locs') do
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
