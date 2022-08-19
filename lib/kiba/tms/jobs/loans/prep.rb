@@ -49,6 +49,10 @@ module Kiba
                   lookup: prep__loan_purposes,
                   keycolumn: :loanpurposeid,
                   fieldmap: {loanpurpose: :loanpurpose}
+
+                Tms::LoanPurposes.unused_values.each do |val|
+                  transform Warn::IfFieldValueMatches, field: :loanpurpose, match: val
+                end
               end
               transform Delete::Fields, fields: :loanpurposeid
 
