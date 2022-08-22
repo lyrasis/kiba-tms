@@ -1,0 +1,47 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Loans mapping options
+
+There is one table for Loans in TMS. There are two loan record types in CollectionSpace (CS): Loans In, and Loans Out.
+
+There is a field in the TMS table indicating whether a loan is a loan in. We use this value to split the one table into two separate tables for mapping into CS.
+
+This page shows the options as they apply to Loans In, but they are basically the same for Loans Out records, which are quite similar (with slightly different field names).
+
+toc::[]
+
+== Remarks handling
+
+Default option:: `:status_note`
+
+Example remarks field data:: Sent email requesting extension 7/2/18 -- Signed in person 7/25/18
+
+=== :note
+
+image::loans_remarks_note.png[1180]
++++&nbsp;+++
+
+=== :status_note
+
+image::loans_remarks_status_note.png[2262]
++++&nbsp;+++
+
+NOTE: Status notes derived from `remarks` field will appear last in the status list
+
+NOTE: Controlled status values, names, and dates are **not** extracted from the free-text remarks field
+
+NOTE: By default, the "Status" value for these is "Note" but we can change this to another term, or leave that field blank. 
+
+
+
