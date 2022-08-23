@@ -47,7 +47,7 @@ NOTE: Your migration specialist will examine your `remarks` field data to determ
 
 == Display date handling
 
-CS does not have separate fields for representing the begin/end dates or the ndisplay  of a loan.
+CS does not have separate fields for representing the begin/end dates of the display of a loan.
 
 Default option:: `:status`
 
