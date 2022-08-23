@@ -18,6 +18,7 @@ module Kiba
       # If :primaryconxrefid, this should be ignored and ConXrefDetails used to merge in all names, not
       #   just a primary name
       setting :con_link_field, default: :primaryconxrefid, reader: true
+
       def omitted_fields
         ( delete_fields + empty_fields ).uniq
       end
