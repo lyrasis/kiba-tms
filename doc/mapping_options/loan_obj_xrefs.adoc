@@ -1,0 +1,105 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Loan-object relationship data mapping
+
+
+TMS has a table (LoanObjXrefs) that links object records to loans. We will use this table to create relationships between Objects and Loan procedures in CollectionSpace (CS).
+
+The TMS LoanObjXrefs table contains many fields for recording detailed information about the relationship between loans and objects.
+
+The CS data model does not support recording details about the specific object/loan relationship on the CS relationship record, which has a very simple structure and expresses only "record A of type A is related to record B of type B".footnote:[https://collectionspace.atlassian.net/wiki/spaces/DOC/pages/2593663181/Relationship+Service+RESTful+APIs#RelationshipServiceRESTfulAPIs-RelationshipRESTpayloadschemas[CS Relationship Record structure examples]
+
+
+
+Because of this data model mismatch, the migration data transformation process needs to merge data from this table into either Loan In/Loan Out records and/or Object records for ingest into CS, or drop the data.
+
+This behavior can be configured on a per-field basis. The options that can be applied and the defaults for each field are outlined below.
+
+toc::[]
+
+== The options
+Currently, one option is chosen for each field in the TMS LoanObjXrefs table. This option applies to all values in that field.
+
+If it is important to treat some values in a given field differently than others, we can write a client-specific custom transformer for that field, as long as the requirement can be achieved programmatically. This will extend the migration development process.
+
+NOTE:: There are some fields that get combined or have other special treatment, which is explained in detail under those fields below.
+
+The example for each options uses the `remarks` field of the TMS table, and assumes you have the following data:
+
+* Loan number: L2017.2 (this is a loan-in)
+* Object number: L2017.2.27
+* Remarks: Came with DVD
+
+=== Drop
+Data in the TMS LoanObjXrefs field will not be migrated.
+
+**Example:**
+
+"Came with DVD" will not be migrated.
+
+=== Loan with target field
+Data in the TMS LoanObjXrefs field will migrate into the specified target field in the CS Loan In or Loan Out record referenced by the table.
+
+Relevant object number is prepended to the field value. 
+
+**Example, with target field = Note:**
+
+image::loanobjxrefs_loan_example.png[1776]
++++&nbsp;+++
+
+=== Object with target field
+Data in the TMS LoanObjXrefs field will migrate into the specified target field in the CS Object record referenced by the table.
+
+Relevant loan number is prepended to the field value.
+
+**Example, with target field = Comment:**
+
+image::loanobjxrefs_object_example.png[1688]
++++&nbsp;+++
+
+== Default options for each field
+=== appraisalvalueid
+Normal options do not apply.
+
+A value in this field causes a relationship to be created between the loan and Valuation Control procedure that will have been created from the TMS ObjInsurance table. Without this, the Valuation Control would be linked to the Object, but not the Loan record in CS. 
+=== conditions
+
+Target record:: Loan
+Target field:: loanConditions
+Label:: `{objectNumber}: `
+
+=== indemnityreceiveddateiso
+=== indemnityreceivedvalue
+=== insindemresp
+
+Target record:: Object
+Target field:: comment
+Label:: `Insurance/indemnity responsibility details for this object as part of loan #{loanNumber}:` 
+
+=== insurancevalueid
+Normal options do not apply.
+
+A value in this field causes a relationship to be created between the loan and Valuation Control procedure that will have been created from the TMS ObjInsurance table. Without this, the Valuation Control would be linked to the Object, but not the Loan record in CS. 
+
+=== lendercreditline
+
+Target record:: Object
+Target field:: loanConditions
+Label:: `{objectNumber}: `
+
+=== loanobjectstatusid
+=== loanobjstatus_old
+=== loanobjstatusdateiso
+=== loanobjstatusnotes
+=== remarks
