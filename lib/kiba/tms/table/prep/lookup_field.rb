@@ -47,6 +47,7 @@ module Kiba
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
+            loan_object_statuses: :loanobjectstatusid,
             loan_purposes: :loanpurposeid,
             loan_statuses: :loanstatusid,
             loc_approvers: :approverid,
