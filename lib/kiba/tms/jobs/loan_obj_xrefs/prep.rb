@@ -21,9 +21,17 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              
-              unless Tms::LoanObjXrefs.delete_fields.empty?
-                transform Delete::Fields, fields: Tms::LoanObjXrefs.delete_fields
+
+              empty = Tms::LoanObjXrefs.empty_fields
+              unless empty.empty?
+                empty.each do |field|
+                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
+                end
+              end
+
+              omitted = Tms::LoanObjXrefs.omitted_fields
+              unless omitted.empty?
+                transform Delete::Fields, fields: omitted
               end
 
               transform Merge::MultiRowLookup,

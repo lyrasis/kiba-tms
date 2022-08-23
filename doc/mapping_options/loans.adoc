@@ -41,7 +41,40 @@ NOTE: Status notes derived from `remarks` field will appear last in the status l
 
 NOTE: Controlled status values, names, and dates are **not** extracted from the free-text remarks field
 
-NOTE: By default, the "Status" value for these is "Note" but we can change this to another term, or leave that field blank. 
+NOTE: By default, the "Status" value for these is "Note" but we can change this to another term, or leave that field blank.
+
+NOTE: Your migration specialist will examine your `remarks` field data to determine the appropriate value on which to split that field into separate notes.
+
+== Display date handling
+
+CS does not have separate fields for representing the begin/end dates or the ndisplay  of a loan.
+
+Default option:: `:status`
+
+*Example display date data:*
+
+image::loans_displaydate_data.png[490]
++++&nbsp;+++
+
+=== :status
+
+image::loans_displaydate_status.png[1672]
++++&nbsp;+++
+
+NOTE: The Status field values default to "Display begin" and "Display end", but these are configurable.
+
+=== :note
+
+image::loans_displaydate_note.png[1026]
++++&nbsp;+++
+
+=== :conditions
+
+image::loans_displaydate_conditions.png[1608]
++++&nbsp;+++
+
+
+
 
 
 

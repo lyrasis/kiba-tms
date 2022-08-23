@@ -39,6 +39,12 @@ module Kiba
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
+
+              unless Tms::Loans.empty_fields.empty?
+                Tms::Loans.empty_fields.each do |field|
+                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
+                end
+              end
               
               unless Tms::Loans.omitted_fields.empty?
                 transform Delete::Fields, fields: Tms::Loans.omitted_fields
