@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module LoanObjectStatuses
+      module LoanObjStatuses
         module Prep
           module_function
           
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__loan_object_statuses,
-                destination: :prep__loan_object_statuses
+                source: :tms__loan_obj_statuses,
+                destination: :prep__loan_obj_statuses
               },
               transformer: xforms
             )
@@ -20,8 +20,8 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :objincomingpurpose
-              deletes = Tms::LoanObjectStatuses.delete_fields
+              transform Tms::Transforms::DeleteNoValueTypes, field: :loanobjectstatus
+              deletes = Tms::LoanObjStatuses.delete_fields
               unless deletes.empty?
                 transform Delete::Fields, fields: deletes
               end
