@@ -11,7 +11,7 @@ module Kiba
       # whether or not table is used
       setting :used, default: true, reader: true
       setting :loaninnote_source_fields, default: %i[description], reader: true
-      setting :loaninconditions_source_fields, default: %i[loanconditions], reader: true
+      setting :loaninconditions_source_fields, default: %i[loanconditions insind], reader: true
 
       setting :purpose_mapping,
         default: {

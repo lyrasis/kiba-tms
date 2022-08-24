@@ -159,6 +159,8 @@ module Kiba
                   delete_sources: true
               end
 
+              transform Tms::Transforms::Loansin::InsuranceIndemnityNote
+              
               conditionsfields = Tms::Loansin.loaninconditions_source_fields
               unless conditionsfields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
