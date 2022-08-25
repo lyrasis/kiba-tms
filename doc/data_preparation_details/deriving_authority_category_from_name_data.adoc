@@ -1,0 +1,34 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Deriving authority category from name data
+
+This algorithm uses name details to make a "best guess" at whether a name is a Person or an Organization.
+
+The client is asked to review and correct this information.
+
+Person field(s):: `lastname`, `firstname`
+Org field(s):: `institution`
+
+The OrgNameChecker checks whether a preferred name matches any of https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/services/names/org_name_checker.rb[the specified patterns that indicate "organization-ness"]. It returns true if a name matches any organization patterns, and false if not.
+
+* If person field(s) are not populated AND org field(s) are not populated
+** Derived type = Organization if OrgNameChecker returns true
+** No derived type if OrgNameChecker returns false
+* If both person and org field(s) are populated
+** Derived type = Organization if OrgNameChecker returns true
+** No derived type if OrgNameChecker returns false
+* If person field(s) are populated and org field(s) are not
+** Derived type = Person
+* If org field(s) are populated and person field(s) are not
+** Derived type = Organization
