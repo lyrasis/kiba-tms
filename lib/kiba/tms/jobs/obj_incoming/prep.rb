@@ -29,6 +29,10 @@ module Kiba
               unless Tms::ObjIncoming.delete_fields.empty?
                 transform Delete::Fields, fields: Tms::ObjIncoming.delete_fields
               end
+
+              %i[approver handler].each do |field|
+                transform Tms::Transforms::DeleteNoValueTypes, field: field
+              end
               
               transform Merge::MultiRowLookup,
                 lookup: prep__obj_inc_purposes,
