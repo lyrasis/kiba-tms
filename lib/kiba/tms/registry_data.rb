@@ -1017,7 +1017,7 @@ module Kiba
             tags: %i[names cleanup],
             dest_special_opts: {
               initial_headers:
-              %i[name correctname authoritytype correctauthoritytype] }
+              %i[name correctname authoritytype correctauthoritytype termsource] }
           }
           end
         Kiba::Tms.registry.namespace('names') do          
