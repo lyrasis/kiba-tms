@@ -31,7 +31,6 @@ module Kiba
         ( delete_fields + empty_fields ).uniq
       end
 
-      # If this mapping changes, update it in doc/name_compilation.adoc
       setting :type_mapping,
         default: {
             'Business' => 'Organization',
