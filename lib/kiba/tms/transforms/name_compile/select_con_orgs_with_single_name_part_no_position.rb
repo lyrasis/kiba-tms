@@ -13,7 +13,7 @@ module Kiba
           def process(row)
             contype = row[:contype]
             return if contype.blank?
-            return unless  contype == 'Organization'
+            return unless  contype['Organization']
             
             nameparts = getter.call(row)
             return unless nameparts.length == 1

@@ -21,8 +21,9 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::FieldPopulated, action: :keep, field: :constituent_duplicate
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: :name, target: :norm
+              transform Tms::Transforms::Constituents::NormalizeContype
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm],
+                sources: %i[contype_norm norm],
                 target: :normalized,
                 sep: ' ',
                 delete_sources: true

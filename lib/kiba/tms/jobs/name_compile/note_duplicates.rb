@@ -20,9 +20,10 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldMatchRegexp, action: :keep, field: :relation_type, match: '_note$'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm relation_type note_text]
+              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm relation_type note_text]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm relation_type note_text],
+                sources: %i[contype_norm norm relation_type note_text],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false

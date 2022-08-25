@@ -21,7 +21,12 @@ module Kiba
           def xforms
             Kiba.job_segment do
               treatment = Tms::NameCompile.source_treatment[:name_compile__from_con_org_with_inst]
-              transform FilterRows::FieldEqualTo, action: :keep, field: :contype, value: 'Organization'
+              transform FilterRows::WithLambda,
+                action: :keep,
+                lambda: ->(row) do
+                  type = row[:contype]
+                  type && type['Organization']
+                end
               transform FilterRows::FieldPopulated, action: :keep, field: :institution
               transform Append::ToFieldValue, field: :constituentid, value: '.institution'
               transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_institution'

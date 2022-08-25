@@ -47,7 +47,7 @@ module Kiba
               relation_type: '_main term',
               constituentid: "#{table}.#{name}"
             }
-            row[:contype] = orgchecker.call(row) ? 'Organization' : nil
+            row[:contype] = orgchecker.call(row) ? 'Organization?' : nil
             row
           end
           

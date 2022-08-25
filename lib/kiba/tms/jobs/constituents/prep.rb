@@ -67,8 +67,11 @@ module Kiba
                 sep: '',
                 delete_sources: false
 
+              transform Copy::Field, from: :contype, to: :contype_norm
+
+              transform Tms::Transforms::Constituents::NormalizeContype
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: [:contype, prefname],
+                sources: [:contype_norm, prefname],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
@@ -128,7 +131,7 @@ module Kiba
                   source: Tms::Constituents.preferred_name_field,
                   target: :norm
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: %i[contype norm],
+                  sources: %i[contype_norm norm],
                   target: :combined,
                   sep: ' ',
                   delete_sources: false
@@ -143,11 +146,12 @@ module Kiba
                 source: Tms::Constituents.preferred_name_field,
                 target: :norm
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm],
+                sources: %i[contype_norm norm],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
               transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
+              transform Delete::Fields, fields: %i[contype_norm]
 
               boolfields = []
               boolfields << :approved unless Tms::Constituents.map_approved

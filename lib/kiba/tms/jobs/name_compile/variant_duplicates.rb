@@ -20,9 +20,10 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: 'variant term'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm variant_term variant_qualifier]
+              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm variant_term variant_qualifier]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm variant_term variant_qualifier],
+                sources: %i[contype_norm norm variant_term variant_qualifier],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false

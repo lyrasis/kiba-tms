@@ -88,12 +88,13 @@ module Kiba
 
 
               transform Cspace::NormalizeForID, source: :name, target: :norm
+              transform Tms::Transforms::Constituents::NormalizeContype
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm relation_type],
+                sources: %i[contype_norm norm relation_type],
                 target: :sort,
                 sep: ' ',
                 delete_sources: false
-              transform Delete::Fields, fields: %i[fingerprint norm]
+              transform Delete::Fields, fields: %i[fingerprint contype norm]
             end
           end
         end

@@ -21,9 +21,10 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: '_main term'
               transform FilterRows::FieldPopulated, action: :keep, field: :contype
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm]
+              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm],
+                sources: %i[contype_norm norm],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false

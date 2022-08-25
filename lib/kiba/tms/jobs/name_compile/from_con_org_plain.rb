@@ -20,7 +20,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :contype, value: 'Organization'
+              transform FilterRows::WithLambda,
+                action: :keep,
+                lambda: ->(row) do
+                  type = row[:contype]
+                  type && type['Organization']
+                  end
               transform Delete::Fields, fields: Tms::NameCompile.org_nil
               transform Merge::ConstantValues,
                 constantmap: {

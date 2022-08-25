@@ -24,9 +24,10 @@ module Kiba
                 action: :keep,
                 field: :termsource,
                 match: '^TMS Constituents\.(orgs|persons)$'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm]
+              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm],
+                sources: %i[contype_norm norm],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false

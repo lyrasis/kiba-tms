@@ -43,7 +43,7 @@ module Kiba
             @contype = row[:contype]
             return false if contype.blank?
 
-            true if contype == 'Organization'
+            true if contype['Organization']
           end
         end
       end

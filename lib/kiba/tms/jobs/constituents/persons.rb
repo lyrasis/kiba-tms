@@ -21,7 +21,10 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::WithLambda,
                 action: :keep,
-                lambda: ->(row){ row[:constituenttype] == 'Person' || row[:derivedcontype] == 'Person' }
+                lambda: ->(row) do
+                  type = row[:contype]
+                  type && type.start_with?('Person')
+                end
             end
           end
         end

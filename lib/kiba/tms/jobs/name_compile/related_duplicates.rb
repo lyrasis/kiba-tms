@@ -20,9 +20,10 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: 'contact_person'
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype norm related_term related_role]
+              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm related_term related_role]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype norm related_term related_role],
+                sources: %i[contype_norm norm related_term related_role],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
