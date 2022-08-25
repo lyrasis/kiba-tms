@@ -55,7 +55,7 @@ Relevant object number is prepended to the field value.
 
 **Example, with target field = Note:**
 
-image::loanobjxrefs_loan_example.png[1776]
+image::loanobjxref_loan_example.png[1776]
 +++&nbsp;+++
 
 === Object with target field
@@ -73,19 +73,33 @@ image::loanobjxrefs_object_example.png[1688]
 Normal options do not apply.
 
 A value in this field causes a relationship to be created between the loan and Valuation Control procedure that will have been created from the TMS ObjInsurance table. Without this, the Valuation Control would be linked to the Object, but not the Loan record in CS. 
+
 === conditions
 
 Target record:: Loan
 Target field:: loanConditions
-Label:: `{objectNumber}: `
+Label:: {objectnumber}:
 
 === indemnityreceiveddateiso
+See `indemnityreceivedvalue`
+
 === indemnityreceivedvalue
+`indemnityreceivedvalue` and `indemnityreceiveddateiso` are handled together.
+
+Target record:: Object
+Target field:: annotation
+Label:: `{loanNumber}:`  (prepended to `indemnityreceivedvalue`)
+Annotation type:: Loan indemnity received
+
+`indemnityreceivedvalue` goes in Annotation note
+
+`indemnityreceiveddateiso` goes in Annotation date
+
 === insindemresp
 
 Target record:: Object
 Target field:: comment
-Label:: `Insurance/indemnity responsibility details for this object as part of loan #{loanNumber}:` 
+Label:: `Loan object insurance/indemnity ({loanNumber}):` 
 
 === insurancevalueid
 Normal options do not apply.
@@ -98,8 +112,34 @@ Target record:: Object
 Target field:: loanConditions
 Label:: `{objectNumber}: `
 
-=== loanobjectstatusid
+=== loanobjectstatus
+
+Target record:: Object
+Target field:: inventoryStatus
+Label:: n/a
+
 === loanobjstatus_old
+Dropped. Assumed to be redundant (given `loanobjectstatus`) or outdated
+
 === loanobjstatusdateiso
+
+Target record:: Object
+Target field:: comment
+Label:: Loan object status ({loannumber}):
+
+Is combined with `loanobjstatusnotes` value if present.
+
+
 === loanobjstatusnotes
+
+Target record:: Object
+Target field:: comment
+Label:: Loan object status ({loannumber}):
+
+Is combined with `loanobjstatusdateiso` value if present.
+
 === remarks
+
+Target record:: Object
+Target field:: comment
+Label:: `Loan remarks ({loannumber}):` 
