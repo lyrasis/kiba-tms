@@ -1011,6 +1011,14 @@ module Kiba
             desc: 'Data from main/base data source used to create Name Type review/cleanup worksheet',
             tags: %i[names cleanup]
           }
+          register :worksheet, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::Worksheet,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'name_type_cleanup_worksheet.csv'),
+            tags: %i[names cleanup],
+            dest_special_opts: {
+              initial_headers:
+              %i[name correctname authoritytype correctauthoritytype] }
+          }
           end
         Kiba::Tms.registry.namespace('names') do          
           register :compiled, {
