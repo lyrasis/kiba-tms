@@ -5,32 +5,52 @@ module Kiba
     module Transforms
       module Constituents
         class DeriveType
-          def initialize
+          # @param mode [:main, alt]
+          def initialize(mode: :main)
+            @mode = mode
             @type = :constituenttype
+            @target = mainmode? ? :derivedcontype : :altauthtype
             @pgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[lastname firstname])
             @ogetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [:institution])
-            @target = :derivedcontype
+            @ochecker = Tms::Services::Names::OrgNameChecker.new(field: Tms::Constituents.preferred_name_field)
           end
 
           def process(row)
             row[target] = nil
-            typeval = row[type]
-            return row unless typeval.blank?
+
+            if mainmode?
+              typeval = row[type]
+              return row unless typeval.blank?
+            end
             
-            p_name = pgetter.call(row)
-            o_name = ogetter.call(row)
-            return row if p_name.empty? && o_name.empty?
-            return row if !p_name.empty? && !o_name.empty?
-
-            row[target] = 'Person' unless p_name.empty?
-            row[target] = 'Organization' if p_name.empty?
-
+            derived = derived_type(row)
+            row[target] = derived if derived
+            
             row
           end
 
           private
 
-          attr_reader :type, :pgetter, :ogetter, :target
+          attr_reader :mode, :type, :target, :pgetter, :ogetter, :ochecker
+
+          def derived_type(row)
+            p_name = pgetter.call(row)
+            o_name = ogetter.call(row)
+
+            if p_name.empty? && o_name.empty?
+              'Organization' if ochecker.call(row)
+            elsif !p_name.empty? && !o_name.empty?
+              'Organization' if ochecker.call(row)
+            elsif !p_name.empty?
+              'Person' unless p_name.empty?
+            else
+              'Organization' if p_name.empty?
+            end
+          end
+          
+          def mainmode?
+            mode == :main
+          end
         end
       end
     end

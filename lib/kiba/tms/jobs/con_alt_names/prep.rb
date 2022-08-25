@@ -91,7 +91,7 @@ module Kiba
                 }
               transform Delete::Fields, fields: %i[altnorm connorm]
 
-              transform Tms::Transforms::ConAltNames::DeriveType
+              transform Tms::Transforms::Constituents::DeriveType, mode: :alt
 
               # force separate constituent type value as altauthtype where available
               transform do |row|
