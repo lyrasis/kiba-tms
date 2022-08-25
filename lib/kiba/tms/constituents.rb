@@ -19,10 +19,22 @@ module Kiba
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
 
+      # the final 3 date fields are deleted because they are handled in Constituents::CleanDates
+      setting :delete_fields,
+        default: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
+                    begindate enddate systemflag internalstatus islocked publicaccess
+                    displaydate begindateiso enddateiso],
+        reader: true
+      setting :empty_fields, default: %i[], reader: true
+
+      def omitted_fields
+        ( delete_fields + empty_fields ).uniq
+      end
+
       # If this mapping changes, update it in doc/name_compilation.adoc
       setting :type_mapping,
         default: {
-#            'Business' => 'Organization',
+            'Business' => 'Organization',
             'Individual' => 'Person',
             'Foundation' => 'Organization',
             'Institution' => 'Organization',

@@ -30,11 +30,18 @@ module Kiba
               
               transform Tms::Transforms::DeleteTmsFields
 
-              # the final 3 date fields are deleted because they are handled in Constituents::CleanDates
-              transform Delete::Fields,
-                fields: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
-                           begindate enddate systemflag internalstatus islocked publicaccess
-                           displaydate begindateiso enddateiso]
+              empty_fields = Tms::Constituents.empty_fields
+              unless empty_fields.empty?
+                empty_fields.each do |field|
+                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
+                end
+              end
+
+              to_del = Tms::Constituents.omitted_fields
+              unless to_del.empty?
+                transform Delete::Fields, fields: to_del
+              end
+              
               transform Delete::FieldValueContainingString, fields: %i[defaultdisplaybioid], match: '-1'
               
               transform Merge::MultiRowLookup,
