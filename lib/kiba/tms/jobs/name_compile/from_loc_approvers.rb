@@ -20,12 +20,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: :approver
-              transform Deduplicate::Table, field: :approver
-              transform Rename::Field, from: :approver, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :contype, value: 'Person'
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS LocApprovers'
-              transform Merge::ConstantValue, target: :relation_type, value: '_main term'
+              transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
+                table: 'LocApprovers',
+                fields: [:approver]              
             end
           end
         end

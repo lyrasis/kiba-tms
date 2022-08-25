@@ -20,12 +20,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: :childstring
-              transform Deduplicate::Table, field: :childstring
-              transform Rename::Field, from: :childstring, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :contype, value: 'Person'
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS AssocParents.for_constituents'
-              transform Merge::ConstantValue, target: :relation_type, value: '_main term'
+              transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
+                table: 'AssocParents.for_constituents',
+                fields: [:childstring]
             end
           end
         end

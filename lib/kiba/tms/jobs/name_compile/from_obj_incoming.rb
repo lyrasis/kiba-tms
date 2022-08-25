@@ -22,18 +22,9 @@ module Kiba
             Kiba.job_segment do
               namefields = %i[approvedby requestedby courierin courierout cratepaidby ininsurpaidby
                               shippingpaidby]
-              transform Delete::FieldsExcept, fields: namefields
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: namefields,
-                target: :combined,
-                sep: '|||',
-                delete_sources: true
-              transform FilterRows::FieldPopulated, action: :keep, field: :combined
-              transform Explode::RowsFromMultivalField, field: :combined, delim: '|||'
-              transform Deduplicate::Table, field: :combined
-              transform Rename::Field, from: :combined, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ObjIncoming'
-              transform Merge::ConstantValue, target: :relation_type, value: '_main term'
+              transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
+                table: 'ObjIncoming',
+                fields: namefields
             end
           end
         end
