@@ -1004,6 +1004,14 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('name_type_cleanup') do   
+          register :from_base_data, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::FromBaseData,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_from_base_data.csv'),
+            desc: 'Data from main/base data source used to create Name Type review/cleanup worksheet',
+            tags: %i[names cleanup]
+          }
+          end
         Kiba::Tms.registry.namespace('names') do          
           register :compiled, {
             creator: Kiba::Tms::Jobs::Names::CompiledData,
