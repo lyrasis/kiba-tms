@@ -11,7 +11,11 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :loans__in,
-                destination: :loansin__prep
+                destination: :loansin__prep,
+                lookup: %i[
+                           orgs__by_norm
+                           persons__by_norm
+                          ]
               },
               transformer: xforms
             )
@@ -19,6 +23,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Delete::EmptyFields
+              
               dd_treatment = Tms::Loansin.display_date_treatment
               if dd_treatment == :status
                 %i[dispbeg dispend].each{ |src| Tms::Loansin.status_sources << src }
@@ -29,10 +35,16 @@ module Kiba
                 Tms::Loansin.status_sources << :rem
                 Tms::Loansin.status_targets << :loanstatusnote
               end
+
+              if Tms::LoanObjXrefs.conditions.record == :loan
+                case Tms::LoanObjXrefs.conditions.field
+                when :loanconditions
+                  Tms::Loansin.loaninconditions_source_fields << :obj_loanconditions
+                end
+              end
               
               transform Rename::Fields, fieldmap: {
                 loannumber: :loaninnumber,
-                contact: :lenderscontact,
                 beginisodate: :loanindate,
                 endisodate: :loanreturndate,
                 loanrenewalisodate: :loanrenewalapplicationdate,
@@ -110,7 +122,7 @@ module Kiba
                 transform Reshape::FieldsToFieldGroupWithConstant,
                   fieldmap: dispbeg_map.merge(Tms::Loansin.status_nil_merge_fields(dispbeg_map)),
                   constant_target: :dispbeg_loanstatus,
-                  constant_value: 'Display begins',
+                  constant_value: Tms::Loansin.display_date_begin_status,
                   replace_empty: false
 
                 dispend_map = {
@@ -121,7 +133,7 @@ module Kiba
                 transform Reshape::FieldsToFieldGroupWithConstant,
                   fieldmap: dispend_map.merge(Tms::Loansin.status_nil_merge_fields(dispend_map)),
                   constant_target: :dispend_loanstatus,
-                  constant_value: 'Display ends',
+                  constant_value: Tms::Loansin.display_date_end_status,
                   replace_empty: false
               else
                 warn("Unknown Tms::Loansin.display_date_treatment: #{dd_treatment}")
@@ -129,16 +141,6 @@ module Kiba
 
               if remarks_treatment == :statusnote
                 transform Tms::Transforms::Loansin::RemarksToStatusNote
-                rem_map = {
-                  remarks: :rem_loanstatusnote
-                }
-                rem_nils = Tms::Loansin.status_nil_append_fields(rem_map)
-                transform Append::NilFields, fields: rem_nils unless rem_nils.empty?
-                transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: rem_map.merge(Tms::Loansin.status_nil_merge_fields(rem_map)),
-                  constant_target: :rem_loanstatus,
-                  constant_value: Tms::Loansin.remarks_status,
-                  replace_empty: false
               elsif remarks_treatment == :note
                 Tms::Loansin.loaninnote_source_fields << :remarks
               else
@@ -164,7 +166,7 @@ module Kiba
               conditionsfields = Tms::Loansin.loaninconditions_source_fields
               unless conditionsfields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: notefields,
+                  sources: conditionsfields,
                   target: :loaninconditions,
                   sep: '%CR%%CR%',
                   delete_sources: true
@@ -172,13 +174,50 @@ module Kiba
 
               transform Tms::Transforms::Loansin::SeparateContacts
 
-              %i[personrole orgrole].each do |field|
+              rolefields = %i[personrole orgrole]
+              rolefields.each do |field|
                 transform Warn::UnlessFieldValueMatches,
                   field: field,
                   match: 'lender',
                   delim: Tms.delim,
                   casesensitive: false
               end
+              transform Delete::Fields, fields: rolefields
+
+              namefields = %i[person org contact]
+              namefields.each do |field|
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: field,
+                  target: "#{field}_norm".to_sym,
+                  multival: true,
+                  delim: Tms.delim
+              end
+
+              pref = Tms::Constituents.preferred_name_field
+              
+              transform Merge::MultiRowLookup,
+                lookup: persons__by_norm,
+                keycolumn: :person_norm,
+                fieldmap: {lenderpersonlocal: pref},
+                multikey: true,
+                delim: Tms.delim
+              transform Merge::MultiRowLookup,
+                lookup: persons__by_norm,
+                keycolumn: :contact_norm,
+                fieldmap: {lenderscontact: pref},
+                multikey: true,
+                delim: Tms.delim
+              transform Merge::MultiRowLookup,
+                lookup: orgs__by_norm,
+                keycolumn: :org_norm,
+                fieldmap: {lenderorganizationlocal: pref},
+                multikey: true,
+                delim: Tms.delim
+
+              delfields = namefields + namefields.map{ |field| "#{field}_norm".to_sym }
+              transform Delete::Fields, fields: delfields
+
+              transform Tms::Transforms::Loansin::CombineLoanStatus
             end
           end
         end
@@ -186,4 +225,3 @@ module Kiba
     end
   end
 end
-

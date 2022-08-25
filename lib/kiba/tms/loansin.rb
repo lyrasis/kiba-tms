@@ -13,11 +13,6 @@ module Kiba
       setting :loaninnote_source_fields, default: %i[description], reader: true
       setting :loaninconditions_source_fields, default: %i[loanconditions insind], reader: true
 
-      setting :purpose_mapping,
-        default: {
-        },
-        reader: true
-
       # options: :status, :note, :conditions
       setting :display_date_treatment, default: :status, reader: true
       setting :display_date_begin_status, default: 'Display begin', reader: true

@@ -30,10 +30,10 @@ module Kiba
 
           def add_to_contact(vals, index)
             newval = vals[:person][index]
-            if vals.key?(:lenderscontact)
-              vals[:lenderscontact] << newval
+            if vals.key?(:contact)
+              vals[:contact] << newval
             else
-              vals[:lenderscontact] = [newval]
+              vals[:contact] = [newval]
             end
           end
 

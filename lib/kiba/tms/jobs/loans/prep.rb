@@ -31,6 +31,7 @@ module Kiba
             else
               warn('Implement other Tms::Loans.con_link_field')
             end
+            base << :prep__loan_obj_xrefs if Tms::LoanObjXrefs.used && Tms::LoanObjXrefs.merging_into_loans
             base
           end
 
@@ -128,6 +129,17 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
               end
               transform Delete::Fields, fields: :primaryconxrefid
+
+              if Tms::LoanObjXrefs.conditions.record == :loan
+                case Tms::LoanObjXrefs.conditions.field
+                when :loanconditions
+                  transform Merge::MultiRowLookup,
+                    lookup: prep__loan_obj_xrefs,
+                    keycolumn: :loanid,
+                    fieldmap: {obj_loanconditions: :conditions},
+                    delim: '%CR%'
+                end
+              end
             end
           end
         end

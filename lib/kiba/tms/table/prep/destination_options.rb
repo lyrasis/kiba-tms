@@ -49,6 +49,10 @@ module Kiba
               initial_headers:
               %i[tablename recordid role roletype person org displayorder]
             },
+            loan_obj_xrefs: {
+              initial_headers:
+              %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
+            },
             obj_incoming: {
               initial_headers: Tms::ObjIncoming.all_fields
             },

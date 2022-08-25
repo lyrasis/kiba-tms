@@ -19,7 +19,7 @@ module Kiba
           end
 
           def lookups
-            base = []
+            base = %i[tms__loans tms__objects]
             base << :prep__loan_obj_statuses if Tms::LoanObjStatuses.used
             base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used
             base
@@ -27,6 +27,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              conditions_label = Tms::LoanObjXrefs.conditions.label
+              
               transform Tms::Transforms::DeleteTmsFields
 
               emptyfields = Tms::LoanObjXrefs.empty_fields
@@ -40,6 +42,15 @@ module Kiba
               unless omitted.empty?
                 transform Delete::Fields, fields: omitted
               end
+
+              transform Merge::MultiRowLookup,
+                lookup: tms__loans,
+                keycolumn: :loanid,
+                fieldmap: {loannumber: :loannumber}
+              transform Merge::MultiRowLookup,
+                lookup: tms__objects,
+                keycolumn: :objectid,
+                fieldmap: {objectnumber: :objectnumber}
 
               if Tms::ObjInsIndemResp.used
                 transform Merge::MultiRowLookup,
@@ -70,6 +81,29 @@ module Kiba
 
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
+
+              if conditions_label == :objectnumber || conditions_label == :loannumber
+                transform do |row|
+                  cond = row[:conditions]
+                  next row if cond.blank?
+
+                  num = row[conditions_label]
+                  row[:conditions] = "#{num}: #{cond}"
+                  row
+                end
+              elsif conditions_label.is_a?(String)
+                transform do |row|
+                  cond = row[:conditions]
+                  next row if cond.blank?
+                  
+                  label = conditions_label.sub('{objectnumber}', row[:objectnumber])
+                    .sub('{loannumber}', row[:loannumber])
+                  row[:conditions] = "#{label}: #{cond}"
+                  row
+                end
+              else
+                warn("Unknown value for Tms::LoanObjXrefs.conditions.label")
+              end
             end
           end
         end

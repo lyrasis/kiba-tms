@@ -25,6 +25,7 @@ module Kiba
           FIELDS = {
             constituents: :constituentid,
             departments: :departmentid,
+            loans: :loanid,
             loc_purposes: :locpurposeid,
             locations: :locationid,
             obj_comp_statuses: :objcompstatusid,
