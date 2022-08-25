@@ -42,9 +42,9 @@ module Kiba
             elsif !p_name.empty? && !o_name.empty?
               'Organization' if ochecker.call(row)
             elsif !p_name.empty?
-              'Person' unless p_name.empty?
-            else
-              'Organization' if p_name.empty?
+              'Person'
+            elsif !o_name.empty?
+              'Organization'
             end
           end
           
