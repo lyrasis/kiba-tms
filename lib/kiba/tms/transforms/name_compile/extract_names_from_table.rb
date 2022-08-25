@@ -42,7 +42,7 @@ module Kiba
 
           def build_name_row(name, fields)
             row = {
-              namefield: name,
+              namefield => name,
               termsource: "TMS #{table}.#{fields}",
               relation_type: '_main term',
               constituentid: "#{table}.#{name}"
