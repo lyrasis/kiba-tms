@@ -1,0 +1,84 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Name type cleanup worksheet
+
+toc::[]
+
+== Purpose
+
+This worksheet allows you to make sure names in your TMS data are migrated into the correct Person or Organization authorities in CollectionSpace (CS).
+
+It also allows you to indicate names that should not be migrated and perform simple name corrections that can be merged into the next phase of name processing.
+
+Finally, it may inform cleanup you want to do in TMS prior to migration.
+
+[NOTE]
+====
+You may skip doing anything with this worksheet. Please let your migration specialist know if you want to skip this step.
+
+If you perform no cleanup here, all names with a blank `authoritytype` value will migrate to CollectionSpace (CS) as Person authorities by default.
+
+Let your migration specialist know if you want all names with a blank `authoritytype` value to be treated as Organizations
+====
+
+== Instructions
+
+[WARNING]
+====
+*Do not add or delete any rows and do not edit any columns other than `correctname` and `correctauthoritytype`.*
+
+If you edit other columns, those changes *_will not_* be merged into the migration. Editing some columns may prevent your allowed changes from being merged back into the migration. 
+====
+
+You may:
+* Filter and sort the rows however you like
+* Change the order of columns
+* Add your own columns to support your work. Data in these will be ignored in the actual migration, but will be kept in any future iterations of the worksheet for your reference. Avoid using formulas or color coding/other formatting. These will be lost in future iterations of the worksheet, since all data is converted to plain text CSV format for processing.
+
+== Procedures
+
+=== Assign authority type
+
+.Original data
+....
+| name           | correctname | authoritytype | correctauthoritytype |
+|----------------+-------------+---------------+----------------------|
+| Some Name Here |             |               |                      |
+....
+
+.If "Some Name Here" is a Person
+....
+| name           | correctname | authoritytype | correctauthoritytype |
+|----------------+-------------+---------------+----------------------|
+| Some Name Here |             |               | p                    |
+....
+
+.If "Some Name Here" is an Organization
+....
+| name           | correctname | authoritytype | correctauthoritytype |
+|----------------+-------------+---------------+----------------------|
+| Some Name Here |             |               | o                    |
+....
+
+== Suggested steps
+
+=== Filter to `authoritytype` = (Blanks) and categorize the names
+
+
+
+
+Refer to xref:name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet, and how the information here translates into records in .
+
+
+
