@@ -48,6 +48,14 @@ You may:
 
 == Procedures
 
+=== `correctauthoritytype` codes
+
+`d`:: drop, or, do not migrate
+`n`:: migrate as note instead of name
+`o`:: Organization
+`p`:: Person
+
+
 === Assign authority type
 
 .Original data
@@ -71,14 +79,138 @@ You may:
 | Some Name Here |             |               | o                    |
 ....
 
+=== Correct authority type
+
+.Original data
+....
+| name           | correctname | authoritytype | correctauthoritytype |
+|----------------+-------------+---------------+----------------------|
+| Some Name Here |             | Person        |                      |
+....
+
+. If "Some Name Here" is actually an Organization
+....
+| name           | correctname | authoritytype | correctauthoritytype |
+|----------------+-------------+---------------+----------------------|
+| Some Name Here |             | Person        | o                    |
+....
+
+=== Indicate that a `name` value should migrate as note instead of a name
+
+This worksheet contains all unique values in TMS fields that map to CS fields controlled by Person/Org authorities. Not all of those fields in TMS are controlled, so sometimes non-name information is recorded there.
+
+.Example
+....
+| name                                        | correctname | authoritytype | correctauthoritytype | termsource                |
+|---------------------------------------------+-------------+---------------+----------------------+---------------------------|
+| Already at Museum; picked up by Sam in 2012 |             |               |                      | TMS ObjIncoming.courierin |
+....
+
+In most cases, the records these values are mapping into have other fields we can populate with a free-text note. To indicate this treatment is desired for a value:
+
+....
+| name                                        | correctname | authoritytype | correctauthoritytype | termsource                |
+|---------------------------------------------+-------------+---------------+----------------------+---------------------------|
+| Already at Museum; picked up by Sam in 2012 |             |               | n                    | TMS ObjIncoming.courierin |
+....
+
+=== Indicate that a `name` value should not migrate at all
+
+.Example
+....
+| name        | correctname | authoritytype | correctauthoritytype | termsource               |
+|-------------+-------------+---------------+----------------------+--------------------------|
+| not entered |             |               |                      | TMS ObjIncoming.approver |
+....
+
+.This value will not be migrated
+....
+| name        | correctname | authoritytype | correctauthoritytype | termsource               |
+|-------------+-------------+---------------+----------------------+--------------------------|
+| not entered |             |               | d                    | TMS ObjIncoming.approver |
+....
+
+Fields that try to look up the migrating name (or note) value associated with this TMS value will just be left blank.
+
+=== Cleaning up names
+
+.Example 1
+....
+| name                   | correctname | authoritytype | correctauthoritytype | termsource                  |
+|------------------------+-------------+---------------+----------------------+-----------------------------|
+| Acquisition committee  |             | Organization  |                      | TMS ObjIncoming.approvedby  |
+| Acquisitions committee |             | Organization  |                      | TMS ObjAccession.authorizer |
+....
+
+Left as is, the data will create two separate Organization authorities. You probably don't want that.
+
+If you provide the following, one Organization for "Acquisitions committee" will be created.
+
+The migration process will try to look up "Acquisition committee" and see that the proper name to use is "Acquisitions committee".
+
+.Merge the two into one Organization
+....
+| name                   | correctname            | authoritytype | correctauthoritytype | termsource                  |
+|------------------------+------------------------+---------------+----------------------+-----------------------------|
+| Acquisition committee  | Acquisitions committee | Organization  |                      | TMS ObjIncoming.approvedby  |
+| Acquisitions committee |                        | Organization  |                      | TMS ObjAccession.authorizer |
+....
+
+IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). If creating a variant is important to you, wait until the next cleanup phase, which allows you to indicate some more sophisticated operations. This step is intended to handle simple/obvious misspellings/variations in form.
+
+
+NOTE: If `authoritytype` needs to be added or corrected for the names, it needs to be done on each row!
+
+.Example 2
+....
+| name                   | correctname | authoritytype | correctauthoritytype | termsource                  |
+|------------------------+-------------+---------------+----------------------+-----------------------------|
+| Acquisition committee  |             |               |                      | TMS ObjIncoming.approvedby  |
+| Acquisitions committee |             |               |                      | TMS ObjAccession.authorizer |
+....
+
+.Required
+....
+| name                   | correctname            | authoritytype | correctauthoritytype | termsource                  |
+|------------------------+------------------------+---------------+----------------------+-----------------------------|
+| Acquisition committee  | Acquisitions committee |               | o                    | TMS ObjIncoming.approvedby  |
+| Acquisitions committee |                        |               | o                    | TMS ObjAccession.authorizer |
+....
+
+This is required because the following is desired/possible:
+
+.Example 3
+....
+| name     | correctname | authoritytype | correctauthoritytype |
+|----------+-------------+---------------+----------------------|
+| Vangard  | Vanguard    | Organization? | p                    |
+| Vanguard |             | Organization  |                      |
+....
+
+Here, the additional data provided for reference in the spreadsheet allowed you to determine the first is actually the name used by a person. Given the above, the migration will create one Organization authority for "Vanguard" and one Person authority for "Vanguard".
+
 == Suggested steps
 
 === Filter to `authoritytype` = (Blanks) and categorize the names
 
+Follow the examples under Procedures > Assign authority type.
+
+=== Filter to `authoritytype` values that include `?` or `(derived)` and review
+
+The `authoritytype` values with `?` were xref:data_preparation_details/deriving_authority_category_from_name_data.adoc[derived from name details] when no name type was explicitly assigned in TMS.
+
+The `authoritytype` values with `(derived)` were derived from a TMS data row that was identified as representing more than one name.
+
+The algorithms we used to derive these `authoritytypes` are not overly intelligent, so it is good to make sure these are right.
+
+If the `?`/`derived` value is good, you don't need to do anything.
+
+Otherwise, follow the examples under Procedures > Correct authority type.
 
 
+== Background/more information
 
-Refer to xref:name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet, and how the information here translates into records in .
+Refer to xref:name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet.
 
 
 
