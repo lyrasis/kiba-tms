@@ -24,7 +24,7 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   type = row[:contype]
-                  type && type['Person']
+                  type && type.start_with?('Person')
                 end
               transform Delete::Fields, fields: Tms::NameCompile.person_nil
               transform Merge::ConstantValues,

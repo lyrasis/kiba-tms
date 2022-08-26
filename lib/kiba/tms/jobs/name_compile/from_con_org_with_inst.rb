@@ -25,7 +25,7 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   type = row[:contype]
-                  type && type['Organization']
+                  type && type.start_with?('Organization')
                 end
               transform FilterRows::FieldPopulated, action: :keep, field: :institution
               transform Append::ToFieldValue, field: :constituentid, value: '.institution'

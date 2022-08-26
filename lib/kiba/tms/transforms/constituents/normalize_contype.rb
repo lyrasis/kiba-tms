@@ -9,6 +9,7 @@ module Kiba
           def initialize(source: :contype, target: :contype_norm)
             @source = source
             @target = target
+            @normalizer = Tms::Services::Constituents::ContypeNormalizer.new
           end
 
           # @private
@@ -17,13 +18,13 @@ module Kiba
             type = row[source]
             return row if type.blank?
             
-            row[target] = type.sub(/\?| \(derived\)/, '')
+            row[target] = normalizer.call(type)
             row
           end
           
           private
 
-          attr_reader :source, :target
+          attr_reader :source, :target, :normalizer
         end
       end
     end

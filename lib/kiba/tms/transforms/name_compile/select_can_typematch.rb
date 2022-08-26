@@ -5,7 +5,10 @@ module Kiba
     module Transforms
       module NameCompile
         class SelectCanTypematch
-          # @private
+          def initialize
+            @normalizer = Tms::Services::Constituents::ContypeNormalizer.new
+          end
+          
           def process(row)
             return unless eligible?(row)
             
@@ -14,12 +17,14 @@ module Kiba
           
           private
 
+          attr_reader :normalizer
+          
           def eligible?(row)
             type_match?(row) && unestablished_alt_name?(row)
           end
 
           def type_match?(row)
-            row[:conauthtype] == row[:altauthtype]
+            normalizer.call(row[:conauthtype]) == normalizer.call(row[:altauthtype])
           end
 
           def unestablished_alt_name?(row)

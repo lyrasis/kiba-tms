@@ -16,3 +16,32 @@ endif::[]
 Refer to xref:name_compilation.adoc[Name compilation data preparation details] for the larger context of this document.
 
 The result of name compilation is xref:../names_review_and_cleanup_worksheet.adoc[the names review and cleanup worksheet].
+
+The default processing and any built-in non-default options are described below.
+
+== Preferred name field
+
+Prior to process constituent data, we ask the client to https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[identify their preferred name form for persons].
+
+If they choose direct form, the preferred name field from the Constituents and ConAltNames tables is `displayname`.
+
+If they choose inverted form, it is `alphasort`
+
+== Processing steps
+
+=== Remove non-migrating and empty fields, test row
+
+These fields will be marked as such in your data mapping details spreadsheet. The reason for omission from migration is given there.
+
+In a number of tables, TMS appears to create a row with the id "-1" with no data. This row is present in Constituents table and is removed from migration.
+
+=== Determine CollectionSpace (CS) authority type
+
+Next, we categorize each constituent name into Person or Organization.
+
+For constituent names with a constituenttype coded in TMS, we use https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the mapping configured for Constituents (search for `setting :type_mapping` in the linked page)].
+
+For constituent names without a constituenttype coded in TMS, we xref:deriving_authority_category_from_name_data.adoc[derive the category if we can].
+
+
+

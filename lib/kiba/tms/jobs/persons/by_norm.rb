@@ -33,7 +33,11 @@ module Kiba
                 
                 transform FilterRows::WithLambda,
                   action: :keep,
-                  lambda: ->(row){ row[:contype] == 'Person' && row[:relation_type] == '_main term' }
+                  lambda: ->(row) do
+                    ctype = row[:contype]
+                    rtype = row[:relation_type]
+                    ctype && rtype && ctype.start_with?('Person') &&  rtype == '_main term'
+                  end
                 transform Delete::FieldsExcept, fields: pref
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: pref, target: :norm
               end

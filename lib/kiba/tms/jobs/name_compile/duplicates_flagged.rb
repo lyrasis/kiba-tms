@@ -94,7 +94,7 @@ module Kiba
                 target: :sort,
                 sep: ' ',
                 delete_sources: false
-              transform Delete::Fields, fields: %i[fingerprint contype norm]
+              transform Delete::Fields, fields: %i[fingerprint contype_norm norm]
             end
           end
         end
