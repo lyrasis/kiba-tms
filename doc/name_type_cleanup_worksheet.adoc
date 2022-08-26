@@ -58,21 +58,21 @@ You may:
 
 === Assign authority type
 
-.Original data
+.Example 1, original
 ....
 | name           | correctname | authoritytype | correctauthoritytype |
 |----------------+-------------+---------------+----------------------|
 | Some Name Here |             |               |                      |
 ....
 
-.If "Some Name Here" is a Person
+.Example 1 fixed, if "Some Name Here" is a Person
 ....
 | name           | correctname | authoritytype | correctauthoritytype |
 |----------------+-------------+---------------+----------------------|
 | Some Name Here |             |               | p                    |
 ....
 
-.If "Some Name Here" is an Organization
+.Example 1 fixed, if "Some Name Here" is an Organization
 ....
 | name           | correctname | authoritytype | correctauthoritytype |
 |----------------+-------------+---------------+----------------------|
@@ -81,14 +81,14 @@ You may:
 
 === Correct authority type
 
-.Original data
+.Example 2, original
 ....
 | name           | correctname | authoritytype | correctauthoritytype |
 |----------------+-------------+---------------+----------------------|
 | Some Name Here |             | Person        |                      |
 ....
 
-. If "Some Name Here" is actually an Organization
+.Example 2, fixed, if "Some Name Here" is actually an Organization
 ....
 | name           | correctname | authoritytype | correctauthoritytype |
 |----------------+-------------+---------------+----------------------|
@@ -99,7 +99,7 @@ You may:
 
 This worksheet contains all unique values in TMS fields that map to CS fields controlled by Person/Org authorities. Not all of those fields in TMS are controlled, so sometimes non-name information is recorded there.
 
-.Example
+.Example 3, original
 ....
 | name                                        | correctname | authoritytype | correctauthoritytype | termsource                |
 |---------------------------------------------+-------------+---------------+----------------------+---------------------------|
@@ -108,6 +108,7 @@ This worksheet contains all unique values in TMS fields that map to CS fields co
 
 In most cases, the records these values are mapping into have other fields we can populate with a free-text note. To indicate this treatment is desired for a value:
 
+.Example 3, migrate as note
 ....
 | name                                        | correctname | authoritytype | correctauthoritytype | termsource                |
 |---------------------------------------------+-------------+---------------+----------------------+---------------------------|
@@ -116,25 +117,27 @@ In most cases, the records these values are mapping into have other fields we ca
 
 === Indicate that a `name` value should not migrate at all
 
-.Example
+.Example 4, original
 ....
 | name        | correctname | authoritytype | correctauthoritytype | termsource               |
 |-------------+-------------+---------------+----------------------+--------------------------|
 | not entered |             |               |                      | TMS ObjIncoming.approver |
 ....
 
-.This value will not be migrated
+.Example 4, not migrating
 ....
 | name        | correctname | authoritytype | correctauthoritytype | termsource               |
 |-------------+-------------+---------------+----------------------+--------------------------|
 | not entered |             |               | d                    | TMS ObjIncoming.approver |
 ....
 
+No authority will be created for "not entered".
+
 Fields that try to look up the migrating name (or note) value associated with this TMS value will just be left blank.
 
 === Cleaning up names
 
-.Example 1
+.Example 5, original
 ....
 | name                   | correctname | authoritytype | correctauthoritytype | termsource                  |
 |------------------------+-------------+---------------+----------------------+-----------------------------|
@@ -148,7 +151,7 @@ If you provide the following, one Organization for "Acquisitions committee" will
 
 The migration process will try to look up "Acquisition committee" and see that the proper name to use is "Acquisitions committee".
 
-.Merge the two into one Organization
+.Example 5, merging name forms with no variant
 ....
 | name                   | correctname            | authoritytype | correctauthoritytype | termsource                  |
 |------------------------+------------------------+---------------+----------------------+-----------------------------|
@@ -161,7 +164,7 @@ IMPORTANT: The solution above will *not* create a variant form of name "Acquisit
 
 NOTE: If `authoritytype` needs to be added or corrected for the names, it needs to be done on each row!
 
-.Example 2
+.Example 6, original
 ....
 | name                   | correctname | authoritytype | correctauthoritytype | termsource                  |
 |------------------------+-------------+---------------+----------------------+-----------------------------|
@@ -169,7 +172,7 @@ NOTE: If `authoritytype` needs to be added or corrected for the names, it needs 
 | Acquisitions committee |             |               |                      | TMS ObjAccession.authorizer |
 ....
 
-.Required
+.Example 6, fixed
 ....
 | name                   | correctname            | authoritytype | correctauthoritytype | termsource                  |
 |------------------------+------------------------+---------------+----------------------+-----------------------------|
@@ -179,7 +182,7 @@ NOTE: If `authoritytype` needs to be added or corrected for the names, it needs 
 
 This is required because the following is desired/possible:
 
-.Example 3
+.Example 7
 ....
 | name     | correctname | authoritytype | correctauthoritytype |
 |----------+-------------+---------------+----------------------|
@@ -187,7 +190,48 @@ This is required because the following is desired/possible:
 | Vanguard |             | Organization  |                      |
 ....
 
-Here, the additional data provided for reference in the spreadsheet allowed you to determine the first is actually the name used by a person. Given the above, the migration will create one Organization authority for "Vanguard" and one Person authority for "Vanguard".
+In Example 7, the additional data provided for reference in the spreadsheet allowed you to determine the first is actually the name used by a person. Given the above, the migration will create one Organization authority for "Vanguard" and one Person authority for "Vanguard".
+
+Another use case is if you have chosen direct form of name as your preferred form, but some names are entered in non-Constituent-linked fields in indirect order:
+
+.Example 8, original
+....
+| name      | correctname | authoritytype | correctauthoritytype | termsource          |
+|-----------+-------------+---------------+----------------------+---------------------|
+| Jane Doe  |             | Person        |                      | Constituents.person |
+| Doe, Jane |             |               |                      | Loans.requestedby   |
+....
+
+Given the above, if the second name is marked as a person without providing a `correctname`, two separate Person authorities will be created.
+
+With the edits shown below, one Person authority is created for "Jane Doe" and that value will be used in your Loan In or Loan Out records.
+
+.Example 8, fixed
+....
+| name      | correctname | authoritytype | correctauthoritytype | termsource          |
+|-----------+-------------+---------------+----------------------+---------------------|
+| Jane Doe  |             | Person        |                      | Constituents.person |
+| Doe, Jane | Jane Doe    |               | p                    | Loans.requestedby   |
+....
+
+This procedure can also be used to correct typos in single names:
+
+.Example 9, original
+....
+| name        | correctname | authoritytype | correctauthoritytype |
+|-------------+-------------+---------------+----------------------|
+| Brain Bones |             | Person        |                      |
+....
+
+This name may be used 100 times in your TMS data, but you only need to fix it once here for it to migrate with the correct spelling.
+
+.Example 9, fixed
+....
+| name        | correctname | authoritytype | correctauthoritytype |
+|-------------+-------------+---------------+----------------------|
+| Brain Bones | Brian Bones | Person        |                      |
+....
+
 
 == Suggested steps
 
@@ -207,6 +251,9 @@ If the `?`/`derived` value is good, you don't need to do anything.
 
 Otherwise, follow the examples under Procedures > Correct authority type.
 
+=== Sort by name and eyeball to find similar names that may need to be cleaned up
+
+Refer to Procedures > Cleaning up names
 
 == Background/more information
 
