@@ -323,7 +323,7 @@ Given the original data for Example 10, three separate Person authority records 
 
 The fixed data for Example 10 below will cause two Person authority records to be created. For records in TMS that have "Becky Barrow and Ann Booth", the two name values will be entered separately:
 
-image::name_type_cleanup_ex_10_1.png[1134]
+image::name_type_cleanup_ex10_1.png[1134]
 +++&nbsp;+++
 
 .Example 10, fixed
