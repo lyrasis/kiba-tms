@@ -70,7 +70,8 @@ Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_wor
 
 === Handle other cleanup in TMS
 
-There 
+There
+
 == Procedures
 
 === `correctauthoritytype` codes
