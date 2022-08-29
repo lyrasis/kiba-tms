@@ -25,11 +25,11 @@ Finally, it may inform cleanup you want to do in TMS prior to migration.
 
 [NOTE]
 ====
-You may skip doing anything with this worksheet. Please let your migration specialist know if you want to skip this step.
+You may skip doing anything with this worksheet. *Please let your migration specialist know if you want to skip this step.*
 
 If you perform no cleanup here, all names with a blank `authoritytype` value will migrate to CollectionSpace (CS) as Person authorities by default.
 
-Let your migration specialist know if you want all names with a blank `authoritytype` value to be treated as Organizations
+*Let your migration specialist know if you want all names with a blank `authoritytype` value to be treated as Organizations.*
 ====
 
 == Instructions
@@ -68,9 +68,44 @@ Otherwise, follow the examples under https://github.com/lyrasis/kiba-tms/blob/ma
 
 Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#cleaning-up-names[Procedures > Cleaning up names].
 
-=== Handle other cleanup in TMS
+=== Handle other cleanup in TMS (or post-migration in CS)
 
-There
+More complex cleanup operations than those described here should be handled in TMS prior to migration. Some examples:
+
+
+.Role/relationship term is not part of name
+....
+| name             | termsource            |
+|------------------+-----------------------|
+| Bob Allen        | TMS Constituents      |
+| Bob Allen, donor | TMS Loans.requestedby |
+....
+
+Assuming Bob Allen as a donor is not a separate person from Bob Allen, there should only be one authority for him. The role he plays/reason he is being recorded in an individual record should be captured somewhere other than his name:
+
+image::name_type_cleanup_donor.png[2270]
++++&nbsp;+++
+
+.Terms that make sense in a display, but not as a name value
+....
+| name   | termsource                |
+|--------+---------------------------|
+| artist | TMS ObjIncoming.courierin |
+....
+
+The above would create an authority for "artist" and all ObjIncoming records with courierin value "artist" would link to the same name, despite those artists being different people.
+
+.Additional info in name
+....
+| name               | termsource        |
+|--------------------+-------------------|
+| Bob Allen          | TMS Constituents  |
+| Bob Allen 555-1234 | TMS Loans.contact |
+....
+
+To avoid a second authority record being created for Bob, which includes his phone number as part of his name, move the phone number to Constituent information for Bob in TMS. If it is important to have the phone number in the loan record, move it to remarks.
+
+Alternately, we migrate this as two separate Person names in CS, and you can later https://collectionspace.atlassian.net/wiki/spaces/COL/pages/905445377/User+Manual+Data+Updates+Merge+Authority+Items[merge them]. 
 
 == Procedures
 
@@ -286,7 +321,7 @@ image::name_type_cleanup_ex_10_1.png[1134]
 |----------------------------+-------------------------+---------------+----------------------|
 | Ann Booth                  |                         | Person        |                      |
 | Becky Barrow               | Beckie Barrow           | Person        |                      |
-| Becky Barrow and Ann Booth | Beckie Barrow|Ann Booth | Person        | Person|Person        |
+| Becky Barrow and Ann Booth | Beckie Barrow|Ann Booth | Person        | p|p                  |
 ....
 
 [IMPORTANT]
