@@ -233,7 +233,7 @@ The migration process will try to look up "Acquisition committee" and see that t
 | Acquisitions committee |                        | Organization  |                      | TMS ObjAccession.authorizer |
 ....
 
-IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). This step is intended to handle simple/obvious misspellings/variations in form, without If creating a variant is important to you, wait until the next cleanup phase, which allows you to specify some more sophisticated operations. 
+IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). This step is intended to handle simple/obvious misspellings/variations in form. If creating a variant is important to you, wait until the next cleanup phase, which allows you to specify some more sophisticated operations in terms of variant and related names. 
 
 
 NOTE: If `authoritytype` needs to be added or corrected for the names, it needs to be done on each row!
