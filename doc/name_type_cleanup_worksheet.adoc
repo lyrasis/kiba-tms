@@ -27,7 +27,7 @@ Finally, it may inform cleanup you want to do in TMS prior to migration.
 ====
 You may skip doing anything with this worksheet. *Please let your migration specialist know if you want to skip this step.*
 
-If you perform no cleanup here, all names with a blank `authoritytype` value will migrate to CollectionSpace (CS) as Person authorities by default.
+If you perform no cleanup here, a separate authority record will be created for each row in CS. All names with a blank `authoritytype` value will migrate to CollectionSpace (CS) as Person authorities by default.
 
 *Let your migration specialist know if you want all names with a blank `authoritytype` value to be treated as Organizations.*
 ====
