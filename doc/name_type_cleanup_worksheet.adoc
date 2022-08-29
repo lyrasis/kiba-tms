@@ -49,6 +49,16 @@ You may:
 
 == Suggested steps
 
+=== Review `termsources`
+
+Your data entry practices may mean that we should remove some tables or fields from being treated as names.
+
+Filter the `termsource` column to remove all sources beginning with `TMS Constituents` or `TMS ConAltNames`. Sort on `termsource` column.
+
+A `termsource` value like "TMS ObjIncoming.approver.handler" means the name value of the row appears in the approver and handler fields of the TMS ObjIncoming table.
+
+*Let your migration specialist know if you want any fields or tables removed from being treated as names in the migration*. They will regenerate your name type cleanup worksheet without values from the specified fields/tables. 
+
 === Filter to `authoritytype` = (Blanks) and categorize the names
 
 Follow the examples under https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#assign-authority-type[Procedures > Assign authority type].
@@ -71,7 +81,7 @@ Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_wor
 
 === Handle other cleanup in TMS (or post-migration in CS)
 
-More complex cleanup operations than those described here should be handled in TMS prior to migration. Some examples:
+More complex cleanup operations than those described in the Procedures section should be handled in TMS prior to migration, or cleaned up in CS after migration is complete. Some examples of things we can't handle programmatically via the migration process:
 
 
 .Role/relationship term is not part of name
@@ -82,7 +92,7 @@ More complex cleanup operations than those described here should be handled in T
 | Bob Allen, donor | TMS Loans.requestedby |
 ....
 
-Assuming Bob Allen as a donor is not a separate person from Bob Allen, there should only be one authority for him. The role he plays/reason he is being recorded in an individual record should be captured somewhere other than his name:
+Assuming Bob Allen as a donor is not a separate person from Bob Allen, there should only be one authority for him. If you need to retain the fact that he was the donor of objects he is now requesting loan of, that needs to be captured somewhere else in the Loan record:
 
 image::name_type_cleanup_donor.png[2270]
 +++&nbsp;+++
