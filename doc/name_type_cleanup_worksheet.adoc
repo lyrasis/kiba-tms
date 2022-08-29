@@ -42,6 +42,7 @@ If you edit other columns, those changes *_will not_* be merged into the migrati
 ====
 
 You may:
+
 * Filter and sort the rows however you like
 * Change the order of columns
 * Add your own columns to support your work. Data in these will be ignored in the actual migration, but will be kept in any future iterations of the worksheet for your reference. Avoid using formulas or color coding/other formatting. These will be lost in future iterations of the worksheet, since all data is converted to plain text CSV format for processing.
