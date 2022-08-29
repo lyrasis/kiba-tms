@@ -46,6 +46,31 @@ You may:
 * Change the order of columns
 * Add your own columns to support your work. Data in these will be ignored in the actual migration, but will be kept in any future iterations of the worksheet for your reference. Avoid using formulas or color coding/other formatting. These will be lost in future iterations of the worksheet, since all data is converted to plain text CSV format for processing.
 
+== Suggested steps
+
+=== Filter to `authoritytype` = (Blanks) and categorize the names
+
+Follow the examples under https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#assign-authority-type[Procedures > Assign authority type].
+
+=== Filter to `authoritytype` values that include `?` or `(derived)` and review
+
+The `authoritytype` values with `?` were xref:data_preparation_details/deriving_authority_category_from_name_data.adoc[derived from name details] when no name type was explicitly assigned in TMS.
+
+The `authoritytype` values with `(derived)` were derived from a TMS data row that was identified as representing more than one name.
+
+The algorithms we used to derive these `authoritytypes` are not overly intelligent, so it is good to make sure these are right.
+
+If the `?`/`derived` value is good, you don't need to do anything.
+
+Otherwise, follow the examples under https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#correct-authority-type[Procedures > Correct authority type].
+
+=== Sort by name and eyeball to find similar names that can be cleaned up via this worksheet
+
+Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#cleaning-up-names[Procedures > Cleaning up names].
+
+=== Handle other cleanup in TMS
+
+There 
 == Procedures
 
 === `correctauthoritytype` codes
@@ -137,6 +162,8 @@ Fields that try to look up the migrating name (or note) value associated with th
 
 === Cleaning up names
 
+==== Merging multiple forms of name into one consistent form
+
 .Example 5, original
 ....
 | name                   | correctname | authoritytype | correctauthoritytype | termsource                  |
@@ -159,7 +186,7 @@ The migration process will try to look up "Acquisition committee" and see that t
 | Acquisitions committee |                        | Organization  |                      | TMS ObjAccession.authorizer |
 ....
 
-IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). If creating a variant is important to you, wait until the next cleanup phase, which allows you to indicate some more sophisticated operations. This step is intended to handle simple/obvious misspellings/variations in form.
+IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). This step is intended to handle simple/obvious misspellings/variations in form, without If creating a variant is important to you, wait until the next cleanup phase, which allows you to specify some more sophisticated operations. 
 
 
 NOTE: If `authoritytype` needs to be added or corrected for the names, it needs to be done on each row!
@@ -180,7 +207,7 @@ NOTE: If `authoritytype` needs to be added or corrected for the names, it needs 
 | Acquisitions committee |                        |               | o                    | TMS ObjAccession.authorizer |
 ....
 
-This is required because the following is desired/possible:
+This is required because the following situation is possible:
 
 .Example 7
 ....
@@ -214,6 +241,8 @@ With the edits shown below, one Person authority is created for "Jane Doe" and t
 | Doe, Jane | Jane Doe    |               | p                    | Loans.requestedby   |
 ....
 
+==== Correcting typos/errors in single names
+
 This procedure can also be used to correct typos in single names:
 
 .Example 9, original
@@ -232,28 +261,40 @@ This name may be used 100 times in your TMS data, but you only need to fix it on
 | Brain Bones | Brian Bones | Person        |                      |
 ....
 
+==== Splitting multiple names in one field
 
-== Suggested steps
+Given the original data for Example 10, three separate Person authority records would be created.
 
-=== Filter to `authoritytype` = (Blanks) and categorize the names
+.Example 10, original
+....
+| name                       | correctname | authoritytype | correctauthoritytype |
+|----------------------------+-------------+---------------+----------------------|
+| Ann Booth                  |             | Person        |                      |
+| Becky Barrow               |             | Person        |                      |
+| Becky Barrow and Ann Booth |             | Person        |                      |
+....
 
-Follow the examples under Procedures > Assign authority type.
+The fixed data for Example 10 below will cause two Person authority records to be created. For records in TMS that have "Becky Barrow and Ann Booth", the two name values will be entered separately:
 
-=== Filter to `authoritytype` values that include `?` or `(derived)` and review
+image::name_type_cleanup_ex_10_1.png[1134]
++++&nbsp;+++
 
-The `authoritytype` values with `?` were xref:data_preparation_details/deriving_authority_category_from_name_data.adoc[derived from name details] when no name type was explicitly assigned in TMS.
+.Example 10, fixed
+....
+| name                       | correctname             | authoritytype | correctauthoritytype |
+|----------------------------+-------------------------+---------------+----------------------|
+| Ann Booth                  |                         | Person        |                      |
+| Becky Barrow               | Beckie Barrow           | Person        |                      |
+| Becky Barrow and Ann Booth | Beckie Barrow|Ann Booth | Person        | Person|Person        |
+....
 
-The `authoritytype` values with `(derived)` were derived from a TMS data row that was identified as representing more than one name.
+[IMPORTANT]
+====
+Note that:
 
-The algorithms we used to derive these `authoritytypes` are not overly intelligent, so it is good to make sure these are right.
-
-If the `?`/`derived` value is good, you don't need to do anything.
-
-Otherwise, follow the examples under Procedures > Correct authority type.
-
-=== Sort by name and eyeball to find similar names that may need to be cleaned up
-
-Refer to Procedures > Cleaning up names
+* The corrected/final form of name must be given in the `correctname` column of the row being split. If we instead had `Becky Barrow|Ann Booth`, then three authorities will be created: Ann Booth, Beckie Barrow, and Becky Barrow.
+* The authority type should be specified for each name in `correctauthoritytype`. This is required because you could have something like `Ann Booth|Vanguard`. Is that Vanguard the artist (Person), or the organization?
+====
 
 == Background/more information
 
