@@ -8,7 +8,7 @@ module Kiba
         class SeparateContacts
           def initialize(delim: Tms.delim)
             @delim = delim
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[borrowerscontact person personrole])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[contact person personrole])
           end
 
           def process(row)

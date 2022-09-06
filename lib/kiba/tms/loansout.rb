@@ -6,10 +6,14 @@ module Kiba
   module Tms
     module Loansout
       extend Dry::Configurable
+      extend Tms::Omittable
       module_function
       
       # whether or not table is used
       setting :used, default: true, reader: true
+      setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
+
       setting :loanoutnote_source_fields, default: %i[description], reader: true
       setting :specialconditionsofloan_source_fields, default: %i[loanconditions insind], reader: true
 
@@ -28,6 +32,10 @@ module Kiba
 
       setting :status_sources, default: %i[req app agsent agrec origloanend], reader: true
       setting :status_targets, default: %i[loanindividual loanstatus loanstatusdate], reader: true
+
+      def display_dates?
+        true unless ( %i[dispbegisodate dispendisodate] - omitted_fields ).empty?
+      end
 
       def status_pad_fields(fieldmap)
         prefix = fieldmap.values.first.to_s.split('_').first

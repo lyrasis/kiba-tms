@@ -533,16 +533,16 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'loansout__prep.csv'),
             tags: %i[loans loansout]
           }
-          # register :cspace, {
-          #   creator: Kiba::Tms::Jobs::Loansout::Cspace,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'loansout__cspace.csv'),
-          #   tags: %i[loans loansout]
-          # }
-          # register :rel_obj, {
-          #   creator: Kiba::Tms::Jobs::Loansout::RelObj,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'loansout__rel_obj.csv'),
-          #   tags: %i[loans loansout relations]
-          # }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::Loansout::Cspace,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loansout__cspace.csv'),
+            tags: %i[loans loansout]
+          }
+          register :rel_obj, {
+            creator: Kiba::Tms::Jobs::Loansout::RelObj,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loansout__rel_obj.csv'),
+            tags: %i[loans loansout relations]
+          }
         end
 
         Kiba::Tms.registry.namespace('locs') do
