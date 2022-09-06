@@ -527,6 +527,24 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('loansout') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::Loansout::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loansout__prep.csv'),
+            tags: %i[loans loansout]
+          }
+          # register :cspace, {
+          #   creator: Kiba::Tms::Jobs::Loansout::Cspace,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'loansout__cspace.csv'),
+          #   tags: %i[loans loansout]
+          # }
+          # register :rel_obj, {
+          #   creator: Kiba::Tms::Jobs::Loansout::RelObj,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'loansout__rel_obj.csv'),
+          #   tags: %i[loans loansout relations]
+          # }
+        end
+
         Kiba::Tms.registry.namespace('locs') do
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
