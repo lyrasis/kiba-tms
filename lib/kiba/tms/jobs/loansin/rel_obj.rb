@@ -24,11 +24,11 @@ module Kiba
                 action: :keep,
                 lambda: ->(row, lkup: loans__in){ lkup.key?(row[:loanid]) }
               transform Delete::FieldsExcept, fields: %i[loannumber objectnumber]
-              transform Rename::Fields, fieldmap: {loannumber: :item1_id, objectnumber: :item2_id}
+              transform Rename::Fields, fieldmap: {loannumber: :item2_id, objectnumber: :item1_id}
               transform Merge::ConstantValues,
                 constantmap: {
-                  item1_type: 'loansin',
-                  item2_type: 'collectionobjects'
+                  item2_type: 'loansin',
+                  item1_type: 'collectionobjects'
                 }
             end
           end
