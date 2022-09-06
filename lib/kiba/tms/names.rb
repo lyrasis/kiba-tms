@@ -8,6 +8,7 @@ module Kiba
       module_function
       
       extend Dry::Configurable
+      setting :cleanup_workflow, default: nil, reader: true
       setting :cleanup_iteration, default: nil, reader: true
       # whether to add "variant form" to name term flag field
       setting :flag_variant_form, default: false, reader: true

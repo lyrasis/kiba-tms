@@ -1056,6 +1056,13 @@ module Kiba
                  approved active isstaff is_private_collector code
                 ] }
           }
+          register :map_by_norm, {
+            creator: Kiba::Tms::Jobs::Names::MapByNorm,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_map_by_norm.csv'),
+            desc: Proc.new{ Kiba::Tms::Jobs::Names::MapByNorm.desc },
+            tags: %i[names],
+            lookup_on: :orig_norm
+          }
           register :flagged_duplicates, {
             creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_flagged_duplicates.csv'),
