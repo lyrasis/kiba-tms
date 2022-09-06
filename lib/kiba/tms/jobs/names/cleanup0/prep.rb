@@ -11,7 +11,7 @@ module Kiba
             def job
               Kiba::Extend::Jobs::Job.new(
                 files: {
-                  source: :names__cleaned_zero,
+                  source: :names__cleaned0,
                   destination: :nameclean0__prep
                 },
                 transformer: xforms
