@@ -13,28 +13,11 @@ endif::[]
 
 = Name compilation details
 
-This document explains how your TMS Constituents (and other name data) has been programmatically prepared for migration into CollectionSpace (CS), and options you have for changing how this has been handled.
-
-NOTE: This documentation covers TMS migrations in general, so may discuss data patterns not present in your data.
+This page describes how your TMS data is transformed and compiled to create the `names_compiled_unique.csv` file described in xref:../name_cleanup_workflow_overview.adoc[Name cleanup workflow overview]
 
 toc::[]
 
-== Basic differences/assumptions to be aware of
-=== Conceptual/data model differences
-Your Contituent (and other) names will migrate into Person and Organization authorities in CS. The conceptual/data model for Constituents in TMS is very different from (and more complex than) the conceptual/data model for Person and Organization authorities. *We strongly recommend you log into your staging instance site and familiarize yourself with Person and Organization records*.
-
-See also https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality] documentation.
-
-In CS, the Person/Org authorities are used to ensure the consistency of names used in other records. Some additional information about a person or organization may be stored in the authority record for a name, but the fields available are less granular than in TMS.
-
-TMS builds a lot of functionality/behavior onto constituents (which is a more complex concept than "names") that isn't really supported in CS. 
-
-=== Categorization to Person vs. Organization authorities
-Ideally, all constituent names and names from other sources are categorized as either Person or Organization for migration into CS authorities.
-
-If a given client has many uncategorized names in TMS and cannot assign them to Person or Organization prior to the migration, they can specify that all uncategorized names should be created as either Person or Organization records in CS. We can set a term status flag in these records so they may be identified in CS for post-migration review.
-
-== Name sources
+== Name source tables
 
 === Included by default
 If client has no data in a table, it is excluded.
@@ -219,10 +202,43 @@ image::per_brassai_r_3.png[1936]
 
 ==== Plain number (ex: 1611)
 
-If `relation_type` = main term, the `name` value in the row came from the main/primary name in Constituent record with that id.
+If `relation_type` = main term, the `name` value in the row came from the preferred name field in the Constituent record with that id.
 
-If `relation_type` = variant_term, the `variant_term` value in the row came from the main/primary name in Constituent record with that id.
+If `relation_type` = variant_term, the `variant_term` value in the row came from the preferred name field in Constituent record with that id. The id of the constituent row from which the `name` value is derived is not represented. This row is added because, after normalization, the preferred name values of these two constituents are duplicates, though there are minor differences in the un-normalized values.
 
-==== Number + . + text (ex: 8775.insitution)
+==== Number + . + institution (ex: 8775.institution)
+
+If `relation_type` = main term, the `name` value in the row came from the `institution` field in the record with the given constituent id (8775).
+
+If `relation_type` = contact_person, the `name` value in the row came from the `institution` field in the record with the given constituent id (8775). The `related_term` value is the preferred name from the given constituent record (8775).
+
+If `relation_type` = variant_term, the `variant_term` value in the row came from the `institution` field in the record with the given constituent id (8775). The `name` value in the row comes from the preferred name field of the given constituent id (8775).
 
 
+==== Number + . + position (ex: 8775.position)
+
+If `relation_type` = bio_note, the `note_text` value in the row came from the `position` field in the record with the given constituent id (8775). The `name` value in the row comes from the preferred name field of the given constituent id (8775).
+
+==== Number + . + namedetail (ex: 8775.namedetail)
+
+Name detail fields include `firstname`, `middlename`, `lastname`, etc.
+
+If `relation_type` = main term, the `name` value in the row came from the name detail fields in the record with the given constituent id (8775).
+
+If `relation_type` = contact_person, the `name` value in the row is the preferred name from the given constituent record (8775). The `related_term` value came from the name detail fields in the record with the given constituent id (8775).
+
+==== Number + . + number (ex: 11.514)
+
+altnameid (from ConAltNames table) . constituentid (from Constituents table, i.e. main name of which the alt name is a variant)
+
+See documentation on term sources for details on how rows are derived.
+
+==== Number + . + number + . + number (ex: 12.527.530)
+
+altnameid (from ConAltNames table) . constituentid (from Constituents table, i.e. main name of which the alt name is a variant) . constituent id of main name that, when normalized, matches the alt name value.
+
+See documentation on term sources for details on how rows are derived.
+
+==== Table name + . + name string (ex: Loans.Jon T. Wilson)
+
+Table (having name fields not linked to constituent ids) from which name was extracted, and the original name value.

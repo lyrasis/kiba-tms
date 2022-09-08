@@ -68,3 +68,15 @@ For corrections to names extracted from columns not controlled by/linked to cons
 
 * xref:name_type_cleanup_worksheet.adoc[Name type cleanup worksheet]
 * Name detail and relation cleanup worksheet (todo)
+
+== Why is this process so complex?
+
+Your Contituent name data and names from other tables will migrate into Person and Organization authorities in CS.
+
+The conceptual/data model for Constituents in TMS is very different from (and more complex than) the conceptual/data model for Person and Organization authorities. *We strongly recommend you log into your staging instance site and familiarize yourself with Person and Organization records*.
+
+See also https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality] documentation.
+
+In CS, the Person/Org authorities are used to ensure the consistency of names used in other records. Some additional information about a person or organization may be stored in the authority record for a name, but the fields available are less granular than in TMS.
+
+TMS builds a lot of functionality/behavior onto constituents (which is a more complex concept than "names") that isn't really supported in CS. To support this complexity, TMS stores constituent data across nine tables in its database. We do our best to smoosh all this complexity down to CS authorities with minimal data loss, but since the changes made to the data are so extensive, it requires your review and approval. 
