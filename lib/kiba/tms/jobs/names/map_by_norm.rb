@@ -28,9 +28,7 @@ module Kiba
           def sources
             if Tms::Names.cleanup_iteration && Tms::Names.cleanup_workflow == :old
               iter = Tms::Names.cleanup_iteration
-              source = "nameclean#{iter}__prep".to_sym
-              puts "SOURCE: :#{source}"
-              source
+              "nameclean#{iter}__prep".to_sym
             elsif Tms::Names.cleanup_iteration && !Tms::Names.cleanup_workflow == :old
               warn("#{self.name}: Need to implement new workflow when cleanup iteration")
             else
