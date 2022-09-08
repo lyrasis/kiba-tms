@@ -23,6 +23,7 @@ module Kiba
           attr_reader :table_key
 
           FIELDS = {
+            accession_methods: :accessionmethodid,
             alt_nums: :description,
             classifications: :classificationid,
             classification_notations: :classificationnotationid,
