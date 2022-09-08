@@ -33,6 +33,9 @@ Non-migrating fields will be marked as such in your data mapping details spreads
 
 In a number of tables, TMS appears to create a row with the id "-1" with no data. This row is present in Constituents table and is removed from migration.
 
+`displaydate`, `begindateiso`, and `enddateiso` fields are deleted because they are handled in the xref:con_dates.adoc[ConDates table processing], the results of which are later merged back into the main Constituents data.
+
+
 === Determine CollectionSpace (CS) authority type
 
 Next, we categorize each constituent name into Person or Organization.
@@ -43,15 +46,23 @@ For constituent names without a constituenttype coded in TMS, we attempt to xref
 
 The processing keeps separate categories mapped from explicit TMS constituenttype (Person, Organization), and derived guesses (Person?, Organization?). For ease of further processing, a normalized authority type is also created for each name (person, organization).
 
-=== Flag duplicate names
+=== Remove redundant non-preferred names
 
-We create a new field called `duplicate`.
+Matching is case insensitive.
 
-We create a new field called `combined` which concatenates normalized authority type and preferred name values: "person John Doe"
+....
+| displayname    | alphasort      |
+|----------------+----------------|
+| Doe Associates | Doe associates |
+....
 
-If more than one row has the same value in `combined` column, the value of the `duplicate` column is set to `y` in all matching rows.
+becomes:
 
-The `combined` column is then deleted.
+....
+| displayname    | alphasort |
+|----------------+-----------|
+| Doe Associates |           |
+....
 
 === Organization name cleanup/warnings
 
@@ -59,7 +70,7 @@ NOTE: The examples in this section assume the preferred name field is `displayna
 
 The following processing is applied to rows where normalized authority type = Organization:
 
-*Remove `institution` value if it is the same as the preferred name*
+==== Remove `institution` value if it is the same as the preferred name
 
 Matching is case insensitive.
 
@@ -77,7 +88,7 @@ becomes:
 | ACME Corporation |             |
 ....
 
-*Remove `institution` value if it is the same as the non-preferred form of name*
+==== Remove `institution` value if it is the same as the non-preferred form of name
 
 Matching is case insensitive:
 
@@ -95,7 +106,7 @@ becomes:
 | ACME Corporation | ACME Corp. |             |
 ....
 
-*Conditionally remove name details*
+==== Conditionally remove name details
 
 Name details are values in fields for breaking up personal names: `nametitle`, `salutation`, `firstname`, `middlename`, `lastname`, `suffix`.
 
@@ -126,5 +137,64 @@ The core name details fields used to determine whether a row matches the conditi
 ....
 
 .Conditions for name detail removal
-* There is no `position` value. The "Jane Smith Art" row does not have name details removed. This is because if there is a position, we assume the name details indicate a person holding that position within the organization. These name details will later be extracted out to separate person names.
+* There is no `position` value. If there is a position, we assume the name details indicate a person holding that position within the organization. These name details will later be extracted out to separate person names.
+** The "Jane Smith Art" row does not have name details removed. 
 * The values of all core name detail fields are substrings of the preferred name
+** "Doe Associates" is retained as `lastname` because that string cannot be found in "Doe & Associates"
+** "Poe Press" can be found in "Poe Press, Inc.", but "Incorporated" cannot, so no name details are removed
+
+==== Add `check_org_names` column
+
+Set its value to "y" if:
+
+* there is an `institution` value remaining (i.e. some organization name not the same as the preferred or non-preferred name is recorded for the organization)
+* non-preferred name of organization is different from the preferred name
+
+=== Add `namedata` field
+
+This field concatenates the values from the following fields: `displayname`, `alphasort`, `lastname`, `firstname`, `middlename`, `institution`
+
+It is used to produce a separate report of Constituent table rows that will be dropped from the migration because they have no name information. Each CS authority requires a name value. 
+
+=== Remove non-preferred form of name unless client opts to migrate these as variant names
+
+The default is to not create variant names in CS from the non-preferred form of name.
+
+Usually the non-preferred name is the exact same name as the preferred name, in a different order.
+
+If the non-preferred form of name is not migrating, we don't need to look at it or deal with it in the cleanup steps.
+
+=== Merge in date data
+
+Details on how date data from the Constituents and ConDates tables are processed into a mergeable format are covered in xref:con_dates.adoc[ConDates table processing].
+
+The `birth_foundation_date`, `death_dissolution_date`, and `datenote` fields are merged in from the results of that processing.
+
+=== Append date values to names (optionally)
+
+The default is to do this for normalized-duplicate names. In this case, we:
+
+* produce normalized form of name
+* combine normalized form of name with normalized authority type
+* identify duplicates on that combined value
+* append date values to the duplicate rows
+* remove normalized, combined, and duplicate flag values
+
+See xref:../mapping_options/constituents.adoc[Constituent mapping options] for other options.
+
+=== Flag duplicate names
+
+* produce normalized form of name
+* combine normalized form of name with normalized authority type
+* flag duplicates on that combined value
+
+This flag is used to produce a separate duplicate name report.
+
+=== Optional field values converted/mapped
+
+By default these fields are omitted from migration, since the CS data model does not support any functionality based on them: `approved`, `active`, `isstaff`, `isprivate`.
+
+If default migration settings are used, we delete these fields.
+
+If a client specifies a need to migrate any of these fields, we handle them as specified in xref:../mapping_options/constituents.adoc[Constituent mapping options].
+
