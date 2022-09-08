@@ -31,7 +31,7 @@ The names are compiled in this order. When deduplication is done later, the firs
 * AssocParents table
 ** keep only rows related to Constituents
 ** keep unique `childstring` field values
-** categorized as Person names
+** not categorized as Person/Organization
 ** treat as main term
 * Loans table
 ** keep unique `approvedby`, `contact`, and `requestedby` field values
@@ -39,11 +39,11 @@ The names are compiled in this order. When deduplication is done later, the firs
 ** treat as main term
 * LocApprovers table
 ** keep unique `approver` field values
-** categorized as Person names
+** not categorized as Person/Organization
 ** treat as main term
 * LocHandlers table
 ** keep unique `handler` field values
-** categorized as Person names
+** not categorized as Person/Organization
 ** treat as main term
 * ObjAccession table
 ** keep unique `authorizer` and `initiator` field values
