@@ -13,6 +13,8 @@ endif::[]
 
 = Name cleanup workflow overview
 
+toc::[]
+
 == Initial process
 
 * Your TMS data is processed into `names_compiled_unique.csv`
