@@ -1,0 +1,68 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Name worksheets: "constituentid" values
+
+In the name type cleanup worksheet (phase 1 of name cleanup), you will only see terms with `relation_type` = `_main term`. Because only main terms are included, there is no `relation_type` column in this phase.
+
+Phase 2 allows you to preview and make changes to related terms, so it contains a `relation_type` column with `_main term` and other values.
+
+
+== "constituentid" patterns
+
+"constituentid" is in quotes because the values in the column may include additional information appended to an actual constituentid, or may not contain a constituentid at all.
+
+The intent is to create, with the addition of the `relation_type` value, an id that can be used to manage merging cleaned up data back into the migration, even if you update data in your database or go through multiple iterations of cleanup.
+
+==== Plain number (ex: 1611)
+
+If `relation_type` = main term, the `name` value in the row came from the preferred name field in the Constituent record with that id.
+
+If `relation_type` = variant_term, the `variant_term` value in the row came from the preferred name field in Constituent record with that id. The id of the constituent row from which the `name` value is derived is not represented. This row is added because, after normalization, the preferred name values of these two constituents are duplicates, though there are minor differences in the un-normalized values.
+
+==== Number + . + institution (ex: 8775.institution)
+
+If `relation_type` = main term, the `name` value in the row came from the `institution` field in the record with the given constituent id (8775).
+
+If `relation_type` = contact_person, the `name` value in the row came from the `institution` field in the record with the given constituent id (8775). The `related_term` value is the preferred name from the given constituent record (8775).
+
+If `relation_type` = variant_term, the `variant_term` value in the row came from the `institution` field in the record with the given constituent id (8775). The `name` value in the row comes from the preferred name field of the given constituent id (8775).
+
+
+==== Number + . + position (ex: 8775.position)
+
+If `relation_type` = bio_note, the `note_text` value in the row came from the `position` field in the record with the given constituent id (8775). The `name` value in the row comes from the preferred name field of the given constituent id (8775).
+
+==== Number + . + namedetail (ex: 8775.namedetail)
+
+Name detail fields include `firstname`, `middlename`, `lastname`, etc.
+
+If `relation_type` = main term, the `name` value in the row came from the name detail fields in the record with the given constituent id (8775).
+
+If `relation_type` = contact_person, the `name` value in the row is the preferred name from the given constituent record (8775). The `related_term` value came from the name detail fields in the record with the given constituent id (8775).
+
+==== Number + . + number (ex: 11.514)
+
+altnameid (from ConAltNames table) . constituentid (from Constituents table, i.e. main name of which the alt name is a variant)
+
+See documentation on term sources for details on how rows are derived.
+
+==== Number + . + number + . + number (ex: 12.527.530)
+
+altnameid (from ConAltNames table) . constituentid (from Constituents table, i.e. main name of which the alt name is a variant) . constituent id of main name that, when normalized, matches the alt name value.
+
+See documentation on term sources for details on how rows are derived.
+
+==== Table name + . + name string (ex: Loans.Jon T. Wilson)
+
+Table (having name fields not linked to constituent ids) from which name was extracted, and the original name value.
