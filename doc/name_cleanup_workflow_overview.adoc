@@ -63,3 +63,8 @@ For corrections to names extracted from columns not controlled by/linked to cons
 * In first cleanup iteration, you corrected the name spelling of this name to "Marsha Frey"
 * At some point prior to providing fresh TMS data for the production migration, you change the Loans approvedby value to "MFrey"
 * Since the "id" for names extracted from these sources contains the original name string, "MFrey" will show up as a new row in the next iteration of the review/cleanup worksheets. It will not be overlaid with the "Marsha Frey" correction. If you only updated some occurrences of "Marcia Frey" to "MFrey", the remaining "Marcia Frey" occurrences will be corrected to "Marsha Frey" in the migration.
+
+== Detailed instructions for each phase
+
+* xref:name_type_cleanup_worksheet.adoc[Name type cleanup worksheet]
+* Name detail and relation cleanup worksheet (todo)
