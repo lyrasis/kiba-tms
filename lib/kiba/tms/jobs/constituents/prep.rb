@@ -66,7 +66,6 @@ module Kiba
                 target: :contype,
                 sep: '',
                 delete_sources: false
-
               transform Copy::Field, from: :contype, to: :contype_norm
               transform Tms::Transforms::Constituents::NormalizeContype
               
