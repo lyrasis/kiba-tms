@@ -8,6 +8,7 @@ module Kiba
     #   ConAddress, ConAltNames, ConDates, ConEMail, ConPhones, ConTypes, Constituents
     module Constituents
       extend Dry::Configurable
+      extend Omittable
 
       module_function
       
@@ -19,17 +20,14 @@ module Kiba
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
 
-      # the final 3 date fields are deleted because they are handled in Constituents::CleanDates
+      # the final 3 date fields are deleted because they are handled in the Constituents::CleanDates
+      #   job (a dependency of ConDates::ToMerge job)
       setting :delete_fields,
         default: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
                     begindate enddate systemflag internalstatus islocked publicaccess
                     displaydate begindateiso enddateiso],
         reader: true
       setting :empty_fields, default: %i[], reader: true
-
-      def omitted_fields
-        ( delete_fields + empty_fields ).uniq
-      end
 
       setting :type_mapping,
         default: {
