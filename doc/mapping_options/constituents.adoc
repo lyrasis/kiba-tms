@@ -13,15 +13,19 @@ endif::[]
 
 = Constituents mapping options
 
+This page covers options for handling data from the TMS Constituents table and its related tables, including: ConAddress, ConAltNames, ConDates, ConEMail, ConPhones, ConTypes
+
 toc::[]
 
-== Preferred name field for persons
+== General (across tables)
+
+=== Preferred name field for persons
 
 See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[Choosing preferred form of name for Person authorities].
 
 Default option:: `:displayname` (direct form)
 
-== Include non-preferred name form as variant name?
+=== Include non-preferred name form as variant name?
 
 Default option:: `false` (we do not create a variant name in the authority for the non-preferred name form)
 Alternate option(s):: `true` (we create a variant name in the authority for the non-preferred name form)
@@ -36,7 +40,7 @@ In your staging instance, enter some person names with only your preferred name 
 * search
 ====
 
-== Uncategorized authority default
+=== Uncategorized authority default
 
 This is mainly relevant if you are skipping the name review/cleanup process. If you are going through that process, you are probably assigning appropriate category (Person or Organization) to each name.
 
@@ -45,7 +49,8 @@ If any are left uncategorized, or if you are skipping that process altogether, w
 Default option:: Person
 Alternate option(s):: Organization
 
-== `approved` field handling
+== Constituents table
+=== `approved` field handling
 
 This is a Boolean (yes/no) field in TMS
 
@@ -54,7 +59,7 @@ Default option:: `:nomigrate` -- it is unclear if the functionality of this fiel
 .Alternate option(s)
 `:termstatus`:: If `approved` = 1/yes/true for a name, the term status value *_in the first/primary term field group of the CS authority record_* is set to "accepted". If `approved` = 0/no/false for a name, no term status value is provided in the CS authority.
 
-== `active` field handling
+=== `active` field handling
 
 Default option:: `:nomigrate` -- There is no CS functionality supporting active vs. inactive authorities.
 
@@ -62,7 +67,7 @@ Default option:: `:nomigrate` -- There is no CS functionality supporting active 
 `:group`:: If `active` = 1/yes/true for a name, we add a Group value of "active constituents" to the CS authority record. If `active` = 0/no/false for a name, we add a Group value of "inactive constituents" to the CS authority record.
 `:drop`:: Only migrate names where `active` = 1/yes/true. NOTE: this can cause data loss if inactive constituent names are used in objects, accessions, and other places in the database. 
 
-== `isstaff` field handling
+=== `isstaff` field handling
 
 Default option:: `:nomigrate` -- There is no CS functionality supporting staff vs. nonstaff authorities.
 
@@ -70,7 +75,7 @@ Default option:: `:nomigrate` -- There is no CS functionality supporting staff v
 `:termtype`:: If `isstaff` = 1/yes/true for a name migrating as a Person authority, we add a Term type value of "Employee" to the CS authority record. If `isstaff` = 1/yes/true for a name migrating as an Organization authority, we do nothing. If `isstaff` = 0/no/false for a name, we do nothing.
 `:group`:: If `isstaff` = 1/yes/true for a name, we add a Group value of "staff" to the CS authority record. If `isstaff` = 0/no/false for a name, we do nothing.
 
-== `isprivate` field handling
+=== `isprivate` field handling
 
 The TMS data dictionary indicates this field is used to indicate whether a constituent is a private collector.
 
@@ -79,7 +84,7 @@ Default option:: `:nomigrate` -- There is no CS functionality supporting authori
 .Alternate option(s)
 `:group`:: If `isprivate` = 1/yes/true for a name, we add a Group value of "private collectors" to the CS authority record. If `isprivate` = 0/no/false for a name, we do nothing.
 
-== Append date data to names?
+=== Append date data to names?
 If there is date data for a name, this can be appended to the actual name value.
 
 Default option:: `:duplicates` - during processing, we check for duplicate name values. Date values, when present, are appended to duplicate name values in hopes of disambiguating the duplicates automatically using existing data.
@@ -90,3 +95,26 @@ Default option:: `:duplicates` - during processing, we check for duplicate name 
 `:person`:: date values, when present, will be appended to all person names
 `:organization`:: date values, when present, will be appended to all organization names
 
+=== `culturegroup` target field
+
+Where to map the TMS `culturegroup` field.
+
+Default option:: `:group` -- The TMS culturegroup value will become a Group value in the Person or Organization record
+
+.Alternate option(s)
+(TBD)
+
+== ConAddress table
+
+=== Omit inactive addresses?
+
+Default option:: `:false` - All addresses for a constituent will be included in the migration
+
+.Alternate option(s)
+`:true`:: Addresses marked as inactive will not migrate
+
+=== Deriving address values
+
+TMS provides more address fields than does the CS data model, and every TMS user seems to enter address data differently
+
+(to be continued)
