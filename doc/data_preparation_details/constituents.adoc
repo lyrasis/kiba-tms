@@ -13,25 +13,23 @@ endif::[]
 
 = Constituents data processing details
 
-Refer to xref:name_compilation.adoc[Name compilation data preparation details] for the larger context of this document.
-
-The result of name compilation is xref:../names_review_and_cleanup_worksheet.adoc[the names review and cleanup worksheet].
-
-The default processing and any built-in non-default options are described below.
+This page details how the data in the TMS Constituents table is processed in the overall xref:name_compilation.adoc[Name compilation] process. 
 
 == Preferred name field
 
-Prior to process constituent data, we ask the client to https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[identify their preferred name form for persons].
+Prior to processing constituent data, we ask the client to https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[identify their preferred name form for persons].
 
 If they choose direct form, the preferred name field from the Constituents and ConAltNames tables is `displayname`.
 
 If they choose inverted form, it is `alphasort`
 
+In the remainder of this document, "preferred name" refers to the value of the preferred name field. 
+
 == Processing steps
 
 === Remove non-migrating and empty fields, test row
 
-These fields will be marked as such in your data mapping details spreadsheet. The reason for omission from migration is given there.
+Non-migrating fields will be marked as such in your data mapping details spreadsheet. The reason for omission from migration is given there.
 
 In a number of tables, TMS appears to create a row with the id "-1" with no data. This row is present in Constituents table and is removed from migration.
 
@@ -39,9 +37,39 @@ In a number of tables, TMS appears to create a row with the id "-1" with no data
 
 Next, we categorize each constituent name into Person or Organization.
 
-For constituent names with a constituenttype coded in TMS, we use https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the mapping configured for Constituents (search for `setting :type_mapping` in the linked page)].
+For constituent names with a constituenttype coded in TMS, we use https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the mapping configured for Constituents] (search for `setting :type_mapping` in the linked page).
 
-For constituent names without a constituenttype coded in TMS, we xref:deriving_authority_category_from_name_data.adoc[derive the category if we can].
+For constituent names without a constituenttype coded in TMS, we attempt to xref:deriving_authority_category_from_name_data.adoc[derive the appropriate category].
 
+The processing keeps separate categories mapped from explicit TMS constituenttype (Person, Organization), and derived guesses (Person?, Organization?). For ease of further processing, a normalized authority type is also created for each name (person, organization).
 
+=== Flag duplicate names
+
+We create a new field called `duplicate`.
+
+We create a new field called `combined` which concatenates normalized authority type and preferred name values: "person John Doe"
+
+If more than one row has the same value in `combined` column, the value of the `duplicate` column is set to `y` in all matching rows.
+
+The `combined` column is then deleted.
+
+=== Organization name cleanup/warnings
+
+The following processing is applied to rows where normalized authority type = Organization:
+
+*Institution value is removed if it is the same as the preferred name*
+
+....
+| displayname      | institution      |
+|------------------+------------------|
+| ACME Corporation | Acme Corporation |
+....
+
+becomes:
+
+....
+| displayname      | institution |
+|------------------+-------------|
+| ACME Corporation |             |
+....
 
