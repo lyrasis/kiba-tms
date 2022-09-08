@@ -13,7 +13,7 @@ endif::[]
 
 = Name type cleanup worksheet
 
-This page is about the name type review/cleanup worksheet provided to clients as Phase 1 of name cleanup. For an overview of the name cleanup workflow, see: xref:name_cleanup_workflow_overview.adoc
+This page is about the name type review/cleanup worksheet provided to clients as Phase 1 of name cleanup. For an overview of the name cleanup workflow, see: xref:name_cleanup_workflow_overview.adoc[Name cleanup workflow overview]
 
 This worksheet allows you to make sure names in your TMS data are migrated into the correct Person or Organization authorities in CollectionSpace (CS).
 
