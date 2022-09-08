@@ -676,7 +676,7 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_cleaned_up.csv'),
-            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip, normalizzes cleaned up forms',
+            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip, normalizes cleaned up forms',
             tags: %i[names],
             lookup_on: :norm
           }
@@ -1033,9 +1033,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::NameTypeCleanup::Worksheet,
             path: File.join(Kiba::Tms.datadir, 'reports', 'name_type_cleanup_worksheet.csv'),
             tags: %i[names cleanup],
-            dest_special_opts: {
-              initial_headers:
-              %i[name correctname authoritytype correctauthoritytype termsource] }
+            dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
           end
         Kiba::Tms.registry.namespace('names') do          

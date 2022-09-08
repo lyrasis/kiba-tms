@@ -11,7 +11,11 @@ module Kiba
       # Indicates whether any cleanup has been returned. If not, we run everything on base data. If yes, we
       #   merge in/overlay cleanup on anything using this data.
       setting :cleanup_done, default: false, reader: true
+      def initial_headers
+        base = %i[name correctname authoritytype correctauthoritytype termsource]
+        base.unshift(:to_review) if Tms::Names.cleanup_iteration
+        base
+      end
     end
   end
 end
-
