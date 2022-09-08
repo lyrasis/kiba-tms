@@ -15,6 +15,8 @@ endif::[]
 
 This page details how the data in the TMS Constituents table is processed in the overall xref:name_compilation.adoc[Name compilation] process. 
 
+toc::[]
+
 == Preferred name field
 
 Prior to processing constituent data, we ask the client to https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[identify their preferred name form for persons].
