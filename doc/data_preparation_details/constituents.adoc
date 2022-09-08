@@ -55,9 +55,13 @@ The `combined` column is then deleted.
 
 === Organization name cleanup/warnings
 
+NOTE: The examples in this section assume the preferred name field is `displayname`
+
 The following processing is applied to rows where normalized authority type = Organization:
 
-*Institution value is removed if it is the same as the preferred name*
+*Remove `institution` value if it is the same as the preferred name*
+
+Matching is case insensitive.
 
 ....
 | displayname      | institution      |
@@ -73,3 +77,54 @@ becomes:
 | ACME Corporation |             |
 ....
 
+*Remove `institution` value if it is the same as the non-preferred form of name*
+
+Matching is case insensitive:
+
+....
+| displayname      | alphasort  | institution |
+|------------------+------------+-------------|
+| ACME Corporation | ACME Corp. | Acme Corp.  |
+....
+
+becomes:
+
+....
+| displayname      | alphasort  | institution |
+|------------------+------------+-------------|
+| ACME Corporation | ACME Corp. |             |
+....
+
+*Conditionally remove name details*
+
+Name details are values in fields for breaking up personal names: `nametitle`, `salutation`, `firstname`, `middlename`, `lastname`, `suffix`.
+
+If a row matches the conditions explained below, all of the name details fields are cleared.
+
+The core name details fields used to determine whether a row matches the conditions are: `firstname`, `middlename`, `lastname`, `suffix`.
+
+.Original data
+....
+| displayname      | position | lastname       | firstname    |
+|------------------+----------+----------------+--------------|
+| Doe & Associates |          | Doe Associates |              |
+| Moe Press, Inc.  |          | Moe Press      | Inc          |
+| Poe Press, Inc.  |          | Poe Press      | Incorporated |
+| Jane Doe Art     |          | Doe            | Jane         |
+| Jane Smith Art   | owner    | Smith          | Jane         |
+....
+
+.Processed data
+....
+| displayname      | position | lastname       | firstname    |
+|------------------+----------+----------------+--------------|
+| Doe & Associates |          | Doe Associates |              |
+| Moe Press, Inc.  |          |                |              |
+| Poe Press, Inc.  |          | Poe Press      | Incorporated |
+| Jane Doe Art     |          |                |              |
+| Jane Smith Art   | owner    | Smith          | Jane         |
+....
+
+.Conditions for name detail removal
+* There is no `position` value. The "Jane Smith Art" row does not have name details removed. This is because if there is a position, we assume the name details indicate a person holding that position within the organization. These name details will later be extracted out to separate person names.
+* The values of all core name detail fields are substrings of the preferred name
