@@ -10,7 +10,7 @@ module Kiba
     #
     # - `extend Dry::Configurable`
     # - define `delete_fields` setting (Array)
-    # - defind `empty_fields` setting (Array)
+    # - define `empty_fields` setting (Array)
     # - `extend Tms::Omittable`
     module Omittable
       def delete_omitted_fields(hash)
