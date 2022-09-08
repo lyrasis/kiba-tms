@@ -13,9 +13,7 @@ endif::[]
 
 = Name type cleanup worksheet
 
-toc::[]
-
-== Purpose
+This page is about the name type review/cleanup worksheet provided to clients as Phase 1 of name cleanup. For an overview of the name cleanup workflow, see: xref:name_cleanup_workflow_overview.adoc
 
 This worksheet allows you to make sure names in your TMS data are migrated into the correct Person or Organization authorities in CollectionSpace (CS).
 
@@ -31,6 +29,8 @@ If you perform no cleanup here, a separate authority record will be created for 
 
 *Let your migration specialist know if you want all names with a blank `authoritytype` value to be treated as Organizations.*
 ====
+
+toc::[]
 
 == Instructions
 
