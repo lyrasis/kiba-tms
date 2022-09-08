@@ -1,0 +1,65 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Name cleanup workflow overview
+
+== Initial process
+
+* Your TMS data is processed into `names_compiled_unique.csv`
+* Early in the migration process, `names_compiled_unique.csv` is used to produce `name_type_cleanup_worksheet.xlsx` (phase 1 of name cleanup)
+* Once you complete `name_type_cleanup_worksheet.xlsx` (or let us know to proceed with data as-is and default authority type), your changes from `name_type_cleanup_worksheet.xlsx` are converted back to .csv format and are merged into `names_compiled_unique.csv` to produce `names_compiled_with_type_cleanup.csv`
+* `names_compiled_with_type_cleanup.csv` is used to produce `name_detail_and_relation_cleanup_worksheet.xlsx` (phase 2 of name cleanup)
+* Once you complete `name_detail_and_relation_cleanup_worksheet.xlsx`, your changes are merged back into the migration as `names_compiled_for_migration.csv`
+* At this point we are able to generate and ingest the required Person and Organization authority records into the staging instance, after which we can begin generating and ingesting objects and procedures which include fields with values controlled by these authorities.
+
+
+== Subsequent iterations
+
+Each time you provide a fresh copy of TMS data, we will go through the following steps. This includes if you provide fresh TMS data during the migration development process, and after you provide final TMS data for the production migration.
+
+* We generate `names_compiled_unique.csv` from the new TMS data
+* We apply your changes from the previously completed `name_type_cleanup_worksheet.xlsx` to produce a new version of that document that flags any names in the new data that did not appear in the previous review/cleanup.
+* Once you have reviewed/updated the new `name_type_cleanup_worksheet.xlsx`, we use that to produce a new version of `name_detail_and_relation_cleanup_worksheet.xlsx` with any new rows flagged for review.
+* Once you have reviewed/updated the new `name_detail_and_relation_cleanup_worksheet.xlsx`, we use that to determine:
+** any new authorities that need to be created
+** any authorities that need to be changed/updated
+
+If we are working in the staging environment, we do not bother with deleting authorities that are no longer needed.
+
+When we do the production migration, we start with an empty instance of CS and the most recent TMS data, and thus will not create authorities that are no longer needed.
+
+== Changes are cumulative
+
+Each time you receive a cleanup worksheet:
+
+* You receive the full worksheet representing all current TMS data with any previously-made corrections apply and new rows flagged for review
+* You will no longer see any corrections previously made to rows that have been removed from TMS in the interim
+* You only need to review/update names you haven't already corrected
+
+However, if you are actively making changes to constituent data in your TMS instance during the migration process, we suggest you conduct a careful review of all names corrections in the last round of cleanup/review after providing production migration data.
+
+Consider the following workflow as an example of why you should be cautious in this situation:
+
+* The first TMS data provided had: constituentid: 123, name: Marcia Frey
+* In first cleanup iteration, you corrected the name spelling of constituentid 123 to "Marsha Frey"
+* At some point prior to providing fresh TMS data for the production migration, this person says they now go by "MFrey", so you change the name of constituent 123 to that value in TMS
+* The review/cleanup worksheet you receive after we receive your production data will layer your previous corrections on top of the current TMS data. Thus, it will indicate that you want constituentid: 123 "MFrey" changed to "Marsha Frey". If you don't remove that now-erroneous "correction" from the final review/cleanup worksheet, you lose the more recent change made in TMS.
+
+If you plan to do any significant cleanup of TMS Constituent data in TMS, it may preferable to skip making corrections to name data from Constituents and linked tables in the cleanup worksheets.
+
+For corrections to names extracted from columns not controlled by/linked to constituent ids in TMS, the above is not a concern. For example:
+
+* The first TMS data provided had: Loans/approvedby: Marcia Frey
+* In first cleanup iteration, you corrected the name spelling of this name to "Marsha Frey"
+* At some point prior to providing fresh TMS data for the production migration, you change the Loans approvedby value to "MFrey"
+* Since the "id" for names extracted from these sources contains the original name string, "MFrey" will show up as a new row in the next iteration of the review/cleanup worksheets. It will not be overlaid with the "Marsha Frey" correction. If you only updated some occurrences of "Marcia Frey" to "MFrey", the remaining "Marcia Frey" occurrences will be corrected to "Marsha Frey" in the migration.
