@@ -6,10 +6,12 @@ module Kiba
   module Tms
     module ObjAccession
       extend Dry::Configurable
+      extend Tms::Omittable
       # whether or not table is used
       setting :used, default: ->{ Tms::Table::List.include?('ObjAccession') }, reader: true
       # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
     end
   end
 end
