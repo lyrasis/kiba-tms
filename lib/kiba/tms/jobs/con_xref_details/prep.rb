@@ -77,6 +77,14 @@ module Kiba
                 fields: %i[datebegin dateend amount],
                 find: '^0$',
                 replace: ''
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[tablename recordid role person org datebegin dateend prefix remarks
+                            constatement suffix amount displaydate],
+                target: :combined,
+                sep: ' ',
+                delete_sources: false
+              transform Deduplicate::Table, field: :combined, delete_field: true
             end
           end
         end
