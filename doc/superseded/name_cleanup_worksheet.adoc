@@ -1,0 +1,771 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Name cleanup worksheet for TMS-to-CS migration
+
+TO-DO:
+
+* add more/better example(s) of `merge_variant` migration_action
+* better explanation/clarification of alt_name column
+
+toc::[]
+
+== Important things re: working with the worksheet
+* It is fine to sort/filter the worksheet however you want in order to review and edit your data.
+* Feel free to change the order of the columns to support your work. 
+* **Do not edit any values in grey-ed out columns**. If you change data in the grey-ed out  columns, we may not be able to merge your work back into the migration.
+* **Do not change column names** or we may not be able to merge your work back into the migration.
+* **Do not delete any rows**. Adding rows is ok when needed, as explained in examples below.
+
+=== General way this spreadsheet works in the migration
+You make changes and additions in the spreadsheet as per the instructions below. You return the completed worksheet to LYRASIS migration staff.
+
+The spreadsheet then becomes another data source in the migration. The `fingerprint` column allows us to match each row up to the original TMS data it came from. Essentially, we use this to create a "just in the migration process" virtual version of your data.
+
+At the beginning of the final phase of the migration, when you send us the final data to migrate into your production CS, we will run the final data through this process, generate the "just in the migration process" version of your data, and re-check it for new duplicates or any other issues. At this point, you may need to complete a smaller version of this spreadsheet to handle any issues introduced by new data in the system.
+
+=== `migration_action` values
+(blank):: An authority record of the given type will be created in CS
+add_contact:: Merge the given `contact_person` (and, if present, `contact_role`) value into the organization in `preferred_name_form`
+main:: When multiple rows have the same name value, indicates which row should be used to create the authority record for that name in CS.
+merge_variant:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column. **AND, the migration should merge the original `preferred_name_form` value of this row into the record as a non-preferred/variant name.**
+ok:: This just turns off warning highlighting in the spreadsheet. Only use this in particular instances described below. 
+skip:: Ignore this row altogether. If used on rows derived directly from TMS tables (i.e. not from migration processing), this means values using this name will be lost.
+use_name:: Indicates the migration should not create a separate authority record for this row, but should use the record for the name in the `preferred_name_form` column.
+
+== Explanation of selected worksheet columns
+`termsource`:: Where the name came from---TMS table or a data extraction method
+`normalized_form`:: The value of `preferred_name_form` column, normalized for CS import. This value was derived by code outside Excel and will NOT change as you add/change values.
+`approx_normalized`:: Dynamic approximation of normalized form to help you as you add or change data in Excel. Duplicate values will be highlighted pink. Excel can't handle the full normalization logic, so this isn't 100% accurate.
+`duplicate`:: Whether name is a duplicate. This is based on `normalized_form`, so you will see some non-exact matches flagged as duplicates. This is because, due to the under-the-hood way CS created behind-the-scenes unique IDs for authority terms, these would kbe seen by the system as the same. See <<on-duplicates>> and <<prepare-for-reviewing-duplicates>>.
+`inconsistent_org_names`:: Flags organization names with unexpected name variations for review and possible cleanup
+`missing_last_name`:: Flags person names lacking a `lastname` value for review and possible cleanup. (We only check for last name because it is important for sorting/reporting by surname)
+`migration_action`:: For you to fill in to indicate what to do with a name in the migration. More details below.
+`preferred_name_form`:: For names with `termsource`=`TMS Constituents`, if you chose direct form of name as your preferred name form, this column has the values from the TMS `displayname` field. If you chose inverted form of name as your preferred name form, this column has the values from the TMS `alphasort` field. For additional names derived from Constituents table by migration logic, we try to follow your preferred name form here, using available Constituent data. For names from other sources, this contains the name as it exists in that source.footnote:[These other tables do not include the level of name detail as Constituents table, so we just take the value as entered.]
+`variant_name_form`:: For names with `termsource`=`TMS Constituents`, if you chose direct form of name as your preferred name form, this column has the values from the TMS `alphasort` field. If you chose inverted form of name as your preferred name form, this column has the values from the TMS `displayname` field. For additional names derived from Constituents table by migration logic, we try to use available Constituent data to construct the proper variant name. For names from other sources, we can't populate this automatically.
+`alt_names`:: Names merged in from TMS `ConAltNames` table for review
+
+.Difference between `variant_name_form` and `alt_names` columns
+====
+The value in `variant_name_form` comes from data in the Constituents table itself. In general, it is assumed it is a flipped version of whatever is in the `preferred_name_form` for persons. For organizations, it is expected to be the same as the `preferred_name_form`.
+
+Values in the `alt_names` column come from the TMS ConAltNames table, and may be completely different names (former or later names, pseudonyms, etc.).
+
+In CS, any values in `variant_name_form` and `alt_names` will become non-preferred forms of name in the record created for the `preferred_name_form` value.
+====
+
+`contact_person`:: See <<on-modeling-relationships-between-person-and-organization>>
+`contact_role`:: The TMS `Constituents.position` field
+`fingerprint`:: A representation of the original data for this name. This is the most important value for merging your work back into the migration. **It is crucial that you do not edit this column**
+`matchpref`:: Used to power the conditional formatting that highlights `contact_person` values if they do not exist as Person names. **Do not edit.**
+`orig_pref_name`:: Since you will likely be changing what's in `preferred_name_form`, this is a copy of what what originally there, in case you need to compare. Recommended that you not edit this, but it won't be used in the migration.
+
+Other fields not named above are from the TMS `Constituents` table.
+
+== Background, and important things about authorities in CS that affect this work
+
+* All names in CS need to be categorized as `Person` or `Organization`. Name rows without a value in `constituenttype` will not be migrated
+
+=== On duplicates
+
+* CS will let you have exact duplicate name records within a given authority, but for the purposes of the migration we have to avoid that. For your general data integrity and ability to batch update your data with the CSV Import Tool in the future, you also want to avoid this.
+
+[NOTE]
+====
+These would not be considered duplicates in CS, since they are in two different authorities:.footnote:[What you want to avoid is having the exact same name more than once in the same authority, which is confusing and ambiguous in terms of making sure you are using the correct name in other records, and in batch-updating names via the CSV Importer]
+
+- Hugo Boss (with `constituenttype`=`Organization`)
+- Hugo Boss (with `constituenttype`= `Person`)
+
+They are flagged here as duplicates for review in case they are not really both an organization and a person.
+====
+
+=== On modeling relationships between Person and Organization
+* A CS Organization authority record has a dedicated/linked field (Contact Person, with associated Contact Role) in which to record an associated Person, but the details of the person name have to be recorded in the Person name record
+** TMS lets you record details of individual/person names (first name, middle name, title, etc.) in a Consituent coded as an Institution or other type mapped to CS Organization.
+
+* A CS Person authority record does not have a dedicated/linked field in which to record an associated Organization
+** If a person has been included as a contact in an Organization record, you can see that from the Person record.
+** TMS allows you to record an institution in a Constituent coded as an Individual
+
+Because of the above differences, we need to extract some extra rows of data from some Constituent records for your review. These rows can be identified by the `termsource` column value as described below.
+
+* `termsource` = `TMS Constituents.orgs_with_person_names`
+** Original constituent record is coded as not an Individual, but includes person name details
+** A row has been added for the Person name recorded as part of the constituent record.
+
+* `termsource` = `TMS Constituents.org_with_contact_person`
+** Original constituent record is coded as an Individual, but includes an institution name
+** A row has been added for the Organization name recorded as part of the constituent record.
+** The preferred form of the person name is recorded as the contact person for the derived Organization
+
+NOTE: Breaking this data out usually introduces some rows marked as duplicates, but also adds names that wouldn't otherwise migrate
+
+== To-do overview
+
+More details on each step are given below. Examples are included!
+
+1. Ensure all names have the appropriate `constituenttype` value: "Person" or "Organization"
+2. Ensure all names have a `preferred_name_form` value
+3. Check and resolve duplicate names
+4. Check and resolve names where `inconsistent_org_names` value = `y`
+5. Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y` footnote:[This checks only for missing last name, as that's the most important element for sorting/reporting properly. You may also want to do things like: filter to `constituenttype` = `Person` and filter to blank `firstname` values.]
+6. Look for and merge near-duplicates and variants
+7. Ensure all `contact_person` values exist as Person names
+8. Deal with Persons as alt names of Organizations and vice-versa
+
+== Step details
+=== Ensure all names have the appropriate `constituenttype` value: "Person" or "Organization"
+
+This includes providing missing values (Strategy 1) and verifying/correcting existing values (remaining strategies).
+
+==== Strategy 1: Filter to `constituenttype` empty
+Provide the appropriate value for any rows
+
+==== Strategy 2: Filter to `missing_last_name` = `y`
+Should some of these be coded as Organizations instead of people? See <<switch-a-person-to-an-organization>>.
+
+=== Ensure all names have a `preferred_name_form` value
+
+This can sometimes be an issue if you have chosen to use the inverted form as the preferred form of person name. It usually means name details (`lastname`, etc.) were not recorded.
+
+Rows without a `preferred_name_form` value will be highlighted pink.
+
+=== Check and resolve duplicate names
+Initially, filter to `duplicate` = `y`.
+
+As you change/add data, check for highlighed `approx_normalized` values.
+
+The <<how-to>> section includes various ways of handling duplicates.
+
+=== Check and resolve names where `inconsistent_org_names` value = `y`
+When `inconsistent_org_names` value = `y`, it often means an organization name row has person name details embedded in it. This is common, so it apparently works in TMS. It will not work well in CS, however.
+
+See <<person-name-details-embedded-in-organization-record>>.
+
+=== Check and add name details (first, middle, last names, etc.) where `missing_last_name` = `y`
+IMPORTANT: This is necessary only for Person names.
+
+Person names lacking `lastname` and `firstname` values will be warning highlighted in those columns.
+
+=== Look for and merge near-duplicates and variants
+There's no clear successful procedure for this. Some strategies may include:
+
+- Sorting on `preferred_name_form` and eyeballing the list
+- Sorting on `variant_name_form` and eyeballing the list
+- Your migration specialist will provide some similarity/clustering reports generated using OpenRefine. These are often a mix of usefully highlighted similar values, with a generous helping of stuff to ignore. They may be worth looking at to find other near-duplicates.
+
+The <<how-to>> section includes various ways of handling variants.
+
+=== Ensure all `contact_person` values exist as Person names
+
+The spreadsheet tries to help you with this by warning highlighting any `contact_person` values that do not exist as person records.
+
+The `contact_person` value must match the `preferred_name_form` value of a Person record.
+
+You may just need to change the `contact_person` value to use the correct form of an existing Person row.
+
+Or, you may need to create a new Person row as shown in the Zenith example in <<person-name-details-embedded-in-organization-record>>.
+
+=== Deal with Persons as alt names of Organizations and vice-versa
+
+It is technically possible in CS to add "Jones, Jane" as a non-preferred/variant form of the Organization name "Zenith, Inc.". This is what will happen if you have the following:
+
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | contact_person |
+|------------------+------------------+-----------------+---------------------+-------------------+-------------+----------------|
+| TMS Constituents |                  | Organization    | Zenith, Inc.        |                   | Jones, Jane |                |
+----
+
+Since Jane Jones is actually not an alternate name for Zenith, Inc., it's not ideal modeling of data to migrate it as such.
+
+If you have both a person record for "Jones, Jane" and an organization record with "Jones, Jane" as a variant form, it can complicate/confuse the data entry process in fields which may be populated by either Person or Organization authority.
+
+Our recommendation is to split these out into separate records of the appropriate type as necessary, and to relate persons and organizations via the `contact_person` field in the relevant organization record.
+
+However, if you have Organizations which are one-person businesses, the person vs. organization names are much more interchangeable and this may not be a priority for you.
+
+To clean up, ...TODO
+
+== How to
+
+NOTE: In the examples below, columns are omitted if they aren't relevant to the change you want to make.
+
+=== Add multiple contact persons to the same organization
+==== Row already added by migration process
+
+.Original data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         |                  | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+| TMS Constituents.org_with_contact_person |                  | Organization    | Misc Museum         | Jones, Ann     |              |
+....
+
+.Fixed data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         | main             | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+| TMS Constituents.org_with_contact_person | add_contact      | Organization    | Misc Museum         | Jones, Ann     | registrar    |
+....
+
+* In Organization row with `termsource`=`TMS Constituents`, set `migration_action`=`main`. (This ensures any data in other tables referring to this constituent Organization gets linked as expected and turns off warning highlighting of duplicate values)
+* In row with additional contact person info, set `migration_action`=`add_contact`
+* Optionally, I added the `contact_role` for the contact I was adding.
+
+==== Manually, as part of alt_names fix or for any other reason
+
+.Original data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         |                  | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+....
+
+Here, you want another contact person listed for Misc Museum.
+
+.Fixed data
+....
+| termsource                               | migration_action | constituenttype | preferred_name_form | contact_person | contact_role |
+|------------------------------------------+------------------+-----------------+---------------------+----------------+--------------|
+| TMS Constituents                         | main             | Organization    | Misc Museum         | Smith, Lisa    | curator      |
+|                                          | add_contact      | Organization    | Misc Museum         | Jones, Ann     | registrar    |
+....
+
+* In the existing Organization row, set `migration_action`=`main`. (This ensures any data in other tables referring to this constituent Organization gets linked as expected and turns off warning highlighting of duplicate values when you add another field with same `preferred_name_form`)
+* Add new row with `migration_action`=`add_contact`, `constituenttype`=`Organization`, `preferred_name_form`= the name from the main row
+* In your new row, add the `contact_person` and optional `contact_role` value.
+
+IMPORTANT: The `contact_person` value should exist as the `preferred_name_form` of a row tagged as `constituenttype`=`Person`. If it does not, the spreadsheet should warning highlight it.
+
+=== Change the form of name used
+==== Change the form of name used (multiple rows involved)
+
+What if you determine that all three of these rows are the same person, and you want the name in CS to be "Smith, Robert J."?
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+| TMS Loans        |                  |                 | robertsmith         |                   |           |            |          |
+| TMS Constituents |                  | Person          | Smith, Robert       | Robert Smith      | Robert    |            | Smith    |
+----
+
+In the "Smith, Robert" row (chosen because it is closest to the name I want to use):
+
+* `migration_action`=`main`
+* update `preferred_name_form` to be the form you want to use
+* update all relevant details fields to match the form you want to use
+
+In row from TMS Loans:
+
+* Add constituentype (necessary because the same name can be in the organization authority *and* person authority
+* `migration_action`=`use_name` (we want the Loans info to use the record that will be created by the main row, but we don't want a variant name `robertsmith` added to that record)
+* Change `preferred_name_form` to `Smith, Robert J.`
+
+In the `Smith, R.J.` row:
+
+* `migration_action`=`merge_variant` (if we want the record in CS to also be findable by "Smith, R.J.")
+* Change `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+* Ensure any data in additional fields in this row that don't belong in the Term section of a CS Person/Org are copied into the main row
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents | merge_variant    | Person          | Smith, Robert J.    | R.J. Smith        | R.        | J.         | Smith    |
+| TMS Loans        | use_name         | Person          | Smith, Robert J.    |                   |           |            |          |
+| TMS Constituents | main             | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+----
+
+==== Change the form of name used (one row) without adding a variant form of name
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
+* Change `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+----
+
+==== Change the form of name used (one row) and add a variant
+
+.Original data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents |                  | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
+We have to make the desired changes in the existing row, since that is the row that other tables in TMS link to.
+
+* In existing row `preferred_name_form` to `Smith, Robert J.`
+* Ensure any relevant name details for the variant form are correct
+* add `migration_action`=`main` 
+
+Add new row marked `merge_variant` with relevant name details for the variant name
+
+.Fixed data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+-----------+------------+----------|
+| TMS Constituents | main             | Person          | Smith, Robert J.    | Robert J. Smith   | Robert    | J.         | Smith    |
+|                  | merge_variant    | Person          | Smith, R.J.         | R.J. Smith        | R.        | J.         | Smith    |
+----
+
+=== Clean up `alt_names` of different type than record they are on
+
+Here we want to move the organization alt_name out of the Person record, but retain the alt_name for her previous name.
+
+Additionally, we want to move the person alt_name out of the Organization record.
+
+.Original data
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names                | contact_person | contact_role        | firstname | middlename | lastname |
+|------------------+-----------------+---------------------+-------------------+--------------------------+----------------+---------------------+-----------+------------+----------|
+|                  | Person          | Baker, Kat Harlow   | Kat Harlow Baker  | Arts Academy|Harlow, Kat |                | Assistant Principal | Kat       | Harlow     | Baker    |
+|                  | Organization    | Hill Corporation    |                   | Hill, David              |                |                     |           |            |          |
+----
+
+.Fixed data
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names                     | contact_person    | contact_role        | firstname | middlename | lastname |
+|------------------+-----------------+---------------------+-------------------+-------------------------------+-------------------+---------------------+-----------+------------+----------|
+|                  | Person          | Baker, Kat Harlow   | Kat Harlow Baker  | -{{Arts Academy}}|Harlow, Kat |                   |                     | Kat       | Harlow     | Baker    |
+|                  | Organization    | Arts Academy        |                   |                               | Baker, Kat Harlow | Assistant Principal |           |            |          |
+|                  | Organization    | Hill Corporation    |                   | -{{Hill, David}}              | Hill, David       |                     |           |            |          |
+|                  | Person          | Hill, David         | David Hill        |                               |                   |                     | David     |            | Hill     |
+----
+
+[IMPORTANT]
+====
+The actions I took are based on an assumption that there were not already an organization row for `Arts Academy` or a person row for `Hill, David.`
+
+If there had been, I could have just added `Baker, Kat Harlow` as the contact person on the existing org record.
+====
+
+For the `Baker, Kat Harlow` row:
+
+* I indicate I do not want `Arts Academy` treated as a variant name of `Baker, Kat Harlow` by wrapping it in `-{{` and `}}`
+* I create a new row for `Arts Academy`, indicating it is an Organization.
+* I copy the `preferred_name_form` from the previous row as the `contact_person` value in this organization
+* I move `Assistant Principal` to be the `contact_role` value with the `contact_person` name on the organization row
+
+For the `Hill Corporation` row:
+
+* I indicate I do not want `Hill, David` treated as a variant name of `Hill Corporation` by wrapping it in `-{{` and `}}`
+* I create a new row for `Hill, David`, indicating this is a Person.
+* In this new Person record, I fill in `variant_name_form`, `firstname`, `lastname` and any other details I have
+* `Hill, David` is already in the organization name as `contact person`. If it were not, I would need to add it to link these two names together.
+* If I knew the relationship between `Hill, David` and `Hill Corporation`, I could specify it in the `contact_role` field of the organization record.
+
+=== Differentiate "duplicates" that are not actually duplicates
+
+.Original data
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | firstname | lastname | begindateiso | enddateiso |
+|-----------------+---------------------+-------------------+-----------+----------+--------------+------------|
+| Person          | Jane Smith          | Smith, Jane       | Jane      | Smith    |         1900 |       1978 |
+| Person          | Jane Smith          | Smith, Jane       | Jane      | Smith    |         1924 |       2015 |
+----
+
+If there is some data in the record to distinguish the two names, include that data in **at least one** of the `preferred_name_form` values.
+
+.Fixed data
+[source]
+----
+| constituenttype | preferred_name_form   | variant_name_form      | firstname | lastname | begindateiso | enddateiso |
+|-----------------+-----------------------+------------------------+-----------+----------+--------------+------------|
+| Person          | Jane Smith, 1900-1978 | Smith, Jane, 1900-1978 | Jane      | Smith    |         1900 |       1978 |
+| Person          | Jane Smith            | Smith, Jane            | Jane      | Smith    |         1924 |       2015 |
+----
+
+=== Filter column to values with warning highlighting
+* Click the down-pointing triangle on the right of the heading
+* Filter >> By color >> Cell color >> Rose
+
+This will show you only rows with warning highlighting in that column.
+
+Instead of filtering, you can do Sort >> By color >> Cell color >> Rose to see the highlighted rows at the top
+
+=== Handle duplicates
+==== When one record has full data and the other is just a name value
+
+.Example data
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form |
+|------------------+------------------+-----------------+---------------------+-------------------|
+| TMS Constituents |                  | Person          | Ann Smith           | Smith, Ann        |
+| TMS ObjLocations |                  | Person          | Ann Smith           |                   |
+----
+
+Assume other fields in the row from TMS Constituents are also filled in (nationality, bio, etc.).
+
+To fix:
+
+.Edited data will ignore row from TMS ObjLocations in migration
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form |
+|------------------+------------------+-----------------+---------------------+-------------------|
+| TMS Constituents | main             | Person          | Ann Smith           | Smith, Ann        |
+| TMS ObjLocations | use_name         | Person          | Ann Smith           |                   |
+----
+
+
+This will no longer be highlighted as a duplicate in `approx_normalized`.
+
+A person authority will be created from the row marked `main`. Any uses of this name in TMS ObjLocations will be linked to the authority as expected.
+
+==== When records for duplicate names contain different name details data
+
+Handle the same as above, **except ensure the data you want in the name record is moved/copied into the row marked `main`.**
+
+We can do a lot of cool stuff in the migration process, but it is not actually an intelligent process. For example, it cannot reconcile and merge fields in a meaningful way. If one row for `Ann Smith` has `nationality`=`English`, and another has `nationality` = `French`, it does not know if:
+
+- these are actually two separate people
+- it is one person and one of the `nationality` values is wrong
+- it is one person with dual nationality/citizenship
+
+=== Merge variant multiple name forms into one name
+==== Variant already recorded as alt_name
+
+.Original
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+|                  | Person          | Jane Smith          | Smith, Jane       | Jayne Smith | Jane      | Smith    |         1900 |            |
+|                  | Person          | Jayne Smith         | Smith, Jayne      |             | Jayne     | Smith    |              |       1978 |
+----
+
+Based on the first row alone, `Jayne Smith` is going to be listed as variant name in the CS Person record for `Jane Smith`. This information comes from TMS `ConAltNames` table, which allows for the recording of name details of alternate names, which will be merged into non-preferred terms of the appropriate authority records as part of the migration.
+
+In the row that should NOT be used to create a new name record:
+
+* Record `use_name` in `migration_action`
+* Record the name for that should be used instead in `preferred_name_form`
+
+In the migration, this tells us that any TMS records that link to the consituent record for `Jayne Smith` should be linked to the CS Person record we are going to create for `Jane Smith.`
+
+It prevents a separate person record from being created for `Jayne Smith` in CS.
+
+.Fixed
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+| main             | Person          | Jane Smith          | Smith, Jane       | Jayne Smith | Jane      | Smith    |         1900 |       1978 |
+| use_name         | Person          | Jane Smith          | Smith, Jayne      |             | Jayne     | Smith    |              |       1978 |
+----
+
+[IMPORTANT]
+====
+Except for the `migration_action` and `preferred_name_form` columns, data in the row marked `use_name` is ignored. **Check the name detail fields over to the right of the spreadsheet and make sure to copy any data you don't want to lose into the main row.** In the example below, I've copied the `enddateiso` value from the `use_name` row into the main row that the authority record will be created from. This ensures I won't lose that death date. 
+====
+
+==== Variant not already recorded as alt_name and you do **not** want it included as a non-preferred form of name (typos, minor variations)
+
+.Original
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+|                  | Person          | Jane Smith          | Smith, Jane       |             | Jane      | Smith    |         1900 |            |
+|                  | Person          | Jane Smit           |                   |             |           |          |              |       1978 |
+----
+
+.Fixed
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+| main             | Person          | Jane Smith          | Smith, Jane       |             | Jane      | Smith    |         1900 |       1978 |
+| use_name         | Person          | Jane Smith          |                   |             |           |          |              |       1978 |
+----
+
+Any TMS data referring to `Jane Smit` is going to be linked to Person `Jane Smith` in CS.
+
+I manually moved the death date from the `use_name` row into the `main` row, that data does not get lost. 
+
+==== Variant not already recorded as alt_name and you want it included as a non-preferred form of name
+
+.Limitation of this approach
+[TIP]
+====
+This approach does not allow you to specify the type of variant name (pseudonym, previous name, etc.).
+
+If you need to capture this, we recommend you:
+
+- add the alternate name in TMS with the relevant name type. This will be in your final data export and will get merged in as a non-preferred term as expected in the final migration
+- mark the `Jane Jones` row shown below as `use_name` and change `preferred_name_form` to `Jane Smith`
+====
+
+.Original
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+|                  | Person          | Jane Smith          | Smith, Jane       | Jayne Smith | Jane      | Smith    |         1900 |            |
+|                  | Person          | Jane Jones          |                   |             |           |          |              |       1978 |
+----
+
+.Fixed
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | alt_names   | firstname | lastname | begindateiso | enddateiso |
+|------------------+-----------------+---------------------+-------------------+-------------+-----------+----------+--------------+------------|
+| main             | Person          | Jane Smith          | Smith, Jane       | Jayne Smith | Jane      | Smith    |         1900 |       1978 |
+| merge_variant    | Person          | Jane Smith          |                   |             | Jane      | Jones    |              |            |
+----
+
+Entering `migration_action`=`merge_variant` will cause the name details from the original TMS data for this row to be included as a non-preferred form of name in the authority record created for the name entered in `preferred_name_form`.
+
+.Not all row fields get merged
+[IMPORTANT]
+====
+The only fields in the `merge_variant` row that will be merged in as a non-preferred form are the name details that map to the `Term` section of a Person or Organization record.
+
+A given term section does not itself record any variant forms. Each term section is information about a variant form. So we do not need a `variant_name_form` value in the `merge_variant` row.
+
+Name parts are specified in each term section, so I have added `firstname` and `lastname` values. 
+
+I moved the `enddateiso` (death date) value to the main row since death date is not part of the `Term` section of a Person record.
+====
+
+=== Organization and Person have same name values
+
+.Original
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | institution | contact_person | firstname | lastname |
+|-----------------+---------------------+-------------------+-------------+----------------+-----------+----------|
+| Organization    | Fanny Mae           | Mae, Fanny        |             | Fanny Mae      | Fanny     | Mae      |
+| Person          | Fanny Mae           | Mae, Fanny        | Fanny Mae   |                | Fanny     | Mae      |
+----
+
+* Companies do not have inverted form of name (Mae, Fanny), nor first names and last names, so clear the values for `variant_name_form`, `firstname`, and `lastname`.
+* Person names do not record links to institutions. Clear the `institution` value. A link between this organization and person will be made based on the `contact_person` value in the organization name. 
+* `ok` is added to `migration_action` to stop these being flagged as duplicates in `approx_normalized`
+
+.Fixed
+[source]
+----
+| migration_action | constituenttype | preferred_name_form | variant_name_form | institution | contact_person | firstname | lastname |
+|------------------+-----------------+---------------------+-------------------+-------------+----------------+-----------+----------|
+| ok               | Organization    | Fanny Mae           |                   |             | Fanny Mae      |           |          |
+| ok               | Person          | Fanny Mae           | Mae, Fanny        |             |                | Fanny     | Mae      |
+----
+
+=== Person name details embedded in Organization record
+
+NOTE: The following examples assume that inverted form of name is used as the preferred Person name format.
+
+.Original
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form      | variant_name_form | contact_person | contact_role | nametitle | firstname | middlename | lastname |
+|------------------+------------------+-----------------+--------------------------+-------------------+----------------+--------------+-----------+-----------+------------+----------|
+| TMS Constituents |                  | Organization    | Zenith, Inc. Jones, Jane | Zenith, Inc.      |                | CEO          |           | Jane      |            | Jones    |
+| TMS Constituents |                  | Organization    | Acme Corp. Smith, Robert | Acme Corp.        | Smith, Robert  |              |           | Robert    |            | Smith    |
+| TMS Constituents |                  | Organization    | Apex                     | Apex Co.          |                |              |           |           |            |          |
+----
+
+Upon review, the record for Apex is fine. There are no person name details embedded in the record. The other two need to be cleaned up, though.
+
+.Fixed
+[source]
+----
+| termsource       | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | contact_role | nametitle | firstname | middlename | lastname |
+|------------------+------------------+-----------------+---------------------+-------------------+----------------+--------------+-----------+-----------+------------+----------|
+| TMS Constituents |                  | Organization    | Zenith, Inc.        |                   | Jones, Jane    | CEO          |           |           |            |          |
+|                  |                  | Person          | Jones, Jane         | Jane Jones        |                |              |           | Jane      |            | Jones    |
+| TMS Constituents |                  | Organization    | Acme Corp.          |                   | Smith, Robert  |              |           |           |            |          |
+| TMS Constituents |                  | Organization    | Apex                | Apex Co.          |                |              |           |           |            |          |
+----
+
+**For Zenith**
+
+* Determined there **is not** already a Person row with `preferred_name_form`=`Jones, Jane`.
+* Create a new row to record the person name details: `preferred_name_form`=`Jones,Jane`, `variant_name_form`=`Jane Jones`, `firstname`, and `lastname`.
+* You can tell this is an added row because it has no `termsource` value.
+* Do not add any `migration_action`
+* Once you have moved the Person details to a new record, remove them from the Organization record:
+** After removing the person name from `preferred_name_form`, `variant_name_form` is redundant, so I remove `variant_name_form`
+** Clear the `firstname` and `lastname` fields
+** In real life, I'd review all the fields and make sure they are in the appropriate row
+* Add the Person's `preferred_name_form` value to the Organization's `contact_person` field.
+
+**For Acme**
+* Determined there **is** already a Person row with `preferred_name_form`=`Smith, Robert`, so I do **not** create a new row for person name data.
+* I just remove the person name data from the Organization row:
+** After removing the person name from `preferred_name_form`, `variant_name_form` is redundant, so I remove `variant_name_form`
+** Clear the `firstname` and `lastname` fields
+** In real life, I'd review all the fields and make sure they are in the appropriate row
+* `Smith, Robert` is already the organization `contact_person`, so I leave that alone
+
+=== Prepare for reviewing duplicates
+* Sort by `normalized_form`
+* Filter to `duplicate` = `y`
+
+=== Remove/Ignore unwanted names
+==== Added by migration processing
+
+[WARNING]
+====
+Typically you will only want to use the `skip` `migration_action` in rows derived from migration-related data processing (i.e. `termsource` with a dot plus some function/routine name after the table name)
+
+We run these processes because they tend to mostly extract/identify data necessary for the migration. But sometimes they add spurious names, typically because data was entered in TMS in an unexpected way.
+
+The `skip` option tells the later  migration processes: this isn't a real name. Don't create a record for it. Don't link anything to it. Any data in other tables that refers to this name should be ignored/dropped.
+
+If the row came directly from TMS Constituents or other table, you probably want to use one of the <<merge-variant-multiple-name-forms-into-one-name>> options.
+====
+
+.Original data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+----------|
+| TMS Constituents                        |                  | Organization    | Smith               |                   | Smith          |          |
+| TMS Constituents.orgs_with_person_names |                  | Person          | Smith               | Smith             |                | Smith    |
+----
+
+.Fixed data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+----------|
+| TMS Constituents                        | ok               | Organization    | Smith               |                   |                |          |
+| TMS Constituents.orgs_with_person_names | skip             | Person          | Smith               | Smith             |                | Smith    |
+----
+
+The Person row was added by the migration data process to automagically extract Persons from Constituent Organizations that have name details associated with people. Magic doesn't always work perfectly, unfortunately!
+
+This was triggered by `Smith` being recorded as the `lastname` value in the organization constituent record in TMS.
+
+This personal name detail has been moved to the Person row in the spreadsheet, and `Smith` has been retained as the `contact_person` in the Organization.
+
+We don't want a Person name for this, so we enter `migration_action`=`skip` in the Person row.
+
+Because there is not actually a contact person named `Smith` we clear that value out of the Organization row. If you add `migration_action`=`ok` in the Organization row, that prevents it from getting highlighted as a probably duplicate.
+
+==== Name added by migration processing is correct, original TMS row is wrong
+
+.Original data
+[source]
+----
+| termsource                              | constituenttype | preferred_name_form | variant_name_form | contact_person | firstname | lastname |
+|-----------------------------------------+-----------------+---------------------+-------------------+----------------+-----------+----------|
+| TMS Constituents                        | Organization    | Barlow, Mary        | Mary Barlow       | Barlow, Mary   |           |          |
+| TMS Constituents.orgs_with_person_names | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+----
+
+We ended up with this situation because, in TMS, the Constituent entry for `Barlow, Mary` is coded as an organization, but has a `firstname` and `lastname` value.
+
+In this case, the `constituenttype` coded in TMS was incorrect.
+
+As described above, we do not want to `skip` the row that came from TMS Constituents. We expect that other tables link to this name, and using `skip` would cause those links to be lost.
+
+Here is how we handle it:
+
+.Fixed data
+[source]
+----
+| termsource                              | migration_action | constituenttype | preferred_name_form | variant_name_form | contact_person | firstname | lastname |
+|-----------------------------------------+------------------+-----------------+---------------------+-------------------+----------------+-----------+----------|
+| TMS Constituents                        | ok               | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+| TMS Constituents.orgs_with_person_names | skip             | Person          | Barlow, Mary        | Mary Barlow       |                | Mary      | Barlow   |
+----
+
+* In row from TMS Consituents:
+** Correct the `constituenttype`
+** Copy the person name details from the other row into
+** Remove `contact_person` value from the now-Person we are keeping
+** `migration_action`=`ok` (optional -- keeps it from being highlighted as a duplicate)
+
+* In row added by migration process:
+** `migration_action`=`skip`
+
+
+
+=== Switch a Person to an Organization
+
+**First** make sure there aren't both a Person and Organization row for the same name. Handling that situation is different. See <<organization-and-person-have-same-name-values>>.
+
+* Change the `constituenttype` value to `Organization`
+* **Do not** fill in `institution` value
+
+.Example "Person" data that should be an Organization
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | alt_names | institution | firstname | middlename | lastname |
+|-----------------+---------------------+-------------------+-----------+-------------+-----------+------------+----------|
+| Person          | W.W. Norton         |                   |           |             |           |            |          |
+----
+
+.Changed to migrate as an Organization
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | alt_names | institution | firstname | middlename | lastname |
+|-----------------+---------------------+-------------------+-----------+-------------+-----------+------------+----------|
+| Organization    | W.W. Norton         |                   |           |             |           |            |          |
+----
+
+=== Switch an Organization to a Person
+
+**First** make sure there aren't both a Person and Organization row for the same name. Handling that situation is different. See <<organization-and-person-have-same-name-values>>.
+
+* Change the `constituenttype` value to `Person`
+* Fill in the `variant_name_form` with relevant form of Person name
+* Fill in the name details (title, first, middle, last, suffix, etc.)
+
+.Example "Organization" data that should be a Person
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | alt_names | institution | firstname | middlename | lastname |
+|-----------------+---------------------+-------------------+-----------+-------------+-----------+------------+----------|
+| Organization    | James Comp          |                   |           |             |           |            |          |
+----
+
+.Changed to migrate as a Person
+[source]
+----
+| constituenttype | preferred_name_form | variant_name_form | alt_names | institution | firstname | middlename | lastname |
+|-----------------+---------------------+-------------------+-----------+-------------+-----------+------------+----------|
+| Person          | James Comp          | Comp, James       |           |             | James     |            | Comp     |
+----
+
