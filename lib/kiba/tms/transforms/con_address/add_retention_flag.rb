@@ -5,35 +5,25 @@ module Kiba
     module Transforms
       module ConAddress
         class AddRetentionFlag
-          include Kiba::Extend::Transforms::Helpers
-          
           def initialize
             @matches_field = :matches_constituent
-            @addr_fields = Tms::Constituents.address_fields
-            @omit_inactive = Tms::Constituents.omit_inactive_address
             @target = :keeping
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: Tms::Constituents.address_fields)
+            @chks = Tms::Constituents.omit_inactive_address ? %i[no_match inactive data] : %i[no_match data]
           end
 
           # @private
           def process(row)
-            chks = omit_inactive ? %i[no_match inactive data] : %i[no_match data] 
-            chks.each do |chk|
-              result = send(chk, row)
-              if result == 'y'
-                next
-              else
-                row[target] = result
-                return row
-              end
-            end
-            row.delete(matches_field)
             row[target] = 'y'
+#            binding.pry if row[:active] = '0'
+            run_chks(chks, row)
+            row.delete(matches_field)
             row
           end
           
           private
 
-          attr_reader :matches_field, :addr_fields, :omit_inactive, :target
+          attr_reader :matches_field, :target, :getter, :chks
 
           def no_match(row)
             val = row[matches_field]
@@ -48,10 +38,22 @@ module Kiba
           end
 
           def data(row)
-            vals = field_values(row: row, fields: addr_fields).values
+            vals = getter.call(row).values
             return 'n - no address data in row' if vals.empty?
 
             'y'
+          end
+
+          def run_chks(chks, row)
+            chks.each do |chk|
+              result = send(chk, row)
+              if result == 'y'
+                next
+              else
+                row[target] = result
+                break
+              end
+            end
           end
         end
       end

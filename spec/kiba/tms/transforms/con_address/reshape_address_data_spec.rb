@@ -3,14 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Kiba::Tms::Transforms::ConAddress::ReshapeAddressData do
-  let(:accumulator){ [] }
-  let(:test_job){ Helpers::TestJob.new(input: input, accumulator: accumulator, transforms: transforms) }
-  let(:result){ test_job.accumulator }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::ConAddress::ReshapeAddressData
-    end
-  end
+  subject(:xform){ described_class.new }
+  let(:result){ input.map{ |row| xform.process(row) } }
   let(:input) do
     [
       {displayname1: 'a', displayname2: 'b', streetline1: '1', streetline2: '2', streetline3: '3'},
@@ -27,7 +21,7 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::ReshapeAddressData do
       {addressplace1: 'c', addressplace2: '4, 5'},
       {addressplace1: 'd', addressplace2: '6'},
       {addressplace1: '7', addressplace2: '8, 9'},
-      {foo: 'bar'}
+      {addressplace1: nil, addressplace2: nil, foo: 'bar'}
     ]
   end
   

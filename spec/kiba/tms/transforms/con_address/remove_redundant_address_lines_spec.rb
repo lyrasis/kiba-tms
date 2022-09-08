@@ -3,14 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Kiba::Tms::Transforms::ConAddress::RemoveRedundantAddressLines do
-  let(:accumulator){ [] }
-  let(:test_job){ Helpers::TestJob.new(input: input, accumulator: accumulator, transforms: transforms) }
-  let(:result){ test_job.accumulator }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::ConAddress::RemoveRedundantAddressLines
-    end
-  end
+  subject(:xform){ described_class.new }
+  let(:result){ input.map{ |row| xform.process(row) } }
   let(:input) do
     [
       {alphasort: 'b, a', displayname: 'a b', displayname1: 'ab'},

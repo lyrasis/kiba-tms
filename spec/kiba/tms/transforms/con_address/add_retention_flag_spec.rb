@@ -3,14 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Kiba::Tms::Transforms::ConAddress::AddRetentionFlag do
-  let(:accumulator){ [] }
-  let(:test_job){ Helpers::TestJob.new(input: input, accumulator: accumulator, transforms: transforms) }
-  let(:result){ test_job.accumulator }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::ConAddress::AddRetentionFlag
-    end
-  end
+  subject(:xform){ described_class.new }
+  let(:result){ input.map{ |row| xform.process(row) } }
   let(:input) do
     [
       {matches_constituent: '1', streetline1: '1', active: '1'},
@@ -24,10 +18,10 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::AddRetentionFlag do
   context 'without omit_inactive' do
     let(:expected) do
       [
-      {matches_constituent: '1', streetline1: '1', active: '1', keeping: 'y'},
-      {matches_constituent: '1', streetline1: '1', active: '0', keeping: 'y'},
-      {matches_constituent: '', streetline1: '1', active: '1', keeping: 'n - associated constituent not migrating'},
-      {matches_constituent: '1', streetline1: '', active: '1', keeping: 'n - no address data in row'},
+      {streetline1: '1', active: '1', keeping: 'y'},
+      {streetline1: '1', active: '0', keeping: 'y'},
+      {streetline1: '1', active: '1', keeping: 'n - associated constituent not migrating'},
+      {streetline1: '', active: '1', keeping: 'n - no address data in row'},
       {foo: 'bar', keeping: 'n - associated constituent not migrating'}
       ]
     end
@@ -38,14 +32,14 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::AddRetentionFlag do
   end
 
   context 'with omit_inactive' do
-    before(:all){ Tms.config.constituents.omit_inactive_address = true }
-    after(:all){ Tms.config.constituents.omit_inactive_address = false }
+    before(:all){ Tms::Constituents.config.omit_inactive_address = true }
+    after(:all){ Tms::Constituents.config.omit_inactive_address = false }
     let(:expected) do
       [
-      {matches_constituent: '1', streetline1: '1', active: '1', keeping: 'y'},
-      {matches_constituent: '1', streetline1: '1', active: '0', keeping: 'n - inactive address'},
-      {matches_constituent: '', streetline1: '1', active: '1', keeping: 'n - associated constituent not migrating'},
-      {matches_constituent: '1', streetline1: '', active: '1', keeping: 'n - no address data in row'},
+      {streetline1: '1', active: '1', keeping: 'y'},
+      {streetline1: '1', active: '0', keeping: 'n - inactive address'},
+      {streetline1: '1', active: '1', keeping: 'n - associated constituent not migrating'},
+      {streetline1: '', active: '1', keeping: 'n - no address data in row'},
       {foo: 'bar', keeping: 'n - associated constituent not migrating'}
       ]
     end

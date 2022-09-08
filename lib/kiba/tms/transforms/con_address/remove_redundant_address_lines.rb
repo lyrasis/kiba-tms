@@ -5,16 +5,15 @@ module Kiba
     module Transforms
       module ConAddress
         class RemoveRedundantAddressLines
-          include Kiba::Extend::Transforms::Helpers
           
           def initialize
             @names = %i[displayname1 displayname2]
-            @constnames = %i[alphasort displayname]
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[alphasort displayname])
           end
 
           # @private
           def process(row)
-            chk = field_values(row: row, fields: constnames).values
+            chk = getter.call(row).values
             names.each{ |name| remove_redundant(row, name, chk) }
             
             row
@@ -22,7 +21,7 @@ module Kiba
           
           private
 
-          attr_reader :names, :constnames
+          attr_reader :names, :getter
 
           def remove_redundant(row, name, chk)
             return unless row.key?(name)
