@@ -1170,6 +1170,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_accession') do
+          register :one_to_one, {
+            creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_one_to_one.csv'),
+            tags: %i[objaccession setup],
+            desc: 'Rows from which acquisitions will be created using OneToOne approach'
+          }
+        end
+
         Kiba::Tms.registry.namespace('obj_comp_statuses') do
           register :unmapped, {
             creator: Kiba::Tms::Jobs::ObjCompStatuses::Unmapped,
