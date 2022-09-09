@@ -65,6 +65,22 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('accession_lot') do
+          register :set_count, {
+            creator: Kiba::Tms::Jobs::AccessionLot::SetCount,
+            path: File.join(Kiba::Tms.datadir, 'working', 'accession_lot_set_count.csv'),
+            desc: 'Adds :registrationsets field with count of registration sets per lot',
+            tags: %i[accessionlot registrationsets],
+            lookup_on: :acquisitionlotid
+          }
+          register :multi_set, {
+            creator: Kiba::Tms::Jobs::AccessionLot::MultiSet,
+            path: File.join(Kiba::Tms.datadir, 'working', 'accession_lot_multi_set.csv'),
+            desc: 'Accession lots having more than one registration set. Non-zero means work to do!',
+            tags: %i[accessionlot todochk]
+          }
+        end
+        
         Kiba::Tms.registry.namespace('alt_nums') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::AltNums::NewTables,
