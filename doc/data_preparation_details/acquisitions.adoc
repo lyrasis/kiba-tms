@@ -17,186 +17,50 @@ This page details how the data in the TMS table is processed to produce Collecti
 
 toc::[]
 
-== Preferred name field
+== Overview of possible approaches required
 
-Prior to processing constituent data, we ask the client to https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[identify their preferred name form for persons].
+Depending on client data entry practices/what tables they have used in TMS, we need up to three different approaches:
 
-If they choose direct form, the preferred name field from the Constituents and ConAltNames tables is `displayname`.
+* If accession lots have been used (i.e. there are AcquisitionLotID values in the ObjAccessions table), we need to use the `Lot/Set` approach to create some Acquisition procedures
+* If AcquisitionLot values have been assigned in the ObjAccessions table, but rows with those values do not have AcquisitionLotID values, we need to use the `LotNumber` approach to create some Acquisition procedures
+* 
 
-If they choose inverted form, it is `alphasort`
+=== `OneToOne` approach
 
-In the remainder of this document, "preferred name" refers to the value of the preferred name field. 
+Used for rows in ObjAccessions table without AcquisitionLotID or AcquisitionLot values.
 
-== Processing steps
+Creates one Acquisition procedure per row.
 
-=== Remove non-migrating and empty fields, test row
+The Acquisition procedure derived from the row is related to the Object represented by that row.
 
-Non-migrating fields will be marked as such in your data mapping details spreadsheet. The reason for omission from migration is given there.
+=== `LotNumber` approach
 
-In a number of tables, TMS appears to create a row with the id "-1" with no data. This row is present in Constituents table and is removed from migration.
+Used if there are ObjAccessions rows having `AcqisitionLot` values, but lacking `AcquisitionLotID` values.
 
-`displaydate`, `begindateiso`, and `enddateiso` fields are deleted because they are handled in the xref:con_dates.adoc[ConDates table processing], the results of which are later merged back into the main Constituents data.
+One Acquisition procedure is created per unique `AcquisitionLot` value.
 
+That Acquisition procedure is related to all Objects represented by rows with the source `AcquisitionLot` value.
 
-=== Determine CollectionSpace (CS) authority type
+NOTE: This assumes that all details in rows with the same `AcquisitionLot` value will have all the same data values in all other columns that get mapped to Acquisitions. We need to develop a report to verify this is the case.
 
-Next, we categorize each constituent name into Person or Organization.
+=== `LinkedLot` approach
 
-For constituent names with a constituenttype coded in TMS, we use https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the mapping configured for Constituents] (search for `setting :type_mapping` in the linked page).
+Used if there are `AcquisitionLotID` values in the ObjAccessions table. There will also be populated entries in the AccessionLots and RegistrationSets tables.
 
-For constituent names without a constituenttype coded in TMS, we attempt to xref:deriving_authority_category_from_name_data.adoc[derive the appropriate category].
+One or more registration sets can be associated with a given accession lot. The registration set level is where most of the Acquisition procedure source data fields are populated, so we create one Acquisition procedure per registration set.
 
-The processing keeps separate categories mapped from explicit TMS constituenttype (Person, Organization), and derived guesses (Person?, Organization?). For ease of further processing, a normalized authority type is also created for each name (person, organization).
+Each Acquisition procedure derived from a registration set is linked to the Objects that list that RegistrationSetID in the ObjAccessions table.
 
-=== Remove redundant non-preferred names
+[CAUTION]
+====
+CS does not support hierarchical Acquisitions, so if a client has any acquisition lots that have multiple registration sets per lot, some structural data is lost.
 
-Matching is case insensitive.
+We need to assign a unique reference number per Acquisition procedure. For lots having multiple sets, we will need to derive those from the `LotNumber` value assigned in the AccessionLots table, by adding a segment to the end.
 
-....
-| displayname    | alphasort      |
-|----------------+----------------|
-| Doe Associates | Doe associates |
-....
+This means it will be possible to search for all Acquisitions whose reference numbers start with a given lot number, but we will not have an Acquisition procedure that is linked to all objects in all registration sets for a given lot.
+====
 
-becomes:
-
-....
-| displayname    | alphasort |
-|----------------+-----------|
-| Doe Associates |           |
-....
-
-=== Organization name cleanup/warnings
-
-NOTE: The examples in this section assume the preferred name field is `displayname`
-
-The following processing is applied to rows where normalized authority type = Organization:
-
-==== Remove `institution` value if it is the same as the preferred name
-
-Matching is case insensitive.
-
-....
-| displayname      | institution      |
-|------------------+------------------|
-| ACME Corporation | Acme Corporation |
-....
-
-becomes:
-
-....
-| displayname      | institution |
-|------------------+-------------|
-| ACME Corporation |             |
-....
-
-==== Remove `institution` value if it is the same as the non-preferred form of name
-
-Matching is case insensitive:
-
-....
-| displayname      | alphasort  | institution |
-|------------------+------------+-------------|
-| ACME Corporation | ACME Corp. | Acme Corp.  |
-....
-
-becomes:
-
-....
-| displayname      | alphasort  | institution |
-|------------------+------------+-------------|
-| ACME Corporation | ACME Corp. |             |
-....
-
-==== Conditionally remove name details
-
-Name details are values in fields for breaking up personal names: `nametitle`, `salutation`, `firstname`, `middlename`, `lastname`, `suffix`.
-
-If a row matches the conditions explained below, all of the name details fields are cleared.
-
-The core name details fields used to determine whether a row matches the conditions are: `firstname`, `middlename`, `lastname`, `suffix`.
-
-.Original data
-....
-| displayname      | position | lastname       | firstname    |
-|------------------+----------+----------------+--------------|
-| Doe & Associates |          | Doe Associates |              |
-| Moe Press, Inc.  |          | Moe Press      | Inc          |
-| Poe Press, Inc.  |          | Poe Press      | Incorporated |
-| Jane Doe Art     |          | Doe            | Jane         |
-| Jane Smith Art   | owner    | Smith          | Jane         |
-....
-
-.Processed data
-....
-| displayname      | position | lastname       | firstname    |
-|------------------+----------+----------------+--------------|
-| Doe & Associates |          | Doe Associates |              |
-| Moe Press, Inc.  |          |                |              |
-| Poe Press, Inc.  |          | Poe Press      | Incorporated |
-| Jane Doe Art     |          |                |              |
-| Jane Smith Art   | owner    | Smith          | Jane         |
-....
-
-.Conditions for name detail removal
-* There is no `position` value. If there is a position, we assume the name details indicate a person holding that position within the organization. These name details will later be extracted out to separate person names.
-** The "Jane Smith Art" row does not have name details removed. 
-* The values of all core name detail fields are substrings of the preferred name
-** "Doe Associates" is retained as `lastname` because that string cannot be found in "Doe & Associates"
-** "Poe Press" can be found in "Poe Press, Inc.", but "Incorporated" cannot, so no name details are removed
-
-==== Add `check_org_names` column
-
-Set its value to "y" if:
-
-* there is an `institution` value remaining (i.e. some organization name not the same as the preferred or non-preferred name is recorded for the organization)
-* non-preferred name of organization is different from the preferred name
-
-=== Add `namedata` field
-
-This field concatenates the values from the following fields: `displayname`, `alphasort`, `lastname`, `firstname`, `middlename`, `institution`
-
-It is used to produce a separate report of Constituent table rows that will be dropped from the migration because they have no name information. Each CS authority requires a name value. 
-
-=== Remove non-preferred form of name unless client opts to migrate these as variant names
-
-The default is to not create variant names in CS from the non-preferred form of name.
-
-Usually the non-preferred name is the exact same name as the preferred name, in a different order.
-
-If the non-preferred form of name is not migrating, we don't need to look at it or deal with it in the cleanup steps.
-
-=== Merge in date data
-
-Details on how date data from the Constituents and ConDates tables are processed into a mergeable format are covered in xref:con_dates.adoc[ConDates table processing].
-
-The `birth_foundation_date`, `death_dissolution_date`, and `datenote` fields are merged in from the results of that processing.
-
-=== Append date values to names (optionally)
-
-The default is to do this for normalized-duplicate names. In this case, we:
-
-* produce normalized form of name
-* combine normalized form of name with normalized authority type
-* identify duplicates on that combined value
-* append date values to the duplicate rows
-* remove normalized, combined, and duplicate flag values
-
-See xref:../mapping_options/constituents.adoc[Constituent mapping options] for other options.
-
-=== Flag duplicate names
-
-* produce normalized form of name
-* combine normalized form of name with normalized authority type
-* flag duplicates on that combined value
-
-This flag is used to produce a separate duplicate name report.
-
-=== Optional field values converted/mapped
-
-By default these fields are omitted from migration, since the CS data model does not support any functionality based on them: `approved`, `active`, `isstaff`, `isprivate`.
-
-If default migration settings are used, we delete these fields.
-
-If a client specifies a need to migrate any of these fields, we handle them as specified in xref:../mapping_options/constituents.adoc[Constituent mapping options].
-
+[NOTE]
+====
+Currently no TMS migration we have handled has involved multiple registration sets per accession lot, so the existing codebase does not handle creation of multiple Acquisition procedures per accession lot due to multiple sets in the lot. We can add that functionality should we work on a migration that needs it.
+====
