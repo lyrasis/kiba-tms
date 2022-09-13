@@ -1,0 +1,75 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= ConAltNames structure
+
+The ConAltNames table stores information about alternate names for Constituents. However, given the vast diversity in type and patterns of data I have seen recorded in ConAltNames in different client datasets, it seems like TMS is not very descriptive or strict about this table's use.
+
+== Basic idea of available data and assumptions made
+
+NOTE: Many columns are omitted for simplicity
+
+.Constituents table
+....
+| constituentid | constituenttype | displayname | alphasort    | firstname | lastname | defaultnameid |
+|---------------+-----------------+-------------+--------------+-----------+----------+---------------|
+|            23 | Individual      | Diana Booth | Booth, Diana | Diana     | Booth    |            52 |
+....
+
+.ConAltNames table
+....
+| altnameid | constituentid | altnametype | displayname | alphasort    | firstname | lastname |
+|-----------+---------------+-------------+-------------+--------------+-----------+----------|
+|        52 |            23 |             | Diana Booth | Booth, Diana | Diana     | Booth    |
+|       142 |            23 | birth name  | Diana Gray  | Gray, Diana  | Diana     | Gray     |
+....
+
+We take what the TMS data dictionary says/implies literally and make a basic assumptions that:
+
+* Each row in the Constitutents table represents a distinct person or organization entity
+* Each row in the ConAltNames table represents an alternate name for an entity
+* We assume the name recorded in the Constituents table is the primary/preferred form of name for an entity
+
+That is what the data shown above expresses.
+
+* `constituenttype` is "Individual", which means a Person authority record is created in CS.
+* We remove the row for `altnameid` = "52" from the ConAltNames table since it duplicates values in the Constituents table.
+* "Diana Booth" and "Diana Gray" are two names used by the same person. Only one Person authority is created for this person.
+* "Diana Booth" will be https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc#mainprimarypreferred-term[the main/primary/preferred term] in the CS Person authority record
+* "Diana Gray" will be https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc#variant-terms[a variant name] in the CS Person authority record
+
+However, there is often also data like the following:
+
+.Constituents table
+....
+| constituentid | constituenttype | displayname  | firstname | lastname | defaultnameid |
+|---------------+-----------------+--------------+-----------+----------+---------------|
+|            18 | Individual      | Carol Turner | Carol     | Turner   |           100 |
+|            19 | Business        | Acme Company |           |          |            92 |
+|            23 | Individual      | Diana Booth  | Diana     | Booth    |            52 |
+....
+
+.ConAltNames table (rows matching Constituents names removed)
+....
+| altnameid | constituentid | altnametype    | displayname  | firstname | lastname | position          |
+|-----------+---------------+----------------+--------------+-----------+----------+-------------------|
+|       127 |            19 | Contact        | Paul Brown   | Paul      | Brown    | Licensing manager |
+|       142 |            23 | Representative | John Puckett | John      | Puckett  |                   |
+|       143 |            18 |                | Acme Company |           |          | Vice president    |
+....
+
+* Paul Brown is recorded as an alternate name for Acme Company. The Constituents table specifies Acme Company is a Business. This will become an Organization authority in CS. Note that ConAltNames does not allow you to categorize alt names as Individuals/Businesses/etc., probably because an of an assumption that an alternate name for a business would also be a business name. However, if we run our xref:deriving_authority_category_from_name_data.adoc[authority type derivation algorithm] on `altnameid` 127, Paul Brown is categorized as a person.
+* John Puckett is recorded as an alternate name for Diana Booth. These are both persons, but they are not different names used by the same person. John Puckett is a related name to Diana Booth, not an alternate name.
+* In `altnameid` 143, Acme Company is recorded as an alternate name of Carol Turner (individual). The intent of this seems to be to record that Carol is a VP at Acme, "Acme Company" should not be treated as a variant name in the CS Person authority record for "Carol Turner"
+
+A lot of the complexity of ConAltNames data processing aims to disentangle this kind of pattern, which goes against the base assumptions of how the ConAltNames table should work. 
