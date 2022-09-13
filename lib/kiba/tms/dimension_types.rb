@@ -6,15 +6,24 @@ module Kiba
   module Tms
     module DimensionTypes
       extend Dry::Configurable
-      # map values in TMS table to CS measurementUnits optionlist
-      setting :type_mapping,
-        default: {
-          'Height' => 'height',
-          'Width' => 'width',
-          'Depth' => 'depth',
-          'Weight' => 'weight'
-        },
+      extend Tms::AutoConfigurable
+      module_function
+
+      setting :delete_fields,
+        default: %i[unittypeid primaryunitid secondaryunitid system],
         reader: true
+      setting :empty_fields, default: %i[], reader: true
+      
+      setting :type_lookup, default: true, reader: true
+      setting :id_field, default: :dimensiontypeid, reader: true
+      setting :type_field, default: :dimensiontype, reader: true
+      setting :used_in,
+        default: [
+          "Dimensions.#{id_field}",
+          "DimElemTypeXrefs.#{id_field}"
+        ],
+        reader: true
+      setting :mappings, default: {}, reader: true
     end
   end
 end

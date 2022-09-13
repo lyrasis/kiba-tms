@@ -7,33 +7,7 @@ module Kiba
         def initialize(source: :tableid, target: :tablename)
           @source = source
           @target = target
-          @lookup = {
-            '23'=>'Constituents',
-            '47'=>'Exhibitions',
-            '49'=>'ExhObjXrefs',
-            '51'=>'ExhVenuesXrefs',
-            '79'=>'LoanObjXrefs',
-            '81'=>'Loans',
-            '89'=>'ObjAccession',
-            '94'=>'ObjComponents',
-            '95'=>'Conditions',
-            '102'=>'ObjDeaccession',
-            '108'=>'Objects',
-            '126'=>'ObjRights',
-            '143'=>'ReferenceMaster',
-            '187'=>'HistEvents',
-            '189'=>'Sites',
-            '287'=>'TermMasterThes',
-            '318'=>'MediaMaster',
-            '322'=>'MediaRenditions',
-            '345'=>'Shipments',
-            '355'=>'ShipmentSteps',
-            '631'=>'AccessionLot',
-            '632'=>'RegistrationSets',
-            '726'=>'ObjContext',
-            '790'=>'Projects',
-            '792'=>'ConservationReports'
-          }
+          @lookup = Tms.table_lookup
         end
 
         def process(row)

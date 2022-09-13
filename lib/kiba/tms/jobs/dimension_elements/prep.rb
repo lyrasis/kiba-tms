@@ -8,6 +8,8 @@ module Kiba
           extend self
           
           def job
+            return unless Tms::DimensionElements.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__dimension_elements,
@@ -29,8 +31,8 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :origelement,
                 target: :element,
-                mapping: Tms::DimensionElements.element_mapping,
-                fallback_val: 'NEEDS MAPPING',
+                mapping: Tms::DimensionElements.mappings,
+                fallback_val: nil,
                 delete_source: false
             end
           end

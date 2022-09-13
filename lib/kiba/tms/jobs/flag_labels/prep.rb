@@ -24,8 +24,8 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :origlabel,
                 target: :flaglabel,
-                mapping: Tms::FlagLabels.inventory_status_mapping,
-                fallback_val: 'NEEDS MAPPING',
+                mapping: Tms::FlagLabels.mappings,
+                fallback_val: nil,
                 delete_source: false
             end
           end

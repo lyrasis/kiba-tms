@@ -55,6 +55,35 @@ module Kiba
     # TMS tables not used in a given project. Override in project application
     #   These should be tables that are not literally empty. Empty tables are listed in the file found
     #   at Tms.empty_table_list_path
+    setting :table_lookup,
+      default: {
+            '23'=>'Constituents',
+            '47'=>'Exhibitions',
+            '49'=>'ExhObjXrefs',
+            '51'=>'ExhVenuesXrefs',
+            '79'=>'LoanObjXrefs',
+            '81'=>'Loans',
+            '89'=>'ObjAccession',
+            '94'=>'ObjComponents',
+            '95'=>'Conditions',
+            '102'=>'ObjDeaccession',
+            '108'=>'Objects',
+            '126'=>'ObjRights',
+            '143'=>'ReferenceMaster',
+            '187'=>'HistEvents',
+            '189'=>'Sites',
+            '287'=>'TermMasterThes',
+            '318'=>'MediaMaster',
+            '322'=>'MediaRenditions',
+            '345'=>'Shipments',
+            '355'=>'ShipmentSteps',
+            '631'=>'AccessionLot',
+            '632'=>'RegistrationSets',
+            '726'=>'ObjContext',
+            '790'=>'Projects',
+            '792'=>'ConservationReports'
+          },
+      reader: true
     setting :excluded_tables, default: [], reader: true
     # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
     #   this application) vs. EnvironmentalRequirementTypes (as found in another TMS instance). The Hash given as the
@@ -73,12 +102,26 @@ module Kiba
 
     # client-specific cleanup of whitespace, special characters, etc. to be generically applied
     setting :data_cleaner, default: nil, reader: true
+
+    # TMS-internal fields to be deleted
+    setting :tms_fields, default: %i[loginid entereddate gsrowversion], reader: true
+    
     # whether conservation entity data has actually been used/augmented (true) or whether it looks like the
     #   default field data had been populated automatically by TMS (false)
     setting :conservationentity_used, default: false, reader: true
     # if true, do not delete (not assigned) and (not entered) and other similar values from type lookup tables
     #   before merging in
     setting :migrate_no_value_types, default: false, reader: true
+    setting :no_value_type_pattern,
+      default: '^(\(|\[)?(none assigned|not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$',
+      reader: true
+
+    setting :inventory_status_mapping,
+      default: {},
+      reader: true,
+      constructor: ->(value) do
+        value.merge(Tms::FlagLabels.mappings)
+      end
 
     setting :classifications, reader: true do
       # how to map/merge fields from Classifications table into objects

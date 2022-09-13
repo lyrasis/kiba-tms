@@ -469,33 +469,6 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('dimension_elements') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::DimensionElements::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'dimension_elements_unmapped.csv'),
-            desc: 'DimensionElements values needing to be added to Tms::DimensionElements.element_mapping. Non-zero count means work to do!',
-            tags: %i[dimension_elements todochk]
-          }
-        end
-
-        Kiba::Tms.registry.namespace('dimension_types') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::DimensionTypes::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'dimension_types_unmapped.csv'),
-            desc: 'DimensionTypes values needing to be added to Tms::DimensionTypes.type_mapping. Non-zero count means work to do!',
-            tags: %i[dimension_types todochk]
-          }
-        end
-
-        Kiba::Tms.registry.namespace('dimension_units') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::DimensionUnits::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'dimension_units_unmapped.csv'),
-            desc: 'DimensionUnits values needing to be added to Tms::DimensionUnits.unit_mapping. Non-zero count means work to do!',
-            tags: %i[dimension_units todochk]
-          }
-        end
-
         Kiba::Tms.registry.namespace('flag_labels') do
           register :unmapped, {
             creator: Kiba::Tms::Jobs::FlagLabels::Unmapped,
@@ -1171,6 +1144,18 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('obj_accession') do
+          register :linked_lot, {
+            creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_linked_lot.csv'),
+            tags: %i[objaccession setup],
+            desc: 'Rows from which acquisitions will be created using LinkedLot approach'
+          }
+          register :lot_number, {
+            creator: Kiba::Tms::Jobs::ObjAccession::LotNumber,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_lot_number.csv'),
+            tags: %i[objaccession setup],
+            desc: 'Rows from which acquisitions will be created using LotNumber approach'
+          }
           register :one_to_one, {
             creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_one_to_one.csv'),

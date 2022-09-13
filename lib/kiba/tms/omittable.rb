@@ -10,16 +10,27 @@ module Kiba
     #
     # - `extend Dry::Configurable`
     # - define `delete_fields` setting (Array)
-    # - define `empty_fields` setting (Array)
+    # - define `empty_fields` setting (Hash (Array supported for backwards compatibility))
     # - `extend Tms::Omittable`
     module Omittable
       def delete_omitted_fields(hash)
         omitted_fields.each{ |field| hash.delete(field) if hash.key?(field) }
         hash
       end
+
+      def emptyfields
+        return [] unless empty_fields
+
+        case empty_fields.class
+        when Array
+          empty_fields
+        when Hash
+          empty_fields.keys
+        end
+      end
       
       def omitted_fields
-        ( delete_fields + empty_fields ).uniq
+        ( delete_fields + emptyfields ).uniq
       end
 
       def omitting_fields?

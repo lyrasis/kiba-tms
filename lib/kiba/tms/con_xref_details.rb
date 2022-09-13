@@ -5,8 +5,9 @@ require 'dry-configurable'
 module Kiba
   module Tms
     module ConXrefDetails
-      extend MultiTableMergeable
       extend Dry::Configurable
+      extend MultiTableMergeable
+      extend Tableable
 
       setting :target_tables, default: [], reader: true
       

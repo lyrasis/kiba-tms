@@ -5,7 +5,7 @@ module Kiba
     module Transforms
       class DeleteTmsFields
         def initialize
-          @fields = %i[loginid entereddate gsrowversion]
+          @fields = Tms.tms_fields
         end
 
         def process(row)

@@ -6,14 +6,22 @@ module Kiba
   module Tms
     module DimensionElements
       extend Dry::Configurable
-      # map values in TMS table to CS measurementUnits optionlist
-      setting :element_mapping,
-        default: {
-          'Other' => 'other',
-          'Overall' => 'overall',
-          'Storage' => 'storage'
-        },
+      extend Tms::AutoConfigurable
+      module_function
+
+      setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
+      
+      setting :type_lookup, default: true, reader: true
+      setting :id_field, default: :elementid, reader: true
+      setting :type_field, default: :element, reader: true
+      setting :used_in,
+        default: [
+          "DimElemTypeXrefs.#{id_field}",
+          "DimItemElemXrefs.#{id_field}"
+        ],
         reader: true
+      setting :mappings, default: {}, reader: true
     end
   end
 end

@@ -3,15 +3,17 @@
 module Kiba
   module Tms
     module Jobs
-      module DimensionElements
-        module Unmapped
+      module ObjAccession
+        module LinkedLot
           module_function
 
           def job
+            return unless Tms::ObjAccession.used
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__dimension_elements,
-                destination: :dimension_elements__unmapped
+                source: :tms__obj_accession,
+                destination: :obj_accession__linked_lot
               },
               transformer: xforms
             )
@@ -19,8 +21,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :element, value: 'NEEDS MAPPING'
-           end
+              transform FilterRows::FieldPopulated, action: :keep, field: :acquisitionlotid
+            end
           end
         end
       end
