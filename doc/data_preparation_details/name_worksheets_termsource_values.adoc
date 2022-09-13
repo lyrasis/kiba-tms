@@ -17,6 +17,7 @@ In the name type cleanup worksheet (phase 1 of name cleanup), you will only see 
 
 Phase 2 allows you to preview and make changes to related terms, so it contains a `relation_type` column with `_main term` and other values.
 
+toc::[]
 
 == TMS Constituents patterns
 
