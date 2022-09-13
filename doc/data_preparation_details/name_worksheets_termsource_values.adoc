@@ -1,0 +1,104 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Name worksheets: `termsource` values and processing
+
+In the name type cleanup worksheet (phase 1 of name cleanup), you will only see terms with `relation_type` = `_main term`. Because only main terms are included, there is no `relation_type` column in this phase.
+
+Phase 2 allows you to preview and make changes to related terms, so it contains a `relation_type` column with `_main term` and other values.
+
+
+== TMS Constituents patterns
+
+== TMS ConAltNames patterns
+See xref:conaltnames_structure.adoc[ConAltNames structure] for background.
+
+At the point where the following termsource values are determined, we have already:
+
+* removed ConAltNames rows that duplicate the data in the Constituents table
+* run the xref:deriving_authority_category_from_name_data.adoc[authority type derivation algorithm] to categorize (if possible) each alt name as Person or Organization
+
+Main name:: The name recorded in Constituents table
+Alt name:: A name recorded in ConAltNames table and linked to a main name
+
+=== TMS ConAltNames.typematch
+
+.https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/name_compile/select_can_typematch.rb[Category selection criteria]
+* Main name and alt name are both categorized as the same type (person, organzation, or uncategorized)
+* The preferred form of the alt name is not a preferred form of name in the Constituents table
+
+Names in this source category https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/name_compile/determine_typematch_treatment.rb[get further categorized for treatment] as follows:
+
+==== `:no_nametype_position`
+
+.Subcategory selection criteria
+* Alt name row has no `altnametype` value
+* Alt name row has a `position` field value
+
+Default treatment:: `:separate_name`
+Alternate treatment(s) available:: `:variant`
+
+(Find-in-page for `altname_typematch_no_nametype_position` in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/name_compile.rb[the migration configuration].)
+
+==== `:no_nametype_no_position`
+
+.Subcategory selection criteria
+* Alt name row has no `altnametype` value
+* Alt name row has no `position` field value
+
+Default treatment:: `:variant`
+Alternate treatment(s) available:: `:separate_name`
+
+(Find-in-page for `altname_typematch_no_nametype_no_position` in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/name_compile.rb[the migration configuration].)
+
+==== `:separate_name`
+
+.Subcategory selection criteria
+* Alt name row has an `altnametype` value
+* The `altnametype` value does not match any of the terms that indicate a variant name (Find-in-page for `altname_typematch_variant_nametypes` in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/name_compile.rb[the migration configuration] for list of terms.)
+
+==== `:variant`
+
+.Subcategory selection criteria
+* Alt name row has an `altnametype` value
+* The `altnametype` value matches one of the terms indicating a variant name (Find-in-page for `altname_typematch_variant_nametypes` in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/name_compile.rb[the migration configuration] for list of terms.)
+
+List of values to be categorized as variants can be customized per client migration project.
+
+=== TMS ConAltNames.typematch_established
+
+.https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/name_compile/select_can_typematch_established.rb[Category selection criteria]
+* Main name and alt name are categorized as the same type (person or organization)
+* The preferred form of the alt name is a preferred form of name in the Constituents table (i.e. it matches another constituent name, not the one it is linked to as an alt name)
+
+=== TMS ConAltNames.typemismatch_main_org
+
+.https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/name_compile/select_can_typemismatch_main_org.rb[Category selection criteria]
+* Main name (Constituents table) is categorized as an Organization
+* Alt name is categorized as a Person
+* The preferred form of the alt name is not a preferred form of name in the Constituents table
+
+=== TMS ConAltNames.typemismatch_main_person
+
+.https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/name_compile/select_can_typemismatch_main_person.rb[Category selection criteria]
+* Main name (Constituents table) is categorized as an Person
+* Alt name is categorized as an Organization
+* The preferred form of the alt name is not a preferred form of name in the Constituents table
+
+== Pattern for other tables
+
+TMS + table name + column names, separated by "."
+
+TMS Loans.contact:: The name was extracted from the `contact` column of the Loans table
+
+TMS Loans.approvedby.requestedby:: The name was extracted from the `approvedby` and `requestedby` columns of the Loans table
