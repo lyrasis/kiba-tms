@@ -20,6 +20,7 @@ Phase 2 allows you to preview and make changes to related terms, so it contains 
 toc::[]
 
 == TMS Constituents patterns
+(todo)
 
 == TMS ConAltNames patterns
 See xref:conaltnames_structure.adoc[ConAltNames structure] for background.
