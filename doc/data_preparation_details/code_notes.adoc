@@ -13,7 +13,27 @@ endif::[]
 
 = Code notes
 
+== Code organization
+Under `/lib/kiba/tms`:
+
+`.rb` files:: Almost all of these are configuration modules named for the TMS database table, CS record type, or other processing category the config is intended for. For example, `obj_accessions.rb` defines `Tms::ObjAccessions`, which extends `Dry::Configurable`. Exceptions to this pattern are listed below.
+`data`:: Value objects to pass data around
+`jobs`:: Jobs define (1) input sources, destinations, and lookups; and (2) transformations to be applied to the source data in order to create the destination. First level is namespaces that match up to the configuration modules defined in `/lib/kiba/tms/*.rb` files. For example, jobs to process ObjAccessions table data are in `lib/kiba/tms/jobs/obj_accessions` directory and the namespace `Tms::Jobs::ObjAccessions`
+`mixins`:: Modules used to compose behaviors elsewhere
+`services`:: `call`-able service objects. These operate on discrete data values, or on individual modules/classes. Contrast with `transforms`, which take a data row and return a data row, and `utils`, which run services on aggregates of modules/classes. Services specific to a given TMS database table, CS record type, or other processing category will be nested under a namespace consistent with configs and jobs.
+`transforms`:: Data row transformation classes. Transforms specific to a given TMS database table, CS record type, or other processing category will be nested under a namespace consistent with configs and jobs.
+`utils`:: `call`-able service objects that aggregate running individual `service` service objects across all configs, jobs, tables, etc.
+
+== Extending configured jobs
+
+Add the following to the `lib/my_project.rb` file, before `Kiba::Tms::RegistryData.register`.
+
+`Kiba::Tms::Jobs.extend_configured_jobs`
+
+This adds a `:config` method to all job-definition modules matching a top-level config namespace.
+
 == binding job namespace config into `Kiba.job_segment`
+All jobs 
 
 Model usage: `Kiba::Tms::Jobs::TermMasterThes.xforms`
 
@@ -21,9 +41,9 @@ Model usage: `Kiba::Tms::Jobs::TermMasterThes.xforms`
 [source, ruby]
 ----
 def xforms
-  b = binding
+  bind = binding
   Kiba.job_segment do
-    config = b.receiver.send(:config)
+    config = bind.receiver.send(:config)
     transform Tms::Transforms::DeleteTmsFields
     if config.omitting_fields?
       transform Delete::Fields, fields: config.omitted_fields
