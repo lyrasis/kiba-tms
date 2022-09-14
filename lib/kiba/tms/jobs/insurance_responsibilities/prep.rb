@@ -5,24 +5,18 @@ module Kiba
     module Jobs
       module InsuranceResponsibilities
         module Prep
-          extend self
+          module_function
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__insurance_responsibilities,
                 destination: :prep__insurance_responsibilities
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: Tms::InsuranceResponsibilities.delete_fields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :responsibility
-            end
           end
         end
       end
