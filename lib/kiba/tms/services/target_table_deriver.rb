@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require 'dry/monads'
+
 module Kiba
   module Tms
     module Services
       class TargetTableDeriver
+        include Dry::Monads[:result]
+        
         def self.call(...)
           self.new(...).call
         end

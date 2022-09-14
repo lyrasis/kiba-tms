@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'dry/monads'
+require 'dry/monads/do'
 
 module Kiba
   module Tms
     module Services
       class InitialTypeMappingDeriver
+        include Dry::Monads[:result]
+        include Dry::Monads::Do.for(:call)
+        
         def self.call(...)
           self.new(...).call
         end
@@ -17,38 +22,41 @@ module Kiba
           @type_field = mod.type_field
           @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
           @default_mapping = mod.mappings.empty? ? false : true
+          @setting_name = "#{mod}.config.mappings"
         end
 
         def call
-          return nil if cleaned.empty?
+          clean = yield(cleaned)
+          hash = yield(mapping_hash(clean))
+          return nil if clean.empty?
 
           if default_mapping
-            "#{mod}.config.mapping = #{mod.mappings.merge(mapping_hash)}"
+            Success("#{setting_name} = #{mod.mappings.merge(hash)}")
           else
-            "#{mod}.config.mapping = #{mapping_hash}"
+            Success("#{setting_name} = #{hash}")
           end
         end
 
         private
 
-        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping
+        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping, :setting_name
 
         def cleaned
-          return @cleaned if instance_variable_defined?(:@cleaned)
-          
-          all = vals_as_rows.map{ |row| no_val_xform.process(row) }
+          result = vals_as_rows.map{ |row| no_val_xform.process(row) }
             .compact
             .map{ |row| row[type_field] }
-          if default_mapping
-            instance_variable_set(:@cleaned, all - mod.mappings.keys)
-          else
-            instance_variable_set(:@cleaned, all)
-          end
-          @cleaned
+        rescue StandardError => err
+          Failure(setting_name, err)
+        else
+          default_mapping ? Success(result - mod.mappings.keys) : Success(result)
         end
 
-        def mapping_hash
-          cleaned.map{ |val| [val, val.downcase] }.to_h
+        def mapping_hash(values)
+          result = values.map{ |val| [val, val.downcase] }.to_h
+        rescue StandardError => err
+          Failure(setting_name, err)
+        else
+          Success(result)
         end
 
         def used_val_ids

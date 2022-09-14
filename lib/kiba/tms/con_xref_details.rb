@@ -6,8 +6,11 @@ module Kiba
   module Tms
     module ConXrefDetails
       extend Dry::Configurable
+      extend Tms::Mixins::AutoConfigurable
       extend Tms::Mixins::MultiTableMergeable
-      extend Tms::Mixins::Tableable
+
+      setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
 
       setting :target_tables, default: [], reader: true
       

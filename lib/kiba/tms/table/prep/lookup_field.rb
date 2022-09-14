@@ -58,6 +58,7 @@ module Kiba
             loc_handlers: :handlerid,
             loc_purposes: :locpurposeid,
             locations: :locationid,
+            media_types: :mediatypeid,
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,
             obj_components: :component_id,
