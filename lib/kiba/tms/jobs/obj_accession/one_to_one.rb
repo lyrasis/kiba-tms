@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::ObjAccession.used
+            return unless config.used?
             
             Kiba::Extend::Jobs::Job.new(
               files: {

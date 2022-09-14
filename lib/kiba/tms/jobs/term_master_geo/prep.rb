@@ -3,25 +3,27 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjAccession
-        module LinkedLot
+      module TermMasterGeo
+        module Prep
           module_function
-
+          
           def job
             return unless config.used?
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_accession,
-                destination: :obj_accession__linked_lot
+                source: :tms__term_master_geo,
+                destination: :prep__term_master_geo
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :acquisitionlotid
+              config = bind.receiver.send(:config)
+              transform Tms::Transforms::DeleteTmsFields
             end
           end
         end

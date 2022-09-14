@@ -20,7 +20,9 @@ module Kiba
           end
 
           def xforms
+            bind = binding
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
