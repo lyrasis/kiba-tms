@@ -45,6 +45,7 @@ module Kiba
             dimension_types: :dimensiontypeid,
             dimension_units: :unitid,
             dimensions: :dimitemelemxrefid,
+            disposition_methods: :dispmethodid,
             email_types: :emailtypeid,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
