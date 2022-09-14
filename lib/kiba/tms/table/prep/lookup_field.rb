@@ -82,7 +82,8 @@ module Kiba
             text_entries: :tablerowid,
             text_types: :texttypeid,
             thes_xref_types: :thesxreftypeid,
-            title_types: :titletypeid
+            title_types: :titletypeid,
+            treatment_priorities: :priorityid
           }
         end
       end
