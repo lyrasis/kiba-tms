@@ -56,6 +56,7 @@ module Kiba
             loan_statuses: :loanstatusid,
             loc_approvers: :approverid,
             loc_handlers: :handlerid,
+            loc_purposes: :locpurposeid,
             locations: :locationid,
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,
