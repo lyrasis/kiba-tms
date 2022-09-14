@@ -20,13 +20,15 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[compstatforecolor compstatbackcolor available system systemid]
+              if Tms::ObjCompStatuses.omitting_fields?
+                transform Delete::Fields, fields: Tms::ObjCompStatuses.omitted_fields
+              end
               transform Rename::Field, from: :objcompstatus, to: :origstatus
               transform Replace::FieldValueWithStaticMapping,
                 source: :origstatus,
                 target: :objcompstatus,
-                mapping: Tms::ObjCompStatuses.inventory_status_mapping,
-                fallback_val: 'NEEDS MAPPING',
+                mapping: Tms::ObjCompStatuses.mappings,
+                fallback_val: nil,
                 delete_source: false
             end
           end

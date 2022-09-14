@@ -27,8 +27,8 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :titletype,
                 target: :titletype,
-                mapping: Tms::TitleTypes.type_mapping,
-                fallback_val: 'UNMAPPED'
+                mapping: Tms::TitleTypes.mappings,
+                fallback_val: nil
             end
           end
         end

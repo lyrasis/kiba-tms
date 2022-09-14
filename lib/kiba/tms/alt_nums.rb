@@ -6,8 +6,8 @@ module Kiba
   module Tms
     module AltNums
       extend Dry::Configurable
-      extend MultiTableMergeable
-      extend Tableable
+      extend Tms::Mixins::MultiTableMergeable
+      extend Tms::Mixins::Tableable
       module_function
 
       setting :target_tables, default: %w[Objects], reader: true

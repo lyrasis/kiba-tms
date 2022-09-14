@@ -26,7 +26,7 @@ module Kiba
         def gather_configurable
           constants = Kiba::Tms.constants.select do |constant|
             evaled = Kiba::Tms.const_get(constant)
-            evaled.is_a?(Module) && evaled.ancestors.any?(Kiba::Tms::Tableable)
+            evaled.is_a?(Module) && evaled.ancestors.any?(Kiba::Tms::Mixins::Tableable)
           end
           constants.map{ |const| Kiba::Tms.const_get(const) }
         end

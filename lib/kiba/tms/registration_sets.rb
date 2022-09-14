@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module RegistrationSets
       extend Dry::Configurable
-      extend Tms::Omittable
+      extend Tms::Mixins::Omittable
       # whether or not table is used
       setting :used, default: ->{ Tms::Table::List.include?('RegistrationSets') }, reader: true
       # Fields beyond DeleteTmsFields general fields to delete

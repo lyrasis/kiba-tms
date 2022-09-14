@@ -3,17 +3,17 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjCompStatuses
-        module Unmapped
+      module TermMaster
+        module Prep
           module_function
 
           def job
-            return if Tms.excluded_tables.any?('ObjCompStatuses')
+            return unless config.used?
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__obj_comp_statuses,
-                destination: :obj_comp_statuses__unmapped
+                source: :tms__term_master,
+                destination: :prep__term_master
               },
               transformer: xforms
             )
@@ -21,8 +21,11 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :objcompstatus, value: 'NEEDS MAPPING'
-           end
+              transform Tms::Transforms::DeleteTmsFields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+            end
           end
         end
       end

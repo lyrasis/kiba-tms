@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module AccessionMethods
       extend Dry::Configurable
-      extend Tms::AutoConfigurable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
       setting :delete_fields, default: %i[], reader: true
@@ -17,8 +17,8 @@ module Kiba
       setting :type_field, default: :accessionmethod, reader: true
       setting :used_in,
         default: [
-          'ObjAccession.accessionmethodid',
-          'RegistrationSets.accessionmethodid'
+          "ObjAccession.#{id_field}",
+          "RegistrationSets.#{id_field}"
         ],
         reader: true
       setting :mappings, default: {}, reader: true

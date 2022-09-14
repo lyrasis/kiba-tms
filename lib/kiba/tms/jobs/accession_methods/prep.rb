@@ -21,10 +21,13 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteNoValueTypes, field: :accessionmethod
-
+              transform Rename::Field, from: :accessionmethod, to: :orig_accessionmethod
               transform Replace::FieldValueWithStaticMapping,
-                source: :accessionmethod,
-                mapping: Tms::AccessionMethods.mappings
+                source: :orig_accessionmethod,
+                target: :accessionmethod,
+                mapping: Tms::AccessionMethods.mappings,
+                fallback_val: nil,
+                delete_source: false
             end
           end
         end

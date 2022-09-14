@@ -5,7 +5,7 @@ module Kiba
     module Jobs
       module AltNums
         module ForReferenceMaster
-          extend ForTableable
+          extend Tms::Mixins::ForTable
           module_function
 
           def job

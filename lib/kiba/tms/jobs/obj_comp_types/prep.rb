@@ -20,13 +20,15 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[comptypemnemonic]
+              if Tms::ObjCompTypes.omitting_fields?
+                transform Delete::Fields, fields: Tms::ObjCompTypes.omitted_fields
+              end
               transform Rename::Field, from: :objcomptype, to: :origtype
               transform Replace::FieldValueWithStaticMapping,
                 source: :origtype,
                 target: :objcomptype,
-                mapping: Tms::ObjCompTypes.type_mapping,
-                fallback_val: 'NEEDS MAPPING',
+                mapping: Tms::ObjCompTypes.mappings,
+                fallback_val: nil,
                 delete_source: false
             end
           end

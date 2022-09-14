@@ -5,13 +5,22 @@ require 'dry-configurable'
 module Kiba
   module Tms
     module LoanObjStatuses
-      module_function
-      
       extend Dry::Configurable
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Tables::List.include?('LoanObjStatuses') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
-      setting :delete_fields, default: %i[system onview], reader: true
+      extend Tms::Mixins::AutoConfigurable
+      module_function
+
+      setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
+      
+      setting :type_lookup, default: true, reader: true
+      setting :id_field, default: :loanobjectstatusid, reader: true
+      setting :type_field, default: :loanobjectstatus, reader: true
+      setting :used_in,
+        default: [
+          "LoanObjXrefs.#{id_field}"
+        ],
+        reader: true
+      setting :mappings, default: {}, reader: true
     end
   end
 end

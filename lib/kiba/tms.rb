@@ -21,7 +21,6 @@ module Kiba
     
     extend Dry::Configurable
 
-
     def loader
       @loader ||= setup_loader
     end
@@ -29,6 +28,7 @@ module Kiba
     private def setup_loader
               puts "LOADING KIBA-TMS"
               @loader = Zeitwerk::Loader.new
+#              @loader.log!
               @loader.push_dir(File.expand_path(__FILE__).delete_suffix('.rb'), namespace: Kiba::Tms)
               @loader.inflector.inflect(
                 'classification_xrefs' => 'ClassificationXRefs',
@@ -44,7 +44,7 @@ module Kiba
     def reload!
       @loader.reload
     end
-    
+
     # you will want to override the following in any application using this extension
     setting :empty_table_list_path, default: "#{__dir__}/empty_tables.txt", reader: true
     setting :tms_table_dir_path, default: "#{__dir__}/data/tms", reader: true
@@ -121,6 +121,8 @@ module Kiba
       reader: true,
       constructor: ->(value) do
         value.merge(Tms::FlagLabels.mappings)
+          .merge(Tms::ObjCompStatuses.mappings)
+          .merge(Tms::ObjectStatuses.mappings)
       end
 
     setting :classifications, reader: true do

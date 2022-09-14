@@ -20,7 +20,9 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[inpermanentjurisdiction system]
+              if Tms::ObjectStatuses.omitting_fields?
+                transform Delete::Fields, fields: Tms::ObjectStatuses.omitted_fields
+              end
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :objectstatus,
                 find: '\(unknown\)',
@@ -29,8 +31,8 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :origstatus,
                 target: :objectstatus,
-                mapping: Tms::ObjectStatuses.inventory_status_mapping,
-                fallback_val: 'NEEDS MAPPING',
+                mapping: Tms::ObjectStatuses.mappings,
+                fallback_val: nil,
                 delete_source: false
             end
           end

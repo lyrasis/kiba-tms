@@ -8,7 +8,7 @@ module Kiba
     #   ConAddress, ConAltNames, ConDates, ConEMail, ConPhones, ConTypes, Constituents
     module Constituents
       extend Dry::Configurable
-      extend Omittable
+      extend Tms::Mixins::Omittable
 
       module_function
       
@@ -29,16 +29,6 @@ module Kiba
         reader: true
       setting :empty_fields, default: %i[], reader: true
 
-      setting :type_mapping,
-        default: {
-            'Business' => 'Organization',
-            'Individual' => 'Person',
-            'Foundation' => 'Organization',
-            'Institution' => 'Organization',
-            'Organization' => 'Organization',
-            'Venue' => 'Organization'
-          },
-        reader: true
       setting :untyped_default, default: 'Person', reader: true
       
       # map these boolean, coded fields to text note values?

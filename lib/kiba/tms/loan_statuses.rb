@@ -6,12 +6,21 @@ module Kiba
   module Tms
     module LoanStatuses
       extend Dry::Configurable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Table::List.include?('LoanStatuses') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
+      
+      setting :type_lookup, default: true, reader: true
+      setting :id_field, default: :loanstatusid, reader: true
+      setting :type_field, default: :loanstatus, reader: true
+      setting :used_in,
+        default: [
+          "Loans.#{id_field}"
+        ],
+        reader: true
+      setting :mappings, default: {}, reader: true
     end
   end
 end

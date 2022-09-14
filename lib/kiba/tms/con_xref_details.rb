@@ -6,8 +6,8 @@ module Kiba
   module Tms
     module ConXrefDetails
       extend Dry::Configurable
-      extend MultiTableMergeable
-      extend Tableable
+      extend Tms::Mixins::MultiTableMergeable
+      extend Tms::Mixins::Tableable
 
       setting :target_tables, default: [], reader: true
       

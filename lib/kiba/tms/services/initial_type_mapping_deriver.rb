@@ -16,20 +16,35 @@ module Kiba
           @id_field = mod.id_field
           @type_field = mod.type_field
           @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
+          @default_mapping = mod.mappings.empty? ? false : true
         end
 
         def call
-          "#{mod}.config.mapping = #{mapping_hash}"
+          return nil if cleaned.empty?
+
+          if default_mapping
+            "#{mod}.config.mapping = #{mod.mappings.merge(mapping_hash)}"
+          else
+            "#{mod}.config.mapping = #{mapping_hash}"
+          end
         end
 
         private
 
-        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform
+        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping
 
         def cleaned
-          vals_as_rows.map{ |row| no_val_xform.process(row) }
+          return @cleaned if instance_variable_defined?(:@cleaned)
+          
+          all = vals_as_rows.map{ |row| no_val_xform.process(row) }
             .compact
             .map{ |row| row[type_field] }
+          if default_mapping
+            instance_variable_set(:@cleaned, all - mod.mappings.keys)
+          else
+            instance_variable_set(:@cleaned, all)
+          end
+          @cleaned
         end
 
         def mapping_hash

@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module DimensionElements
       extend Dry::Configurable
-      extend Tms::AutoConfigurable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
       setting :delete_fields, default: %i[], reader: true

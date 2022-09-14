@@ -14,7 +14,7 @@ module Kiba
           
           def process(row)
             type = row[:altauthtype]
-            type == 'Person' ? person_row(row) : org_row(row)
+            type.start_with?('Person') ? person_row(row) : org_row(row)
             nil
           end
           

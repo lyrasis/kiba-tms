@@ -30,7 +30,8 @@ module Kiba
             evaled.is_a?(Module) &&
               evaled.ancestors.any?(Dry::Configurable) &&
               used?(evaled) &&
-              evaled.config.values.key?(:type_lookup)
+              evaled.config.values.key?(:type_lookup) &&
+              evaled.config.values.key?(:mappings)
           end
           constants.map{ |const| Kiba::Tms.const_get(const) }
         end

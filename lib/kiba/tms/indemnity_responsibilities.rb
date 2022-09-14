@@ -6,12 +6,11 @@ module Kiba
   module Tms
     module IndemnityResponsibilities
       extend Dry::Configurable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Table::List.include?('IndemnityResponsibilities') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
       setting :delete_fields, default: %i[system], reader: true
+      setting :empty_fields, default: %i[], reader: true
     end
   end
 end

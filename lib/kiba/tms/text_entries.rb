@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module TextEntries
       module_function
-      extend MultiTableMergeable
+      extend Tms::Mixins::MultiTableMergeable
       extend Dry::Configurable
       # whether or not table is used
       setting :used, default: ->{ Tms::Table::List.include?('TextEntries') }, reader: true

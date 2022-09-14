@@ -469,15 +469,6 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('flag_labels') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::FlagLabels::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'flag_labels_unmapped.csv'),
-            desc: 'FlagLabel values needing to be added to Tms::FlagLabels.inventory_status_mapping. Non-zero count means work to do!',
-            tags: %i[flag_labels todochk]
-          }
-        end
-        
         Kiba::Tms.registry.namespace('loan_obj_xrefs') do
           register :by_obj, {
             creator: Kiba::Tms::Jobs::LoanObjXrefs::Prep,
@@ -656,7 +647,7 @@ module Kiba
 
         Kiba::Tms.registry.namespace('media_files') do
           register :file_names, {
-            creator: Kiba::Tms::Jobs::MediaFiles.method(:file_names),
+            creator: Kiba::Tms::Jobs::MediaFiles::FileNames,
             path: File.join(Kiba::Tms.datadir, 'reports', 'media_file_names.csv'),
             desc: 'Media file names',
             tags: %i[mediafiles reports]
@@ -1164,24 +1155,6 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('obj_comp_statuses') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::ObjCompStatuses::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_comp_statuses_unmapped.csv'),
-            tags: %i[obj_components obj_comp_statuses todochk],
-            desc: 'Non-zero count means work to do!'
-          }
-        end
-
-        Kiba::Tms.registry.namespace('obj_comp_types') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::ObjCompTypes::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_comp_types_unmapped.csv'),
-            tags: %i[obj_components obj_comp_types todochk],
-            desc: 'Non-zero count means work to do!'
-          }
-        end
-        
         Kiba::Tms.registry.namespace('obj_components') do
           register :with_object_numbers, {
             desc: %q{Merges in the human-readable :objectnumber value for each row; Flags "top objects", i.e. not separate components, i.e. :objectnumber = :componentnumber; Adds :existingobject field, which, if populated, means there is an object in Objects table with the same ID as the component (this is expected for "top objects" but not other rows.},
@@ -1197,12 +1170,6 @@ module Kiba
                  component_type objcompstatus active
                  physdesc
                 ] }
-          }
-          register :unhandled, {
-            creator: Kiba::Tms::Jobs::ObjComponents::Unhandled,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_components_unhandled_fields.csv'),
-            tags: %i[obj_components todochk],
-            desc: 'Rows where any fields expected to be empty are not. These fields are not yet handled by the code, so non-zero count means work to do!'
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
@@ -1275,15 +1242,6 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports', 'obj_titles_note_review.csv'),
             desc: 'Object title notes for client review/cleanup',
             tags: %i[obj_titles objects postmigcleanup]
-          }
-        end
-        
-        Kiba::Tms.registry.namespace('object_statuses') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::ObjectStatuses::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'object_statuses_unmapped.csv'),
-            desc: 'ObjectStatuses values that need to be added to project Tms::ObjectStatuses.inventory_status_mapping. If non-zero count, there is work to do!',
-            tags: %i[object_statuses todochk]
           }
         end
 
@@ -1467,15 +1425,6 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('title_types') do
-          register :unmapped, {
-            creator: Kiba::Tms::Jobs::TitleTypes::Unmapped,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'title_types_unmapped.csv'),
-            tags: %i[title_types todochk],
-            desc: 'Non-zero value means work to do in TitleTypes::Prep'
-          }
-        end
-        
         Kiba::Tms.registry.namespace('works') do
           register :compiled, {
             creator: Kiba::Tms::Jobs::Works::Compiled,

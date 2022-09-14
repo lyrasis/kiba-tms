@@ -5,10 +5,22 @@ require 'dry-configurable'
 module Kiba
   module Tms
     module TitleTypes
-      module_function
       extend Dry::Configurable
+      extend Tms::Mixins::AutoConfigurable
+      module_function
 
-      setting :type_mapping, default: {}, reader: true
+      setting :delete_fields, default: %i[], reader: true
+      setting :empty_fields, default: %i[], reader: true
+      
+      setting :type_lookup, default: true, reader: true
+      setting :id_field, default: :titletypeid, reader: true
+      setting :type_field, default: :titletype, reader: true
+      setting :used_in,
+        default: [
+          "ObjTitles.#{id_field}"
+        ],
+        reader: true
+      setting :mappings, default: {}, reader: true
     end
   end
 end

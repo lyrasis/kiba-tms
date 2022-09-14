@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module DimensionTypes
       extend Dry::Configurable
-      extend Tms::AutoConfigurable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
       setting :delete_fields,

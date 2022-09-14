@@ -3,17 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjCompTypes
-        module Unmapped
+      module MediaFiles
+        module FileNames
           module_function
-
+          
           def job
-            return if Tms.excluded_tables.any?('ObjCompTypes')
-            
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__obj_comp_types,
-                destination: :obj_comp_types__unmapped
+                source: :tms__media_files,
+                destination: :media_files__file_names
               },
               transformer: xforms
             )
@@ -21,8 +19,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :objcomptype, value: 'NEEDS MAPPING'
-           end
+              transform Delete::FieldsExcept, keepfields: %i[filename]
+              transform FilterRows::FieldPopulated, action: :keep, field: :filename
+            end
           end
         end
       end

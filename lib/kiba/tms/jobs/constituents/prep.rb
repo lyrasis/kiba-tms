@@ -19,7 +19,8 @@ module Kiba
           end
 
           def lookups
-            base = %i[prep__con_types]
+            base = []
+            base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
             base
           end
@@ -29,37 +30,24 @@ module Kiba
               prefname = Tms::Constituents.preferred_name_field
               
               transform Tms::Transforms::DeleteTmsFields
-
-              empty_fields = Tms::Constituents.empty_fields
-              unless empty_fields.empty?
-                empty_fields.each do |field|
-                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
-                end
-              end
-
-              to_del = Tms::Constituents.omitted_fields
-              unless to_del.empty?
-                transform Delete::Fields, fields: to_del
+              if Tms::Constituents.omitting_fields?
+                transform Delete::Fields, fields: Tms::Constituents.omitted_fields
               end
               
               transform Delete::FieldValueContainingString, fields: %i[defaultdisplaybioid], match: '-1'
-              
-              transform Merge::MultiRowLookup,
-                keycolumn: :constituenttypeid,
-                lookup: prep__con_types,
-                fieldmap: {constituenttype: :constituenttype}
+
+              if Tms::ConTypes.used?
+                transform Merge::MultiRowLookup,
+                  keycolumn: :constituenttypeid,
+                  lookup: prep__con_types,
+                  fieldmap: {constituenttype: :constituenttype}
+              end
               transform Delete::Fields, fields: :constituenttypeid
 
               if Tms::Constituents.prep_transform_pre
                 transform Tms::Constituents.prep_transform_pre
               end
               
-              transform Replace::FieldValueWithStaticMapping,
-                source: :constituenttype,
-                target: :constituenttype,
-                mapping: Tms::Constituents.type_mapping,
-                fallback_val: :orig,
-                delete_source: false
               transform Tms::Transforms::Constituents::DeriveType
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituenttype derivedcontype],

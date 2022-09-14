@@ -21,6 +21,13 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteNoValueTypes, field: :constituenttype
+              transform Rename::Field, from: :constituenttype, to: :orig_constituenttype
+              transform Replace::FieldValueWithStaticMapping,
+                source: :orig_constituenttype,
+                target: :constituenttype,
+                mapping: Tms::ConTypes.mappings,
+                fallback_val: nil,
+                delete_source: false
             end
           end
         end

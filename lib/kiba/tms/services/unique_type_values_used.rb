@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module Services
       class UniqueTypeValuesUsed
-        include Columnable
+        include Tms::Mixins::Columnable
         
         def self.call(...)
           self.new(...).call

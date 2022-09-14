@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module Loans
       extend Dry::Configurable
-      extend Tms::Omittable
+      extend Tms::Mixins::Omittable
       module_function
       
       # whether or not table is used

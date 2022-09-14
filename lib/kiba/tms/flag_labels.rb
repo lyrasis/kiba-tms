@@ -6,8 +6,8 @@ module Kiba
   module Tms
     module FlagLabels
       extend Dry::Configurable
-      extend Tms::MultiTableMergeable
-      extend Tms::AutoConfigurable
+      extend Tms::Mixins::MultiTableMergeable
+      extend Tms::Mixins::AutoConfigurable
       module_function
 
       setting :delete_fields, default: %i[flaguse important], reader: true
