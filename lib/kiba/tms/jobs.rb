@@ -35,7 +35,6 @@ module Kiba
         Tms::Jobs.constants.select{ |constant| has_config?(constant) }
       end
       private_class_method :job_namespaces
-      
     end
   end
 end

@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjCompTypes
+      module DimensionMethods
         module Prep
           module_function
           
@@ -12,8 +12,8 @@ module Kiba
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_comp_types,
-                destination: :prep__obj_comp_types
+                source: :tms__dimension_methods,
+                destination: :prep__dimension_methods
               },
               transformer: config.xforms(binding)
             )

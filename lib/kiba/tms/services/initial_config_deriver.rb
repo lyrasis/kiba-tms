@@ -16,7 +16,7 @@ module Kiba
         def call
           return nil unless mod.used?
           config << Tms::Services::InitialEmptyFieldDeriver.call(mod)
-          derive_type_config if mod.type_lookup
+          derive_type_config if mod.respond_to?(:type_lookup) && mod.type_lookup
           derive_multi_table_merge_config if mod.respond_to?(:for?)
           derive_custom_config if mod.respond_to?(:configurable)
           config.compact

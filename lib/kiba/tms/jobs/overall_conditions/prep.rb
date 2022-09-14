@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjCompTypes
+      module OverallConditions
         module Prep
           module_function
           
@@ -12,10 +12,10 @@ module Kiba
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_comp_types,
-                destination: :prep__obj_comp_types
+                source: :tms__overall_conditions,
+                destination: :prep__overall_conditions
               },
-              transformer: config.xforms(binding)
+              transformer: config.multitable_xforms(binding)
             )
           end
         end

@@ -13,22 +13,8 @@ module Kiba
                 source: :tms__object_levels,
                 destination: :prep__object_levels
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :objectlevel
-              transform Rename::Field, from: :objectlevel, to: :orig_objectlevel
-              transform Replace::FieldValueWithStaticMapping,
-                source: :orig_objectlevel,
-                target: :objectlevel,
-                mapping: Tms::ObjectLevels.mappings,
-                fallback_val: nil,
-                delete_source: false
-            end
           end
         end
       end

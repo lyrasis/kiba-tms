@@ -66,6 +66,7 @@ module Kiba
             obj_titles: :objectid,
             objects: :objectnumber,
             object_statuses: :objectstatusid,
+            overall_conditions: :overallconditionid,
             phone_types: :phonetypeid,
             ref_formats: :formatid,
             relationships: :relationshipid,

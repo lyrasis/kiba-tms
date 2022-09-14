@@ -13,22 +13,8 @@ module Kiba
                 source: :tms__accession_methods,
                 destination: :prep__accession_methods
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :accessionmethod
-              transform Rename::Field, from: :accessionmethod, to: :orig_accessionmethod
-              transform Replace::FieldValueWithStaticMapping,
-                source: :orig_accessionmethod,
-                target: :accessionmethod,
-                mapping: Tms::AccessionMethods.mappings,
-                fallback_val: nil,
-                delete_source: false
-            end
           end
         end
       end

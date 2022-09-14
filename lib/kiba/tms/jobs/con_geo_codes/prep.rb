@@ -8,20 +8,15 @@ module Kiba
           module_function
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_geo_codes,
                 destination: :prep__con_geo_codes
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :congeocode
-            end
           end
         end
       end

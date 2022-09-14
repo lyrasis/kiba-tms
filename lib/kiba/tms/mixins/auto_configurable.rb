@@ -13,7 +13,6 @@ module Kiba
       module AutoConfigurable
         include Tms::Mixins::Omittable
         include Tms::Mixins::Tableable
-
         
         def verify_empty_fields
           return nil unless used
@@ -21,8 +20,6 @@ module Kiba
 
           Tms::Services::EmptyFieldsChecker.call(table, self)
         end
-
-        #      private_class_method %i[verify_empty_fields]
       end
     end
   end

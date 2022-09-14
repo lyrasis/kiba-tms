@@ -7,12 +7,12 @@ module Kiba
     module ObjectStatuses
       extend Dry::Configurable
       extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields, default: %i[inpermanentjurisdiction system], reader: true
       setting :empty_fields, default: %i[], reader: true
       
-      setting :type_lookup, default: true, reader: true
       setting :id_field, default: :objectstatusid, reader: true
       setting :type_field, default: :objectstatus, reader: true
       setting :used_in,

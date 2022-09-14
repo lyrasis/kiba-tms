@@ -8,12 +8,12 @@ module Kiba
       extend Dry::Configurable
       extend Tms::Mixins::MultiTableMergeable
       extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields, default: %i[flaguse important], reader: true
       setting :empty_fields, default: %i[], reader: true
       
-      setting :type_lookup, default: true, reader: true
       setting :id_field, default: :flagid, reader: true
       setting :type_field, default: :flaglabel, reader: true
       setting :used_in,

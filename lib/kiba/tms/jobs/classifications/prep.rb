@@ -8,30 +8,15 @@ module Kiba
           module_function
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__classifications,
                 destination: :prep__classifications
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              if Tms::Classifications.omitting_fields?
-                transform Delete::Fields, fields: Tms::Classifications.omitted_fields
-              end
-              transform Tms::Transforms::DeleteNoValueTypes, field: :classification
-              transform Rename::Field, from: :classification, to: :orig_classification
-              transform Replace::FieldValueWithStaticMapping,
-                source: :orig_classification,
-                target: :classification,
-                mapping: Tms::Classifications.mappings,
-                fallback_val: nil,
-                delete_source: false
-            end
           end
         end
       end

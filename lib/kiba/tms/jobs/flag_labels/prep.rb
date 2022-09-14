@@ -8,26 +8,15 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__flag_labels,
                 destination: :prep__flag_labels
               },
-              transformer: xforms
+              transformer: config.multitable_xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[flagid flaglabel]
-              transform Rename::Field, from: :flaglabel, to: :origlabel
-              transform Replace::FieldValueWithStaticMapping,
-                source: :origlabel,
-                target: :flaglabel,
-                mapping: Tms::FlagLabels.mappings,
-                fallback_val: nil,
-                delete_source: false
-            end
           end
         end
       end

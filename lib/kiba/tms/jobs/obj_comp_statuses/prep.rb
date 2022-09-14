@@ -8,29 +8,15 @@ module Kiba
           extend self
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_comp_statuses,
                 destination: :prep__obj_comp_statuses
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              if Tms::ObjCompStatuses.omitting_fields?
-                transform Delete::Fields, fields: Tms::ObjCompStatuses.omitted_fields
-              end
-              transform Rename::Field, from: :objcompstatus, to: :origstatus
-              transform Replace::FieldValueWithStaticMapping,
-                source: :origstatus,
-                target: :objcompstatus,
-                mapping: Tms::ObjCompStatuses.mappings,
-                fallback_val: nil,
-                delete_source: false
-            end
           end
         end
       end
