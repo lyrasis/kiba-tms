@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module Countries
+      module Currencies
         module Prep
           module_function
 
@@ -12,8 +12,8 @@ module Kiba
             
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__countries,
-                destination: :prep__countries
+                source: :tms__currencies,
+                destination: :prep__currencies
               },
               transformer: config.xforms(binding)
             )
