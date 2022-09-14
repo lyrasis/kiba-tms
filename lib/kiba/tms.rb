@@ -114,7 +114,7 @@ module Kiba
     #   before merging in
     setting :migrate_no_value_types, default: false, reader: true
     setting :no_value_type_pattern,
-      default: '^(\(|\[)?(none assigned|not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$',
+      default: '^(\(|\[)?(enter your value here|none assigned|not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$',
       reader: true
 
     setting :inventory_status_mapping,

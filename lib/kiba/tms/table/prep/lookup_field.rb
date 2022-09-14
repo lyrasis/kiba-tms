@@ -73,6 +73,7 @@ module Kiba
             roles: :roleid,
             shipping_methods: :shippingmethodid,
             status_flags: :recordid,
+            survey_types: :surveytypeid,
             term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
             term_types: :termtypeid,
