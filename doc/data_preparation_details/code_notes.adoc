@@ -1,0 +1,33 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Code notes
+
+== binding job namespace config into `Kiba.job_segment`
+
+Model usage: `Kiba::Tms::Jobs::TermMasterThes.xforms`
+
+.Example
+[source, ruby]
+----
+def xforms
+  b = binding
+  Kiba.job_segment do
+    config = b.receiver.send(:config)
+    transform Tms::Transforms::DeleteTmsFields
+    if config.omitting_fields?
+      transform Delete::Fields, fields: config.omitted_fields
+    end
+  end
+end
+----
