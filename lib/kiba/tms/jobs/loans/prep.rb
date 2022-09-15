@@ -8,6 +8,8 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__loans,
@@ -19,51 +21,43 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                      prep__departments
-                     ]
-            base << :prep__loan_purposes if Tms::LoanPurposes.used
-            base << :prep__loan_statuses if Tms::LoanStatuses.used
-            base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used
-            base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used
+            base = []
+            base << :prep__departments if Tms::Departments.used?
+            base << :prep__loan_purposes if Tms::LoanPurposes.used?
+            base << :prep__loan_statuses if Tms::LoanStatuses.used?
+            base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used?
+            base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used?
             if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
               base << :con_xref_details__for_loans
             else
               warn('Implement other Tms::Loans.con_link_field')
             end
-            base << :prep__loan_obj_xrefs if Tms::LoanObjXrefs.used && Tms::LoanObjXrefs.merging_into_loans
+            base << :prep__loan_obj_xrefs if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
             base
           end
 
           def xforms
+            bind = binding
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
 
-              unless Tms::Loans.empty_fields.empty?
-                Tms::Loans.empty_fields.each do |field|
-                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
-                end
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
               
-              unless Tms::Loans.omitted_fields.empty?
-                transform Delete::Fields, fields: Tms::Loans.omitted_fields
-              end
-
-              if Tms::LoanPurposes.used
+              if Tms::LoanPurposes.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__loan_purposes,
                   keycolumn: :loanpurposeid,
                   fieldmap: {loanpurpose: :loanpurpose}
-
-                Tms::LoanPurposes.unused_values.each do |val|
-                  transform Warn::IfFieldValueMatches, field: :loanpurpose, match: val
-                end
               end
               transform Delete::Fields, fields: :loanpurposeid
 
-              if Tms::LoanStatuses.used
+              if Tms::LoanStatuses.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__loan_statuses,
                   keycolumn: :loanstatusid,
@@ -72,9 +66,9 @@ module Kiba
               transform Delete::Fields, fields: :loanstatusid
 
               indfields = %i[indemnityfromlender indemnityfrompreviousvenue indemnityatvenue indemnityreturn]
-              if Tms::IndemnityResponsibilities.used
+              if Tms::IndemnityResponsibilities.used?
                 indfields.each do |field|
-                  next if Tms::Loans.omitted_fields.any?(field)
+                  next if config.omitted_fields.any?(field)
 
                   transform Merge::MultiRowLookup,
                     lookup: prep__indemnity_responsibilities,
@@ -88,7 +82,7 @@ module Kiba
               insfields = %i[insurancefromlender insurancefrompreviousvenue insuranceatvenue insurancereturn]
               if Tms::InsuranceResponsibilities.used
                 insfields.each do |field|
-                  next if Tms::Loans.omitted_fields.any?(field)
+                  next if config.omitted_fields.any?(field)
 
                   transform Merge::MultiRowLookup,
                     lookup: prep__insurance_responsibilities,
@@ -104,10 +98,12 @@ module Kiba
                 target: :loantype,
                 mapping: {'1'=>'loan in', '0'=>'loan out'}
 
-              transform Merge::MultiRowLookup,
-                lookup: prep__departments,
-                keycolumn: :departmentid,
-                fieldmap: {department: :department}
+              if Tms::Departments.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__departments,
+                  keycolumn: :departmentid,
+                  fieldmap: {department: :department}
+              end
               transform Delete::Fields, fields: :departmentid
 
               if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
@@ -130,14 +126,16 @@ module Kiba
               end
               transform Delete::Fields, fields: :primaryconxrefid
 
-              if Tms::LoanObjXrefs.conditions.record == :loan
-                case Tms::LoanObjXrefs.conditions.field
-                when :loanconditions
-                  transform Merge::MultiRowLookup,
-                    lookup: prep__loan_obj_xrefs,
-                    keycolumn: :loanid,
-                    fieldmap: {obj_loanconditions: :conditions},
-                    delim: '%CR%'
+              if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
+                if Tms::LoanObjXrefs.conditions.record == :loan
+                  case Tms::LoanObjXrefs.conditions.field
+                  when :loanconditions
+                    transform Merge::MultiRowLookup,
+                      lookup: prep__loan_obj_xrefs,
+                      keycolumn: :loanid,
+                      fieldmap: {obj_loanconditions: :conditions},
+                      delim: '%CR%'
+                  end
                 end
               end
             end
