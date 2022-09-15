@@ -23,13 +23,15 @@ module Kiba
                       names__from_constituents_orgs_from_persons
                       names__from_constituents_persons_from_orgs
                      ]
-            base << :names__from_loans if Tms::Loans.used
-            base << :names__from_obj_accession if Tms::ObjAccession.used
-            base << :names__from_obj_locations if Tms::ObjLocations.used
-            base << :names__from_assoc_parents_for_con if Tms::AssocParents.used && Tms::AssocParents.for_constituents 
-            base << :names__from_loc_approvers unless Tms.excluded_tables.any?('LocApprovers')
-            base << :names__from_loc_handlers unless Tms.excluded_tables.any?('LocHandlers')
-            base << :names__from_obj_incoming if Tms::ObjIncoming.used
+            base << :names__from_loans if Tms::Loans.used?
+            base << :names__from_obj_accession if Tms::ObjAccession.used?
+            base << :names__from_obj_locations if Tms::ObjLocations.used?
+            if Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Constituents')
+              base << :names__from_assoc_parents_for_con
+            end
+            base << :names__from_loc_approvers if Tms::LocApprovers.used?
+            base << :names__from_loc_handlers if Tms::LocHandlers.used?
+            base << :names__from_obj_incoming if Tms::ObjIncoming.used?
             base
           end
 
