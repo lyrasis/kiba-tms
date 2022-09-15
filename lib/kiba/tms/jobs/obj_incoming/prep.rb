@@ -8,22 +8,31 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_incoming,
                 destination: :prep__obj_incoming,
-                lookup: %i[
-                           prep__obj_inc_purposes
-                           prep__shipping_methods
-                           prep__constituents
-                           ]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = [:prep__constituents]
+            base << :prep__shipping_methods if Tms::ShippingMethods.used?
+            base << :prep__obj_inc_purposes if Tms::ObjIncPurposes.used?
+            base
+          end
+          
           def xforms
+            bind = binding
+            
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::TmsTableNames
               unless Tms::ObjIncoming.delete_fields.empty?
