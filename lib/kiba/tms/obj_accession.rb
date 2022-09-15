@@ -6,14 +6,8 @@ module Kiba
   module Tms
     module ObjAccession
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
       module_function
 
-      setting :configurable,
-        default: {
-          processing_approaches: Proc.new{ set_processing_approaches }
-        },
-        reader: true
       # The first three rows are fields all marked as not in use in the TMS data dictionary
       setting :delete_fields,
         default: %i[currencyamount currencyrate localamount
@@ -21,9 +15,16 @@ module Kiba
                     currencyid originalentityid currententityid],
         reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
+
       # approaches required for creation of CS acquisitions and obj/acq relations
       #   options: :onetone, :lotnumber, :linkedlot
       #   see: https://github.com/lyrasis/kiba-tms/blob/main/doc/data_preparation_details/acquisitions.adoc
+      setting :configurable,
+        default: {
+          processing_approaches: Proc.new{ set_processing_approaches }
+        },
+        reader: true
       setting :processing_approaches, default: %i[one_to_one], reader: true
 
       def set_processing_approaches
