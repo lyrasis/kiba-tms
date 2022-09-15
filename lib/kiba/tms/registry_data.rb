@@ -153,18 +153,7 @@ module Kiba
             lookup_on: :recordid,
             tags: %i[assoc_parents con]
           }
-          register :new_rels_for_constituents, {
-            creator: Kiba::Tms::Jobs::AssocParents::NewRelsForConstituents,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'assoc_parents_new_rels_for_con.csv'),
-            tags: %i[assoc_parents con reports todochk],
-            desc: 'Non-zero means work to do. names__persons_from_con_assoc_parents assumes all are org/contact'
-          }
-          register :new_tables, {
-            creator: Kiba::Tms::Jobs::AssocParents::NewTables,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'assoc_parents_new_tables.csv'),
-            tags: %i[assoc_parents reports todochk],
-            desc: 'Non-zero means work to do'
-          }
+
         end
 
         Kiba::Tms.registry.namespace('classification_notations') do
@@ -1326,15 +1315,6 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'persons_for_cspace.csv'),
             tags: %i[persons cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
-          }
-        end
-
-        Kiba::Tms.registry.namespace('relationships') do
-          register :unknown_tables, {
-            creator: Kiba::Tms::Jobs::Relationships::UnknownTables,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'relationships_unknown_tables.csv'),
-            desc: 'Check for tables we do not have set up yet. Non-zero count means work to do!',
-            tags: %i[relationships todochk]
           }
         end
 
