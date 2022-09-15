@@ -8,6 +8,10 @@ module Kiba
       module_function
       
       extend Dry::Configurable
+
+      def used?
+        true
+      end
       # whether or not table is used
       setting :used, default: ->{ Tms::Table::List.include?('LoanObjXrefs') }, reader: true
       setting :delete_fields, default: %i[], reader: true
