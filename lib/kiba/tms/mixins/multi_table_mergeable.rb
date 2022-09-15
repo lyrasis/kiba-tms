@@ -13,6 +13,54 @@ module Kiba
           target_tables.any?(table)
         end
 
+        # METHODS USED FOR RUNNING CHECKS
+        #
+        # Reports if there is a target_table with no matching setting defined in the config
+        def check_needed_table_transform_settings
+          needed = target_transform_settings_expected.reject{ |transform| self.respond_to?(transform) }
+          return nil if needed.empty?
+
+          "#{self.name}: add config settings: #{needed.join(', ')}"
+        end
+
+        # Reports if a defined for-target-table transform setting defined in the config,
+        #   but no value (an actual transform class or :no_xform) has been assigned to the
+        #   setting. These indicate there may be more work to be done.
+        def check_undefined_table_transforms
+          undefined = target_transform_settings - target_transform_settings_handled
+          return nil if undefined.empty?
+
+          "#{self.name}: no transforms defined for: #{undefined.join(', ')}"
+        end
+        
+        def target_transform_settings
+          self.settings
+            .map(&:to_s)
+            .select{ |meth| meth.match?(/^for_.*_transform$/) }
+        end
+
+        # These are defined with actual transform classes
+        def target_transform_settings_defined
+          target_transform_settings.reject do |setting|
+            val = config.values[setting]
+            val.nil? || val == :no_xform
+          end
+        end
+        
+        def target_transform_settings_expected
+          target_tables.map do |target|
+            tobj = Tms::Table::Obj.new(target)
+            "for_#{tobj.filekey}_transform".to_sym
+          end
+        end
+
+        # These are defined with actual transform classes or :no_xform placeholders to indicate
+        #   we have analyzed the data and found no need for a specific transform
+        def target_transform_settings_handled
+          target_transform_settings.reject{ |setting| config.values[setting].nil? }
+        end
+
+        # Methods used for auto-registering for-table jobs
         def register_per_table_jobs(field = :tablename)
           key = filekey
           return unless key
