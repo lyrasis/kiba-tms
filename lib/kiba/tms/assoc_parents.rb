@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module AssocParents
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
       module_function
 

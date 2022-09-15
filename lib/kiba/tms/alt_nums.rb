@@ -10,7 +10,7 @@ module Kiba
 
       setting :delete_fields, default: [], reader: true
       setting :empty_fields, default: {}, reader: true
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       
       setting :target_tables, default: %w[], reader: true
       extend Tms::Mixins::MultiTableMergeable

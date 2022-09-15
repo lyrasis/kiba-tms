@@ -8,7 +8,7 @@ module Kiba
     # Names are extracted from it
     module LocApprovers
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       module_function
 
       setting :delete_fields, default: %i[], reader: true

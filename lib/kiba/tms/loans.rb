@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module Loans
       extend Dry::Configurable
-     extend Tms::Mixins::AutoConfigurable
+     extend Tms::Mixins::Tableable
       module_function
 
       setting :configurable,

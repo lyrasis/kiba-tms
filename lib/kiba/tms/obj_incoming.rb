@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module ObjIncoming
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       module_function
       
       setting :delete_fields, default: %i[], reader: true

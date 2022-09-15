@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module ClassificationNotations
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       module_function
 
       setting :delete_fields, default: %i[dateentered sorttype rank], reader: true

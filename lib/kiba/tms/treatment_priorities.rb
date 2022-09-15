@@ -7,7 +7,7 @@ module Kiba
     module TreatmentPriorities
       extend Dry::Configurable
       extend Tms::Mixins::MultiTableMergeable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       extend Tms::Mixins::TypeLookupTable
       module_function
 

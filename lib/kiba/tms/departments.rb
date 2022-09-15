@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module Departments
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::Tableable
       extend Tms::Mixins::TypeLookupTable
       module_function
 
