@@ -65,22 +65,28 @@ module Kiba
           key = filekey
           return unless key
 
-          ns_name = "#{key}_for"
-          targets = target_tables
-          Tms.registry.import(build_registry_namespace(ns_name, targets, field))
+          ns = build_registry_namespace(
+            "#{key}_for",
+            target_tables,
+            field,
+            target_transform_settings_defined
+          )
+          Tms.registry.import(ns)
         end
         
-        def build_registry_namespace(ns_name, targets, field)
+        def build_registry_namespace(ns_name, targets, field, xforms)
           bind = binding
           Dry::Container::Namespace.new(ns_name) do
+            mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              register targetobj.filekey, bind.receiver.send(:target_job_hash, *[ns_name, targetobj, field])
+              targetxform = xforms.select{ |x| x.to_s == "for_#{targetobj.filekey}_transform" }
+              register targetobj.filekey, mod.send(:target_job_hash, *[ns_name, targetobj, field, targetxform])
             end
           end
         end
 
-        def target_job_hash(ns_name, targetobj, field)
+        def target_job_hash(ns_name, targetobj, field, xforms)
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
             .map{ |val| val.gsub('_', '') }
@@ -92,10 +98,11 @@ module Kiba
             path: File.join(Tms.datadir, 'working', "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
                       args: {
-                        source: "prep_#{ns_name}".to_sym,
+                        source: "prep__#{ns_name}".delete_suffix('_for').to_sym,
                         dest: "#{ns_name}__#{key}".to_sym,
                         targettable: targetobj.tablename,
-                        field: field
+                        field: field,
+                        xforms: xforms
                       }
                      },
             tags: tags
