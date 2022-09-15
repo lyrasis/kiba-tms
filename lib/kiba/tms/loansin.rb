@@ -7,9 +7,12 @@ module Kiba
     module Loansin
       extend Dry::Configurable
       module_function
-      
-      # whether or not table is used
-      setting :used, default: true, reader: true
+
+      setting :source_job_key, default: :loans__in, reader: true
+      setting :delete_fields, default: [], reader: true
+      setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::AutoConfigurable
+
       setting :loaninnote_source_fields, default: %i[description], reader: true
       setting :loaninconditions_source_fields, default: %i[loanconditions insind], reader: true
 
