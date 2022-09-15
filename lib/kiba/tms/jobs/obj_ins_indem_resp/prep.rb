@@ -8,11 +8,13 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_ins_indem_resp,
                 destination: :prep__obj_ins_indem_resp,
-                lookup: %i[prep__indemnity_responsibilities prep__insurance_responsibilities]
+                lookup: lookups
               },
               transformer: xforms
             )
@@ -20,30 +22,22 @@ module Kiba
 
           def lookups
             base = []
-            base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used
-            base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used
+            base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used?
+            base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used?
             base
           end
 
           def xforms
+            bind = binding
+            
             Kiba.job_segment do
-              ins_ind_fields = Tms::ObjInsIndemResp.ins_ind_fields
+              config = bind.receiver.send(:config)
+              ins_ind_fields = config.ins_ind_fields
               
               transform Tms::Transforms::DeleteTmsFields
 
-              emptyfields = Tms::ObjInsIndemResp.empty_fields
-              unless emptyfields.empty?
-                emptyfields.each do |field|
-                  transform Warn::UnlessFieldValueMatches,
-                    field: field,
-                    match: Tms::ObjInsIndemResp.empty_pattern,
-                    matchmode: :regexp
-                end
-              end
-
-              deletefields = Tms::ObjInsIndemResp.omitted_fields
-              unless deletefields.empty?
-                transform Delete::Fields, fields: deletefields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
 
               # remove rows with no values in remaining fields
@@ -57,8 +51,8 @@ module Kiba
               transform Delete::Fields, fields: :combined
 
               # merge in responsibility values
-              if Tms::InsuranceResponsibilities.used
-                Tms::ObjInsIndemResp.insurance_fields.each do |insresp|
+              if Tms::InsuranceResponsibilities.used?
+                config.insurance_fields.each do |insresp|
                   transform Merge::MultiRowLookup,
                     keycolumn: insresp,
                     lookup: prep__insurance_responsibilities,
@@ -69,8 +63,8 @@ module Kiba
                 end
               end
 
-              if Tms::IndemnityResponsibilities.used
-                Tms::ObjInsIndemResp.indemnity_fields.each do |indemresp|
+              if Tms::IndemnityResponsibilities.used?
+                config.indemnity_fields.each do |indemresp|
                   transform Merge::MultiRowLookup,
                     keycolumn: indemresp,
                     lookup: prep__indemnity_responsibilities,
@@ -82,7 +76,7 @@ module Kiba
               end
               
               ins_ind_fields.each do |fieldname|
-                labeltext = Tms::ObjInsIndemResp.fieldlabel.send(fieldname)
+                labeltext = Tms::ObjInsIndemResp.fieldlabels[fieldname]
                 transform Prepend::ToFieldValue, field: fieldname, value: "#{labeltext}: "
               end
 
