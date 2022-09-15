@@ -9,7 +9,7 @@ module Kiba
       module ForTable
         module_function
 
-        def xforms(table:, field: :tablename)
+        def for_table_xforms(table:, field: :tablename)
           Kiba.job_segment do
             transform FilterRows::FieldEqualTo, action: :keep, field: field, value: table
           end

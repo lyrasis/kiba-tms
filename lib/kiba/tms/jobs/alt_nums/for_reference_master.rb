@@ -14,7 +14,7 @@ module Kiba
                 source: :prep__alt_nums,
                 destination: :alt_nums__for_reference_master
               },
-              transformer: xforms(table: 'ReferenceMaster')
+              transformer: for_table_xforms(table: 'ReferenceMaster')
             )
           end
         end

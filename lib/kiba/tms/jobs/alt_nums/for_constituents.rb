@@ -14,7 +14,7 @@ module Kiba
                 source: :prep__alt_nums,
                 destination: :alt_nums__for_constituents
               },
-              transformer: xforms(table: 'Constituents')
+              transformer: for_table_xforms(table: 'Constituents')
             )
           end
         end

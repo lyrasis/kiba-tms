@@ -14,7 +14,7 @@ module Kiba
                 source: :prep__alt_nums,
                 destination: :alt_nums__for_objects
               },
-              transformer: xforms(table: 'Objects')
+              transformer: for_table_xforms(table: 'Objects')
             )
           end
         end
