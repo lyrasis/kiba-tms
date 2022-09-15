@@ -11,7 +11,7 @@ module Kiba
       def register
         register_supplied_files
         register_prep_files
-        Tms::Relationships.register_per_table_jobs
+        Tms::Utils::PerTableJobRegistrar.call
         register_files
       end
 
