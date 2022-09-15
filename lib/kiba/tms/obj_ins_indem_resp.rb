@@ -6,7 +6,6 @@ module Kiba
   module Tms
     module ObjInsIndemResp
       extend Dry::Configurable
-      extend Tms::Mixins::AutoConfigurable
       module_function
 
       setting :checkable,
@@ -14,9 +13,14 @@ module Kiba
           all_fields_have_labels: Proc.new{ check_all_fields_have_labels }
         },
         reader: true
+      
       setting :delete_fields, default: %i[tableid], reader: true
       setting :empty_fields, default: %i[], reader: true
+      extend Tms::Mixins::AutoConfigurable
 
+      setting :target_tables, default: %w[], reader: true
+      extend Tms::Mixins::MultiTableMergeable
+      
       setting :indemnity_fields,default: %i[], reader: true,
         constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?('ind') } }
       setting :insurance_fields, default: %i[], reader: true,

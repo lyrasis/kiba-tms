@@ -35,7 +35,8 @@ module Kiba
               ins_ind_fields = config.ins_ind_fields
               
               transform Tms::Transforms::DeleteTmsFields
-
+              transform Tms::Transforms::TmsTableNames
+              
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
