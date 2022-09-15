@@ -13,15 +13,8 @@ module Kiba
                 source: :tms__text_types,
                 destination: :prep__text_types,
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :texttype
-            end
           end
         end
       end
