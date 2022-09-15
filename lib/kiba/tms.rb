@@ -57,6 +57,7 @@ module Kiba
         '23'=>'Constituents',
         '47'=>'Exhibitions',
         '49'=>'ExhObjXrefs',
+        '50'=>'ExhVenObjXrefs',
         '51'=>'ExhVenuesXrefs',
         '79'=>'LoanObjXrefs',
         '81'=>'Loans',
@@ -178,6 +179,10 @@ module Kiba
       end.map{ |const| Tms.const_get(const) }
     end
 
+    def needconfig
+      configs.reject{ |c| c.respond_to?(:used?) }
+    end
+    
     def init_config(mod)
       Tms::Services::InitialConfigDeriver.call(mod).each{ |config| puts config.value! }
     end
