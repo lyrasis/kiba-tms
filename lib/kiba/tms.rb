@@ -177,6 +177,10 @@ module Kiba
         evaled.is_a?(Module) && evaled.respond_to?(:config)
       end.map{ |const| Tms.const_get(const) }
     end
+
+    def init_config(mod)
+      Tms::Services::InitialConfigDeriver.call(mod).each{ |config| puts config.value! }
+    end
   end
 end
 
