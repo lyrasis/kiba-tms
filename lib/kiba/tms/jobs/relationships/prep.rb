@@ -5,9 +5,11 @@ module Kiba
     module Jobs
       module Relationships
         module Prep
-          extend self
+          module_function
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__relationships,
@@ -18,10 +20,13 @@ module Kiba
           end
 
           def xforms
+            bind = binding
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields,
-                fields: %i[movecolocated rel1prep rel2prep relation1plural relation2plural transitive]
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
               transform Tms::Transforms::TmsTableNames
               transform Tms::Transforms::Relationships::AddLabel
             end

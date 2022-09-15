@@ -5,13 +5,14 @@ require 'dry-configurable'
 module Kiba
   module Tms
     module AssocParents
-      module_function
       extend Dry::Configurable
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Table::List.include?('AssocParents') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
+      extend Tms::Mixins::AutoConfigurable
+      extend Tms::Mixins::MultiTableMergeable
+      module_function
+
       setting :delete_fields, default: %i[complete mixed], reader: true
-      setting :for_constituents, default: false, reader: true
+      setting :empty_fields, default: {}, reader: true
+      setting :target_tables, default: %w[], reader: true
     end
   end
 end
