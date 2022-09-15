@@ -13,7 +13,7 @@ module Kiba
       #
       # - name match a TMS table filename
       # - `extend Tms::Mixins::Tableable`
-      module Tableable
+      module Tableable        
         def all_fields
           return [] unless used
           
@@ -28,7 +28,13 @@ module Kiba
 
           all_fields - Tms.tms_fields - delete_fields - empty_fields
         end
-        
+
+        def filekey
+          return nil unless used?
+
+          table.filekey
+        end
+
         def table
           Tms::Table::Obj.new(table_name)
         end
