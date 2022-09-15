@@ -11,9 +11,8 @@ module Kiba
       #
       # - `extend Tms::Mixins::AutoConfigurable`
       module AutoConfigurable
-        include Tms::Mixins::Omittable
         include Tms::Mixins::Tableable
-        
+
         def verify_empty_fields
           return nil unless used
           return Tms::Data::EmptyFieldsCheckerResult.new(status: :success, mod: self) if empty_fields.empty?
