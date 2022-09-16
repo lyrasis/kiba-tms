@@ -1159,7 +1159,8 @@ module Kiba
                  physdesc parentdesc
                  component_type objcompstatus active
                  physdesc
-                ] }
+                ] },
+            lookup_on: :objectid
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
