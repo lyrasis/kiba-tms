@@ -61,6 +61,7 @@ module Kiba
         '51'=>'ExhVenuesXrefs',
         '79'=>'LoanObjXrefs',
         '81'=>'Loans',
+        '83'=>'Locations',
         '89'=>'ObjAccession',
         '94'=>'ObjComponents',
         '95'=>'Conditions',
