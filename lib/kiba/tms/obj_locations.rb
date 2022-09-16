@@ -6,10 +6,16 @@ module Kiba
   module Tms
     module ObjLocations
       extend Dry::Configurable
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Table::List.include?('ObjLocations') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
-      setting :delete_fields, default: %i[], reader: true
+      module_function
+
+      # The first three rows are fields all marked as not in use in the TMS data dictionary
+      setting :delete_fields,
+        default: %i[currencyamount currencyrate localamount
+                    accessionminutes1 accessionminutes2 budget capitalprogram
+                    currencyid originalentityid currententityid],
+        reader: true
+      setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
     end
   end
 end
