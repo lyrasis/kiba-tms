@@ -10,8 +10,10 @@ module Kiba
           def initialize
             @target = :fulllocid
             @fields = Tms.locations.fulllocid_fields
+            @temp_fields = fields.map{ |field| temp(field) }
             @placeholder = 'nil'
             @delim = Tms.delim
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: temp_fields)
           end
 
           def process(row)
@@ -23,10 +25,10 @@ module Kiba
 
           private
 
-          attr_reader :target, :fields, :placeholder, :delim
+          attr_reader :target, :fields, :temp_fields, :placeholder, :delim, :getter
 
           def concat_id(row)
-            field_values(row: row, fields: temp_fields).values.join(delim)
+            getter.call(row).values.join(delim)
           end
           
           def populate_temp(row, field)
@@ -36,10 +38,6 @@ module Kiba
           
           def temp(field)
             "#{field}_tmp".to_sym
-          end
-          
-          def temp_fields
-            fields.map{ |field| temp(field) }
           end
         end
       end
