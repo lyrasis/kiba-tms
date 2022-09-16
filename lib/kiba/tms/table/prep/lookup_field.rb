@@ -87,6 +87,8 @@ module Kiba
             text_types: :texttypeid,
             thes_xref_types: :thesxreftypeid,
             title_types: :titletypeid,
+            trans_codes: :transcodeid,
+            trans_status: :transstatusid,
             treatment_priorities: :priorityid
           }
         end
