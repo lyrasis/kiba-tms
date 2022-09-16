@@ -20,9 +20,13 @@ module Kiba
       #   for the module you are configuring
       module Tableable
         def all_fields
-          return [] unless used?
-
-          Kiba::Extend::Command::Run.job(source_job_key) unless File.exist?(table_path)
+          unless File.exist?(table_path)
+            if respond_to?(source_job_key) && Tms.registry.key?(source_job_key)
+              Kiba::Extend::Command::Run.job(source_job_key)
+            else
+              []
+            end
+          end
           
           CSV.foreach(table_path)
             .first
@@ -94,6 +98,10 @@ module Kiba
         end
 
         def used?
+          if respond_to?(:populated)
+            return populated ? true : false
+          end
+
           table.included
         end
       end
