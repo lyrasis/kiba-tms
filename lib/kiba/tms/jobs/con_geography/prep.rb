@@ -8,6 +8,8 @@ module Kiba
           module_function
           
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_geography,
@@ -20,21 +22,26 @@ module Kiba
 
           def lookups
             base = []
-            base << :prep__con_geo_codes if Tms::ConGeoCodes.used
+            base << :prep__con_geo_codes if Tms::ConGeoCodes.used?
             base
           end
           
           def xforms
+            bind = binding
+            
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields,
-                fields: [Tms::ConGeography.delete_fields, Tms::ConGeography.empty_fields].flatten
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
               
               if Tms::ConGeoCodes.used
-              transform Merge::MultiRowLookup,
-                lookup: prep__con_geo_codes,
-                keycolumn: :geocodeid,
-                fieldmap: {geocode: :congeocode}
+                transform Merge::MultiRowLookup,
+                  lookup: prep__con_geo_codes,
+                  keycolumn: :geocodeid,
+                  fieldmap: {geocode: :congeocode}
               end
               transform Delete::Fields, fields: :geocodeid
             end

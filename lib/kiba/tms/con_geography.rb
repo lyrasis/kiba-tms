@@ -8,11 +8,12 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      # whether or not table is used
-      setting :used, default: ->{ Tms::Table::List.include?('ConGeography') }, reader: true
-      # Fields beyond DeleteTmsFields general fields to delete
-      setting :delete_fields, default: %i[keyfieldssearchvalue primarydisplay], reader: true
+      # The first three rows are fields all marked as not in use in the TMS data dictionary
+      setting :delete_fields,
+        default: %i[keyfieldssearchvalue primarydisplay],
+        reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
     end
   end
 end
