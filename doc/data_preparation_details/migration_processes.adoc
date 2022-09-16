@@ -1,0 +1,24 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Migration notes
+
+See also: https://github.com/lyrasis/dts-data-migration-docs/blob/main/source_systems_and_data_formats/tms.adoc[DTS Migrations team documentation on TMS as data source] (private repo)
+
+== Notes on weird tables
+TransCodes and TransStatus:: For some reason these are empty tables in the TMS .bak files. I cannot find this data under any other name. I have the client tell me what the mappings are and create dummy "supplied" files in the `tms` directory (with other original source data files). You also need to manually delete these tables from the empty_tables.txt list, once client provides mapping and CSVs are created.
+TermMaster/TermMasterThes:: According to https://si-listserv.si.edu/cgi-bin/wa?A2=1902&L=TMSUSERS&D=0&H=N&P=4851674[this listserv post], TermMaster table became TermMasterThes table in TMS 2018 (when the thesaurus became a web app)
+== Before processing a new TMS.bak
+* Make sure you have copies of TransCodes and TransStatus tables somewhere they won't be overwritten/lost
+
+
