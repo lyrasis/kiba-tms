@@ -15,7 +15,7 @@ module Kiba
                     decimalplaces unitcutoff unitspersuperunit unitlabel superunitlabel
                     issuperunit system],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       
       setting :id_field, default: :unitid, reader: true
       setting :type_field, default: :unitname, reader: true

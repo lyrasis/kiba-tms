@@ -15,7 +15,7 @@ module Kiba
         reader: true
       
       setting :delete_fields, default: %i[tableid], reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       setting :target_tables, default: %w[], reader: true

@@ -27,7 +27,7 @@ module Kiba
                     begindate enddate systemflag internalstatus islocked publicaccess
                     displaydate begindateiso enddateiso],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
 
       setting :untyped_default, default: 'Person', reader: true
       

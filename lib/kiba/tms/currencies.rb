@@ -15,7 +15,7 @@ module Kiba
                     replacedbycurrencyid replacementrate replacedonisodate
                     allowedforlocalvalues],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       
       setting :id_field, default: :currencyid, reader: true
       setting :type_field, default: :currency, reader: true

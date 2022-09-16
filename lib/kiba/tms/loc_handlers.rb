@@ -12,7 +12,7 @@ module Kiba
       module_function
 
       setting :delete_fields, default: %i[], reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
     end
   end
 end

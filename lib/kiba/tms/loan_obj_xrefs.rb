@@ -15,7 +15,7 @@ module Kiba
       # whether or not table is used
       setting :used, default: ->{ Tms::Table::List.include?('LoanObjXrefs') }, reader: true
       setting :delete_fields, default: %i[], reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
 
       setting :merging_into_loans, default: true, reader: true
       setting :merging_into_objects, default: true, reader: true

@@ -12,7 +12,7 @@ module Kiba
       setting :delete_fields,
         default: %i[lightexpluxperhour remarks begindispldateiso enddispldateiso catalognumber],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
     end
   end
 end

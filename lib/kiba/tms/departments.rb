@@ -13,7 +13,7 @@ module Kiba
       setting :delete_fields,
         default: %i[mnemonic inputid numrandomobjs defaultformid maintableid],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       
       setting :id_field, default: :departmentid, reader: true
       setting :type_field, default: :department, reader: true

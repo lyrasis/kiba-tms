@@ -13,7 +13,7 @@ module Kiba
       setting :delete_fields,
         default: %i[unittypeid primaryunitid secondaryunitid system],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       
       setting :id_field, default: :dimensiontypeid, reader: true
       setting :type_field, default: :dimensiontype, reader: true

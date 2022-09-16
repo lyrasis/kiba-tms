@@ -12,7 +12,7 @@ module Kiba
       setting :delete_fields,
         default: %i[dateentered datemodified termclassid displaydescriptorid],
         reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
     end
   end
 end

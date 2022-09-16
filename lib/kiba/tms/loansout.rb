@@ -12,7 +12,7 @@ module Kiba
       # whether or not table is used
       setting :used, default: true, reader: true
       setting :delete_fields, default: %i[], reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
 
       setting :loanoutnote_source_fields, default: %i[description], reader: true
       setting :specialconditionsofloan_source_fields, default: %i[loanconditions insind], reader: true

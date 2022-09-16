@@ -11,7 +11,7 @@ module Kiba
       module_function
 
       setting :delete_fields, default: %i[], reader: true
-      setting :empty_fields, default: %i[], reader: true
+      setting :empty_fields, default: {}, reader: true
       
       setting :id_field, default: :classificationid, reader: true
       setting :type_field, default: :classification, reader: true
