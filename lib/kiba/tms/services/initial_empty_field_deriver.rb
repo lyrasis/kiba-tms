@@ -43,13 +43,15 @@ module Kiba
         end
         
         def empty_field_hash(arr)
-          arr.map{ |e| [e, [nil, '', '0', '.0000']] }.to_h
+          arr.map{ |emptyfield| [emptyfield, [nil, '', '0', '.0000']] }.to_h
         end
 
         def set_checkable_fields
           all = mod.all_fields - Tms.tms_fields
-          final = mod.respond_to?(:delete_fields) ? all - mod.delete_fields : all
-          mod.config.send(:empty_fields=, empty_field_hash(final))
+          not_deleted = mod.respond_to?(:delete_fields) ? all - mod.delete_fields : all
+          final = not_deleted - mod.empty_fields.keys
+          merged = mod.empty_fields.merge(empty_field_hash(final))
+          mod.config.send(:empty_fields=, merged)
         rescue StandardError => err
           Failure([setting_name, err])
         else
