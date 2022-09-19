@@ -24,8 +24,8 @@ module Kiba
               transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: 'Objects'
               transform Delete::Fields, fields: %i[tableid table]
               
-              if Tms::TextEntries.for_object_transform
-                transform Tms::TextEntries.for_object_transform
+              if Tms::TextEntries.for_objects_transform
+                transform Tms::TextEntries.for_objects_transform
               end
             end
           end

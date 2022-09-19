@@ -45,10 +45,10 @@ module Kiba
               initial_headers:
               %i[datedescription remarks date]
             },
-            con_xref_details: {
-              initial_headers:
-              %i[tablename recordid role roletype person org displayorder]
-            },
+            # con_xref_details: {
+            #   initial_headers:
+            #   %i[tablename recordid role roletype person org displayorder]
+            # },
             loan_obj_xrefs: {
               initial_headers:
               %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]

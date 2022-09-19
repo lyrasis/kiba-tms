@@ -28,7 +28,7 @@ module Kiba
     private def setup_loader
               puts "LOADING KIBA-TMS"
               @loader = Zeitwerk::Loader.new
-#              @loader.log!
+              #              @loader.log!
               @loader.push_dir(File.expand_path(__FILE__).delete_suffix('.rb'), namespace: Kiba::Tms)
               @loader.inflector.inflect(
                 'classification_xrefs' => 'ClassificationXRefs',
@@ -180,12 +180,21 @@ module Kiba
       end.map{ |const| Tms.const_get(const) }
     end
 
-    def needconfig
-      configs.reject{ |c| c.respond_to?(:used?) }
+    def per_job_tables
+      Tms.configs.select do |config|
+        config.respond_to?(:target_tables) &&
+          config.respond_to?(:used?) &&
+          config.used?
+      end
     end
     
     def init_config(mod)
       Tms::Services::InitialConfigDeriver.call(mod).each{ |config| puts config.value! }
+    end
+
+    # methods to delete after development is done
+    def needconfig
+      configs.reject{ |c| c.respond_to?(:used?) }
     end
   end
 end

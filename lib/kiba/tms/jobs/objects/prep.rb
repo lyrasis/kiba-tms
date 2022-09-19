@@ -8,6 +8,8 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__objects,
@@ -19,46 +21,37 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                        prep__departments
-                        prep__object_statuses
-                        prep__obj_context
-                        con_xref_details__for_objects
-                       ]
+            base = []
+            base << :prep__departments if Tms::Departments.used?
+            base << :prep__object_statuses if Tms::ObjectStatuses.used?
+            base << :prep__obj_context if Tms::ObjContext.used?
+            base << :con_xref_details__for_objects if Tms::ConXrefDetails.for?('Objects')
             if Tms::Objects::FieldXforms.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| base << lkup }
             end
             base << :text_entries__for_objects if Tms::TextEntries.for?('Objects')
             base << :alt_nums__for_objects if Tms::AltNums.for?('Objects')
             base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
-            base << :prep__obj_titles if Tms::Table::List.include?('ObjTitles')
+            base << :prep__obj_titles if Tms::ObjTitles.used?
+            base << :obj_components__with_object_numbers if Tms::ObjComponents.merging_text_entries?
             base
           end
           
           def xforms
+            bind = binding
+            
             Kiba.job_segment do
-              custom_handled_fields = Tms::Objects::Config.custom_map_fields
+              config = bind.receiver.send(:config)
+              custom_handled_fields = config.custom_map_fields
+
               transform Tms::Transforms::DeleteTmsFields
-              unless Tms.conservationentity_used
-                transform Delete::Fields, fields: :conservationentityid
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
 
-              # tms internal and data model omissionfields
-              transform Delete::Fields,
-                fields: %i[curatorapproved injurisdiction istemplate isvirtual
-                           curatorrevisodate
-                           searchobjectnumber sortnumber sortnumber2 sortsearchnumber usernumber3
-                           objectscreenid textsearchid]
-              transform Delete::EmptyFields, consider_blank: Tms::Objects::Config.consider_blank
-
-              client_specific_delete_fields = Tms::Objects::Config.delete_fields
-              unless client_specific_delete_fields.empty?
-                transform Delete::Fields, fields: client_specific_delete_fields
-              end
-              
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
-              if Tms::Objects::FieldXforms.classifications
+              if config.classifications_xform
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: prep__classification_xrefs,
@@ -273,7 +266,15 @@ module Kiba
                   conditions: ->(_origrow, mergerows){ mergerows.select{ |row| row[:tablename] == 'Objects' } }
                 transform Tms::Transforms::Objects::CombineObjectStatusAndStatusFlags
               end
-              
+
+              if Tms::ObjComponents.merging_text_entries?
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: obj_components__with_object_numbers,
+                  fieldmap: {tecomp_comment: :te_comment},
+                  delim: Tms.delim
+              end
+
               if Tms::Objects::FieldXforms.text_entries
                 Tms::Objects::Config.config.text_entry_lookup = text_entries__for_objects
                 transform Tms::Objects::FieldXforms.text_entries
@@ -319,7 +320,7 @@ module Kiba
                     delim: Tms.delim
                 end
               end
-
+              
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: Tms::Objects::Config.comment_fields,
                 target: :comment,

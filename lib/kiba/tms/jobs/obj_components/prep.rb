@@ -7,13 +7,9 @@ module Kiba
         module Prep
           module_function
 
-          # The logic of this looks flipped, but the field is named "inactive"
-          STATUS = {
-            '0' => 'active',
-            '1' => 'inactive'
-          }
-
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_components,
@@ -26,23 +22,23 @@ module Kiba
 
           def lookups
             base = []
-            if Tms::ObjComponents.actual_components
+            if config.actual_components
               base << %i[prep__obj_comp_types prep__obj_comp_statuses]
             end
+            base << :text_entries__for_obj_components if config.merging_text_entries?
             base.flatten
           end
-          
+
           def xforms
+            bind = binding
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Tms::Transforms::DeleteTmsFields
-              delete_fields = [
-                  Tms::ObjComponents.out_of_scope_fields,
-                  Tms::ObjComponents.unhandled_fields,
-                  Tms::ObjComponents.other_delete_fields
-                ].flatten
-              delete_fields << :conservationentityid unless Tms.conservationentity_used
-              transform Delete::Fields,
-                fields: delete_fields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+              
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
               
               if Tms::ObjComponents.actual_components
@@ -64,12 +60,16 @@ module Kiba
               end
               transform Delete::Fields, fields: %i[componenttype objcompstatusid]
 
+              if config.merging_text_entries?
+                merger = config.text_entries_merge_xform.new(text_entries__for_obj_components)
+                transform{ |row| merger.process(row) }
+              end
+
               transform Replace::FieldValueWithStaticMapping,
                 source: :inactive,
                 target: :active,
-                mapping: STATUS
+                mapping: config.inactive_mapping
               transform Delete::Fields, fields: :inactive
-
             end
           end
         end

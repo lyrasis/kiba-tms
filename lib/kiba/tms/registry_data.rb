@@ -365,6 +365,19 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('con_refs') do
+          register :create, {
+            creator: Kiba::Tms::Jobs::ConRefs::Create,
+            path: File.join(Kiba::Tms.datadir, 'tms', 'ConRefs.csv'),
+            tags: %i[con_xrefs]
+          }
+          register :prep, {
+            creator: Kiba::Tms::Jobs::ConRefs::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_refs_prepped.csv'),
+            tags: %i[con_xrefs]
+          }
+        end
+
         Kiba::Tms.registry.namespace('constituents') do
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Constituents::Prep,

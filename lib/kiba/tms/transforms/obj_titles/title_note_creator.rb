@@ -7,7 +7,7 @@ module Kiba
         class TitleNoteCreator
           def initialize
             @target = :titlenote
-            @content_fields = %i[remarks dateeffectiveisodate] - Tms::ObjTitles.empty_fields
+            @content_fields = %i[remarks dateeffectiveisodate] - Tms::ObjTitles.empty_fields.keys
             @context_fields = %i[titletype title]
             @contentgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: content_fields

@@ -8,6 +8,9 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            return unless config.actual_components
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_components__with_object_numbers,

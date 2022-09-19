@@ -6,29 +6,51 @@ module Kiba
   module Tms
     module ObjComponents
       extend Dry::Configurable
+      module_function
+
+      # The first three rows are fields all marked as not in use in the TMS data dictionary
+      setting :delete_fields,
+        default: %i[sortnumber injurisdiction],
+        reader: true,
+        constructor: ->value{ value << :conservationentityid unless Tms::ConservationEntities.used? }
+      setting :empty_fields,
+        default: {
+          costmethodid: [nil, '', '0'],
+          homecrateid: [nil, '', '0'],
+          homelevel: [nil, '', '0'],
+          prepcomments: [nil, '', '0'],
+          readyexhibit: [nil, '', '0'],
+          readystorage: [nil, '', '0'],
+          receiveddate: [nil, '', '0'],
+          searchhomecontainer: [nil, '', '0'],
+          storageformatid: [nil, '', '0'],
+          storagemethodid: [nil, '', '0'],
+          tobecombined: [nil, '', '0'],
+        },
+        reader: true
+      extend Tms::Mixins::Tableable
+
       # Whether or not ObjComponents is used to record information about actual object components
       #   (sub-objects). Either way TMS provides linkage to Locations through ObjComponents
       setting :actual_components, default: false, reader: true
-      # Fields that are removed from migration because they are TMS specific or otherwise cannot be migrated
-      setting :out_of_scope_fields,
-        default: %i[
-                    sortnumber injurisdiction
-                   ],
-        reader: true
-      # These are fields that may need to be handled in the future, but are empty in all known TMS
-      #   data sets at present. 
-      setting :unhandled_fields,
-        default: %i[
-                    storagemethodid storageformatid homelevel searchhomecontainer tobecombined
-                    readystorage readyexhibit prepcomments costmethodid receiveddate homecrateid
-                   ],
-        reader: true
-      # Any other fields to be deleted
-      setting :other_delete_fields, default: [], reader: true
-      setting :text_entries_lookup, default: {}, reader: true
-      setting :text_entries_xform, default: nil, reader: true
+
+      setting :inactive_mapping, default: {'0'=>'active', '1'=>'inactive'}, reader: true
+      setting :text_entries_merge_xform, default: nil, reader: true
       setting :inventorystatus_fields, default: %i[objcompstatus active], reader: true
       setting :comment_fields, default: %i[storagecomments installcomments], reader: true
+
+      setting :configurable, default: {
+        actual_components: proc{ set_actual_components }
+      },
+        reader: true
+
+      def set_actual_components
+        Tms::Services::ObjComponents::ActualComponentDeterminer.call
+      end
+
+      def merging_text_entries?
+        Tms::TextEntries.for?('ObjComponents') && text_entries_merge_xform
+      end
     end
   end
 end

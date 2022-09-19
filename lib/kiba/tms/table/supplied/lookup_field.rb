@@ -23,6 +23,7 @@ module Kiba
           attr_reader :table_key
 
           FIELDS = {
+            con_alt_names: :altnameid,
             constituents: :constituentid,
             departments: :departmentid,
             loans: :loanid,

@@ -4,32 +4,21 @@ module Kiba
   module Tms
     module Jobs
       module Roles
+        # Omits merging in RoleTypes because we don't really need/care about that categorization
+        #   for the migration.
         module Prep
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__roles,
-                destination: :prep__roles,
-                lookup: :prep__role_types
+                destination: :prep__roles
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :role
-              transform Delete::Fields, fields: %i[anonymousnameid prepositional]
-
-              transform Merge::MultiRowLookup,
-                lookup: prep__role_types,
-                keycolumn: :roletypeid,
-                fieldmap: {roletype: :roletype}
-              transform Delete::Fields, fields: :roletypeid
-            end
           end
         end
       end

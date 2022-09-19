@@ -21,14 +21,11 @@ module Kiba
         attr_reader :to_register
 
         def gather
-          constants = Kiba::Tms.constants.select do |constant|
-            evaled = Kiba::Tms.const_get(constant)
-            evaled.is_a?(Module) &&
-              evaled.respond_to?(:target_tables) &&
-              evaled.respond_to?(:used?) &&
-              evaled.used?
-          end
-          constants.map{ |const| Kiba::Tms.const_get(const) }
+          Tms.configs.select do |config|
+            config.respond_to?(:target_tables) &&
+            config.respond_to?(:used?) &&
+            config.used?
+          end            
         end
       end
     end

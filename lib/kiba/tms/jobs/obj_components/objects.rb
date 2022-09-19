@@ -8,47 +8,43 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            return unless config.actual_components
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_components__actual_components,
-                destination: :obj_components__objects,
-                lookup: lookups
+                destination: :obj_components__objects
               },
               transformer: xforms
             )
           end
 
-          def lookups
-            base = []
-            base << :text_entries__for_obj_components if Tms::TextEntries.for?('ObjComponents')
-            base
-          end
-
           def xforms
+            bind = binding
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Delete::FieldsExcept,
-                fields: %i[componentid componentnumber objcompstatus active physdesc storagecomments installcomments
-                           compcount title]
+                fields: %i[componentid componentnumber objcompstatus active physdesc storagecomments
+                           installcomments compcount title te_comment]
               transform Rename::Fields, fieldmap: {
                 componentnumber: :objectnumber,
                 physdesc: :briefdescription,
                 compcount: :numberofobjects
               }
               transform Merge::ConstantValue, target: :cataloglevel, value: 'component'
+              unless config.inventorystatus_fields.empty?
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: Tms::ObjComponents.inventorystatus_fields,
+                sources: config.inventorystatus_fields,
                 target: :inventorystatus,
                 sep: Tms.delim,
                 delete_sources: true
-
-              if Tms::TextEntries.for?('ObjComponents') && Tms::ObjComponents.text_entries_xform
-                Tms::ObjComponents.config.text_entries_lookup = text_entries__for_obj_components
-                transform Tms::ObjComponents.text_entries_xform
               end
 
-              unless Tms::ObjComponents.comment_fields.empty?
+              unless config.comment_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: Tms::ObjComponents.comment_fields,
+                  sources: config.comment_fields,
                   target: :comment,
                   sep: Tms.delim,
                   delete_sources: true

@@ -26,8 +26,6 @@ module Kiba
         ],
         reader: true
       setting :mappings, default: {}, reader: true
-
-      setting :no_table_mapping, default: {}, reader: true
     end
   end
 end

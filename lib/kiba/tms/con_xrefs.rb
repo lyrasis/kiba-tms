@@ -4,13 +4,17 @@ require 'dry-configurable'
 
 module Kiba
   module Tms
-    module ConXrefDetails
+    module ConXrefs
       extend Dry::Configurable
-      setting :delete_fields, default: %i[unmasked displaybioid addressid roletypeid], reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
-      
+      setting :delete_fields, default: %i[displayed isdefaultdisplaybio roletypeid], reader: true
+      setting :empty_fields,
+        default: {
+          conxrefsetid: [nil, '', '-1', '0']
+        },
+        reader: true
+
       setting :for_loans, reader: true do
         # transform adding a :con_note field
         setting :con_note_builder, default: nil, reader: true

@@ -8,30 +8,27 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_xrefs,
-                destination: :prep__con_xrefs,
-                lookup: :prep__roles
+                destination: :prep__con_xrefs
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
+            
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::TmsTableNames
-              transform Delete::Fields, fields: %i[displayed active isdefaultdisplaybio roletypeid]
-              transform Rename::Field, from: :id, to: :recordid
-              transform Merge::MultiRowLookup,
-                lookup: prep__roles,
-                keycolumn: :roleid,
-                fieldmap: {
-                  role: :role,
-                  roletype: :roletype
-                }
-              transform Delete::Fields, fields: :roleid
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
             end
           end
         end
