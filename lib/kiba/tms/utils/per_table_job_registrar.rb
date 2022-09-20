@@ -13,6 +13,7 @@ module Kiba
         end
         
         def call
+          puts "Registering per-table jobs"
           to_register.each{ |mod| mod.register_per_table_jobs }
         end
 

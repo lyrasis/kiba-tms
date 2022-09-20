@@ -17,7 +17,7 @@ module Kiba
           @field = field[0]
           @emptyvals = [field[1], nil, ''].flatten.uniq
 
-          @path = table.supplied_data_path
+          @path = mod.table_path
           @index = set_index
         end
 

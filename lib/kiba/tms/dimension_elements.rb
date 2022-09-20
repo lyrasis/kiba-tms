@@ -23,7 +23,11 @@ module Kiba
           "DimItemElemXrefs.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          'Overall'=>'overall'
+        },
+        reader: true
     end
   end
 end

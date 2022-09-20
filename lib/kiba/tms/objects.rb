@@ -46,6 +46,8 @@ module Kiba
           default << :title_comment if Tms::Table::List.include?('ObjTitles')
           default
         end
+
+      setting :con_role_treatment_mappings, default: {}, reader: true
       
       # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
       #  in client project
@@ -61,7 +63,6 @@ module Kiba
       setting :named_coll_fields, default: [], reader: true
       setting :nontext_inscription_source_fields, default: %i[], reader: true
       setting :nontext_inscription_target_fields, default: %i[], reader: true
-      setting :text_entry_lookup, default: nil, reader: true
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
 

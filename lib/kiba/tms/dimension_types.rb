@@ -6,14 +6,13 @@ module Kiba
   module Tms
     module DimensionTypes
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields,
         default: %i[unittypeid primaryunitid secondaryunitid system],
         reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
       
       setting :id_field, default: :dimensiontypeid, reader: true
       setting :type_field, default: :dimensiontype, reader: true
@@ -23,7 +22,19 @@ module Kiba
           "DimElemTypeXrefs.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          "Height"=>"height",
+          "Width"=>"width",
+          "Depth"=>"depth",
+          "Weight"=>"weight"
+        },
+        reader: true
+      extend Tms::Mixins::TypeLookupTable
+
+      def default_mapping_treatment
+        :downcase
+      end
     end
   end
 end

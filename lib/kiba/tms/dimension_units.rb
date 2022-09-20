@@ -6,8 +6,6 @@ module Kiba
   module Tms
     module DimensionUnits
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields,
@@ -16,6 +14,7 @@ module Kiba
                     issuperunit system],
         reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
       
       setting :id_field, default: :unitid, reader: true
       setting :type_field, default: :unitname, reader: true
@@ -26,7 +25,19 @@ module Kiba
           "PlaceCoordinates.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          "Inches"=>"inches",
+          "Centimeters"=>"centimeters",
+          "Pounds"=>"pounds",
+          "Kilograms"=>"kilograms"
+        },
+        reader: true
+      extend Tms::Mixins::TypeLookupTable
+
+      def default_mapping_treatment
+        :downcase
+      end
     end
   end
 end

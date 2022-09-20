@@ -6,13 +6,11 @@ module Kiba
   module Tms
     module FlagLabels
       extend Dry::Configurable
-      extend Tms::Mixins::MultiTableMergeable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields, default: %i[flaguse important], reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
       
       setting :id_field, default: :flagid, reader: true
       setting :type_field, default: :flaglabel, reader: true
@@ -22,6 +20,7 @@ module Kiba
         ],
         reader: true
       setting :mappings, default: {}, reader: true
+      extend Tms::Mixins::TypeLookupTable
     end
   end
 end

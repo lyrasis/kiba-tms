@@ -25,12 +25,12 @@ module Kiba
             base << :prep__departments if Tms::Departments.used?
             base << :prep__object_statuses if Tms::ObjectStatuses.used?
             base << :prep__obj_context if Tms::ObjContext.used?
-            base << :con_xref_details__for_objects if Tms::ConXrefDetails.for?('Objects')
+            base << :con_refs_for__objects if Tms::ConRefs.for?('Objects')
             if Tms::Objects::FieldXforms.classifications
               %i[prep__classifications prep__classification_xrefs].each{ |lkup| base << lkup }
             end
-            base << :text_entries__for_objects if Tms::TextEntries.for?('Objects')
-            base << :alt_nums__for_objects if Tms::AltNums.for?('Objects')
+            base << :text_entries_for__objects if Tms::TextEntries.for?('Objects')
+            base << :alt_nums_for__objects if Tms::AltNums.for?('Objects')
             base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
             base << :prep__obj_titles if Tms::ObjTitles.used?
             base << :obj_components__with_object_numbers if Tms::ObjComponents.merging_text_entries?
@@ -97,31 +97,35 @@ module Kiba
                 #   sorter: sorter
               end
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :departmentid,
-                lookup: prep__departments,
-                fieldmap: {
-                  Tms::Objects::Config.department_target => :department
-                },
-                delim: Tms.delim
+              if Tms::Departments.used?
+                transform Merge::MultiRowLookup,
+                  keycolumn: :departmentid,
+                  lookup: prep__departments,
+                  fieldmap: {
+                    config.department_target => :department
+                  },
+                  delim: Tms.delim
+              end
               transform Delete::Fields, fields: :departmentid
 
-              if Tms::Objects::Config.department_coll_prefix
+              if config.department_coll_prefix
                 transform Prepend::ToFieldValue,
-                  field: Tms::Objects::Config.department_target,
-                  value: Tms::Objects::Config.department_coll_prefix
+                  field: config.department_target,
+                  value: config.department_coll_prefix
               end
-              
-              transform Merge::MultiRowLookup,
-                keycolumn: :objectstatusid,
-                lookup: prep__object_statuses,
-                fieldmap: {
-                  objectstatus: :objectstatus
-                },
-                delim: Tms.delim
+
+              if Tms::ObjectStatuses.used?
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectstatusid,
+                  lookup: prep__object_statuses,
+                  fieldmap: {
+                    objectstatus: :objectstatus
+                  },
+                  delim: Tms.delim
+              end
               transform Delete::Fields, fields: :objectstatusid
 
-              if Tms::Table::List.include?('ObjTitles')
+              if Tms::ObjTitles.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__obj_titles,
                   keycolumn: :objectid,
@@ -147,6 +151,7 @@ module Kiba
                 transform Rename::Field, from: :obj_title, to: :title
               end
 
+              if Tms::ObjContext.used?
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
                 lookup: prep__obj_context,
@@ -162,17 +167,23 @@ module Kiba
                   period: :period
                 },
                 delim: Tms.delim
+              end
 
+              if Tms::ConRefs.for?('Objects')
+                role_treatment = config.con_role_treatment_mapping
+                prod_roles = role_treatment[:production]
+                assoc_roles = role_treatment[:assoc]
+                
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
-                lookup: con_xref_details__for_objects,
+                lookup: con_refs_for__objects,
                 fieldmap: {
                   objectproductionperson: :person,
                   objectproductionpersonrole: :role
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:person].blank? }
-                    .select{ |row| Tms::ConXrefDetails.for_objects.production_con_roles.any?(row[:role]) }
+                    .select{ |row| prod_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -183,14 +194,14 @@ module Kiba
 
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,
-                lookup: con_xref_details__for_objects,
+                lookup: con_refs_for__objects,
                 fieldmap: {
                   objectproductionorganization: :org,
                   objectproductionorganizationrole: :role
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:org].blank? }
-                    .select{ |row| Tms::ConXrefDetails.for_objects.production_con_roles.any?(row[:role]) }
+                    .select{ |row| prod_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:org]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -209,7 +220,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:person].blank? }
-                    .select{ |row| Tms::ConXrefDetails.for_objects.assoc_con_roles.any?(row[:role]) }
+                    .select{ |row| assoc_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -227,7 +238,7 @@ module Kiba
                 },
                 conditions: ->(_origrow, mergerows) do
                   mergerows.reject{ |row| row[:org].blank? }
-                    .select{ |row| Tms::ConXrefDetails.for_objects.assoc_con_roles.any?(row[:role]) }
+                    .select{ |row| assoc_roles.any?(row[:role]) }
                     .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
                     .to_h
                     .values
@@ -235,11 +246,12 @@ module Kiba
                 sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
                 delim: Tms.delim,
                 null_placeholder: '%NULLVALUE%'
+              end
 
               if Tms::AltNums.for?('Objects')
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
-                  lookup: alt_nums__for_objects,
+                  lookup: alt_nums_for__objects,
                   fieldmap: {
                     numbervalue: :altnum,
                     numbertype: :description
@@ -249,7 +261,7 @@ module Kiba
                   null_placeholder: '%NULLVALUE%'
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
-                  lookup: alt_nums__for_objects,
+                  lookup: alt_nums_for__objects,
                   fieldmap: {alt_num_comment: :remarks},
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
                   delim: Tms.delim
@@ -275,9 +287,9 @@ module Kiba
                   delim: Tms.delim
               end
 
-              if Tms::Objects::FieldXforms.text_entries
-                Tms::Objects::Config.config.text_entry_lookup = text_entries__for_objects
-                transform Tms::Objects::FieldXforms.text_entries
+              if config.text_entries_merge_xform
+                xform = config.text_entries_merge_xform.new(text_entries_for__objects)
+                transform{ |row| xform.process(row) }
               end
 
 

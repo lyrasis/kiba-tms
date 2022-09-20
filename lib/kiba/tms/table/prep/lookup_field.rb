@@ -74,7 +74,6 @@ module Kiba
             phone_types: :phonetypeid,
             ref_formats: :formatid,
             relationships: :relationshipid,
-            role_types: :roletypeid,
             roles: :roleid,
             shipping_methods: :shippingmethodid,
             status_flags: :recordid,

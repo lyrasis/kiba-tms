@@ -4,7 +4,7 @@ require 'dry-configurable'
 
 module Kiba
   module Tms
-    module SurveyTypes
+    module PhoneTypes
       extend Dry::Configurable
       module_function
 
@@ -12,14 +12,20 @@ module Kiba
       setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
       
-      setting :id_field, default: :surveytypeid, reader: true
-      setting :type_field, default: :surveytype, reader: true
+      setting :id_field, default: :phonetypeid, reader: true
+      setting :type_field, default: :phonetype, reader: true
       setting :used_in,
         default: [
-          "Conditions.#{id_field}"
+          "ConPhones.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          "Home"=>"home",
+          "Cell"=>"mobile",
+          "Office"=>"business"
+        },
+        reader: true
       extend Tms::Mixins::TypeLookupTable
     end
   end

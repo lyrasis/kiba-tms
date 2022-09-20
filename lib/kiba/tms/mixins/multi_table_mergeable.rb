@@ -81,12 +81,13 @@ module Kiba
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
               targetxform = xforms.select{ |x| x.to_s == "for_#{targetobj.filekey}_transform" }
-              register targetobj.filekey, mod.send(:target_job_hash, *[ns_name, targetobj, field, targetxform])
+              register targetobj.filekey, mod.send(:target_job_hash, *[mod, ns_name, targetobj, field, targetxform])
             end
           end
         end
 
-        def target_job_hash(ns_name, targetobj, field, xforms)
+        def target_job_hash(mod, ns_name, targetobj, field, xforms)
+          
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
             .map{ |val| val.gsub('_', '') }
@@ -98,15 +99,28 @@ module Kiba
             path: File.join(Tms.datadir, 'working', "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
                       args: {
-                        source: "prep__#{ns_name}".delete_suffix('_for').to_sym,
+                        source: mod.for_table_source,
                         dest: "#{ns_name}__#{key}".to_sym,
                         targettable: targetobj.tablename,
                         field: field,
                         xforms: xforms
                       }
                      },
-            tags: tags
+            tags: tags,
+            lookup_on: mod.lookup_on_field
           }
+        end
+
+        def lookup_on_field
+          return for_table_lookup_on_field if respond_to?(:for_table_lookup_on_field)
+
+          :recordid
+        end
+        
+        def for_table_source
+          return for_table_source_job_key if respond_to?(:for_table_source_job_key)
+
+          "prep__#{filekey}".to_sym
         end
       end
     end

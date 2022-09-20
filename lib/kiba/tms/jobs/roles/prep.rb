@@ -4,8 +4,6 @@ module Kiba
   module Tms
     module Jobs
       module Roles
-        # Omits merging in RoleTypes because we don't really need/care about that categorization
-        #   for the migration.
         module Prep
           module_function
 
@@ -17,8 +15,21 @@ module Kiba
                 source: :tms__roles,
                 destination: :prep__roles
               },
-              transformer: config.xforms(binding)
+              transformer: xforms
             )
+          end
+
+          def xforms
+            bind = binding
+
+            Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              
+              transform Tms::Transforms::DeleteTmsFields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+            end
           end
         end
       end

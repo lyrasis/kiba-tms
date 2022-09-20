@@ -6,13 +6,11 @@ module Kiba
   module Tms
     module OverallConditions
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::MultiTableMergeable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields, default: %i[], reader: true
       setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
       
       setting :id_field, default: :overallconditionid, reader: true
       setting :type_field, default: :overallcondition, reader: true
@@ -21,7 +19,23 @@ module Kiba
           "Conditions.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          "Excellent"=>"excellent",
+          "Fair"=>"fair",
+          "Good"=>"good",
+          "Poor"=>"poor",
+          "Very Good"=>"very good"
+        },
+        reader: true
+      extend Tms::Mixins::TypeLookupTable
+
+      setting :target_tables, default: %w[Objects], reader: true
+      extend Tms::Mixins::MultiTableMergeable
+
+      def default_mapping_treatment
+        :downcase
+      end
     end
   end
 end

@@ -180,6 +180,13 @@ module Kiba
       end.map{ |const| Tms.const_get(const) }
     end
 
+    def finalize_config
+      Tms::Jobs.extend_configured_jobs
+      Tms::ConRefs.target_tables.each do |table|
+        Tms.const_get(table).extend(Tms::Mixins::Roleable)
+      end
+    end
+    
     def per_job_tables
       Tms.configs.select do |config|
         config.respond_to?(:target_tables) &&
@@ -189,7 +196,18 @@ module Kiba
     end
     
     def init_config(mod)
-      Tms::Services::InitialConfigDeriver.call(mod).each{ |config| puts config.value! }
+      result = Tms::Services::InitialConfigDeriver.call(mod)
+      result.select(&:success?).each{ |config| puts config.value!.inspect }
+      errs = result.select(&:failure?)
+      unless errs.empty?
+        puts "\nFailures"
+        errs.map(&:failure).each do |config|
+          puts config[0]
+          puts config[1]
+          puts config[1].backtrace
+          puts ''
+        end
+      end
     end
 
     # methods to delete after development is done

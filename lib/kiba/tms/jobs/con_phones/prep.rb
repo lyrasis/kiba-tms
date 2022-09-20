@@ -8,6 +8,8 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_phones,
@@ -18,6 +20,9 @@ module Kiba
             )
           end
 
+          def lookups
+          end
+          
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields

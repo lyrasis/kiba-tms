@@ -21,7 +21,7 @@ module Kiba
           puts "Deriving config for #{mod}..."
           return nil unless mod.used?
           config << Tms::Services::InitialEmptyFieldDeriver.call(mod)
-          derive_type_config if mod.respond_to?(:type_lookup) && mod.type_lookup
+          derive_type_config if mod.respond_to?(:mappable_type?)
           derive_multi_table_merge_config if mod.respond_to?(:for?)
           derive_custom_config if mod.respond_to?(:configurable)
           config.compact
@@ -56,9 +56,13 @@ module Kiba
             config << Success("#{setting_name} = #{tables.inspect}")
           end
         end
-        
+
         def derive_type_config
-          config << Tms::Services::InitialTypeMappingDeriver.call(mod)
+          if mod.mappable_type?
+            config << Tms::Services::TypeMappingDeriver.call(mod)
+          else
+            config << Tms::Services::TypeTableKnownValueDeriver.call(mod)
+          end
         end
       end
     end

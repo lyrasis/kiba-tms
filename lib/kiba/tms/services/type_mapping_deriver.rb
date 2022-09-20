@@ -7,7 +7,7 @@ require 'dry/monads/do'
 module Kiba
   module Tms
     module Services
-      class InitialTypeMappingDeriver
+      class TypeMappingDeriver
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
         
@@ -17,6 +17,8 @@ module Kiba
         
         def initialize(mod)
           @mod = mod
+          return unless eligible?
+          
           @value_getter = Tms::Services::UniqueTypeValuesUsed.new(mod)
           @id_field = mod.id_field
           @type_field = mod.type_field
@@ -26,6 +28,8 @@ module Kiba
         end
 
         def call
+          return unless eligible?
+
           clean = yield(cleaned)
           hash = yield(mapping_hash(clean))
           return nil if clean.empty?
@@ -42,7 +46,10 @@ module Kiba
         attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping, :setting_name
 
         def cleaned
-          result = vals_as_rows.map{ |row| no_val_xform.process(row) }
+          vals = vals_as_rows
+          return Failure(nil) unless vals
+          
+          result = vals.map{ |row| no_val_xform.process(row) }
             .compact
             .map{ |row| row[type_field] }
         rescue StandardError => err
@@ -51,8 +58,23 @@ module Kiba
           default_mapping ? Success(result - mod.mappings.keys) : Success(result)
         end
 
+        def eligible?
+          mod.respond_to?(:mappable_type?) && mod.mappable_type?
+        end
+
+        def default_mapped(value)
+          case mod.default_mapping_treatment
+          when :self
+            value
+          when :downcase
+            value.downcase
+          when :todo
+            'TODO: provide mapping'
+          end
+        end
+
         def mapping_hash(values)
-          result = values.map{ |val| [val, val.downcase] }.to_h
+          result = values.map{ |val| [val, default_mapped(val)] }.to_h
         rescue StandardError => err
           Failure(setting_name, err)
         else
@@ -60,19 +82,26 @@ module Kiba
         end
 
         def used_val_ids
-          value_getter.call
-            .values
+          vals = value_getter.call
+          return nil unless vals
+          
+          vals.values
             .flatten
             .uniq
         end
         
         def vals_as_rows
-          vals_from_table.map{ |val| {type_field => val} }
+          vals = vals_from_table
+          return nil unless vals
+          
+          vals.map{ |val| {type_field => val} }
         end
         
         def vals_from_table
-          path = mod.table.supplied_data_path
+          path = mod.table_path
           used = used_val_ids
+          return nil unless used
+          
           vals = []
           CSV.foreach(path, headers: true, header_converters: %i[downcase symbol]) do |row|
             next unless used.any?(row[id_field])

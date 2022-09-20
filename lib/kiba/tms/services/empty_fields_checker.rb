@@ -7,7 +7,9 @@ module Kiba
         def self.call(...)
           self.new(...).call
         end
-        
+
+        # @param table [Kiba::Tms::Table::Obj]
+        # @param mod [Module]
         def initialize(table, mod)
           @table = table
           @mod = mod

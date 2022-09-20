@@ -27,8 +27,8 @@ module Kiba
             base << :prep__loan_statuses if Tms::LoanStatuses.used?
             base << :prep__indemnity_responsibilities if Tms::IndemnityResponsibilities.used?
             base << :prep__insurance_responsibilities if Tms::InsuranceResponsibilities.used?
-            if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
-              base << :con_xref_details__for_loans
+            if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConRefs.for?('Loans')
+              base << :con_refs_for__loans
             else
               warn('Implement other Tms::Loans.con_link_field')
             end
@@ -106,9 +106,9 @@ module Kiba
               end
               transform Delete::Fields, fields: :departmentid
 
-              if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConXrefDetails.for?('Loans')
+              if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConRefs.for?('Loans')
                 transform Merge::MultiRowLookup,
-                  lookup: con_xref_details__for_loans,
+                  lookup: con_refs_for__loans,
                   keycolumn: :loanid,
                   fieldmap: {person: :person, personrole: :role},
                   delim: Tms.delim,
@@ -116,7 +116,7 @@ module Kiba
                   conditions: ->(_orig, mrows){ mrows.reject{ |row| row[:person].blank? } },
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
                 transform Merge::MultiRowLookup,
-                  lookup: con_xref_details__for_loans,
+                  lookup: con_refs_for__loans,
                   keycolumn: :loanid,
                   fieldmap: {org: :org, orgrole: :role},
                   delim: Tms.delim,

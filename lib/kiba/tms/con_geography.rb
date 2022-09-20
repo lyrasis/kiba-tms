@@ -8,7 +8,6 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      # The first three rows are fields all marked as not in use in the TMS data dictionary
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true

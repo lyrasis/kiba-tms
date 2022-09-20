@@ -24,13 +24,23 @@ Under `/lib/kiba/tms`:
 `transforms`:: Data row transformation classes. Transforms specific to a given TMS database table, CS record type, or other processing category will be nested under a namespace consistent with configs and jobs.
 `utils`:: `call`-able service objects that aggregate running individual `service` service objects across all configs, jobs, tables, etc.
 
-== Extending configured jobs
+
+== Project-specific steps
+=== Extending configured jobs
 
 Add the following to the `lib/my_project.rb` file, before `Kiba::Tms::RegistryData.register`.
 
-`Kiba::Tms::Jobs.extend_configured_jobs`
+`Kiba::Tms.finalize_config`
 
-This adds a `:config` method to all job-definition modules matching a top-level config namespace.
+=== Generate initial config
+`bin/console`
+`Tms::Utils::InitialConfigDeriver.call`
+
+Paste results into `lib/my_project.rb` file
+
+`Tms::Utils::InitialDependentConfigDeriver.call`
+
+
 
 == binding job namespace config into `Kiba.job_segment`
 All jobs 

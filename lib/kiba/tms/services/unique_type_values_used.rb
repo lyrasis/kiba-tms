@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'dry/monads'
+require 'dry/monads/do'
 
 module Kiba
   module Tms
     module Services
       class UniqueTypeValuesUsed
         include Tms::Mixins::Columnable
+        include Dry::Monads[:result]
+        include Dry::Monads::Do.for(:call)
         
         def self.call(...)
           self.new(...).call

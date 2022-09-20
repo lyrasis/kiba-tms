@@ -5,7 +5,7 @@ require 'dry-configurable'
 module Kiba
   module Tms
     # config settings for handling data from the following tables:
-    #   ConAddress, ConAltNames, ConDates, ConEMail, ConPhones, ConTypes, Constituents
+    #   ConAddress, ConAltNames, ConDates, ConEMail, ConTypes, Constituents
     module Constituents
       extend Dry::Configurable
       extend Tms::Mixins::Omittable

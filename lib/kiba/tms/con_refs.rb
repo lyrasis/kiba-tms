@@ -14,6 +14,7 @@ module Kiba
       extend Tms::Mixins::Tableable
       
       setting :target_tables, default: %w[], reader: true
+      setting :for_table_source_job_key, default: :con_refs__prep, reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       setting :migrate_inactive, default: true, reader: true

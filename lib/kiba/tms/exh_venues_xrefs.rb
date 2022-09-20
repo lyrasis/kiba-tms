@@ -4,11 +4,13 @@ require 'dry-configurable'
 
 module Kiba
   module Tms
-    module Roles
+    module ExhVenuesXrefs
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[anonymousnameid prepositional], reader: true
+      setting :delete_fields,
+        default: %i[],
+        reader: true
       setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
     end

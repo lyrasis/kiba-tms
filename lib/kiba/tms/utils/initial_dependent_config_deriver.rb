@@ -3,27 +3,28 @@
 module Kiba
   module Tms
     module Utils
-      class InitialConfigDeriver
+      class InitialDependentConfigDeriver
         def self.call
           self.new.call
         end
 
         def initialize
           @to_configure = gather_configurable
-          @config_path = "#{Tms.datadir}/initial_config.txt"
-          @err_path = "#{Tms.datadir}/initial_config_errs.txt"
+          @config_path = "#{Tms.datadir}/initial_config_dependent.txt"
+          @err_path = "#{Tms.datadir}/initial_config_errs_dependent.txt"
         end
         
         def call
-          config = to_configure.map{ |const| Tms::Services::InitialConfigDeriver.call(const) }
+          config = to_configure.map{ |const| Tms::Services::RoleTreatmentDeriver.call(const) }
             .flatten
             .compact
             .group_by(&:success?)
-          configs = config[true]
-          errs = config[false]
+          configs = config[true].map(&:value!)
+          errs = config[false].map(&:failure)
           
-          write_config(configs.map(&:value!)) if configs
-          write_errs(errs.map(&:failure)) if errs
+          write_config(configs) unless configs.empty?
+          write_errs(errs) unless errs.empty?
+          binding.pry
         end
 
         private
@@ -31,11 +32,9 @@ module Kiba
         attr_reader :to_configure, :config_path, :err_path
 
         def gather_configurable
-          constants = Kiba::Tms.constants.select do |constant|
-            evaled = Kiba::Tms.const_get(constant)
-            evaled.is_a?(Module) && evaled.respond_to?(:used?)
+          Tms.configs.select do |constant|
+            constant.respond_to?(:merges_roles?)
           end
-          constants.map{ |const| Kiba::Tms.const_get(const) }
         end
 
         def write_config(configs)

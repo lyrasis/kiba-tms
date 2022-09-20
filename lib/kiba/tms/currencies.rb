@@ -27,7 +27,11 @@ module Kiba
           "ObjInsurance.localcurrencyid"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      setting :mappings,
+        default: {
+          'US $' => 'US Dollar'
+        },
+        reader: true
     end
   end
 end
