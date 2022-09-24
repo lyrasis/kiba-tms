@@ -3,6 +3,7 @@ Gemfile.lock
 .rspec_status
 .yardoc/
 .ruby-version
+coverage
 docs
 data/backup
 **/*.csv#

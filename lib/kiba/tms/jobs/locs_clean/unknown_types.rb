@@ -7,8 +7,8 @@ module Kiba
         module UnknownTypes
           module_function
 
-          ITERATION = Tms.locations.cleanup_iteration
-          
+          ITERATION = Tms::Locations.cleanup_iteration
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

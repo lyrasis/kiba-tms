@@ -7,33 +7,73 @@ require 'dry/monads/do'
 module Kiba
   module Tms
     module Services
+      # Returns unique type id values used in included data. Maps ids to their
+      #   textual values. Removes no value values if not migrating.
       class UniqueTypeValuesUsed
-        include Tms::Mixins::Columnable
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
-        
+
         def self.call(...)
           self.new(...).call
         end
-        
-        def initialize(mod)
+
+        def initialize(mod:,
+                       col_obj: Tms::Data::Column,
+                       table_getter: Tms::Data::CsvEnum)
           @mod = mod
-          @used_in = process_used_in
+          @table_getter = table_getter
+          @col_obj = col_obj
+          @used_in = mod.used_in
+          @matcher = Regexp.new(Tms.no_value_type_pattern, Regexp::IGNORECASE)
         end
 
         def call
           return nil unless mod.used?
           return nil unless used_in
 
-          used_values
+          lkup = yield table_getter.call(mod)
+          ids_used = yield used_values
+          vals_used = yield vals_for_ids(ids_used, lkup)
+          cleaned = yield clean_vals(vals_used)
+
+          binding.pry
+          Success(cleaned)
         end
 
         private
 
-        attr_reader :mod, :used_in
+        attr_reader :mod, :col_obj, :used_in, :table_getter, :matcher
+
+        def clean_vals(vals)
+          return Success(vals) if Tms.migrate_no_value_types
+
+          cleaned = vals.reject{ |val| val.match?(matcher) }
+        rescue StandardError => err
+          Failure(err)
+        else
+          Success(cleaned)
+        end
 
         def used_values
-          used_in.map{ |col, params| [col, Tms::Services::UniqueFieldValues.call(*params)] }.to_h
+          vals = used_in.map{ |col| col_obj.new(col).unique_values }
+            .select(&:success?)
+            .map(&:value!)
+            .flatten
+            .sort
+            .uniq
+        rescue StandardError => err
+          Failure(err)
+        else
+          Success(vals)
+        end
+
+        def vals_for_ids(ids_used, lkup)
+          vals = lkup.select{ |row| ids_used.any?(row[mod.id_field]) }
+            .map{ |row| row[mod.type_field] }
+        rescue StandardError => err
+          Failure(err)
+        else
+          Success(vals)
         end
       end
     end

@@ -18,36 +18,55 @@ module Kiba
   module Tms
     ::Tms = Kiba::Tms
     module_function
-    
+
     extend Dry::Configurable
 
     def loader
       @loader ||= setup_loader
     end
 
-    private def setup_loader
-              puts "LOADING KIBA-TMS"
-              @loader = Zeitwerk::Loader.new
-              #              @loader.log!
-              @loader.push_dir(File.expand_path(__FILE__).delete_suffix('.rb'), namespace: Kiba::Tms)
-              @loader.inflector.inflect(
-                'classification_xrefs' => 'ClassificationXRefs',
-                'dd_languages' => 'DDLanguages',
-                'version'   => 'VERSION'
-              )
-              @loader.enable_reloading
-              @loader.setup
-              @loader.eager_load
-              @loader
-            end
+    def setup_loader
+      puts "LOADING KIBA-TMS"
+      @loader = Zeitwerk::Loader.new
+      #              @loader.log!
+      @loader.push_dir(
+        File.expand_path(__FILE__).delete_suffix('.rb'),
+        namespace: Kiba::Tms
+      )
+      @loader.inflector.inflect(
+        'classification_xrefs' => 'ClassificationXRefs',
+        'dd_languages' => 'DDLanguages',
+        'version'   => 'VERSION'
+      )
+      @loader.enable_reloading
+      @loader.setup
+      @loader.eager_load
+      @loader
+    end
+    private_class_method(:setup_loader)
 
     def reload!
       @loader.reload
     end
 
-    # you will want to override the following in any application using this extension
-    setting :empty_table_list_path, default: "#{__dir__}/empty_tables.txt", reader: true
-    setting :tms_table_dir_path, default: "#{__dir__}/data/tms", reader: true
+    # you will want to override the following in any application using this
+    # extension
+    setting :empty_table_list_path,
+      default: "#{__dir__}/empty_tables.txt",
+      reader: true
+    setting :tms_table_dir_path,
+      default: __dir__,
+      reader: true,
+      constructor: proc{ |value|
+        if value['kiba-tms/lib']
+          base = value.split('/')
+          2.times{ base.pop }
+          dir = base.join('/')
+          File.join(dir, 'data', 'tms')
+        else
+          value
+        end
+      }
     setting :datadir, default: "#{__dir__}/data", reader: true
     setting :delim, default: Kiba::Extend.delim, reader: true
     setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
@@ -84,40 +103,48 @@ module Kiba
       },
       reader: true
 
-    # TMS tables not used in a given project. Override in project application
-    #   These should be tables that are not literally empty. Empty tables are listed in the file found
-    #   at Tms.empty_table_list_path
-    setting :excluded_tables, default: [], reader: true
-    # Different TMS installs may have slightly different table names. For instance EnvironmentalReqTypes (expected by
-    #   this application) vs. EnvironmentalRequirementTypes (as found in another TMS instance). The Hash given as the
-    #   following setting can be used to override table names:
-    #
-    # ```
-    # { 
-    setting :table_name_overrides, default: {}, reader: true
-
     # File registry - best to just leave this as-is
     setting :registry, default: Kiba::Extend.registry, reader: true
 
-    # These weird, specific settings are included here instead of in individual job or transform code
-    #   because it may be necessary to override them per client project using this library.
+    # PROJECT SPECIFIC CONFIG
+
+    # TMS tables not used in a given project. Override in project application
+    #   These should be tables that are not literally empty. Empty tables are
+    #   listed in the file found at Tms.empty_table_list_path
+    setting :excluded_tables, default: [], reader: true
     setting :cspace_profile, default: :fcart, reader: true
 
-    # client-specific cleanup of whitespace, special characters, etc. to be generically applied
-    setting :data_cleaner, default: nil, reader: true
-
-    # TMS-internal fields to be deleted
-    setting :tms_fields, default: %i[loginid entereddate gsrowversion], reader: true
-
+    # client-specific cleanup of whitespace, special characters, etc. to be
+    #   generically applied before finalizing initial data prep jobs (or writing
+    #   out final data for ingest)
     setting :boolean_yn_mapping, default: {'0'=>'n', '1'=>'y'}, reader: true
-    setting :inverted_boolean_yn_mapping, default: {'0'=>'y', '1'=>'n'}, reader: true
-
-    # if true, do not delete (not assigned) and (not entered) and other similar values from type lookup tables
-    #   before merging in
-    setting :migrate_no_value_types, default: false, reader: true
-    setting :no_value_type_pattern,
-      default: '^(\(|\[)?(enter your value here|none assigned|not assigned|not defined|not entered|part of an object|not specified)(\)|\])?$',
+    setting :data_cleaner, default: nil, reader: true
+    # TMS-internal fields to be deleted
+    setting :inverted_boolean_yn_mapping,
+      default: {'0'=>'y', '1'=>'n'},
       reader: true
+    # if true, do not delete (not assigned) and (not entered) and other similar
+    #   values from type lookup tables before merging in
+    setting :migrate_no_value_types, default: false, reader: true
+    setting :tms_fields,
+      default: %i[loginid entereddate gsrowversion],
+      reader: true
+
+    # @return String ready to be converted into a Regexp
+    #
+    # If :migrate_no_value_types = false, type values matching any of these
+    #   (case insensitive, wrapped in square brackets or parens) are removed
+    #   from prepared lookups
+    setting :no_value_type_pattern,
+      default: [
+        'enter your value here', 'none assigned', 'not assigned', 'not defined',
+        'not entered', 'part of an object', 'not specified'
+      ],
+      reader: true,
+      constructor: proc{ |value|
+        alts = "(#{value.join('|')})"
+        "(\\(|\\[)?#{alts}(\\)|\\])?$"
+      }
 
     setting :inventory_status_mapping,
       default: {},
@@ -130,49 +157,8 @@ module Kiba
 
     setting :classifications, reader: true do
       # how to map/merge fields from Classifications table into objects
-      setting :fieldmap,
-        default: {
-          classification: :classification,
-          subclassification: :subclassification,
-          subclassification2: :subclassification2,
-          subclassification3: :subclassification3,
-        },
-        reader: true
     end
 
-    setting :locations, reader: true do
-      setting :cleanup_iteration, default: 0, reader: true
-      # Whether client wants the migration to include construction of a location hierarchy
-      setting :hierarchy, default: true, reader: true
-      setting :hierarchy_delim, default: ' > ', reader: true
-      # Which fields in obj_locations need to be concatenated with the location value to create additional
-      #   location values (and thus need a unique id added to look them up)
-      setting :fulllocid_fields, default: %i[locationid loclevel searchcontainer temptext shipmentid crateid sublevel], reader: true
-      # which authority types to process records and hierarchies for (organizations used as locations are
-      #   handled a bit separately
-      setting :authorities, default: %i[local offsite], reader: true
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
-    end
-
-    setting :locations, reader: true do
-      setting :cleanup_iteration, default: 0, reader: true
-      # Whether client wants the migration to include construction of a location hierarchy
-      setting :hierarchy, default: true, reader: true
-      setting :hierarchy_delim, default: ' > ', reader: true
-      # Which fields in obj_locations need to be concatenated with the location value to create additional
-      #   location values (and thus need a unique id added to look them up)
-      setting :fulllocid_fields, default: %i[locationid loclevel searchcontainer temptext shipmentid crateid sublevel], reader: true
-      # which authority types to process records and hierarchies for (organizations used as locations are
-      #   handled a bit separately
-      setting :authorities, default: %i[local offsite], reader: true
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
-    end
-    
-    setting :obj_context, reader: true do
-      # client-specfic fields to delete
-      setting :delete_fields, default: [], reader: true
-    end
-    
     def configs
       Tms.constants.select do |constant|
         evaled = Tms.const_get(constant)
@@ -183,10 +169,12 @@ module Kiba
     def finalize_config
       Tms::Jobs.extend_configured_jobs
       Tms::ConRefs.target_tables.each do |table|
+        next unless Tms.constants.any?(table)
+
         Tms.const_get(table).extend(Tms::Mixins::Roleable)
       end
     end
-    
+
     def per_job_tables
       Tms.configs.select do |config|
         config.respond_to?(:target_tables) &&
@@ -194,10 +182,10 @@ module Kiba
           config.used?
       end
     end
-    
+
     def init_config(mod)
       result = Tms::Services::InitialConfigDeriver.call(mod)
-      result.select(&:success?).each{ |config| puts config.value!.inspect }
+      result.select(&:success?).each{ |config| puts config.value! }
       errs = result.select(&:failure?)
       unless errs.empty?
         puts "\nFailures"
@@ -216,5 +204,3 @@ module Kiba
     end
   end
 end
-
-

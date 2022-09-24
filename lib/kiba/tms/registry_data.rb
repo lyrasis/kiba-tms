@@ -23,7 +23,7 @@ module Kiba
           tables.each do |table|
             reghash = Tms::Table::Prep::RegistryHashCreator.call(table)
             next unless reghash
-            
+
             register table.filekey, reghash
           end
         end
@@ -33,7 +33,7 @@ module Kiba
       def register_supplied_files
         tables = Kiba::Tms::Table::List.call.map{ |table| Kiba::Tms::Table::Obj.new(table) }
           .select(&:included)
-        
+
         Kiba::Tms.registry.namespace('tms') do
           tables.each do |table|
             register table.filekey, Tms::Table::Supplied::RegistryHashCreator.call(table)
@@ -81,7 +81,7 @@ module Kiba
             tags: %i[accessionlot todochk]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('alt_nums') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::AltNums::NewTables,
@@ -297,7 +297,7 @@ module Kiba
             }
           }
         end
-        
+
         Kiba::Tms.registry.namespace('con_email') do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
@@ -480,7 +480,7 @@ module Kiba
             lookup_on: :objectid
           }
         end
-        
+
         Kiba::Tms.registry.namespace('loans') do
           register :in, {
             creator: Kiba::Tms::Jobs::Loans::In,
@@ -595,7 +595,7 @@ module Kiba
             }
           end
 
-          Kiba::Tms.locations.authorities.each do |loc_type|
+          Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_hier".to_sym, {
               path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_hier.csv"),
               creator: {callee: Kiba::Tms::Jobs::LocsClean::HierarchyAdder, args: {type: loc_type}},
@@ -603,7 +603,7 @@ module Kiba
             }
           end
 
-          Kiba::Tms.locations.authorities.each do |loc_type|
+          Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_cspace".to_sym, {
               path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_cspace.csv"),
               creator: {callee: Kiba::Tms::Jobs::LocsClean::Cspace, args: {type: loc_type}},
@@ -611,7 +611,7 @@ module Kiba
             }
           end
 
-          Kiba::Tms.locations.authorities.each do |loc_type|
+          Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_hier_cspace".to_sym, {
               path: File.join(Kiba::Tms.datadir, 'cspace', "locations_#{loc_type}_hier.csv"),
               creator: {callee: Kiba::Tms::Jobs::LocsClean::HierCspace, args: {type: loc_type}},
@@ -666,7 +666,7 @@ module Kiba
             lookup_on: :constituentid
           }
         end
-        
+
         Kiba::Tms.registry.namespace('nameclean0') do
           register :prep, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
@@ -681,7 +681,7 @@ module Kiba
             desc: 'Names which are marked to be used as authority terms',
             tags: %i[names],
             lookup_on: :norm
-          }          
+          }
           register :constituents_kept, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::ConstituentsKept,
             path: File.join(Kiba::Tms.datadir, 'working', 'constituent_names_kept.csv'),
@@ -695,7 +695,7 @@ module Kiba
             desc: 'Organization names which are marked to be used as authority terms',
             tags: %i[names],
             lookup_on: :norm
-          }          
+          }
           register :persons_kept, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsKept,
             path: File.join(Kiba::Tms.datadir, 'working', 'person_names_kept.csv'),
@@ -709,7 +709,7 @@ module Kiba
             desc: 'Organization names which are NOT marked to be used as authority terms',
             tags: %i[names],
             lookup_on: :norm
-          }          
+          }
           register :persons_not_kept, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKept,
             path: File.join(Kiba::Tms.datadir, 'working', 'person_names_not_kept.csv'),
@@ -734,7 +734,7 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_duplicates.csv'),
             desc: 'Organization names which, once normalized, are duplicates',
             tags: %i[names]
-          }          
+          }
           register :persons_duplicates, {
             creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsDuplicates,
             path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_duplicates.csv'),
@@ -742,8 +742,8 @@ module Kiba
             tags: %i[names]
           }
         end
-        
-        Kiba::Tms.registry.namespace('name_compile') do          
+
+        Kiba::Tms.registry.namespace('name_compile') do
           register :raw, {
             creator: Kiba::Tms::Jobs::NameCompile::Raw,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_raw.csv'),
@@ -796,7 +796,7 @@ module Kiba
                  salutation nametitle firstname middlename lastname suffix
                 ] }
           }
-          
+
           register :main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::MainDuplicates,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_main_duplicates.csv'),
@@ -1017,7 +1017,7 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('name_type_cleanup') do   
+        Kiba::Tms.registry.namespace('name_type_cleanup') do
           register :from_base_data, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::FromBaseData,
             path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_from_base_data.csv'),
@@ -1031,7 +1031,7 @@ module Kiba
             dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
           end
-        Kiba::Tms.registry.namespace('names') do          
+        Kiba::Tms.registry.namespace('names') do
           register :compiled, {
             creator: Kiba::Tms::Jobs::Names::CompiledData,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled.csv'),
@@ -1205,7 +1205,7 @@ module Kiba
               initial_headers: %i[objincomingid objectnumber] }
           }
         end
-        
+
         Kiba::Tms.registry.namespace('obj_locations') do
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
@@ -1239,7 +1239,7 @@ module Kiba
             tags: %i[obj_locations obj_components reports]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('obj_titles') do
           register :note_review, {
             creator: Kiba::Tms::Jobs::ObjTitles::NoteReview,
@@ -1266,7 +1266,7 @@ module Kiba
             tags: %i[objects]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('orgs') do
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
@@ -1341,7 +1341,7 @@ module Kiba
             tags: %i[status_flags todochk]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('terms') do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
@@ -1374,7 +1374,7 @@ module Kiba
             tags: %i[termdata terms reference]
           }
         end
-        
+
         Kiba::Tms.registry.namespace('text_entries') do
           register :for_constituents, {
             creator: Kiba::Tms::Jobs::TextEntries::ForConstituents,

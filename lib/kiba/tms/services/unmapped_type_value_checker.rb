@@ -9,7 +9,7 @@ module Kiba
         def self.call(...)
           self.new(...).call
         end
-        
+
         def initialize(mod)
           @mod = mod
           @mapped = mod.mappings.keys
@@ -17,7 +17,7 @@ module Kiba
           @idfield = mod.id_field
           @typefield = mod.type_field
           @migrate_no_val = Tms.migrate_no_value_types
-          @no_val_pattern = Regexp.new(Tms.no_value_type_pattern)
+          @no_val_pattern = Tms.no_value_type_pattern
           @unmapped = get_unmapped
         end
 
@@ -41,7 +41,7 @@ module Kiba
             val = row[typefield]
             next if mapped.any?(val)
             next if !migrate_no_val && no_val_pattern.match?(val)
-            
+
             ids[row[idfield]] = val
           end
           ids
@@ -66,13 +66,13 @@ module Kiba
           end
           report
         end
-        
+
         def setup_used_in
           cols = mod.used_in
           return nil if cols.empty?
 
           result = {}
-          
+
           cols.each do |col|
             val = col.split('.')
             path = Tms::Table::Obj.new(val[0]).supplied_data_path

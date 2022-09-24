@@ -15,57 +15,66 @@ module Kiba
           end
 
           def call
-            OPTS[table_key]
+            opts[table_key]
           end
 
           private
 
           attr_reader :table_key
 
-          classification_fields = Tms.classifications.fieldmap.keys.map(&:to_sym)
-          
-          OPTS = {
-            classification_xrefs: {
-              initial_headers:
-              [:table, :tablerowid, classification_fields ].flatten
-            },
-            constituents: {
-              initial_headers: Proc.new{ Tms::Constituents.initial_headers }
-            },
-            con_alt_names: {
-              initial_headers:
-              %i[
-                 conname altname altconname
-                 conauthtype altauthtype typematch
-                altnametype position
-                mainconid altnameid altnameconid
-              ]
-            },
-            con_dates: {
-              initial_headers:
-              %i[datedescription remarks date]
-            },
-            # con_xref_details: {
-            #   initial_headers:
-            #   %i[tablename recordid role roletype person org displayorder]
-            # },
-            loan_obj_xrefs: {
-              initial_headers:
-              %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
-            },
-            obj_incoming: {
-              initial_headers: Tms::ObjIncoming.all_fields
-            },
-            obj_locations: {
-              initial_headers:
-              %i[objlocationid objectnumber locationid fulllocid]
-            },
-            objects: {
-              initial_headers:
-              [:objectnumber, :title, :objectname, classification_fields].flatten
-            },
-            terms: { initial_headers: %i[termid prefterm termtype term thesaurus_name termsource sourcetermid] }
-          }
+          def classification_fields
+            Tms::Classifications.object_merge_fieldmap
+              .keys
+              .map(&:to_sym)
+          end
+
+          def opts
+            {
+              classification_xrefs: {
+                initial_headers:
+                [:table, :tablerowid, classification_fields ].flatten
+              },
+              constituents: {
+                initial_headers: Proc.new{ Tms::Constituents.initial_headers }
+              },
+              con_alt_names: {
+                initial_headers:
+                %i[
+                   conname altname altconname
+                   conauthtype altauthtype typematch
+                   altnametype position
+                   mainconid altnameid altnameconid
+                  ]
+              },
+              con_dates: {
+                initial_headers:
+                %i[datedescription remarks date]
+              },
+              # con_xref_details: {
+              #   initial_headers:
+              #   %i[tablename recordid role roletype person org displayorder]
+              # },
+              loan_obj_xrefs: {
+                initial_headers:
+                %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
+              },
+              obj_incoming: {
+                initial_headers: Tms::ObjIncoming.all_fields
+              },
+              obj_locations: {
+                initial_headers:
+                %i[objlocationid objectnumber locationid fulllocid]
+              },
+              objects: {
+                initial_headers:
+                [:objectnumber, :title, :objectname,
+                 classification_fields].flatten
+              },
+              terms: {
+                initial_headers: %i[termid prefterm termtype term thesaurus_name
+                                    termsource sourcetermid] }
+            }
+          end
         end
       end
     end
