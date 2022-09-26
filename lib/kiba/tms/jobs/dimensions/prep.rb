@@ -8,28 +8,43 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__dimensions,
                 destination: :prep__dimensions,
-                lookup: %i[
-                           prep__dimension_units
-                           prep__dimension_types
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = []
+            base << :prep__dimension_units if Tms::DimensionUnits.used?
+            base << :prep__dimension_types if Tms::DimensionTypes.used?
+            base
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: %i[displayed dimensionid secondaryunitid]
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
               transform FilterRows::FieldEqualTo, action: :reject, field: :dimension, value: '.0000000000'
-              transform Merge::MultiRowLookup,
-                lookup: prep__dimension_units,
-                keycolumn: :primaryunitid,
-                fieldmap: {measurementunit: :unitname}
+
+              if Tms::DimensionUnits.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__dimension_units,
+                  keycolumn: :primaryunitid,
+                  fieldmap: {measurementunit: :unitname}
+              end
               transform Delete::Fields, fields: :primaryunitid
 
               transform Rename::Field, from: :dimension, to: :value
@@ -39,10 +54,12 @@ module Kiba
                 delim: Tms.sgdelim,
                 places: 10
 
-              transform Merge::MultiRowLookup,
-                lookup: prep__dimension_types,
-                keycolumn: :dimensiontypeid,
-                fieldmap: {dimension: :dimensiontype}
+              if Tms::DimensionTypes.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__dimension_types,
+                  keycolumn: :dimensiontypeid,
+                  fieldmap: {dimension: :dimensiontype}
+              end
               transform Delete::Fields, fields: :dimensiontypeid
             end
           end
