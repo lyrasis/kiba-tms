@@ -7,11 +7,11 @@ module Kiba
     module Services
       class InitialConfigDeriver
         include Dry::Monads[:result]
-        
+
         def self.call(...)
           self.new(...).call
         end
-        
+
         def initialize(mod)
           @mod = mod
           @config = []
@@ -47,13 +47,18 @@ module Kiba
         def derive_multi_table_merge_config
           setting_name = "#{mod}.config.target_tables"
           begin
-            tables = Tms::Services::TargetTableDeriver.call(mod)
+            tables = Tms::Services::TargetTableDeriver.call(mod: mod)
           rescue StandardError => err
             config << Failure([setting_name, err])
           else
-            return unless tables
-            
-            config << Success("#{setting_name} = #{tables.inspect}")
+            return nil unless tables
+
+            tables.either(
+              ->(success){
+                config << Success("#{setting_name} = #{success.inspect}")
+              },
+              ->(failure){ config << Failure([setting_name, failure]) }
+            )
           end
         end
 
