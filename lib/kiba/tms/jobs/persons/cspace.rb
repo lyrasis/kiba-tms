@@ -19,7 +19,7 @@ module Kiba
                            con_alt_names__to_merge_person
                            con_email__for_persons
                            con_phones__for_persons
-                           text_entries__for_constituents
+                           text_entries_for__constituents
                           ]
               },
               transformer: xforms
@@ -28,14 +28,13 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
               transform Merge::MultiRowLookup,
-                lookup: text_entries__for_constituents,
+                lookup: text_entries_for__constituents,
                 keycolumn: :fp_constituentid,
                 fieldmap: { text_entry: :text_entry},
                 delim: Tms.delim,
-                sorter: sorter
-              
+                sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
+
               transform Delete::Fields,
                 fields: %i[migration_action constituenttype alt_names institution contact_person contact_role
                            fingerprint fp_termsource fp_constituenttype fp_constituentid fp_norm fp_alphasort
@@ -54,7 +53,7 @@ module Kiba
               transform Rename::Field, from: :enddateiso, to: :deathdategroup
               transform Rename::Field, from: :biography, to: :bionote
               transform Rename::Field, from: :culturegroup, to: Tms::Constituents.culturegroup_target
-              
+
               transform Tms::Transforms::ConAddress::MergeIntoAuthority, lookup: con_address__for_persons
               transform Tms::Transforms::ConEmail::MergeIntoAuthority, lookup: con_email__for_persons
               transform Tms::Transforms::ConPhones::MergeIntoAuthority, lookup: con_phones__for_persons

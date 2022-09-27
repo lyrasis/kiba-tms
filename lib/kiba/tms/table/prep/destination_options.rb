@@ -32,7 +32,7 @@ module Kiba
             {
               classification_xrefs: {
                 initial_headers:
-                [:table, :tablerowid, classification_fields ].flatten
+                [:table, :recordid, classification_fields ].flatten
               },
               constituents: {
                 initial_headers: Proc.new{ Tms::Constituents.initial_headers }

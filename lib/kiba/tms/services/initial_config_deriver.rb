@@ -39,9 +39,27 @@ module Kiba
             rescue StandardError => err
               config << Failure([setting_name, err])
             else
-              config << Success("#{setting_name} = #{result.inspect}")
+              if result.is_a?(Dry::Monads::Result)
+                successful_custom_config_monad(setting_name, result)
+              else
+                successful_custom_config_non_monad(setting_name, result)
+              end
             end
           end
+        end
+
+        def successful_custom_config_monad(setting_name, result)
+          result.either(
+            ->success{
+              config << Success("#{setting_name} = #{success.inspect}")
+            },
+            ->failure{ config << Failure([setting_name, failure]) }
+          )
+        end
+
+        def successful_custom_config_non_monad(setting_name, result)
+          warn("#{setting_name} auto-config should return Dry::Monads::Result")
+          config << Success("#{setting_name} = #{result.inspect}")
         end
 
         def derive_multi_table_merge_config

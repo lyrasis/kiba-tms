@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :loans__in,
@@ -25,32 +25,16 @@ module Kiba
 
           def xforms
             bind = binding
-            
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              dd_treatment = config.display_date_treatment
+              remarks_treatment = config.remarks_treatment
 
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-                            
-              dd_treatment = config.display_date_treatment
-              if dd_treatment == :status
-                %i[dispbeg dispend].each{ |src| config.status_sources << src }
-              end
 
-              remarks_treatment = config.remarks_treatment
-              if remarks_treatment == :statusnote
-                config.status_sources << :rem
-                config.status_targets << :loanstatusnote
-              end
-
-              if Tms::LoanObjXrefs.conditions.record == :loan
-                case Tms::LoanObjXrefs.conditions.field
-                when :loanconditions
-                  config.loaninconditions_source_fields << :obj_loanconditions
-                end
-              end
-              
               transform Rename::Fields, fieldmap: {
                 loannumber: :loaninnumber,
                 beginisodate: :loanindate,
@@ -115,12 +99,8 @@ module Kiba
                 replace_empty: false
 
 
-              if dd_treatment == :note
+              if dd_treatment == :note || dd_treatment == :conditions
                 transform Tms::Transforms::Loansin::DisplayDateNote, target: :display_dates_note
-                config.loaninnote_source_fields << :display_dates_note
-              elsif dd_treatment == :conditions
-                transform Tms::Transforms::Loansin::DisplayDateNote, target: :display_dates_note
-                config.loaninconditions_source_fields << :display_dates_note
               elsif dd_treatment == :status
                 dispbeg_map = {
                   dispbegisodate: :dispbeg_loanstatusdate
@@ -149,10 +129,6 @@ module Kiba
 
               if remarks_treatment == :statusnote
                 transform Tms::Transforms::Loansin::RemarksToStatusNote
-              elsif remarks_treatment == :note
-                config.loaninnote_source_fields << :remarks
-              else
-                warn ("Unknown Loansin remarks treatment: #{remarks_treatment}")
               end
 
               transform Collapse::FieldsToRepeatableFieldGroup,
@@ -160,7 +136,7 @@ module Kiba
                 targets: config.status_targets,
                 delim: Tms.delim
 
-              notefields = config.loaninnote_source_fields
+              notefields = config.note_source_fields
               unless notefields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notefields,
@@ -170,8 +146,8 @@ module Kiba
               end
 
               transform Tms::Transforms::Loansin::InsuranceIndemnityNote
-              
-              conditionsfields = config.loaninconditions_source_fields
+
+              conditionsfields = config.conditions_source_fields
               unless conditionsfields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: conditionsfields,
@@ -202,7 +178,7 @@ module Kiba
               end
 
               pref = Tms::Constituents.preferred_name_field
-              
+
               transform Merge::MultiRowLookup,
                 lookup: persons__by_norm,
                 keycolumn: :person_norm,

@@ -5,9 +5,11 @@ module Kiba
     module Jobs
       module LoanObjXrefs
         module Prep
-          extend self
+          module_function
 
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__loan_obj_xrefs,
@@ -20,27 +22,22 @@ module Kiba
 
           def lookups
             base = %i[tms__loans tms__objects]
-            base << :prep__loan_obj_statuses if Tms::LoanObjStatuses.used
-            base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used
+            base << :prep__loan_obj_statuses if Tms::LoanObjStatuses.used?
+            base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used?
             base
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              conditions_label = Tms::LoanObjXrefs.conditions.label
-              
+              config = bind.receiver.send(:config)
+              conditions_label = Tms::LoanObjXrefs.conditions_label
+
               transform Tms::Transforms::DeleteTmsFields
 
-              emptyfields = Tms::LoanObjXrefs.empty_fields
-              unless emptyfields.empty?
-                emptyfields.each do |field|
-                  transform Warn::UnlessFieldValueMatches, field: field, match: '^0|$', matchmode: :regexp
-                end
-              end
-
-              omitted = Tms::LoanObjXrefs.omitted_fields
-              unless omitted.empty?
-                transform Delete::Fields, fields: omitted
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
 
               transform Merge::MultiRowLookup,
@@ -52,7 +49,7 @@ module Kiba
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
 
-              if Tms::ObjInsIndemResp.used
+              if Tms::ObjInsIndemResp.used?
                 transform Merge::MultiRowLookup,
                   keycolumn: :insindemrespid,
                   lookup: prep__obj_ins_indem_resp,
@@ -68,7 +65,7 @@ module Kiba
                 find: '%CR%',
                 replace: "\n"
 
-              if Tms::LoanObjStatuses.used
+              if Tms::LoanObjStatuses.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__loan_obj_statuses,
                   keycolumn: :loanobjectstatusid,
@@ -82,12 +79,14 @@ module Kiba
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
 
-              if conditions_label == :objectnumber || conditions_label == :loannumber
+              if conditions_label.is_a?(Symbol)
                 transform do |row|
                   cond = row[:conditions]
                   next row if cond.blank?
 
                   num = row[conditions_label]
+                  next row if num.blank?
+
                   row[:conditions] = "#{num}: #{cond}"
                   row
                 end
@@ -95,14 +94,19 @@ module Kiba
                 transform do |row|
                   cond = row[:conditions]
                   next row if cond.blank?
-                  
-                  label = conditions_label.sub('{objectnumber}', row[:objectnumber])
-                    .sub('{loannumber}', row[:loannumber])
+
+                  label = conditions_label.sub(
+                    '{objectnumber}',
+                    row[:objectnumber]
+                  ).sub(
+                    '{loannumber}',
+                    row[:loannumber]
+                  )
                   row[:conditions] = "#{label}: #{cond}"
                   row
                 end
               else
-                warn("Unknown value for Tms::LoanObjXrefs.conditions.label")
+                warn("Unknown value for Tms::LoanObjXrefs.conditions_label")
               end
             end
           end

@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__text_entries,
@@ -25,13 +25,13 @@ module Kiba
             base << :prep__text_types if Tms::TextTypes.used?
             base
           end
-          
+
           def xforms
             bind = binding
-            
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              
+
               transform Tms::Transforms::DeleteTmsFields
               transform FilterRows::FieldEqualTo, action: :reject, field: :objectid, value: '-1'
 
@@ -46,9 +46,9 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-              
+
               transform Rename::Fields, fieldmap: {
-                id: :tablerowid,
+                id: :recordid,
                 textentryid: :sort
               }
               transform Tms::Transforms::TmsTableNames

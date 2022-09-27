@@ -7,8 +7,10 @@ module Kiba
       module ReferenceMaster
         module Prep
           module_function
-          
+
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__reference_master,
@@ -20,11 +22,13 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                      prep__ref_formats
-                      prep__dd_languages
-                     ]
-            base << :text_entries__for_reference_master if Tms::TextEntries.for?('ReferenceMaster')
+            base = []
+            base << :prep__ref_formats if Tms::RefFormats.used?
+            base << :prep__dd_languages if Tms::DDLanguages.used?
+            if Tms::TextEntries.for?('ReferenceMaster')
+              base << :text_entries__for_reference_master
+            end
+            base
           end
 
           def xforms
@@ -44,11 +48,11 @@ module Kiba
 
               if Tms::TextEntries.for?('ReferenceMaster')
                 if Tms::ReferenceMaster.text_entry_merger
-                  Tms::ReferenceMaster.config.text_entry_lookup = text_entries__for_reference_master
+                  Tms::ReferenceMaster.config.text_entry_lookup = text_entries_for__reference_master
                   transform Tms::ReferenceMaster.text_entry_merger
                 else
                   transform Merge::MultiRowLookup,
-                    lookup: text_entries__for_reference_master,
+                    lookup: text_entries_for__reference_master,
                     keycolumn: :referenceid,
                     fieldmap: {termfullcitation: :textentry}
                 end

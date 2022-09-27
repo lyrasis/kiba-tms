@@ -6,10 +6,10 @@ module Kiba
       module ClassificationXRefs
         module Prep
           module_function
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__classification_xrefs,
@@ -26,7 +26,7 @@ module Kiba
               transform Delete::Fields, fields: %i[classificationxrefid]
 
               transform Rename::Fields, fieldmap: {
-                id: :tablerowid,
+                id: :recordid,
                 displayorder: :sort
               }
               transform Replace::FieldValueWithStaticMapping,

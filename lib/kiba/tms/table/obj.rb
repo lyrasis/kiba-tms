@@ -2,14 +2,20 @@
 
 module Kiba
   module Tms
-    # value object bundling table attributes, given table file
+    # Value object bundling table attributes, given table file. Note that, since
+    #   every job produces a table, a table can be derived from a job key
     module Table
       class Obj
         attr_reader :tablename, :filename, :filekey, :included, :type
-        
+
+
         def initialize(tablename)
           @tablename = tablename
-          tablename.is_a?(Symbol) ? set_up_symbol_tablename : set_up_string_tablename
+          if tablename.is_a?(Symbol)
+            set_up_symbol_tablename
+          else
+            set_up_string_tablename
+          end
         end
 
         def prepped_data_path
@@ -17,7 +23,7 @@ module Kiba
 
           Tms::Table::Prepped::RegistryHashCreator.call(self)[:path]
         end
-        
+
         def supplied_data_path
           return nil unless included
 
@@ -38,7 +44,7 @@ module Kiba
           @included = Tms::Table::List.call.any?(tablename)
           @type = :tms
         end
-        
+
         def set_up_symbol_tablename
           @filekey = tablename
           @type = :derived

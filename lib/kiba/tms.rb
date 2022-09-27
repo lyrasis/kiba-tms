@@ -126,6 +126,8 @@ module Kiba
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
     setting :migrate_no_value_types, default: false, reader: true
+    # Used to keep track of multi-table-merge work. Organized by target table.
+    setting :table_merge_status, default: {}, reader: true
     setting :tms_fields,
       default: %i[loginid entereddate gsrowversion],
       reader: true
@@ -173,6 +175,22 @@ module Kiba
 
         Tms.const_get(table).extend(Tms::Mixins::Roleable)
       end
+      per_job_tables.each do |srctable|
+        srctable.target_tables.each do |target|
+          srctable.define_for_table_module(target)
+        end
+      end
+    end
+
+    def for_merge_into(tablename)
+      Tms.configs.select do |config|
+        config.respond_to?(:target_tables) &&
+          config.target_tables.any?(tablename)
+      end
+    end
+
+    def checkable_tables
+      Tms.configs.select{ |config| config.respond_to?(:checkable) }
     end
 
     def per_job_tables
@@ -196,6 +214,10 @@ module Kiba
           puts ''
         end
       end
+    end
+
+    def needed_work(mod)
+      Tms::Services::NeededWorkChecker.call(mod)
     end
 
     # methods to delete after development is done

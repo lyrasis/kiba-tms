@@ -8,7 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[complete mixed textentryhtml languageid], reader: true
+      setting :delete_fields,
+        default: %i[complete mixed textentryhtml languageid],
+        reader: true
       setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
@@ -16,12 +18,17 @@ module Kiba
       extend Tms::Mixins::MultiTableMergeable
 
       setting :checkable, default: {
-        needed_table_transform_settings: Proc.new{ check_needed_table_transform_settings },
-        undefined_table_transforms: Proc.new{ check_undefined_table_transforms }
+        needed_table_transform_settings: Proc.new{
+          check_needed_table_transform_settings
+        },
+        undefined_table_transforms: Proc.new{
+          check_undefined_table_transforms
+        }
       },
         reader: true
 
-      # pass in client-specific transform classes to prepare text_entry rows for merging
+      # pass in client-specific transform classes to prepare text_entry rows for
+      #   merging
       setting :for_conditions_transform, default: nil, reader: true
       setting :for_constituents_transform, default: nil, reader: true
       setting :for_exhibitions_transform, default: nil, reader: true

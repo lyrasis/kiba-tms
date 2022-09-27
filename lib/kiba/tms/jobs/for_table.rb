@@ -13,11 +13,13 @@ module Kiba
               source: source,
               destination: dest
             },
-            transformer: for_table_xforms(table: targettable, field: field, xforms: [])
+            transformer: for_table_xforms(
+              table: targettable,
+              field: field,
+              xforms: xforms)
           )
         end
       end
     end
   end
 end
-

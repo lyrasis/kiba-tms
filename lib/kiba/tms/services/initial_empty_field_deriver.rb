@@ -13,7 +13,7 @@ module Kiba
         def self.call(...)
           self.new(...).call
         end
-        
+
         def initialize(mod)
           @mod = mod
           @setting_name = "#{mod}.config.empty_fields"
@@ -24,7 +24,7 @@ module Kiba
           _table = yield(ensure_table)
           _checkable_set = yield(set_checkable_fields)
           checked = yield(check)
-          
+
           return nil if checked.empty.empty?
 
           Success("#{setting_name} = #{checked.empty.to_h.inspect}")
@@ -41,21 +41,21 @@ module Kiba
         else
           Success(result)
         end
-        
+
         def empty_field_hash(arr)
           arr.map{ |emptyfield| [emptyfield, [nil, '', '0', '.0000']] }.to_h
         end
 
         def ensure_table
           unless File.exist?(mod.table_path)
-            Kiba::Extend::Command::Run.job(table.filekey)
+            Kiba::Extend::Command::Run.job(mod.table.filekey)
           end
         rescue StandardError => err
           Failure([setting_name, err])
         else
           Success()
         end
-        
+
         def set_checkable_fields
           all = mod.all_fields - Tms.tms_fields
           not_deleted = mod.respond_to?(:delete_fields) ? all - mod.delete_fields : all

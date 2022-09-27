@@ -8,6 +8,8 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :loans__out,
@@ -19,44 +21,15 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              Tms::Loansout.empty_fields.each do |field|
-                transform Warn::UnlessFieldValueMatches, field: field, match: ''
-              end
-
-              transform Delete::Fields, fields: Tms::Loansout.omitted_fields
-
-              if Tms::Loansout.display_dates?
-                dd_treatment = Tms::Loansout.display_date_treatment
-                case dd_treatment
-                when :status
-                  %i[dispbeg dispend].each{ |src| Tms::Loansout.status_sources << src }
-                when :note
-                  Tms::Loansout.loanoutnote_source_fields << :display_dates_note
-                when :conditions
-                  Tms::Loansout.specialconditionsofloan_source_fields << :display_dates_note
-                else
-                  warn ("Unknown Loansout display date treatment: #{dd_treatment}")
-                end
-              end
-              
-
+              config = bind.receiver.send(:config)
+              dd_treatment = config.display_date_treatment
               remarks_treatment = Tms::Loansout.remarks_treatment
-              case remarks_treatment
-              when :statusnote
-                Tms::Loansout.status_sources << :rem
-                Tms::Loansout.status_targets << :loanstatusnote
-              when :note
-                Tms::Loansout.loanoutnote_source_fields << :remarks
-              else
-                warn ("Unknown Loansout remarks treatment: #{remarks_treatment}")
-              end
 
-              if Tms::LoanObjXrefs.conditions.record == :loan
-                case Tms::LoanObjXrefs.conditions.field
-                when :loanconditions
-                  Tms::Loansout.specialconditionsofloan_source_fields << :obj_loanconditions
-                end
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
 
               rename_fieldmap = Tms::Loansout.delete_omitted_fields({
@@ -88,7 +61,7 @@ module Kiba
                   transform Delete::Fields, fields: normfield
                 end
               end
-              
+
               req_map = Tms::Loansout.delete_omitted_fields({
                 requestdate: :req_loanstatusdate,
                 requestedby: :req_loanindividual
@@ -101,7 +74,7 @@ module Kiba
                   constant_target: :req_loanstatus,
                   constant_value: 'Requested'
               end
-              
+
               app_map = Tms::Loansout.delete_omitted_fields({
                 approveddate: :app_loanstatusdate,
                 approvedby: :app_loanindividual
@@ -114,7 +87,7 @@ module Kiba
                   constant_target: :app_loanstatus,
                   constant_value: 'Approved'
               end
-              
+
               agsent_map = Tms::Loansout.delete_omitted_fields({
                 agreementsentisodate: :agsent_loanstatusdate
               })
@@ -127,7 +100,7 @@ module Kiba
                   constant_value: 'Agreement sent',
                   replace_empty: false
               end
-              
+
               agrec_map = Tms::Loansout.delete_omitted_fields({
                 agreementreceivedisodate: :agrec_loanstatusdate
               })
@@ -140,7 +113,7 @@ module Kiba
                   constant_value: 'Agreement received',
                   replace_empty: false
               end
-              
+
               unless Tms::Loansout.omitted_fields.any?(:origloanenddate)
                 origloanend_map = {
                   origloanenddate: :origloanend_loanstatusdate
@@ -156,7 +129,8 @@ module Kiba
 
               if Tms::Loansout.display_dates?
                 if dd_treatment == :note || dd_treatment == :conditions
-                  transform Tms::Transforms::Loansin::DisplayDateNote, target: :display_dates_note
+                  transform Tms::Transforms::Loansin::DisplayDateNote,
+                    target: :display_dates_note
                 elsif dd_treatment == :status
                   dispbeg_map = {
                     dispbegisodate: :dispbeg_loanstatusdate
@@ -183,7 +157,7 @@ module Kiba
                   warn("Unknown Tms::Loansout.display_date_treatment: #{dd_treatment}")
                 end
               end
-              
+
               if remarks_treatment == :statusnote
                 transform Tms::Transforms::Loansin::RemarksToStatusNote
               end
@@ -193,7 +167,7 @@ module Kiba
                 targets: Tms::Loansout.status_targets,
                 delim: Tms.delim
 
-              notefields = Tms::Loansout.loanoutnote_source_fields
+              notefields = Tms::Loansout.note_source_fields
               unless notefields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notefields,
@@ -203,8 +177,8 @@ module Kiba
               end
 
               transform Tms::Transforms::Loansin::InsuranceIndemnityNote
-              
-              conditionsfields = Tms::Loansout.specialconditionsofloan_source_fields
+
+              conditionsfields = Tms::Loansout.conditions_source_fields
               unless conditionsfields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: conditionsfields,
@@ -215,7 +189,7 @@ module Kiba
 
               transform Tms::Transforms::Loansout::SeparateContacts
               transform Rename::Field, from: :contact, to: :borrowerscontact
-              
+
               rolefields = %i[personrole orgrole]
               rolefields.each do |field|
                 transform Warn::UnlessFieldValueMatches,
@@ -248,7 +222,9 @@ module Kiba
                 multikey: true,
                 delim: Tms.delim
 
-              delfields = namefields + namefields.map{ |field| "#{field}_norm".to_sym }
+              delfields = namefields + namefields.map do |field|
+                "#{field}_norm".to_sym
+              end
               transform Delete::Fields, fields: delfields
 
               transform Tms::Transforms::Loansin::CombineLoanStatus

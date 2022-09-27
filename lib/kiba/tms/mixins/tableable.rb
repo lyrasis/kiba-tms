@@ -5,19 +5,21 @@ require 'csv'
 module Kiba
   module Tms
     module Mixins
-      # Mixin module providing consistent methods for accessing the db table for a config module
+      # Mixin module providing consistent methods for accessing the db table for
+      #   a config module
       #
       # ## Implementation details
       #
       # Modules mixing this in must:
       #
       # - `extend Dry::Configurable`
-      # - define `delete_fields` (Array) and `empty_fields` (Hash) config settings
+      # - define `delete_fields` (Array) and `empty_fields` (Hash) config
+      #   settings
       # - `extend Tms::Mixins::Tableable`
       # - If the module name matches a TMS supplied table name, that is all
-      # - If the module name does not match a TMS supplied table name, you must also define a
-      #   `source_job_key` (the registry entry key of the job that produces the source data
-      #   for the module you are configuring
+      # - If the module name does not match a TMS supplied table name, you must
+      #   also define a `source_job_key` (the registry entry key of the job that
+      #   produces the source data for the module you are configuring
       module Tableable
         def all_fields
           unless File.exist?(table_path)
@@ -27,7 +29,7 @@ module Kiba
               []
             end
           end
-          
+
           CSV.foreach(table_path)
             .first
             .map(&:downcase)
@@ -73,7 +75,7 @@ module Kiba
         def table_path
           table.type == :tms ? table.supplied_data_path : table.filename
         end
-        
+
         def subtract_omitted_fields(arr)
           arr - omitted_fields
         end

@@ -15,28 +15,34 @@ module Kiba
 
         # METHODS USED FOR RUNNING CHECKS
         #
-        # Reports if there is a target_table with no matching setting defined in the config
+        # Reports if there is a target_table with no matching setting defined
+        #   in the config
         def check_needed_table_transform_settings
-          needed = target_transform_settings_expected.reject{ |transform| self.respond_to?(transform) }
+          needed = target_transform_settings_expected.reject do |transform|
+            self.respond_to?(transform)
+          end
           return nil if needed.empty?
 
           "#{self.name}: add config settings: #{needed.join(', ')}"
         end
 
-        # Reports if a defined for-target-table transform setting defined in the config,
-        #   but no value (an actual transform class or :no_xform) has been assigned to the
-        #   setting. These indicate there may be more work to be done.
+        # Reports if a defined for-target-table transform setting defined in the
+        #   config, but no value (an actual transform class or :no_xform) has
+        #   been assigned to the setting. These indicate there may be more work
+        #   to be done.
         def check_undefined_table_transforms
-          undefined = target_transform_settings - target_transform_settings_handled
+          undefined =
+            target_transform_settings - target_transform_settings_handled
           return nil if undefined.empty?
 
           "#{self.name}: no transforms defined for: #{undefined.join(', ')}"
         end
-        
+
         def target_transform_settings
           self.settings
             .map(&:to_s)
             .select{ |meth| meth.match?(/^for_.*_transform$/) }
+            .map(&:to_sym)
         end
 
         # These are defined with actual transform classes
@@ -46,7 +52,7 @@ module Kiba
             val.nil? || val == :no_xform
           end
         end
-        
+
         def target_transform_settings_expected
           target_tables.map do |target|
             tobj = Tms::Table::Obj.new(target)
@@ -54,13 +60,17 @@ module Kiba
           end
         end
 
-        # These are defined with actual transform classes or :no_xform placeholders to indicate
-        #   we have analyzed the data and found no need for a specific transform
+        # These are defined with actual transform classes or :no_xform
+        #   placeholders to indicate we have analyzed the data and found no need
+        #   for a specific transform
         def target_transform_settings_handled
-          target_transform_settings.reject{ |setting| config.values[setting].nil? }
+          target_transform_settings.reject do |setting|
+            config.values[setting].nil?
+           end
         end
 
-        # Methods used for auto-registering for-table jobs
+        # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
+
         def register_per_table_jobs(field = :tablename)
           key = filekey
           return unless key
@@ -73,28 +83,39 @@ module Kiba
           )
           Tms.registry.import(ns)
         end
-        
+
         def build_registry_namespace(ns_name, targets, field, xforms)
           bind = binding
           Dry::Container::Namespace.new(ns_name) do
             mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              targetxform = xforms.select{ |x| x.to_s == "for_#{targetobj.filekey}_transform" }
-              register targetobj.filekey, mod.send(:target_job_hash, *[mod, ns_name, targetobj, field, targetxform])
+              targetxform = mod.target_xform(xforms, targetobj)
+              params = [mod, ns_name, targetobj, field, targetxform]
+              register targetobj.filekey, mod.send(:target_job_hash, *params)
             end
           end
         end
 
+        def target_xform(xforms, targetobj)
+          sym = "for_#{targetobj.filekey}_transform".to_sym
+          if xforms.any?(sym)
+            [send(sym)].flatten
+          else
+            []
+          end
+        end
+
         def target_job_hash(mod, ns_name, targetobj, field, xforms)
-          
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
             .map{ |val| val.gsub('_', '') }
             .map(&:to_sym)
           tabletag = tags.shift
-          [tabletag.to_s.delete_suffix('_for').to_sym, :for_table].each{ |tag| tags << tag }
-          
+          [tabletag.to_s.delete_suffix('_for').to_sym, :for_table].each do |tag|
+            tags << tag
+          end
+
           {
             path: File.join(Tms.datadir, 'working', "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
@@ -112,15 +133,49 @@ module Kiba
         end
 
         def lookup_on_field
-          return for_table_lookup_on_field if respond_to?(:for_table_lookup_on_field)
+          return for_table_lookup_on_field if respond_to?(
+            :for_table_lookup_on_field
+          )
 
           :recordid
         end
-        
+
         def for_table_source
-          return for_table_source_job_key if respond_to?(:for_table_source_job_key)
+          return for_table_source_job_key if respond_to?(
+            :for_table_source_job_key
+          )
 
           "prep__#{filekey}".to_sym
+        end
+
+        # METHODS USED FOR AUTO-CONFIGURING FOR-TABLES
+        def for_table_module_name(jobkey)
+          jobkey.to_s
+            .split(/_+/)
+            .map(&:capitalize)
+            .join
+        end
+
+        def define_for_table_module(target)
+          targetobj = Tms::Table::Obj.new(target)
+          jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
+
+          moddef = <<~MODDEF
+          module #{for_table_module_name(jobkey)}
+            extend Dry::Configurable
+            module_function
+
+            setting :source_job_key, default: :#{jobkey}, reader: true
+            setting :delete_fields, default: [], reader: true
+            setting :empty_fields, default: {}, reader: true
+            extend Tms::Mixins::Tableable
+
+            def used?
+              true
+            end
+          end
+          MODDEF
+          Tms.module_eval(moddef)
         end
       end
     end

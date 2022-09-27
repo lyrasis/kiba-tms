@@ -1376,37 +1376,12 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('text_entries') do
-          register :for_constituents, {
-            creator: Kiba::Tms::Jobs::TextEntries::ForConstituents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_constituents.csv'),
-            desc: 'Merges purpose, textdate, org_author, person_author, remarks, and text entry into one field for merge into person or org records',
-            tags: %i[textentries con],
-            lookup_on: :tablerowid
-          }
-          register :for_objects, {
-            creator: Kiba::Tms::Jobs::TextEntries::ForObjects,
-            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_objects.csv'),
-            desc: 'Selects text entries for objects (does not merge text entry fields, as handling may be different per entry type)',
-            tags: %i[textentries objects],
-            lookup_on: :tablerowid
-          }
-          register :for_obj_components, {
-            creator: Kiba::Tms::Jobs::TextEntries::ForObjComponents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_obj_components.csv'),
-            tags: %i[textentries obj_components],
-            lookup_on: :tablerowid
-          }
+
           register :for_reference_master, {
             creator: Kiba::Tms::Jobs::TextEntries::ForReferenceMaster,
             path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_reference_master.csv'),
             tags: %i[textentries reference_master],
             lookup_on: :tablerowid
-          }
-          register :unknown_table, {
-            creator: Kiba::Tms::Jobs::TextEntries::UnknownTable,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'text_entries_unknown_table.csv'),
-            desc: 'TextEntries rows with tableid not in Tms::TABLES lookup',
-            tags: %i[textentries todochk reports]
           }
         end
 
