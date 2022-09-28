@@ -10,87 +10,69 @@ module Kiba
       class RoleTreatmentDeriver
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
-        
+
         def self.call(...)
           self.new(...).call
         end
-        
-        def initialize(mod)
+
+        def initialize(mod:, col: Tms::Data::Column)
           @mod = mod
           return unless eligible?
 
-          @source_path = set_source_path
-          @mapping = mod.con_role_treatment_mappings
-          @mapped_roles = mapping.values.flatten
-          @setting_name = "#{mod}.config.con_role_treatment_mappings"
+          @setting = :con_role_treatment_mappings
+          @role_mod = Tms.const_get("ConRefsFor#{mod.table_name}")
+          @col = col.new(mod: role_mod, field: :role)
+          @current_mapping = mod.send(setting)
+          @known_roles = current_mapping.reject{ |key, _v| key == :unmapped }
+            .values
+            .flatten
         end
 
         def call
           return unless eligible?
 
-          _path = yield(source_path)
-          roles_get = yield(roles)
+          roles = yield(col.unique_values)
+          @new_roles = roles - known_roles
+          result = yield(formatted)
 
-          @used_roles = roles_get
-
-          if mapping.empty?
-            Success("#{setting_name} = #{initial_treatment_hash(roles)}")
-          else
-            update_mapping
-            Success(mapping)
-          end
+          Success(result)
         end
 
         private
 
-        attr_reader :mod, :source_path, :mapping, :mapped_roles, :setting_name, :used_roles
+        attr_reader :mod, :setting, :role_mod, :col, :current_mapping,
+          :known_roles, :new_roles
+
+        def formatted
+          result = [
+            "#{mod}.config.#{setting} = {",
+            hash_lines,
+            '}'
+          ].join("\n")
+        rescue StandardError => err
+          Failure([setting, err])
+        else
+          Success(result)
+        end
+
+        def hash_lines
+          mapping_hash.map{ |key, val| "#{key}: #{val.inspect}" }
+          .join(",\n")
+        end
+
+        def mapping_hash
+          current_mapping.merge(new_role_hash)
+        end
 
         def eligible?
-          mod.respond_to?(:merges_roles?) && mod.merges_roles?
+          m = :gets_roles_merged_in?
+          mod.respond_to?(m) && mod.send(m)
         end
 
-        def initial_treatment_hash(roles)
-          {unmapped: used_roles}
+        def new_role_hash
+          {unmapped: new_roles}
         end
 
-        def new_roles
-          used_roles - mapped_roles
-        end
-        
-        def roles
-          result = []
-          CSV.foreach(source_path.value!, headers: true, header_converters: %i[downcase symbol]) do |row|
-            table = row[:tablename]
-            next unless table == mod.table_name
-
-            role = row[:role]
-            result << role unless result.any?(role)
-          end
-        rescue StandardError => err
-          Failure([setting_name, err])
-        else
-          Success(result.sort)
-        end
-        
-        def set_source_path
-          source_key = Tms::ConRefs.for_table_source_job_key
-          source = Tms.registry.resolve(source_key)
-          source_path = source.path
-          unless File.exist?(source_path)
-            Kiba::Extend::Command::Run.job(source_key)
-          end
-        rescue StandardError => err
-          Failure([setting_name, err])
-        else
-          Success(source_path)
-        end
-
-        def update_mapping
-          to_update = new_roles
-          return if to_update.empty?
-
-          to_update.each{ |role| mapping[:unmapped] << role }
-        end
       end
     end
   end

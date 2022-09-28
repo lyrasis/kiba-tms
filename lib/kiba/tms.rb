@@ -170,6 +170,9 @@ module Kiba
 
     def finalize_config
       Tms::Utils::ConfiguredJobExtender.call
+    end
+
+    def meta_config
       Tms::Utils::ConRefTargetExtender.call
       per_job_tables.each do |srctable|
         srctable.target_tables.each do |target|

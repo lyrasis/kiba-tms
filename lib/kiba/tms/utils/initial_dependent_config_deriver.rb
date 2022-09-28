@@ -4,49 +4,55 @@ module Kiba
   module Tms
     module Utils
       class InitialDependentConfigDeriver
-        def self.call
-          self.new.call
+        def self.call(...)
+          self.new(...).call
         end
 
-        def initialize
-          @to_configure = gather_configurable
+        def initialize(
+          derivers: [
+            Tms::Utils::RoleTreatmentDeriver
+          ],
+          verbose: false
+        )
+          @derivers = derivers
+          @verbose = verbose
           @config_path = "#{Tms.datadir}/initial_config_dependent.txt"
           @err_path = "#{Tms.datadir}/initial_config_errs_dependent.txt"
         end
 
         def call
-          config = to_configure.map{ |const| Tms::Services::RoleTreatmentDeriver.call(const) }
+          all = derivers.map(&:call)
             .flatten
             .compact
             .group_by(&:success?)
-          configs = config[true].map(&:value!)
-          errs = config[false].map(&:failure)
 
-          write_config(configs) unless configs.empty?
-          write_errs(errs) unless errs.empty?
-          binding.pry
+          handle_successes(all)
+          handle_failures(all)
         end
 
         private
 
-        attr_reader :to_configure, :config_path, :err_path
+        attr_reader :derivers, :verbose, :config_path, :err_path
 
-        def gather_configurable
-          Tms.configs.select do |constant|
-            constant.respond_to?(:gets_roles_merged_in?)
-          end
+        def handle_failures(all)
+          list = all[false]
+          return unless list
+          return if list.empty?
+
+          puttable = list.map(&:failure).join("\n\n")
+          File.open(err_path, 'w'){ |f| f.puts(puttable) }
+          puts "\n\nERRORS" if verbose
+          puts puttable if verbose
         end
 
-        def write_config(configs)
-          File.open(config_path, 'w') do |file|
-            configs.each{ |config| file.puts(config) }
-        end
-          end
+        def handle_successes(all)
+          list = all[true]
+          return unless list
+          return if list.empty?
 
-        def write_errs(errs)
-          File.open(err_path, 'w') do |file|
-            errs.each{ |err| file.puts(err) }
-          end
+          puttable = list.map(&:value!).join("\n")
+          File.open(config_path, 'w'){ |f| f.puts(puttable) }
+          puts puttable if verbose
         end
       end
     end

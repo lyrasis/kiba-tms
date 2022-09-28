@@ -19,16 +19,11 @@ module Kiba
         def call
           mod.extend(extend_mod)
           puts "#{mod} extended with #{extend_mod}" if verbose
-          mod.module_eval(setting)
         end
 
         private
 
         attr_reader :mod, :verbose, :extend_mod
-
-        def setting
-          "setting :con_role_treatment_mappings, default: {}, reader: true"
-        end
       end
     end
   end

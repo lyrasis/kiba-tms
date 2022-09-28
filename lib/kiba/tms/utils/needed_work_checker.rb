@@ -25,7 +25,8 @@ module Kiba
         def call
           results = to_check.map{ |mod| checker.call(mod) }
           handle_successes(extract(results, :successes))
-          needed_merges
+          #          needed_merges
+          binding.pry
           handle_failures(extract(results, :failures))
         end
 
@@ -50,13 +51,14 @@ module Kiba
         end
 
         def handle_failures(results)
-          return if results.empty?
+          return if results.compact.empty?
 
           puts("\n\nERRORS")
 
           results.each do |mod, fails|
-            puts(mod)
+            next if fails.compact.empty?
 
+            puts(mod)
             fails.each{ |f| puts "  #{f[0]}\n    #{f[1]}" }
           end
         end

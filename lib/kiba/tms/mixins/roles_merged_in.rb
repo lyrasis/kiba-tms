@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'dry/monads'
 
 module Kiba
   module Tms
@@ -19,9 +20,59 @@ module Kiba
       #
       # extend Tms::Mixins::Tableable
       module RolesMergedIn
+        include Dry::Monads[:result]
+
+        def self.extended(mod)
+          self.set_treatment_mappings(mod)
+          self.set_checkable(mod)
+        end
+
         def gets_roles_merged_in?
           true
         end
+
+        def check_unmapped_role_terms
+          meth = :con_role_treatment_mappings
+          unless respond_to?(meth)
+            return Failure([
+              "#{name}.#{__callee__}",
+              "missing_#{meth}_setting".to_sym
+            ])
+          end
+          unmapped = send(meth)[:unmapped]
+          return Failure(nil) if unmapped.blank?
+
+          Success("Unmapped role terms: #{unmapped.join(', ')}")
+        end
+
+        def self.checkable_from_scratch(mod)
+          code = <<~CODE
+            setting :checkable, default: {
+              unmapped_role_terms: Proc.new{
+                check_unmapped_role_terms
+              }
+            },
+            reader: true
+          CODE
+          mod.module_eval(code)
+        end
+        private_class_method :checkable_from_scratch
+
+        def self.set_checkable(mod)
+          if mod.respond_to?(:checkable)
+          else
+            self.checkable_from_scratch(mod)
+          end
+        end
+        private_class_method :set_checkable
+
+        def self.set_treatment_mappings(mod)
+          return if mod.respond_to?(:con_role_treatment_mappings)
+          mod.module_eval(
+            "setting :con_role_treatment_mappings, default: {}, reader: true"
+          )
+        end
+        private_class_method :set_treatment_mappings
       end
     end
   end

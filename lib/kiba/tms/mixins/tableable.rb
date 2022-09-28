@@ -5,22 +5,27 @@ require 'csv'
 module Kiba
   module Tms
     module Mixins
-      # Mixin module providing consistent methods for accessing the db table for
-      #   a config module
+      # Mixin module providing consistent methods for accessing the db or derived
+      #   table for a config module
+      #
+      # - defines `delete_fields` (Array) and `empty_fields` (Hash) config
+      #   settings if they are not manually set in the config module
       #
       # ## Implementation details
       #
       # Modules mixing this in must:
       #
       # - `extend Dry::Configurable`
-      # - define `delete_fields` (Array) and `empty_fields` (Hash) config
-      #   settings
       # - `extend Tms::Mixins::Tableable`
-      # - If the module name matches a TMS supplied table name, that is all
-      # - If the module name does not match a TMS supplied table name, you must
+      # - **If the module name does not match a TMS supplied table name**, you must
       #   also define a `source_job_key` (the registry entry key of the job that
       #   produces the source data for the module you are configuring
       module Tableable
+        def self.extended(mod)
+          self.set_delete_and_empty_fields_settings(mod)
+          self.check_source_job_key(mod)
+        end
+
         def all_fields
           unless File.exist?(table_path)
             if respond_to?(:source_job_key) && Tms.registry.key?(source_job_key)
@@ -76,18 +81,29 @@ module Kiba
           table.type == :tms ? table.supplied_data_path : table.filename
         end
 
+        def supplied?
+          true if table.type == :tms
+        end
+
         def subtract_omitted_fields(arr)
           arr - omitted_fields
         end
 
         def table
-          if Tms::Table::List.include?(table_name)
-            Tms::Table::Obj.new(table_name)
-          elsif self.respond_to?(:source_job_key)
+          if respond_to?(:source_job_key)
             Tms::Table::Obj.new(source_job_key)
           else
-            Tms::Table::Obj.new('UnknownTable')
+            Tms::Table::Obj.new(table_name)
           end
+
+
+          # if Tms::Table::List.include?(table_name)
+          #   Tms::Table::Obj.new(table_name)
+          # elsif self.respond_to?(:source_job_key)
+          #   Tms::Table::Obj.new(source_job_key)
+          # else
+          #   Tms::Table::Obj.new('UnknownTable')
+          # end
         end
 
         def table_name
@@ -106,6 +122,24 @@ module Kiba
 
           table.included
         end
+
+        def self.check_source_job_key(mod)
+          return if mod.supplied?
+          return if mod.respond_to?(:source_job_key)
+
+          warn("#{mod} needs :source_job_key defined before extending Tableable")
+        end
+        private_class_method :check_source_job_key
+
+        def self.set_delete_and_empty_fields_settings(mod)
+          unless mod.respond_to?(:delete_fields)
+            mod.module_eval('setting :delete_fields, default: [], reader: true')
+          end
+          unless mod.respond_to?(:empty_fields)
+            mod.module_eval('setting :empty_fields, default: {}, reader: true')
+          end
+        end
+        private_class_method :set_delete_and_empty_fields_settings
       end
     end
   end

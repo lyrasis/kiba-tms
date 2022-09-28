@@ -47,8 +47,6 @@ module Kiba
           default
         end
 
-      setting :con_role_treatment_mappings, default: {}, reader: true
-      
       # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
       #  in client project
       setting :custom_map_fields, default: [], reader: true
@@ -77,7 +75,7 @@ module Kiba
 
       ############
       # Transforms
-      ############      
+      ############
       # Configure transformers to transform data in individual source fields or sets of source fields. If nil,
       #   default processing in prep__objects is used unless field is otherwise omitted from processing
       setting :classifications_xform, default: nil, reader: true
@@ -88,7 +86,7 @@ module Kiba
           value: 'Credit Line',
           sourcebecomes: :annotationnote
         ),
-        reader: true        
+        reader: true
       setting :curatorialremarks_xform,
         default: Kiba::Extend::Transforms::Rename::Field.new(
           from: :curatorialremarks,
