@@ -19,8 +19,6 @@ module Kiba
     ::Tms = Kiba::Tms
     module_function
 
-    extend Dry::Configurable
-
     def loader
       @loader ||= setup_loader
     end
@@ -36,6 +34,7 @@ module Kiba
       @loader.inflector.inflect(
         'classification_xrefs' => 'ClassificationXRefs',
         'dd_languages' => 'DDLanguages',
+        'email_types' => 'EMailTypes',
         'version'   => 'VERSION'
       )
       @loader.enable_reloading
@@ -49,28 +48,38 @@ module Kiba
       @loader.reload
     end
 
-    # you will want to override the following in any application using this
-    # extension
-    setting :empty_table_list_path,
-      default: "#{__dir__}/empty_tables.txt",
-      reader: true
-    setting :tms_table_dir_path,
-      default: __dir__,
-      reader: true,
-      constructor: proc{ |value|
-        if value['kiba-tms/lib']
-          base = value.split('/')
-          2.times{ base.pop }
-          dir = base.join('/')
-          File.join(dir, 'data', 'tms')
-        else
-          value
-        end
-      }
-    setting :datadir, default: "#{__dir__}/data", reader: true
-    setting :delim, default: Kiba::Extend.delim, reader: true
-    setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
-    setting :nullvalue, default: '%NULLVALUE%', reader: true
+    extend Dry::Configurable
+    def base_config
+      # you will want to override the following in any application using this
+      # extension
+      setting :empty_table_list_path,
+        default: "#{__dir__}/empty_tables.txt",
+        reader: true
+      setting :tms_table_dir_path,
+        default: __dir__,
+        reader: true,
+        constructor: proc{ |value|
+          if value['kiba-tms/lib']
+            base = value.split('/')
+            2.times{ base.pop }
+            dir = base.join('/')
+            File.join(dir, 'data', 'tms')
+          else
+            value
+          end
+        }
+      setting :datadir, default: "#{__dir__}/data", reader: true
+      setting :delim, default: Kiba::Extend.delim, reader: true
+      setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
+      setting :nullvalue, default: '%NULLVALUE%', reader: true
+      # File registry - best to just leave this as-is
+      setting :registry, default: Kiba::Extend.registry, reader: true
+      # TMS tables not used in a given project. Override in project application
+      #   These should be tables that are not literally empty. Empty tables are
+      #   listed in the file found at Tms.empty_table_list_path
+      setting :excluded_tables, default: [], reader: true
+    end
+
     setting :table_lookup,
       default: {
         '23'=>'Constituents',
@@ -103,15 +112,10 @@ module Kiba
       },
       reader: true
 
-    # File registry - best to just leave this as-is
-    setting :registry, default: Kiba::Extend.registry, reader: true
 
     # PROJECT SPECIFIC CONFIG
 
-    # TMS tables not used in a given project. Override in project application
-    #   These should be tables that are not literally empty. Empty tables are
-    #   listed in the file found at Tms.empty_table_list_path
-    setting :excluded_tables, default: [], reader: true
+
     setting :cspace_profile, default: :fcart, reader: true
 
     # client-specific cleanup of whitespace, special characters, etc. to be
@@ -206,11 +210,8 @@ module Kiba
       errs = result.select(&:failure?)
       unless errs.empty?
         puts "\nFailures"
-        errs.map(&:failure).each do |config|
-          puts config[0]
-          puts config[1]
-          puts config[1].backtrace
-          puts ''
+        errs.each do |err|
+          puts "#{err.failure} (#{err.trace})\n"
         end
       end
     end

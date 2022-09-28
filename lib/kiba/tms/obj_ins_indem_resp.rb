@@ -13,21 +13,18 @@ module Kiba
           all_fields_have_labels: Proc.new{ check_all_fields_have_labels }
         },
         reader: true
-      
-      setting :delete_fields, default: %i[tableid], reader: true
-      setting :empty_fields, default: {}, reader: true
-      extend Tms::Mixins::Tableable
 
-      setting :target_tables, default: %w[], reader: true
+      setting :delete_fields, default: %i[tableid], reader: true
+      extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
-      
+
       setting :indemnity_fields,default: %i[], reader: true,
         constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?('ind') } }
       setting :insurance_fields, default: %i[], reader: true,
         constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?('ins') } }
       setting :fieldlabels,
         default: {
-          indematvenue: 'Indemnity responsibility at venue site',    
+          indematvenue: 'Indemnity responsibility at venue site',
           indemreturn: 'Indemnity responsibility for return to lender',
           indemtovenuefromlender: 'Indemnity responsibility for transit if objects travels from lender to its first venue',
           indemtovenuefromvenue: 'Indemnity responsibility for transit if objects travels from previous venue to venue',

@@ -8,8 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[aatid aatcn sourceid], reader: true
-      setting :empty_fields, default: {}, reader: true
+      setting :delete_fields,
+        default: %i[aatid aatcn sourceid],
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :id_field, default: :classificationid, reader: true
@@ -20,7 +21,6 @@ module Kiba
           "Objects.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
       extend Tms::Mixins::TypeLookupTable
 
       setting :object_merge_fieldmap,

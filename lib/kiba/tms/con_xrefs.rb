@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module ConXrefs
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
+      module_function
 
       setting :delete_fields, default: %i[displayed isdefaultdisplaybio roletypeid], reader: true
       setting :empty_fields,
@@ -14,12 +14,13 @@ module Kiba
           conxrefsetid: [nil, '', '-1', '0']
         },
         reader: true
+      extend Tms::Mixins::Tableable
 
       setting :for_loans, reader: true do
         # transform adding a :con_note field
         setting :con_note_builder, default: nil, reader: true
       end
-      
+
       setting :for_objects, reader: true do
         # transform adding an `:assoc_con_note` field
         setting :assoc_con_note_builder, default: nil, reader: true
@@ -32,4 +33,3 @@ module Kiba
     end
   end
 end
-

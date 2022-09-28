@@ -11,10 +11,8 @@ module Kiba
       setting :delete_fields,
         default: %i[complete mixed textentryhtml languageid],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
-      setting :target_tables, default: [], reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       setting :checkable, default: {

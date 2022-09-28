@@ -25,18 +25,23 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      setting :target_tables, default: %w[], reader: true
       extend Tms::Mixins::MultiTableMergeable
 
-      setting :base_fields, default: %i[conservationentityid id tableid], reader: true
-      # whether conservation entity data has actually been used/augmented (true) or whether
-      # it looks like the default field data had been created automatically by TMS (false)
-      setting :populated, default: nil, reader: true, constructor: proc{ set_populated }
+      setting :base_fields,
+        default: %i[conservationentityid id tableid],
+        reader: true
+      # whether conservation entity data has actually been used/augmented (true)
+      #   or whether it looks like the default field data had been created
+      #   automatically by TMS (false)
+      setting :populated,
+        default: nil,
+        reader: true,
+        constructor: proc{ set_populated }
 
      def set_populated
         return false if (fields - base_fields).empty?
-        
-        true 
+
+        true
       end
     end
   end

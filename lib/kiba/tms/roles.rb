@@ -9,7 +9,6 @@ module Kiba
       module_function
 
       setting :delete_fields, default: %i[anonymousnameid prepositional], reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
     end
   end

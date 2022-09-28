@@ -6,13 +6,11 @@ module Kiba
   module Tms
     module ObjCompTypes
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields, default: %i[comptypemnemonic], reader: true
-      setting :empty_fields, default: {}, reader: true
-      
+      extend Tms::Mixins::Tableable
+
       setting :id_field, default: :objcomptypeid, reader: true
       setting :type_field, default: :objcomptype, reader: true
       setting :used_in,
@@ -27,6 +25,7 @@ module Kiba
           'Accessory' => 'separable-part'
         },
         reader: true
+      extend Tms::Mixins::TypeLookupTable
     end
   end
 end

@@ -9,20 +9,30 @@ module Kiba
       #
       # - `extend Tms::Mixins::TypeLookupTable`
       module TypeLookupTable
+        def self.extended(mod)
+          self.check_required_manual_settings(mod)
+          self.set_mappings_setting(mod)
+        end
+
+        def is_type_lookup_table?
+          mappable_type?
+        end
+
         # Override in extending module if different behavior is desired
         # Options: :todo, :self, :downcase
         def default_mapping_treatment
           :todo
         end
-          
+
         def mappable_type?
           true
         end
 
+        # example of use: Tms::Countries
         def post_transforms
           []
         end
-        
+
         def pre_transforms
           []
         end
@@ -37,7 +47,7 @@ module Kiba
             config.pre_transforms.each do |xform|
               transform{ |row| xform.process(row) }
             end
-              
+
             transform Tms::Transforms::DeleteTmsFields
             transform Tms::Transforms::DeleteNoValueTypes, field: typefield
 
@@ -67,11 +77,11 @@ module Kiba
             config = bind.receiver.send(:config)
             typefield = config.type_field
             origtypefield = "orig_#{typefield}".to_sym
-            
+
             config.pre_transforms.each do |xform|
               transform{ |row| xform.process(row) }
             end
-              
+
             transform Tms::Transforms::DeleteTmsFields
             transform Tms::Transforms::DeleteNoValueTypes, field: typefield
             if config.omitting_fields?
@@ -93,6 +103,23 @@ module Kiba
             end
           end
         end
+
+        def self.check_required_manual_settings(mod)
+          %i[id_field type_field used_in].each do |setting|
+            next if mod.respond_to?(setting)
+
+            msg = "#{mod} needs #{setting} defined to extend TypeLookupTable"
+            warn(msg)
+          end
+        end
+        private_class_method :check_required_manual_settings
+
+        def self.set_mappings_setting(mod)
+          return if mod.respond_to?(:mappings)
+
+          mod.module_eval('setting :mappings, default: {}, reader: true')
+        end
+        private_class_method :set_mappings_setting
       end
     end
   end

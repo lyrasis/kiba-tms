@@ -9,7 +9,6 @@ module Kiba
       module_function
 
       setting :delete_fields, default: %i[system], reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       setting :id_field, default: :responsibilityid, reader: true
@@ -22,7 +21,6 @@ module Kiba
           "ExhVenuesXrefs.indemnityfrompreviousvenue",
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
       extend Tms::Mixins::TypeLookupTable
 
       def mappable_type?

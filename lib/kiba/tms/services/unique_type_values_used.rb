@@ -18,7 +18,7 @@ module Kiba
         end
 
         def initialize(mod:,
-                       col_obj: Tms::Data::Column,
+                       col_obj: Tms::Data::ColumnFromString,
                        table_getter: Tms::Data::CsvEnum)
           @mod = mod
           @table_getter = table_getter
@@ -36,7 +36,6 @@ module Kiba
           vals_used = yield vals_for_ids(ids_used, lkup)
           cleaned = yield clean_vals(vals_used)
 
-          binding.pry
           Success(cleaned)
         end
 
@@ -55,7 +54,7 @@ module Kiba
         end
 
         def used_values
-          vals = used_in.map{ |col| col_obj.new(col).unique_values }
+          vals = used_in.map{ |col| col_obj.call(str: col).unique_values }
             .select(&:success?)
             .map(&:value!)
             .flatten

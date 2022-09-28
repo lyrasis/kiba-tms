@@ -8,10 +8,19 @@ module Kiba
     #   ConAddress, ConAltNames, ConDates, ConEMail, ConTypes, Constituents
     module Constituents
       extend Dry::Configurable
-      extend Tms::Mixins::Omittable
-
       module_function
-      
+
+      # the final 3 date fields are deleted because they are handled in the
+      #   Constituents::CleanDates job (a dependency of ConDates::ToMerge job)
+      setting :delete_fields,
+        default: %i[lastsoundex firstsoundex institutionsoundex n_displayname
+                    n_displaydate begindate enddate systemflag internalstatus
+                    islocked publicaccess
+                    displaydate begindateiso enddateiso],
+        reader: true
+      extend Tms::Mixins::Tableable
+
+
       # transform run at the beginning of prep__constituents to force client-specific changes
       setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
@@ -20,17 +29,8 @@ module Kiba
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
 
-      # the final 3 date fields are deleted because they are handled in the Constituents::CleanDates
-      #   job (a dependency of ConDates::ToMerge job)
-      setting :delete_fields,
-        default: %i[lastsoundex firstsoundex institutionsoundex n_displayname n_displaydate
-                    begindate enddate systemflag internalstatus islocked publicaccess
-                    displaydate begindateiso enddateiso],
-        reader: true
-      setting :empty_fields, default: {}, reader: true
-
       setting :untyped_default, default: 'Person', reader: true
-      
+
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
       setting :map_approved, default: false, reader: true
@@ -45,7 +45,7 @@ module Kiba
         reader: true
       # used by Constituents::DeletePrefixesFromDisplayDate
       setting :displaydate_deletable_prefixes, default: [], reader: true
-      
+
       # inactive addresses are excluded from migration
       setting :omit_inactive_address, default: false, reader: true
       # ConAddress columns to include in address value
@@ -105,7 +105,7 @@ module Kiba
         # whether to run ConAltNames::QualifyAnonymous transform
         setting :qualify_anonymous, default: true, reader: true
       end
-      
+
       # config for processing ConDates table
       setting :dates, reader: true do
         # whether there is constituent date data to be merged into Constituents

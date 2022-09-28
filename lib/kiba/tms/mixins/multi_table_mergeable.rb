@@ -5,10 +5,22 @@ module Kiba
     module Mixins
       # Mixin module
       #
-      # Modules including this should have the following methods defined:
+      # ## Implementation
       #
-      # - :target_tables (Array)
+      # Assumes the table to be split up into individual target tables is
+      #   produced by :prep__job_key
+      #
+      # **IF NOT**, manually specify in :for_table_source_job_key setting
+      #   in your config module before extending MultiTableMergeable
       module MultiTableMergeable
+        def self.extended(mod)
+          self.set_target_tables_setting(mod)
+        end
+
+        def is_multi_table_mergeable?
+          true
+        end
+
         def for?(table)
           target_tables.any?(table)
         end
@@ -66,7 +78,7 @@ module Kiba
         def target_transform_settings_handled
           target_transform_settings.reject do |setting|
             config.values[setting].nil?
-           end
+          end
         end
 
         # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
@@ -177,6 +189,14 @@ module Kiba
           MODDEF
           Tms.module_eval(moddef)
         end
+
+        # METHODS FOR EXTENDING
+        def self.set_target_tables_setting(mod)
+          return if mod.respond_to?(:target_tables)
+
+          mod.module_eval('setting :target_tables, default: [], reader: true')
+        end
+        private_class_method :set_target_tables_setting
       end
     end
   end

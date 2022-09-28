@@ -9,8 +9,6 @@ module Kiba
       module_function
 
       setting :source_job_key, default: :loans__out, reader: true
-      setting :delete_fields, default: [], reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       # @return [:conditions, :note] target field for merged text entries data

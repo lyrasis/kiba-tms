@@ -14,7 +14,6 @@ module Kiba
                     accessionminutes1 accessionminutes2 budget capitalprogram
                     currencyid originalentityid currententityid],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       # approaches required for creation of CS acquisitions and obj/acq relations

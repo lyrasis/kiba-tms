@@ -5,24 +5,34 @@ module Kiba
     module Table
       class List
         class << self
-          def call
-            dirlist = Dir.new(Tms.tms_table_dir_path)
-              .children
-              .map{ |table| table.delete_suffix('.csv') }
-              .reject{ |table| table['~lock.'] }
-              .reject{ |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
-            dirlist - empty_tables - Tms.excluded_tables
+          def all
+            from_dir + empty_tables + Tms.excluded_tables
           end
 
           def as_filenames
             call.map{ |table| "#{table}.csv" }
           end
 
-          def include?(tablename)
-            call.any?(tablename)
+          def call
+            used
           end
-          
+
+          def include?(tablename)
+            used.any?(tablename)
+          end
+
+          def used
+            from_dir - empty_tables - Tms.excluded_tables
+          end
+
           private
+          def from_dir
+            Dir.new(Tms.tms_table_dir_path)
+              .children
+              .map{ |table| table.delete_suffix('.csv') }
+              .reject{ |table| table['~lock.'] }
+              .reject{ |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
+          end
 
           def empty_tables
             File.read(Tms.empty_table_list_path)

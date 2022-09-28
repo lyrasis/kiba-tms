@@ -11,7 +11,6 @@ module Kiba
       setting :delete_fields,
         default: %i[displayed dimensionid secondaryunitid],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
     end
   end

@@ -3,10 +3,10 @@
 module Kiba
   module Tms
     module Jobs
-      module EmailTypes
+      module EMailTypes
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

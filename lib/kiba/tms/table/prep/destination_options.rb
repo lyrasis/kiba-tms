@@ -59,7 +59,7 @@ module Kiba
                 %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
               },
               obj_incoming: {
-                initial_headers: Tms::ObjIncoming.all_fields
+                initial_headers: Proc.new{ Tms::ObjIncoming.fields }
               },
               obj_locations: {
                 initial_headers:

@@ -6,13 +6,10 @@ module Kiba
   module Tms
     module LoanPurposes
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
-      setting :delete_fields, default: %i[], reader: true
-      setting :empty_fields, default: {}, reader: true
-      
+      extend Tms::Mixins::Tableable
+
       setting :id_field, default: :loanpurposeid, reader: true
       setting :type_field, default: :loanpurpose, reader: true
       setting :used_in,
@@ -20,7 +17,7 @@ module Kiba
           "Loans.#{id_field}"
         ],
         reader: true
-      setting :mappings, default: {}, reader: true
+      extend Tms::Mixins::TypeLookupTable
     end
   end
 end

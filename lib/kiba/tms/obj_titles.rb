@@ -9,7 +9,6 @@ module Kiba
       module_function
 
       setting :delete_fields, default: %i[titleid displayed isexhtitle], reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       setting :migrate_inactive, default: false, reader: true

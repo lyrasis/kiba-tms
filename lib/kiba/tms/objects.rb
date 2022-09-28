@@ -15,8 +15,7 @@ module Kiba
                     searchobjectnumber sortsearchnumber
                     usernumber1 usernumber2 usernumber3 usernumber4
                    ],
-        reader: true,
-        constructor: proc{ |value| set_special_deletes(value) }
+        reader: true
       setting :empty_fields, default: {
         loanclassid: '0',
         objectlevelid: '0',
@@ -28,12 +27,6 @@ module Kiba
         type: '0'
       },
         reader: true
-
-      def set_special_deletes(value)
-        value << :conservationentityid unless Tms::ConservationEntities.used?
-        final = value.flatten.uniq.sort
-        final
-      end
       extend Tms::Mixins::Tableable
 
       setting :annotation_source_fields, default: %i[creditline], reader: true

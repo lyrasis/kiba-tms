@@ -9,13 +9,12 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[conversionfactor unittypeid unitlabelatend isfractional basedenominator
-                    decimalplaces unitcutoff unitspersuperunit unitlabel superunitlabel
-                    issuperunit system],
+        default: %i[conversionfactor unittypeid unitlabelatend isfractional
+                    basedenominator decimalplaces unitcutoff unitspersuperunit
+                    unitlabel superunitlabel issuperunit system],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
-      
+
       setting :id_field, default: :unitid, reader: true
       setting :type_field, default: :unitname, reader: true
       setting :used_in,

@@ -11,7 +11,6 @@ module Kiba
       setting :delete_fields,
         default: %i[sortnumber mnemonic isforeignlender hasspecialrequirements],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
 
       # Some TMS installs use :constituentidold, which is a direct constituent

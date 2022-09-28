@@ -6,8 +6,6 @@ module Kiba
   module Tms
     module Currencies
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
-      extend Tms::Mixins::TypeLookupTable
       module_function
 
       setting :delete_fields,
@@ -15,8 +13,8 @@ module Kiba
                     replacedbycurrencyid replacementrate replacedonisodate
                     allowedforlocalvalues],
         reader: true
-      setting :empty_fields, default: {}, reader: true
-      
+      extend Tms::Mixins::Tableable
+
       setting :id_field, default: :currencyid, reader: true
       setting :type_field, default: :currency, reader: true
       setting :used_in,
@@ -32,6 +30,7 @@ module Kiba
           'US $' => 'US Dollar'
         },
         reader: true
+      extend Tms::Mixins::TypeLookupTable
     end
   end
 end

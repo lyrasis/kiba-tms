@@ -6,13 +6,12 @@ module Kiba
   module Tms
     module TermMasterThes
       extend Dry::Configurable
-      extend Tms::Mixins::Tableable
       module_function
 
       setting :delete_fields,
         default: %i[dateentered datemodified termclassid displaydescriptorid],
         reader: true
-      setting :empty_fields, default: {}, reader: true
+      extend Tms::Mixins::Tableable
     end
   end
 end

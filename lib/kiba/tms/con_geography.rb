@@ -11,7 +11,6 @@ module Kiba
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true
-      setting :empty_fields, default: {}, reader: true
       extend Tms::Mixins::Tableable
     end
   end

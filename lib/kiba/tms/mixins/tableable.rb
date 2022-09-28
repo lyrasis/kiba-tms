@@ -22,7 +22,9 @@ module Kiba
       #   produces the source data for the module you are configuring
       module Tableable
         def self.extended(mod)
-          self.set_delete_and_empty_fields_settings(mod)
+          self.set_delete_fields_setting(mod)
+          self.set_empty_fields_setting(mod)
+          self.set_non_content_fields_setting(mod)
           self.check_source_job_key(mod)
         end
 
@@ -39,6 +41,12 @@ module Kiba
             .first
             .map(&:downcase)
             .map(&:to_sym)
+        end
+
+        # non-omitting, non-fields that are not ids or other non-primary content
+        #   bearing fields
+        def content_fields
+          fields - non_content_fields
         end
 
         def delete_omitted_fields(hash)
@@ -70,7 +78,13 @@ module Kiba
         end
 
         def omitted_fields
-          ( delete_fields + emptyfields ).uniq
+          base = ( delete_fields + emptyfields ).uniq
+          return base unless all_fields.any?(:conservationentityid)
+
+          unless Tms::ConservationEntities.used?
+            base << :conservationentityid
+          end
+          base
         end
 
         def omitting_fields?
@@ -82,6 +96,8 @@ module Kiba
         end
 
         def supplied?
+          return false if table.tablename == 'UnknownTable'
+
           true if table.type == :tms
         end
 
@@ -90,20 +106,13 @@ module Kiba
         end
 
         def table
-          if respond_to?(:source_job_key)
+          if Tms::Table::List.all.any?(table_name)
+            Tms::Table::Obj.new(table_name)
+          elsif self.respond_to?(:source_job_key)
             Tms::Table::Obj.new(source_job_key)
           else
-            Tms::Table::Obj.new(table_name)
+            Tms::Table::Obj.new('UnknownTable')
           end
-
-
-          # if Tms::Table::List.include?(table_name)
-          #   Tms::Table::Obj.new(table_name)
-          # elsif self.respond_to?(:source_job_key)
-          #   Tms::Table::Obj.new(source_job_key)
-          # else
-          #   Tms::Table::Obj.new('UnknownTable')
-          # end
         end
 
         def table_name
@@ -131,15 +140,24 @@ module Kiba
         end
         private_class_method :check_source_job_key
 
-        def self.set_delete_and_empty_fields_settings(mod)
-          unless mod.respond_to?(:delete_fields)
-            mod.module_eval('setting :delete_fields, default: [], reader: true')
-          end
-          unless mod.respond_to?(:empty_fields)
-            mod.module_eval('setting :empty_fields, default: {}, reader: true')
-          end
+        def self.set_delete_fields_setting(mod)
+          return if mod.respond_to?(:delete_fields)
+
+          mod.module_eval('setting :delete_fields, default: [], reader: true')
         end
-        private_class_method :set_delete_and_empty_fields_settings
+        private_class_method :set_delete_fields_setting
+
+        def self.set_empty_fields_setting(mod)
+          return if mod.respond_to?(:empty_fields)
+
+          mod.module_eval('setting :empty_fields, default: {}, reader: true')
+        end
+
+        def self.set_non_content_fields_setting(mod)
+          return if mod.respond_to?(:non_content_fields)
+
+          mod.module_eval('setting :non_content_fields, default: [], reader: true')
+        end
       end
     end
   end

@@ -8,10 +8,6 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      # The first three rows are fields all marked as not in use in the TMS data dictionary
-      setting :delete_fields,
-        default: %i[],
-        reader: true
       setting :empty_fields,
         default: {
           dateout: [nil, '', '9999-12-31 00:00:00.000'],
