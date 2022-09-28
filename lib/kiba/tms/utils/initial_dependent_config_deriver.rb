@@ -13,7 +13,7 @@ module Kiba
           @config_path = "#{Tms.datadir}/initial_config_dependent.txt"
           @err_path = "#{Tms.datadir}/initial_config_errs_dependent.txt"
         end
-        
+
         def call
           config = to_configure.map{ |const| Tms::Services::RoleTreatmentDeriver.call(const) }
             .flatten
@@ -21,7 +21,7 @@ module Kiba
             .group_by(&:success?)
           configs = config[true].map(&:value!)
           errs = config[false].map(&:failure)
-          
+
           write_config(configs) unless configs.empty?
           write_errs(errs) unless errs.empty?
           binding.pry
@@ -33,7 +33,7 @@ module Kiba
 
         def gather_configurable
           Tms.configs.select do |constant|
-            constant.respond_to?(:merges_roles?)
+            constant.respond_to?(:gets_roles_merged_in?)
           end
         end
 

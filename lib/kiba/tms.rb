@@ -169,12 +169,8 @@ module Kiba
     end
 
     def finalize_config
-      Tms::ConRefs.target_tables.each do |table|
-        next unless Tms.constants.any?(table)
-
-        Tms.const_get(table).extend(Tms::Mixins::Roleable)
-      end
       Tms::Utils::ConfiguredJobExtender.call
+      Tms::Utils::ConRefTargetExtender.call
       per_job_tables.each do |srctable|
         srctable.target_tables.each do |target|
           srctable.define_for_table_module(target)
