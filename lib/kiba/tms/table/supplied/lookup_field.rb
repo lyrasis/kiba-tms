@@ -32,6 +32,7 @@ module Kiba
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,
             obj_components: :componentid,
+            obj_insurance: :objinsuranceid,
             objects: :objectid,
             registration_sets: :lotid,
             thesaurus_bases: :thesaurusbaseid

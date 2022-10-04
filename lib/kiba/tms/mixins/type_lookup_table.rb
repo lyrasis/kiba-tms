@@ -15,7 +15,7 @@ module Kiba
         end
 
         def is_type_lookup_table?
-          mappable_type?
+          true
         end
 
         # Override in extending module if different behavior is desired
@@ -24,6 +24,11 @@ module Kiba
           :todo
         end
 
+        # If true, the prep transform copies the original type value to a new
+        #   field (for auditing purposes), and replaces the remaining type value
+        #   with mapped value from the extending config's :mappings setting.
+        #
+        # Manually define as false in the extending config to skip that behavior
         def mappable_type?
           true
         end

@@ -10,12 +10,13 @@ module Kiba
         def self.call(...)
           self.new(...).call
         end
-        
-        def initialize(table, mod, field)
-          @table = table
+
+        def initialize(mod:, field:, criteria:)
           @mod = mod
-          @field = field[0]
-          @emptyvals = [field[1], nil, ''].flatten.uniq
+          @table = mod.table
+          @field = field
+          @criteria = criteria
+          @emptyvals = [criteria, nil, ''].flatten.uniq
 
           @path = mod.table_path
           @index = set_index
@@ -24,24 +25,27 @@ module Kiba
         def call
           return nil unless path
           return nil unless index
-          
+
           check_rows
         end
 
         private
 
-        attr_reader :table, :mod, :field, :emptyvals, :path, :index
+        attr_reader :table, :mod, :field, :criteria, :emptyvals, :path, :index
 
         def check_rows
           CSV.foreach(path, headers: true) do |row|
-            return :failure unless emptyvals.any?(row[index])
+            return nil unless emptyvals.any?(row[index])
           end
-          :success
+          {field: field, criteria: criteria}
         end
 
         def set_index
           idx = mod.send(:all_fields).find_index(field)
-          warn("#{self.class.name}: Unknown field `#{field}` in #{table.tablename} table") unless idx
+          unless idx
+            msg = "Unknown field `#{field}` in #{table.tablename} table"
+            warn("#{self.class.name}: #{msg}")
+          end
           idx
         end
       end

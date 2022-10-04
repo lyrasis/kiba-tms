@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :con_refs__create,
@@ -26,7 +26,7 @@ module Kiba
             base << :tms__con_alt_names if Tms::ConAltNames.used?
             base << :prep__departments if Tms::Departments.used?
             base << :prep__roles if Tms::Roles.used?
-            
+
             if Tms::Names.cleanup_iteration
               base << :persons__by_constituentid
               base << :orgs__by_constituentid
@@ -36,20 +36,24 @@ module Kiba
             end
             base
           end
-          
+
           def xforms
             bind = binding
-            
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
               prefname = Tms::Constituents.preferred_name_field
 
               unless config.migrate_inactive
-                transform FilterRows::FieldEqualTo, action: :reject, field: :active, value: '0'
+                transform FilterRows::FieldEqualTo,
+                  action: :reject,
+                  field: :active,
+                  value: '0'
               end
-              
+
               if config.omitting_fields?
-                transform Delete::Fields, fields: (config.omitted_fields + [:active])
+                transform Delete::Fields,
+                  fields: (config.omitted_fields + [:active])
               end
 
               if Tms::Names.cleanup_iteration
@@ -92,11 +96,14 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__roles,
                   keycolumn: :roleid,
-                  fieldmap: {role: :role},
+                  fieldmap: {
+                    role: :role,
+                    role_role_type: :role_role_type},
                   delim: Tms.delim
               end
 
-              transform Delete::Fields, fields: %i[departmentid roleid nameid constituentid]
+              transform Delete::Fields,
+                fields: %i[departmentid roleid nameid constituentid]
               transform Tms::Transforms::TmsTableNames
               transform Rename::Field, from: :id, to: :recordid
 
@@ -104,7 +111,6 @@ module Kiba
                 fields: %i[datebegin dateend],
                 find: '^0$',
                 replace: ''
-              
             end
           end
         end

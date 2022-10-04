@@ -10,16 +10,19 @@ module Kiba
       class TypeTableKnownValueDeriver
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
-        
+
         def self.call(...)
           self.new(...).call
         end
-        
-        def initialize(mod)
+
+        def initialize(mod:,
+                       settingobj: Tms::Data::ConfigSetting,
+                       failobj: Tms::Data::DeriverFailure
+                      )
           @mod = mod
           return unless eligible?
-          
-          @value_getter = Tms::Services::UniqueTypeValuesUsed.new(mod)
+
+          @value_getter = Tms::Services::UniqueTypeValuesUsed.new(mod: mod)
           @id_field = mod.id_field
           @type_field = mod.type_field
           @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
@@ -48,7 +51,7 @@ module Kiba
         def cleaned
           vals = vals_as_rows
           return Failure(nil) unless vals
-          
+
           result = vals.map{ |row| no_val_xform.process(row) }
             .compact
             .map{ |row| row[type_field] }
@@ -84,24 +87,24 @@ module Kiba
         def used_val_ids
           vals = value_getter.call
           return nil unless vals
-          
+
           vals.values
             .flatten
             .uniq
         end
-        
+
         def vals_as_rows
           vals = vals_from_table
           return nil unless vals
-          
+
           vals.map{ |val| {type_field => val} }
         end
-        
+
         def vals_from_table
           path = mod.table_path
           used = used_val_ids
           return nil unless used
-          
+
           vals = []
           CSV.foreach(path, headers: true, header_converters: %i[downcase symbol]) do |row|
             next unless used.any?(row[id_field])

@@ -28,6 +28,10 @@ module Kiba
           self.check_source_job_key(mod)
         end
 
+        def is_tableable?
+          true
+        end
+
         def all_fields
           unless File.exist?(table_path)
             if respond_to?(:source_job_key) && Tms.registry.key?(source_job_key)
@@ -52,6 +56,10 @@ module Kiba
         def delete_omitted_fields(hash)
           omitted_fields.each{ |field| hash.delete(field) if hash.key?(field) }
           hash
+        end
+
+        def empty_candidates
+          all_fields - delete_fields - Tms.tms_fields - non_content_fields
         end
 
         def emptyfields

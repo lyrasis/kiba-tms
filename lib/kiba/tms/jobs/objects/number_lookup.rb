@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module Relationships
-        module UnknownTables
-          extend self
-          
+      module Objects
+        module NumberLookup
+          module_function
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__relationships,
-                destination: :relationships__unknown_tables
+                source: :tms__objects,
+                destination: :objects__number_lookup
               },
               transformer: xforms
             )
@@ -19,7 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :reject, field: :tablename
+              transform Delete::FieldsExcept, fields: %i[objectid objectnumber]
             end
           end
         end

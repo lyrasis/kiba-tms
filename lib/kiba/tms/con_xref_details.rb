@@ -9,7 +9,7 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[unmasked displaybioid addressid roletypeid],
+        default: %i[unmasked displaybioid addressid],
         reader: true
       extend Tms::Mixins::Tableable
 

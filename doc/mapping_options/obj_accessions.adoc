@@ -1,0 +1,121 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+=  Mapping options for ObjAccession, AccessionLot, and RegistrationSets tables
+
+toc::[]
+
+== TMS data structure overview and migration treatment categories
+
+There is one row per object in the system in the ObjAccession table.
+
+Depending on client TMS data entry practice there may or may not be any data in AccessionLot and/or RegistrationSets tables.
+
+These tables can be used to describe the accession of multiple objects as a group accession. One or more objects can be associated with a Registration Set. One or more registration sets can be associated with an Accession Lot. If this structure is used, it appears that the AccessionLot and RegistrationSets tables become populated in TMS, and IDs linking objects to the appropriate records are added to the ObjAccession table. This is referred to in the migration as `:linkedlot` treatment.
+
+It also appears that objects can be associated with an Accession Lot without creation of any RegistrationSets. Or, at least, there is some way of entering data that causes the AccessionLot and RegistationSets tables to be blank, but there is a lot number value in the `:acquisitionlot` field of ObjAccession, and all rows having the same lot number have the same other accession information. This is referred to as `:lotnumber` treatment in the migration.
+
+ObjAccession rows with no links to AccessionLot/RegistrationSets tables or values in :acquisitionlot field are treated as `:onetoone` in the migration.
+
+[CAUTION]
+====
+It is assumed that, if a `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included inthose sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
+
+This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary that can be extracted from a TMS database dump.
+
+We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and not well-supported by the CS data model.
+====
+
+The three treatment categories are treated as follows in the migration:
+
+=== `:linkedlot`
+
+One CS Acquisition procedure created per Registration Set. All objects in ObjAccession table related to a given Registration Set are related to the Acquisition procedure.
+
+If there is one Registration Set associated with an Accession Lot, the resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
+
+If there are multiple Registration Sets per Accession Lot, the resulting Acquisition procedure's reference number begins with the :lotnumber value from the AccessionLot table. Some additional value must be added to ensure reference number uniqueness. If present, the AccessionLot.lotpattern field value will be used as a pattern to derive this. Otherwise a sequential digit segment may be added.
+
+=== `:acquisitionlot`
+
+One CS Acquisition procedure created per unique Acquisition Lot number value in ObjAccession table. All objects in ObjAccession table with the given :lotnumber value are related to the Acquisition procedure.
+
+The resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
+
+=== `:onetoone`
+
+One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure.
+
+The resulting Acquisition procedure's reference number is the related object's object number.
+
+== Mapping options
+
+[NOTE]
+====
+The RegistrationSets and AccessionLot tables contain fields that appear in ObjAccession. The field handling specified for such fields in ObjAccession cascades to RegistrationSets and AccessionLot.
+
+That is, you cannot opt to have :accessionvalue information treated differently for rows being processed as Registration Sets vs. one-to-one acquisition/object relations.
+====
+=== :accessionvalue_treatment
+
+Applies to values in ObjAccession.accessionvalue or AccessionLot.accessionvalue
+
+NOTE: recording values in ObjAccession.accessionvalue is apparently no longer supported in newer versions of TMS, replaced by linking to an ObjectValue record. However, we still see it in client data.
+
+Default option:: `:valuation_control`
+
+Other options to be developed on client request.
+
+==== :valuation_control
+Preprocessing for ObjAccession table/:onetoone treatment rows:
+
+* First we merge in the values of any linked ObjectValue records
+* If the value of :accessionvalue field = the value in the linked ObjectValue record, we delete it from ObjAccession (because we are going to create the relevant Valuation Control (VC) procedure from the ObjectValue record)
+* If the value of :accessionvalue field is different from the value in the linked ObjectValue record, or if there is no linked ObjectValue record, the value is retained for further processing.
+
+No preprocessing for AccessionLot.accessionvalue/:linkedlot treatment rows.
+
+One CS Valuation Control (VC) procedure is created to reflect the recorded value. The VC procedure is linked to the relevant CS acquisition procedure and objects.
+
+.Related options
+* `:accessionvalue_type` - :valuetype to enter in VC procedures derived from this data. Default: "Original Value"
+
+=== :dog_dates_treatment
+Applies to :deedofgiftsentiso and :deedofgiftreceivediso fields in ObjAccession and RegistrationSets tables.
+
+CS does not have structured data fields to record this info. The option specifies which note field this data should be mapped into.
+
+"Deed of gift sent: " will be prepended to any :deedofgiftsentiso field values. "Deed of gift received: " will be prepended to any :deedofgiftreceivediso field values.
+
+Default option:: `:acquisitionnote`
+
+Other options to be developed on client request.
+
+.Alternate options:
+* `:acquisitionprovisos`
+* `:drop` - do not migrate this information
+
+=== :percentowned_treatment
+
+Applies to ObjAccession.currpercentownership and RegistrationSets.percentowned fields.
+
+CS does not have structured data fields to reflect this information. The option specifies which note field this data should be mapped into.
+
+Default option:: `:acquisitionprovisos`
+
+.Alternate options:
+* `:acquisitionnote`
+* `:drop` - do not migrate this information
+
+.Related options
+* `:percentowned_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Percent owned: "

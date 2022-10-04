@@ -8,7 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[anonymousnameid prepositional], reader: true
+      setting :delete_fields,
+        default: %i[anonymousnameid prepositional],
+        reader: true
       extend Tms::Mixins::Tableable
     end
   end

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'csv'
 require 'dry/monads'
 
 module Kiba
@@ -34,15 +33,20 @@ module Kiba
         def check_unmapped_role_terms
           meth = :con_role_treatment_mappings
           unless respond_to?(meth)
-            return Failure([
-              "#{name}.#{__callee__}",
-              "missing_#{meth}_setting".to_sym
-            ])
+            return Failure(Tms::Data::DeriverFailure.new(
+              mod: "#{name}.#{__callee__}",
+              name: meth,
+              sym: :missing_setting
+            ))
           end
           unmapped = send(meth)[:unmapped]
-          return Failure(nil) if unmapped.blank?
+          return nil if umapped.blank?
 
-          Success("Unmapped role terms: #{unmapped.join(', ')}")
+          Success(Tms::Data::ConfigSetting.new(
+            mod:"#{name}.#{__callee__}",
+            name: :unmapped_role_terms,
+            value: unmapped.join(', ')
+            ))
         end
 
         def self.checkable_from_scratch(mod)

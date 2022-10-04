@@ -44,12 +44,6 @@ module Kiba
 
       def register_files
 
-        # register :object_number_lookup, {
-        #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_number_lookup.csv'),
-        #   creator: Kiba::Tms::Jobs::Objects.method(:object_number_lookup),
-        #   lookup_on: :objectid,
-        #   tags: %i[objects lookup prep]
-        # }
         # register :object_numbers, {
         #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_numbers.csv'),
         #   creator: Kiba::Tms::Jobs::Objects.method(:object_numbers),
@@ -67,18 +61,12 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('accession_lot') do
-          register :set_count, {
-            creator: Kiba::Tms::Jobs::AccessionLot::SetCount,
-            path: File.join(Kiba::Tms.datadir, 'working', 'accession_lot_set_count.csv'),
-            desc: 'Adds :registrationsets field with count of registration sets per lot',
-            tags: %i[accessionlot registrationsets],
+          register :valuation_prep, {
+            creator: Kiba::Tms::Jobs::AccessionLot::ValuationPrep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'accession_lot_valuation_prep.csv'),
+            desc: 'Valuation Control procedures created from AccessionLot data. Still with ID for creating relationships',
+            tags: %i[valuation acquisitions],
             lookup_on: :acquisitionlotid
-          }
-          register :multi_set, {
-            creator: Kiba::Tms::Jobs::AccessionLot::MultiSet,
-            path: File.join(Kiba::Tms.datadir, 'working', 'accession_lot_multi_set.csv'),
-            desc: 'Accession lots having more than one registration set. Non-zero means work to do!',
-            tags: %i[accessionlot todochk]
           }
         end
 
@@ -154,7 +142,15 @@ module Kiba
             lookup_on: :recordid,
             tags: %i[assoc_parents con]
           }
+        end
 
+        Kiba::Tms.registry.namespace('associations') do
+          register :missing_values, {
+            creator: Kiba::Tms::Jobs::Associations::MissingValues,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'associations_missing_values.csv'),
+            desc: 'One of the involved ids could not be mapped to a value, human-readable relationship cannot be created.',
+            tags: %i[associations reports]
+          }
         end
 
         Kiba::Tms.registry.namespace('classification_notations') do
@@ -374,6 +370,18 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::ConRefs::Prep,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_refs_prepped.csv'),
+            tags: %i[con_xrefs]
+          }
+          register :type_mismatch, {
+            creator: Kiba::Tms::Jobs::ConRefs::TypeMismatch,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'con_refs_type_mismatch.csv'),
+            desc: 'Role type values from role, con_xrefs, and con_xref_details do not match',
+            tags: %i[con_xrefs]
+          }
+          register :type_match, {
+            creator: Kiba::Tms::Jobs::ConRefs::TypeMatch,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_refs_type_match.csv'),
+            desc: 'Role type values from role, con_xrefs, and con_xref_details do match; redundant fields removed',
             tags: %i[con_xrefs]
           }
         end
@@ -645,6 +653,15 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'locations_cleaned_0.csv'),
             desc: 'Initial cleaned location data with info-only fields removed',
             tags: %i[locations]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('lot_num_acqs') do
+          register :prep, {
+            creator: Kiba::Tms::Jobs::LotNumAcqs::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'lot_num_acqs.csv'),
+            desc: 'ObjAccession rows to be processed with :lotnumber approach',
+            tags: %i[acquisitions]
           }
         end
 
@@ -1265,6 +1282,13 @@ module Kiba
             lookup_on: :objectnumber,
             tags: %i[objects]
           }
+          register :number_lookup, {
+            path: File.join(Kiba::Tms.datadir, 'prepped', 'object_number_lookup.csv'),
+            creator: Kiba::Tms::Jobs::Objects::NumberLookup,
+            desc: 'Just id and objectnumber, retrievable by id',
+            lookup_on: :objectid,
+            tags: %i[objects]
+          }
         end
 
         Kiba::Tms.registry.namespace('orgs') do
@@ -1333,6 +1357,20 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('registration_sets') do
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::RegistrationSets::ForIngest,
+            path: File.join(Kiba::Tms.datadir, 'working', 'reg_set_for_ingest.csv'),
+            desc: 'Acquisitions for ingest, derived from RegSets. RegSet id removed.',
+            tags: %i[acquisitions]
+          }
+          register :obj_rels, {
+            creator: Kiba::Tms::Jobs::RegistrationSets::ObjRels,
+            path: File.join(Kiba::Tms.datadir, 'working', 'reg_set_acq_obj_rels.csv'),
+            tags: %i[nhr acquisitions objects]
+          }
+        end
+
         Kiba::Tms.registry.namespace('status_flags') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::StatusFlags::NewTables,
@@ -1392,6 +1430,29 @@ module Kiba
             desc: 'List of term ids used in ThesXrefs.',
             tags: %i[termdata thesxrefs terms reference],
             lookup_on: :termid
+          }
+        end
+
+        Kiba::Tms.registry.namespace('valuation_control') do
+          register :from_accession_lot, {
+            creator: Kiba::Tms::Jobs::ValuationControl::FromAccessionLot,
+            path: File.join(Kiba::Tms.datadir, 'working', 'vc_from_accessionlot.csv'),
+            tags: %i[valuation acquisitions]
+          }
+          register :nhrs, {
+            creator: Kiba::Tms::Jobs::ValuationControl::Nhrs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'nhr_vc.csv'),
+            tags: %i[valuation nhr]
+          }
+          register :nhr_acq_accession_lot, {
+            creator: Kiba::Tms::Jobs::ValuationControl::NhrAcqAccessionLot,
+            path: File.join(Kiba::Tms.datadir, 'working', 'nhr_acq_vc_from_accessionlot.csv'),
+            tags: %i[valuation acquisitions nhr]
+          }
+          register :nhr_obj_accession_lot, {
+            creator: Kiba::Tms::Jobs::ValuationControl::NhrObjAccessionLot,
+            path: File.join(Kiba::Tms.datadir, 'working', 'nhr_obj_vc_from_accessionlot.csv'),
+            tags: %i[valuation objects nhr]
           }
         end
 

@@ -6,10 +6,10 @@ module Kiba
       module Relationships
         module Prep
           module_function
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__relationships,
@@ -28,7 +28,6 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
               transform Tms::Transforms::TmsTableNames
-              transform Tms::Transforms::Relationships::AddLabel
             end
           end
         end

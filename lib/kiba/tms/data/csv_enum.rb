@@ -16,15 +16,18 @@ module Kiba
         end
 
         # @param mod [Module]
-        def initialize(mod)
+        def initialize(mod:)
           @mod = mod
           @path = mod.table_path
         end
 
         # @return [Enumerable]
         def call
+          unless File.exist?(path)
+            Kiba::Extend::Command::Run.job(mod.source_job_key)
+          end
           csv = CSV.foreach(
-            mod.table_path,
+            path,
             headers: true,
             header_converters: %i[downcase symbol]
           )
@@ -36,7 +39,7 @@ module Kiba
 
         private
 
-        attr_reader :mod
+        attr_reader :mod, :path
 
       end
     end

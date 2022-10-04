@@ -14,6 +14,7 @@ module Kiba
       #   in your config module before extending MultiTableMergeable
       module MultiTableMergeable
         def self.extended(mod)
+          self.set_split_on_column_setting(mod)
           self.set_target_tables_setting(mod)
         end
 
@@ -82,8 +83,7 @@ module Kiba
         end
 
         # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
-
-        def register_per_table_jobs(field = :tablename)
+        def register_per_table_jobs(field = split_on_column)
           key = filekey
           return unless key
 
@@ -191,6 +191,15 @@ module Kiba
         end
 
         # METHODS FOR EXTENDING
+        def self.set_split_on_column_setting(mod)
+          return if mod.respond_to?(:split_on_column)
+
+          mod.module_eval(
+            'setting :split_on_column, default: :tablename, reader: true'
+          )
+        end
+        private_class_method :set_split_on_column_setting
+
         def self.set_target_tables_setting(mod)
           return if mod.respond_to?(:target_tables)
 

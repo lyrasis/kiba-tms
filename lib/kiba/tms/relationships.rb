@@ -9,24 +9,14 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[movecolocated rel1prep rel2prep relation1plural relation2plural transitive],
+        default: %i[movecolocated rel1prep rel2prep relation1plural
+                    relation2plural transitive],
         reader: true
       extend Tms::Mixins::Tableable
 
-      extend Tms::Mixins::MultiTableMergeable
-
-      # to support automated notification if new relationships exist in updated data
-      setting :defined_rels, default: [], reader: true
-
-      setting :configurable,
-        default: {
-          defined_rels: Proc.new{ set_defined_rels }
-        },
-        reader: true
-
-      def set_defined_rels
-        Tms::Services::Relationships::DefinedRelGetter.call
-      end
+      # appears as though it should extend MultiTableMergeable, but this table
+      #   gets merged into Associations or AssocParents, and those are the
+      #   MultiTableMergeable tables.
     end
   end
 end

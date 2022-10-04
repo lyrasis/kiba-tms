@@ -9,7 +9,7 @@ module Kiba
     module Data
       class Column
         include Dry::Monads[:result]
-        include Dry::Monads::Do.for(:unique_values)
+        include Dry::Monads::Do.for(:unique_values, :value_counts)
 
         # @param mod [Module, String]
         # @param field [Symbol, String]
@@ -23,10 +23,21 @@ module Kiba
         def unique_values
           return status unless status.success?
 
-          rows = yield table_getter.call(mod)
+          rows = yield table_getter.call(mod: mod)
           vals = yield rows_to_vals(rows)
 
           Success(vals)
+        end
+
+        # @return [Hash] key: field value, value: number of times value
+        #   occurs in table
+        def value_counts
+          return status unless status.success?
+
+          rows = yield table_getter
+          counts = yield count_vals(rows)
+
+          Success(counts)
         end
 
         def to_monad
@@ -36,6 +47,21 @@ module Kiba
         private
 
         attr_reader :mod, :field, :table_getter, :status
+
+        def count_vals(rows)
+          result = {}
+          rows.each do |row|
+            next unless row.key?(field)
+
+            val = row[field]
+            result[val] = 0 unless result.key?(val)
+            result[val] += 1
+          end
+        rescue StandardError => err
+          Failure(err)
+        else
+          Success(result)
+        end
 
         def rows_to_vals(rows)
           result = rows.map{ |row| row.key?(field) ? row[field] : nil }

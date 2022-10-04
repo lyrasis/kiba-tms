@@ -23,6 +23,7 @@ module Kiba
           attr_reader :table_key
 
           FIELDS = {
+            accession_lot: :acquisitionlotid,
             accession_methods: :accessionmethodid,
             alt_nums: :description,
             classifications: :classificationid,
@@ -73,7 +74,9 @@ module Kiba
             overall_conditions: :overallconditionid,
             phone_types: :phonetypeid,
             ref_formats: :formatid,
+            registration_sets: :registrationsetid,
             relationships: :relationshipid,
+            role_types: :roletypeid,
             roles: :roleid,
             shipping_methods: :shippingmethodid,
             status_flags: :recordid,

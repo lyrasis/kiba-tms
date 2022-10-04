@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_accession,
@@ -21,7 +21,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :acquisitionlotid
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :acquisitionlotid
             end
           end
         end

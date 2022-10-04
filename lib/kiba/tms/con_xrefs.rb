@@ -8,7 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[displayed isdefaultdisplaybio roletypeid], reader: true
+      setting :delete_fields,
+        default: %i[displayed isdefaultdisplaybio],
+        reader: true
       setting :empty_fields,
         default: {
           conxrefsetid: [nil, '', '-1', '0']

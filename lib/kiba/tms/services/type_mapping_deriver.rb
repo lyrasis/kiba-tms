@@ -15,38 +15,56 @@ module Kiba
           self.new(...).call
         end
 
-        def initialize(mod)
+        def initialize(mod:,
+                       settingobj: Tms::Data::ConfigSetting,
+                       failobj: Tms::Data::DeriverFailure,
+                       getter: UniqueTypeValuesUsed
+                      )
           @mod = mod
-          return unless eligible?
+          @settingobj = settingobj
+          @failobj = failobj
+          @getter = getter
+          return eligible? if eligible?.failure?
 
-          @value_getter = Tms::Services::UniqueTypeValuesUsed.new(mod: mod)
           @id_field = mod.id_field
           @type_field = mod.type_field
-          @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
-          @default_mapping = mod.mappings.empty? ? false : true
-          @setting_name = "#{mod}.config.mappings"
+          @no_val_remover = Tms::Transforms::DeleteNoValueTypes.new(
+            field: type_field
+          )
+          @setting = :mappings
+          @current_mappings = mod.mappings
         end
 
         def call
-          return unless eligible?
+          _eligible = yield eligible?
 
-          raw_values = yield(value_getter.call)
-          hash = yield(mapping_hash(clean))
-          return nil if clean.empty?
+          raw_values = yield getter.call(mod: mod)
+          derived_hash = yield(mapping_hash(raw_values))
 
-          if default_mapping
-            Success("#{setting_name} = #{mod.mappings.merge(hash)}")
-          else
-            Success("#{setting_name} = #{hash}")
-          end
+          Success(settingobj.new(
+            mod: mod,
+            name: setting,
+            value: derived_hash.merge(current_mappings)
+          ))
         end
 
         private
 
-        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping, :setting_name
+        attr_reader :mod, :settingobj, :failobj, :getter,
+          :id_field, :type_field, :no_val_remover,
+          :setting, :current_mappings
 
         def eligible?
-          mod.respond_to?(:mappable_type?) && mod.mappable_type?
+          failure = Failure(
+            failobj.new(mod: mod, name: setting, sym: :not_eligible)
+          )
+          return failure unless mod.respond_to?(:is_type_lookup_table?)
+
+          if mod.is_type_lookup_table?
+            Success()
+          else
+            failure
+          end
         end
 
         def default_mapped(value)
@@ -63,7 +81,9 @@ module Kiba
         def mapping_hash(values)
           result = values.map{ |val| [val, default_mapped(val)] }.to_h
         rescue StandardError => err
-          Failure(setting_name, err)
+          Failure(
+            failobj.new(mod: mod, name: setting, err: err)
+          )
         else
           Success(result)
         end

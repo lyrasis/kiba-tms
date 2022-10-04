@@ -12,24 +12,65 @@ module Kiba
           self.new(...).call
         end
 
-        def initialize(mod)
+        def initialize(mod:,
+                       empty_deriver: EmptyFieldsDeriver,
+                       mapping_deriver: TypeMappingDeriver,
+                       known_val_deriver: TypeTableKnownValueDeriver,
+                       target_table_deriver: TargetTableDeriver,
+                       failobj: Tms::Data::DeriverFailure,
+                       resobj: Tms::Data::CompiledResult
+                      )
           @mod = mod
-          @config = []
+          @empty_deriver = empty_deriver
+          @mapping_deriver = mapping_deriver
+          @known_val_deriver = known_val_deriver
+          @target_table_deriver = target_table_deriver
+          @failobj = failobj
+          @resobj = resobj
         end
 
         def call
           puts "Deriving config for #{mod}..."
-          return nil unless mod.used?
-          config << Tms::Services::InitialEmptyFieldDeriver.call(mod)
-          derive_type_config if mod.respond_to?(:mappable_type?)
-          derive_multi_table_merge_config if mod.respond_to?(:for?)
-          derive_custom_config if mod.respond_to?(:configurable)
-          config.compact
+          unless mod.used?
+            return resobj.new(
+              failures: [Failure(failobj.new(mod: mod, sym: :not_used))]
+            )
+          end
+
+          results = configs.map(&:call)
+          return resobj.new if results.blank?
+
+          resobj.new(
+            successes: results.select(&:success?),
+            failures: results.select(&:failure?)
+          )
         end
 
         private
 
-        attr_reader :mod, :config
+        attr_reader :mod, :empty_deriver, :mapping_deriver, :known_val_deriver,
+          :target_table_deriver, :failobj, :resobj
+
+        def configs
+          base = []
+          if mod.respond_to?(:is_tableable?)
+            base << proc{ empty_deriver.call(mod: mod) }
+          end
+
+          if mod.respond_to?(:is_type_lookup_table?)
+            if mod.mappable_type?
+              base << proc{ mapping_deriver.call(mod: mod) }
+            else
+              base << proc{ known_val_deriver.call(mod: mod) }
+            end
+          end
+
+          if mod.respond_to?(:is_multi_table_mergeable?)
+            base << proc{ target_table_deriver.call(mod: mod) }
+          end
+
+          base
+        end
 
         def derive_custom_config
           mod.configurable.each do |setting, proc|
@@ -62,31 +103,6 @@ module Kiba
           config << Success("#{setting_name} = #{result.inspect}")
         end
 
-        def derive_multi_table_merge_config
-          setting_name = "#{mod}.config.target_tables"
-          begin
-            tables = Tms::Services::TargetTableDeriver.call(mod: mod)
-          rescue StandardError => err
-            config << Failure([setting_name, err])
-          else
-            return nil unless tables
-
-            tables.either(
-              ->(success){
-                config << Success("#{setting_name} = #{success.inspect}")
-              },
-              ->(failure){ config << Failure([setting_name, failure]) }
-            )
-          end
-        end
-
-        def derive_type_config
-          if mod.mappable_type?
-            config << Tms::Services::TypeMappingDeriver.call(mod)
-          else
-            config << Tms::Services::TypeTableKnownValueDeriver.call(mod)
-          end
-        end
       end
     end
   end

@@ -3,17 +3,19 @@
 module Kiba
   module Tms
     module Jobs
-      module AccessionLot
-        module MultiSet
+      module RegistrationSets
+        module ForIngest
           module_function
 
           def job
-            return unless Tms::AccessionLot.used
-            
+            return unless config.used?
+            return unless Tms::ObjAccession.processing_approaches.any?(
+              :linkedlot
+            )
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :accession_lot__set_count,
-                destination: :accession_lot__multi_set
+                source: :prep__registration_sets,
+                destination: :registration_sets__for_ingest
               },
               transformer: xforms
             )
@@ -21,7 +23,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :reject, field: :registrationsets, value: '1'
+              transform Delete::Fields, fields: :registrationsetid
             end
           end
         end

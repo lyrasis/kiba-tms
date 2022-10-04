@@ -14,33 +14,47 @@ module Kiba
           self.new(...).call
         end
 
-        def initialize(mod:, table_field: :tableid, col: Tms::Data::Column)
+        def initialize(mod:,
+                       table_field: :tableid,
+                       col: Tms::Data::Column,
+                       settingobj: Tms::Data::ConfigSetting,
+                       failobj: Tms::Data::DeriverFailure
+                      )
           @mod = mod
           @table_field = table_field
           @col = col
+          @settingobj = settingobj
+          @failobj = failobj
           @lookup = Tms.table_lookup
           @nontables = Tms.excluded_tables
+          @setting = :target_tables
         end
 
         def call
-          return Failure(:table_not_used) unless mod.used?
+          return Failure(failobj.new(mod: mod, sym: :not_used)) unless mod.used?
 
           column = yield col.new(mod: mod, field: table_field)
           vals = yield column.unique_values
           named = yield map_table_names(vals)
           clean = yield used_tables(named)
 
-          Success(clean)
+          Success(settingobj.new(mod: mod,
+                                 name: setting,
+                                 value: clean
+                                ))
         end
 
         private
 
-        attr_reader :mod, :table_field, :col, :lookup, :nontables
+        attr_reader :mod, :table_field, :col, :settingobj, :failobj, :setting,
+          :lookup, :nontables
 
         def map_table_names(vals)
           result = vals.map{ |val| lookup_table_name(val) }
         rescue StandardError => err
-          Failure(err)
+          Failure(
+            failobj.new(mod: mod, name: setting, err: err)
+          )
         else
           Success(result)
         end
@@ -59,7 +73,9 @@ module Kiba
         def used_tables(tables)
           result = tables.reject{ |table| nontables.any?(table) }
         rescue StandardError => err
-          Failure(err)
+          Failure(
+            failobj.new(mod: mod, name: setting, err: err)
+          )
         else
           Success(result)
         end

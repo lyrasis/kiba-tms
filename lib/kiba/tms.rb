@@ -205,15 +205,8 @@ module Kiba
     end
 
     def init_config(mod)
-      result = Tms::Services::InitialConfigDeriver.call(mod)
-      result.select(&:success?).each{ |config| puts config.value! }
-      errs = result.select(&:failure?)
-      unless errs.empty?
-        puts "\nFailures"
-        errs.each do |err|
-          puts "#{err.failure} (#{err.trace})\n"
-        end
-      end
+      result = Tms::Services::InitialConfigDeriver.call(mod: mod)
+      result.output
     end
 
     def needed_work(mod)
