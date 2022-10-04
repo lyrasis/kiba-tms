@@ -48,7 +48,9 @@ module Kiba
 
       setting :configurable,
         default: {
-          processing_approaches: Proc.new{ set_processing_approaches }
+          processing_approaches: proc{
+            Tms::Services::ObjAccession::ProcessingApproachDeriver.call
+          }
         },
         reader: true
 
@@ -65,19 +67,6 @@ module Kiba
         value.flatten
       end
       private :set_deletes
-
-      def set_processing_approaches
-        counter = Tms::Services::RowCounter
-        approaches = []
-        approaches << :onetoone if used &&
-          counter.call(:obj_accession__one_to_one) > 0
-        approaches << :lotnumber if used &&
-          counter.call(:obj_accession__lot_number) > 0
-        approaches << :linkedlot if used &&
-          counter.call(:obj_accession__linked_lot) > 0
-        approaches
-      end
-      private :set_processing_approaches
     end
   end
 end

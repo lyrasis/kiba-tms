@@ -22,17 +22,11 @@ module Kiba
 
       setting :configurable,
         default: {
-          con_link_field: Proc.new{ set_con_link_field }
+          con_link_field: Proc.new{
+            Tms::Services::Loans::ConLinkFieldDeriver.call
+          }
         },
         reader: true
-
-      def set_con_link_field
-        af = all_fields
-        return :primaryconxrefid if af.any?(:primaryconxrefid)
-        return :constituentidold if af.any?(:constituentidold)
-
-        :UNDETERMINED_ENTER_MANUALLY
-      end
     end
   end
 end

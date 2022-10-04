@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'dry/monads'
+
 module Kiba
   module Tms
     module Services
@@ -7,6 +9,8 @@ module Kiba
         # returns true if any LotID is associated with more than one
         #   RegistrationSetID
         class MultiSetLotChecker
+          include Dry::Monads[:result]
+
           def self.call(...)
             self.new(...).call
           end
@@ -25,16 +29,18 @@ module Kiba
               .value_counts
             return counts if counts.failure?
 
-            get_result(counts.value!)
+            Success(is_multival?(counts.value!))
           end
 
           private
 
           attr_reader :mod, :col
 
-          def get_result(counts)
+          def is_multival?(counts)
             cts = counts.values.uniq
-            true unless cts == [1]
+            return false if  cts == [1]
+
+            true
           end
         end
       end

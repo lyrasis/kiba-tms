@@ -17,6 +17,7 @@ module Kiba
                        mapping_deriver: TypeMappingDeriver,
                        known_val_deriver: TypeTableKnownValueDeriver,
                        target_table_deriver: TargetTableDeriver,
+                       successobj: Tms::Data::ConfigSetting,
                        failobj: Tms::Data::DeriverFailure,
                        resobj: Tms::Data::CompiledResult
                       )
@@ -25,6 +26,7 @@ module Kiba
           @mapping_deriver = mapping_deriver
           @known_val_deriver = known_val_deriver
           @target_table_deriver = target_table_deriver
+          @successobj = successobj
           @failobj = failobj
           @resobj = resobj
         end
@@ -38,18 +40,21 @@ module Kiba
           end
 
           results = configs.map(&:call)
-          return resobj.new if results.blank?
+          custom = derive_custom_config
+          all = [results, custom].compact.flatten
+
+          return resobj.new if all.blank?
 
           resobj.new(
-            successes: results.select(&:success?),
-            failures: results.select(&:failure?)
+            successes: all.select(&:success?),
+            failures: all.select(&:failure?)
           )
         end
 
         private
 
         attr_reader :mod, :empty_deriver, :mapping_deriver, :known_val_deriver,
-          :target_table_deriver, :failobj, :resobj
+          :target_table_deriver, :failobj, :successobj, :resobj
 
         def configs
           base = []
@@ -73,17 +78,26 @@ module Kiba
         end
 
         def derive_custom_config
-          mod.configurable.each do |setting, proc|
+          return nil unless mod.respond_to?(:configurable)
+
+          mod.configurable.map do |setting, proc|
             begin
-              setting_name = "#{mod}.config.#{setting}"
               result = proc.call
             rescue StandardError => err
-              config << Failure([setting_name, err])
+              Failure(failobj.new(
+                mod: mod,
+                name: setting,
+                err: err
+                ))
             else
-              if result.is_a?(Dry::Monads::Result)
-                successful_custom_config_monad(setting_name, result)
+              if result.success?
+                Success(successobj.new(
+                  mod: mod,
+                  name: setting,
+                  value: result.value!
+                  ))
               else
-                successful_custom_config_non_monad(setting_name, result)
+                result
               end
             end
           end

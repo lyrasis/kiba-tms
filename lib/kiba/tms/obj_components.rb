@@ -30,13 +30,11 @@ module Kiba
         reader: true
 
       setting :configurable, default: {
-        actual_components: proc{ set_actual_components }
+        actual_components: proc{
+          Tms::Services::ObjComponents::ActualComponentDeterminer.call
+        }
       },
         reader: true
-
-      def set_actual_components
-        Tms::Services::ObjComponents::ActualComponentDeterminer.call
-      end
 
       def merging_text_entries?
         Tms::TextEntries.for?('ObjComponents') && text_entries_merge_xform
