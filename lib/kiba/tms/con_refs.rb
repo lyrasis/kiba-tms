@@ -20,7 +20,16 @@ module Kiba
       setting :split_on_column, default: :role_type, reader: true
       extend Tms::Mixins::MultiTableMergeable
 
+      def auto_generate_target_tables
+        false
+      end
+
       setting :migrate_inactive, default: true, reader: true
+
+      setting :configurable, default: {
+        target_tables: proc{ Tms::Services::ConRefs::TargetTableDeriver.call }
+      },
+        reader: true
     end
   end
 end

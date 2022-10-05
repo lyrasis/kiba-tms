@@ -25,7 +25,6 @@ module Kiba
             base << :prep__departments if Tms::Departments.used?
             base << :prep__object_statuses if Tms::ObjectStatuses.used?
             base << :prep__obj_context if Tms::ObjContext.used?
-            base << :con_refs_for__objects if Tms::ConRefs.for?('Objects')
             if Tms::Objects.classifications_xform
               %i[prep__classifications prep__classification_xrefs].each do |lkup|
                 base << lkup
@@ -175,21 +174,21 @@ module Kiba
               end
 
               if Tms::ObjContext.used?
-              transform Merge::MultiRowLookup,
-                keycolumn: :objectid,
-                lookup: prep__obj_context,
-                fieldmap: {
-                  culture: :culture
-                },
-                delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: prep__obj_context,
+                  fieldmap: {
+                    culture: :culture
+                  },
+                  delim: Tms.delim
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :objectid,
-                lookup: prep__obj_context,
-                fieldmap: {
-                  period: :period
-                },
-                delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: prep__obj_context,
+                  fieldmap: {
+                    period: :period
+                  },
+                  delim: Tms.delim
               end
 
               if Tms::DimItemElemXrefs.used?
@@ -205,84 +204,11 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :rank, as: :to_i)
               end
 
-              # if Tms::ConRefs.for?('Objects')
-              #   role_treatment = config.con_role_treatment_mappings
-              #   prod_roles = role_treatment[:production]
-              #   assoc_roles = role_treatment[:assoc]
-
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :objectid,
-              #   lookup: con_refs_for__objects,
-              #   fieldmap: {
-              #     objectproductionperson: :person,
-              #     objectproductionpersonrole: :role
-              #   },
-              #   conditions: ->(_origrow, mergerows) do
-              #     mergerows.reject{ |row| row[:person].blank? }
-              #       .select{ |row| prod_roles.any?(row[:role]) }
-              #       .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
-              #       .to_h
-              #       .values
-              #   end,
-              #   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
-              #   delim: Tms.delim,
-              #   null_placeholder: '%NULLVALUE%'
-
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :objectid,
-              #   lookup: con_refs_for__objects,
-              #   fieldmap: {
-              #     objectproductionorganization: :org,
-              #     objectproductionorganizationrole: :role
-              #   },
-              #   conditions: ->(_origrow, mergerows) do
-              #     mergerows.reject{ |row| row[:org].blank? }
-              #       .select{ |row| prod_roles.any?(row[:role]) }
-              #       .map{ |row| ["#{row[:org]} #{row[:role]}", row] }
-              #       .to_h
-              #       .values
-              #   end,
-              #   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
-              #   delim: Tms.delim,
-              #   null_placeholder: '%NULLVALUE%'
-
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :objectid,
-              #   lookup: con_xref_details__for_objects,
-              #   fieldmap: {
-              #     assocperson: :person,
-              #     assocpersontype: :role,
-              #     assocpersonnote: :assoc_con_note
-              #   },
-              #   conditions: ->(_origrow, mergerows) do
-              #     mergerows.reject{ |row| row[:person].blank? }
-              #       .select{ |row| assoc_roles.any?(row[:role]) }
-              #       .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
-              #       .to_h
-              #       .values
-              #   end,
-              #   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
-              #   delim: Tms.delim,
-              #   null_placeholder: '%NULLVALUE%'
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :objectid,
-              #   lookup: con_xref_details__for_objects,
-              #   fieldmap: {
-              #     assocorganization: :org,
-              #     assocorganizationtype: :role,
-              #     assocorganizationnote: :assoc_con_note
-              #   },
-              #   conditions: ->(_origrow, mergerows) do
-              #     mergerows.reject{ |row| row[:org].blank? }
-              #       .select{ |row| assoc_roles.any?(row[:role]) }
-              #       .map{ |row| ["#{row[:person]} #{row[:role]}", row] }
-              #       .to_h
-              #       .values
-              #   end,
-              #   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
-              #   delim: Tms.delim,
-              #   null_placeholder: '%NULLVALUE%'
-              # end
+              if Tms::ConRefs.for?('Objects')
+                transform Tms::Transforms::ConRefs::Merger,
+                  into: config,
+                  keycolumn: :objectid
+              end
 
               if Tms::AltNums.for?('Objects')
                 transform Merge::MultiRowLookup,
@@ -341,56 +267,58 @@ module Kiba
                   end
                 end
 
-              # %i[creditline curatorialremarks inscribed markings signed].each do |source|
-              #   xform = Tms::Objects::FieldXforms.send(source)
-              #   if xform
-              #     transform do |row|
-              #       xform.process(row)
-              #     end
-              #   end
-              # end
+              config.transformer_fields.each do |field|
+                setting = "#{field}_xform".to_sym
+                xform = config.send(setting)
+                if xform
+                  transform do |row|
+                    xform.process(row)
+                  end
+                end
+              end
 
-              # rename_map = {
-              #   chat: :viewerscontributionnote,
-              #   culture: :objectproductionpeople,
-              #   description: :briefdescription,
-              #   dimensions: :dimensionsummary,
-              #   medium: :materialtechniquedescription,
-              #   notes: :comment,
-              #   objectcount: :numberofobjects,
-              # }
-              # custom_handled_fields.each{ |field| rename_map.delete(field) }
-              # transform Rename::Fields, fieldmap: rename_map.merge(Tms::Objects::Config.custom_rename_fieldmap)
+              rename_map = {
+                chat: :viewerscontributionnote,
+                culture: :objectproductionpeople,
+                description: :briefdescription,
+                dimensions: :dimensionsummary,
+                medium: :materialtechniquedescription,
+                notes: :comment,
+                objectcount: :numberofobjects,
+              }
+              custom_handled_fields.each{ |field| rename_map.delete(field) }
+              transform Rename::Fields,
+                fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
 
-              # %w[annotation nontext_inscription text_inscription].each do |type|
-              #   sources = Tms::Objects::Config.send("#{type}_source_fields".to_sym)
-              #   targets = Tms::Objects::Config.send("#{type}_target_fields".to_sym)
-              #   if !sources.empty? && !targets.empty?
-              #     transform Collapse::FieldsToRepeatableFieldGroup,
-              #       sources: sources,
-              #       targets: targets,
-              #       delim: Tms.delim
-              #   end
-              # end
+              %w[annotation nontext_inscription text_inscription].each do |type|
+                sources = Tms::Objects.send("#{type}_source_fields".to_sym)
+                targets = Tms::Objects.send("#{type}_target_fields".to_sym)
+                if !sources.empty? && !targets.empty?
+                  transform Collapse::FieldsToRepeatableFieldGroup,
+                    sources: sources,
+                    targets: targets,
+                    delim: Tms.delim
+                end
+              end
 
-              # transform CombineValues::FromFieldsWithDelimiter,
-              #   sources: Tms::Objects::Config.comment_fields,
-              #   target: :comment,
-              #   sep: Tms.delim,
-              #   delete_sources: true
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: Tms::Objects.comment_fields,
+                target: :comment,
+                sep: Tms.delim,
+                delete_sources: true
 
 
-              # unless Tms::Objects::Config.named_coll_fields.empty?
-              #   transform CombineValues::FromFieldsWithDelimiter,
-              #     sources: Tms::Objects::Config.named_coll_fields,
-              #     target: :namedcollection,
-              #     sep: Tms.delim,
-              #     delete_sources: true
-              # end
+              unless Tms::Objects.named_coll_fields.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: Tms::Objects.named_coll_fields,
+                  target: :namedcollection,
+                  sep: Tms.delim,
+                  delete_sources: true
+              end
 
-              # if Tms.data_cleaner
-              #   transform Tms.data_cleaner
-              # end
+              if Tms.data_cleaner
+                transform Tms.data_cleaner
+              end
             end
           end
         end

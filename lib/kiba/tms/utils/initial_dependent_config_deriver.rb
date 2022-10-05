@@ -12,47 +12,41 @@ module Kiba
           derivers: [
             Tms::Utils::RoleTreatmentDeriver
           ],
-          verbose: false
+          resobj: Tms::Data::CompiledResult,
+          verbose: false,
+          mode: :stdout
         )
           @derivers = derivers
           @verbose = verbose
-          @config_path = "#{Tms.datadir}/initial_config_dependent.txt"
-          @err_path = "#{Tms.datadir}/initial_config_errs_dependent.txt"
+          @resobj = resobj
+          @path = "#{Tms.datadir}/initial_config_dependent.txt"
+          @mode = mode
         end
 
         def call
           all = derivers.map(&:call)
-            .flatten
             .compact
-            .group_by(&:success?)
+            .flatten
+          return resobj.new if all.blank?
 
-          handle_successes(all)
-          handle_failures(all)
+          result = resobj.new(
+            successes: all.select(&:success?),
+            failures: all.select(&:failure?)
+          )
+
+          handle_output(result)
         end
 
         private
 
-        attr_reader :derivers, :verbose, :config_path, :err_path
+        attr_reader :derivers, :verbose, :resobj, :path, :mode
 
-        def handle_failures(all)
-          list = all[false]
-          return unless list
-          return if list.empty?
-
-          puttable = list.map(&:failure).join("\n\n")
-          File.open(err_path, 'w'){ |f| f.puts(puttable) }
-          puts "\n\nERRORS" if verbose
-          puts puttable if verbose
-        end
-
-        def handle_successes(all)
-          list = all[true]
-          return unless list
-          return if list.empty?
-
-          puttable = list.map(&:value!).join("\n")
-          File.open(config_path, 'w'){ |f| f.puts(puttable) }
-          puts puttable if verbose
+        def handle_output(result)
+          if mode == :stdout
+            result.output
+          else
+            result.output_to(path)
+          end
         end
       end
     end

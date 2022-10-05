@@ -16,14 +16,14 @@ module Kiba
         def initialize(mod:, field:, table_getter: Tms::Data::CsvEnum)
           @mod = set_mod(mod)
           @field = field.to_sym
-          @table_getter = table_getter
+          @table_getter = table_getter.call(mod: mod)
           @status = Success() unless instance_variable_defined?(:@status)
         end
 
         def unique_values
           return status unless status.success?
 
-          rows = yield table_getter.call(mod: mod)
+          rows = yield table_getter
           vals = yield rows_to_vals(rows)
 
           Success(vals)

@@ -32,6 +32,21 @@ module Kiba
         default: 'Percent owned: ',
         reader: true
 
+      setting :con_ref_field_rules,
+        default: {
+          fcart: {
+            acquisitionsource: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
+            },
+            owner: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
+            }
+          }
+        },
+        reader: true
+
       setting :delete_fields,
         default: %i[currencyamount currencyrate localamount
                     accessionminutes1 accessionminutes2 budget capitalprogram

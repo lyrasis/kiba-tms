@@ -17,6 +17,17 @@ module Kiba
           failures.each{ |f| puts f.formatted }
         end
 
+        def output_to(path)
+          File.open(path, 'w') do |file|
+          successes.each{ |success| file.puts(success.to_s) }
+          return if failures.empty?
+
+          puts "\n\nFAILURES"
+          failures.each{ |f| file.puts(f.formatted) }
+
+          end
+        end
+
         private
 
         attr_reader :successes, :failures

@@ -14,6 +14,7 @@ module Kiba
       #   in your config module before extending MultiTableMergeable
       module MultiTableMergeable
         def self.extended(mod)
+          self.set_for_table_source_job_key_setting(mod)
           self.set_split_on_column_setting(mod)
           self.set_target_tables_setting(mod)
         end
@@ -24,6 +25,11 @@ module Kiba
 
         def for?(table)
           target_tables.any?(table)
+        end
+
+        # override manually in module after extending
+        def auto_generate_target_tables
+          true
         end
 
         # METHODS USED FOR RUNNING CHECKS
@@ -132,7 +138,7 @@ module Kiba
             path: File.join(Tms.datadir, 'working', "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
                       args: {
-                        source: mod.for_table_source,
+                        source: mod.for_table_source_job_key,
                         dest: "#{ns_name}__#{key}".to_sym,
                         targettable: targetobj.tablename,
                         field: field,
@@ -150,14 +156,6 @@ module Kiba
           )
 
           :recordid
-        end
-
-        def for_table_source
-          return for_table_source_job_key if respond_to?(
-            :for_table_source_job_key
-          )
-
-          "prep__#{filekey}".to_sym
         end
 
         # METHODS USED FOR AUTO-CONFIGURING FOR-TABLES
@@ -191,6 +189,18 @@ module Kiba
         end
 
         # METHODS FOR EXTENDING
+        def self.set_for_table_source_job_key_setting(mod)
+          return if mod.respond_to?(:for_table_source_job_key)
+
+          str = <<~CFG
+            setting :for_table_source_job_key,
+            default: :prep__#{mod.filekey},
+            reader: true
+          CFG
+          mod.module_eval(str)
+        end
+        private_class_method :set_for_table_source_job_key_setting
+
         def self.set_split_on_column_setting(mod)
           return if mod.respond_to?(:split_on_column)
 

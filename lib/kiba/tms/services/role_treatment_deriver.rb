@@ -64,7 +64,7 @@ module Kiba
             )
           end
 
-          val = mod.send(m)
+          val = mod.send(meth)
           if val
             Success()
           else

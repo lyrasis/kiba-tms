@@ -8,7 +8,6 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      # The first three rows are fields all marked as not in use in the TMS data dictionary
       setting :delete_fields,
         default: %i[
                     sortnumber textsearchid accountability injurisdiction
@@ -40,6 +39,23 @@ module Kiba
           default
         end
 
+      setting :con_ref_field_rules,
+        default: {
+          fcart: {
+            objectproduction: {
+              suffixes: %w[person organization],
+              merge_role: true,
+              role_suffix: 'role'
+            },
+            assoc: {
+              suffixes: %w[person organization],
+              merge_role: true,
+              role_suffix: 'type'
+            }
+          }
+        },
+        reader: true
+
       # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
       #  in client project
       setting :custom_map_fields, default: [], reader: true
@@ -56,6 +72,10 @@ module Kiba
       setting :nontext_inscription_target_fields, default: %i[], reader: true
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
+      # TMS fields with associated field-specific transformers defined. Note
+      #   these transforms are defined in settings below with the name pattern
+      #   `fieldname_xform`
+      setting :transformer_fields, default: [], reader: true
 
       ##########
       # Cleaners

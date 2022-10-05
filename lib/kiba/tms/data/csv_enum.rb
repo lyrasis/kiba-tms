@@ -18,13 +18,21 @@ module Kiba
         # @param mod [Module]
         def initialize(mod:)
           @mod = mod
-          @path = mod.table_path
+          if mod.is_a?(Module)
+            @job_key = mod.source_job_key
+            @path = mod.table_path
+          elsif mod.is_a?(Symbol)
+            @job_key = mod
+            @path = Tms::Table::Obj.new(mod).filename
+          else
+            fail(TypeError, 'mod must be Module or Symbol')
+          end
         end
 
         # @return [Enumerable]
         def call
           unless File.exist?(path)
-            Kiba::Extend::Command::Run.job(mod.source_job_key)
+            Kiba::Extend::Command::Run.job(job_key)
           end
           csv = CSV.foreach(
             path,
@@ -39,8 +47,7 @@ module Kiba
 
         private
 
-        attr_reader :mod, :path
-
+        attr_reader :mod, :path, :job_key
       end
     end
   end

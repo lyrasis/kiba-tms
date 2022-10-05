@@ -22,12 +22,6 @@ module Kiba
 
           attr_reader :table_key
 
-          def classification_fields
-            Tms::Classifications.object_merge_fieldmap
-              .keys
-              .map(&:to_sym)
-          end
-
           def opts
             {
               classification_xrefs: {
@@ -64,11 +58,6 @@ module Kiba
               obj_locations: {
                 initial_headers:
                 %i[objlocationid objectnumber locationid fulllocid]
-              },
-              objects: {
-                initial_headers:
-                [:objectnumber, :title, :objectname,
-                 classification_fields].flatten
               },
               terms: {
                 initial_headers: %i[termid prefterm termtype term thesaurus_name
