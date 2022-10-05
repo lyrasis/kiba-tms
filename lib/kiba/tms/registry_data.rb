@@ -1383,6 +1383,12 @@ module Kiba
             desc: 'Acquisitions for ingest, derived from RegSets. RegSet id removed.',
             tags: %i[acquisitions]
           }
+          register :not_linked, {
+            creator: Kiba::Tms::Jobs::RegistrationSets::NotLinked,
+            path: File.join(Kiba::Tms.datadir, 'reports', 'reg_sets_not_linked.csv'),
+            desc: 'RegistrationSet rows not linked to objects in ObjAccession',
+            tags: %i[acquisitions]
+          }
           register :obj_rels, {
             creator: Kiba::Tms::Jobs::RegistrationSets::ObjRels,
             path: File.join(Kiba::Tms.datadir, 'working', 'reg_set_acq_obj_rels.csv'),
