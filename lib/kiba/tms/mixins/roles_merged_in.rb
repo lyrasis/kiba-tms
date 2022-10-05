@@ -24,10 +24,34 @@ module Kiba
         def self.extended(mod)
           self.set_treatment_mappings(mod)
           self.set_checkable(mod)
+          self.set_con_ref_field_rules(mod)
         end
 
         def gets_roles_merged_in?
           true
+        end
+
+        def con_ref_target_base_fields
+          con_role_treatment_mappings.keys - %i[unmapped drop]
+        end
+
+        def fieldrules
+          targets = con_ref_target_base_fields
+          con_ref_field_rules[Tms.cspace_profile].select do |field, rules|
+            targets.any?(field)
+          end
+        end
+
+        def con_ref_suffixed_fields(field)
+          fieldrules[field][:suffixes].map do |suffix|
+            "#{field}#{suffix}".to_sym
+          end
+        end
+        private :con_ref_suffixed_fields
+
+        def con_ref_target_fields
+          con_ref_target_base_fields.map{ |field| con_ref_suffixed_fields(field) }
+            .flatten
         end
 
         def check_unmapped_role_terms
@@ -77,6 +101,19 @@ module Kiba
           )
         end
         private_class_method :set_treatment_mappings
+
+        def self.set_con_ref_field_rules(mod)
+          unless mod.respond_to?(:con_ref_field_rules)
+            mod.module_eval(
+              'setting :con_ref_field_rules, default: {}, reader: true'
+            )
+          end
+
+          if mod.send(:con_ref_field_rules).empty?
+            warn("Need to set up :con_ref_field_rules for #{mod}")
+          end
+        end
+        private_class_method :set_con_ref_field_rules
       end
     end
   end

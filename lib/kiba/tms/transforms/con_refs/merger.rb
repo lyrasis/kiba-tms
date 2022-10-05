@@ -11,8 +11,8 @@ module Kiba
             @into = into
             @keycolumn = keycolumn
             @config = into.con_role_treatment_mappings
-            @fieldrules = get_fieldrules
-            @fields = config.keys - %i[unmapped drop]
+            @fieldrules = into.fieldrules
+            @fields = into.con_ref_target_base_fields
             check_for_fields_without_rules
             if config.key?(:unmapped) && !config[:unmapped].empty?
               warn(
@@ -81,13 +81,13 @@ module Kiba
             )
           end
 
-          def get_fieldrules
-            targets = config.keys
-            into.con_ref_field_rules[Tms.cspace_profile]
-              .select do |field, rules|
-                targets.any?(field)
-              end
-          end
+          # def get_fieldrules
+          #   targets = config.keys
+          #   into.con_ref_field_rules[Tms.cspace_profile]
+          #     .select do |field, rules|
+          #       targets.any?(field)
+          #     end
+          # end
 
           def get_lookup
             jobkey = "con_refs_for__#{into.filekey}".to_sym
@@ -100,17 +100,6 @@ module Kiba
               file: path,
               keycolumn: :recordid
             )
-          end
-
-          def suffixed_fields(field)
-            fieldrules[field][:suffixes].map do |suffix|
-              "#{field}#{suffix}".to_sym
-            end
-          end
-
-          def target_fields
-            fields.map{ |field| suffixed_fields(field) }
-              .flatten
           end
         end
       end
