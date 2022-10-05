@@ -37,6 +37,12 @@ module Kiba
                 fields: :lotcount,
                 find: '^0$',
                 replace: ''
+
+              if Tms::ConRefs.for?('AccessionLot')
+                transform Tms::Transforms::ConRefs::Merger,
+                  into: config,
+                  keycolumn: :acquisitionlotid
+              end
             end
           end
         end

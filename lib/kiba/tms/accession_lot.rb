@@ -24,6 +24,10 @@ module Kiba
           empty_fields.any?(:accessionvalue) ? false : true
         }
 
+      setting :con_ref_field_rules,
+        default: Tms::ObjAccession.con_ref_field_rules,
+        reader: true
+
       def set_deletes(value)
         if Tms::ObjAccession.accessionvalue_treatment == :valuation_control
           value << :accessionvalue
