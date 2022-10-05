@@ -57,7 +57,7 @@ module Kiba
 
       # approaches required for creation of CS acquisitions and obj/acq
       #   relations
-      #   options: :onetone, :lotnumber, :linkedlot
+      #   options: :onetone, :lotnumber, :linkedlot, :linkedset
       #   see: https://github.com/lyrasis/kiba-tms/blob/main/doc/data_preparation_details/acquisitions.adoc
       setting :processing_approaches, default: %i[one_to_one], reader: true
 

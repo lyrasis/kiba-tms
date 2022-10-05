@@ -12,6 +12,9 @@ module Kiba
         default: %i[displayorder],
         reader: true,
         constructor: Proc.new{ |value| set_deletes(value) }
+      setting :non_content_fields,
+        default: %i[registrationsetid],
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :multi_set_lots, default: false, reader: true
@@ -20,6 +23,10 @@ module Kiba
           Tms::Services::RegistrationSets::MultiSetLotChecker.call
         }
       },
+        reader: true
+
+      setting :con_ref_field_rules,
+        default: Tms::ObjAccession.con_ref_field_rules,
         reader: true
 
       def proviso_sources

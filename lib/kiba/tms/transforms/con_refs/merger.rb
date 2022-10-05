@@ -11,7 +11,7 @@ module Kiba
             @into = into
             @keycolumn = keycolumn
             @config = into.con_role_treatment_mappings
-            @fieldrules = into.con_ref_field_rules[Tms.cspace_profile]
+            @fieldrules = get_fieldrules
             @fields = config.keys - %i[unmapped drop]
             check_for_fields_without_rules
             if config.key?(:unmapped) && !config[:unmapped].empty?
@@ -64,7 +64,7 @@ module Kiba
               sorter: sorter,
               delim: Tms.delim,
               null_placeholder: Tms.nullvalue
-              )
+            )
           end
 
           def build_xforms
@@ -79,6 +79,14 @@ module Kiba
             warn(
               "Add rules for fields to #{into} config: #{missing.join(', ')}"
             )
+          end
+
+          def get_fieldrules
+            targets = config.keys
+            into.con_ref_field_rules[Tms.cspace_profile]
+              .select do |field, rules|
+                targets.any?(field)
+              end
           end
 
           def get_lookup

@@ -10,7 +10,8 @@ module Kiba
           def job
             return unless config.used?
             approaches = Tms::ObjAccession.processing_approaches
-            return unless approaches.any?(:linkedlot)
+            return unless approaches.any?(:linkedlot) ||
+              approaches.any?(:linkedset)
 
             Kiba::Extend::Jobs::Job.new(
               files: {

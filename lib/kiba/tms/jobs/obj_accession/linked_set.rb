@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ObjAccession
-        module LinkedLot
+        module LinkedSet
           module_function
 
           def job
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_accession,
-                destination: :obj_accession__linked_lot
+                destination: :obj_accession__linked_set
               },
               transformer: xforms
             )
@@ -21,12 +21,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated,
-                action: :reject,
-                field: :registrationsetid
-              transform FilterRows::FieldPopulated,
+              transform FilterRows::AllFieldsPopulated,
                 action: :keep,
-                field: :acquisitionlotid
+                fields: %i[registrationsetid acquisitionlotid]
             end
           end
         end

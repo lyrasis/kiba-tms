@@ -480,6 +480,19 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('linked_set_acq') do
+          register :rows, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::Rows,
+            path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq_rows.csv'),
+            tags: %i[acquisitions]
+          }
+          register :prep, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::Prep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq.csv'),
+            tags: %i[acquisitions]
+          }
+        end
+
         Kiba::Tms.registry.namespace('loan_obj_xrefs') do
           register :by_obj, {
             creator: Kiba::Tms::Jobs::LoanObjXrefs::Prep,
@@ -1160,6 +1173,12 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_linked_lot.csv'),
             tags: %i[objaccession setup],
             desc: 'Rows from which acquisitions will be created using LinkedLot approach'
+          }
+          register :linked_set, {
+            creator: Kiba::Tms::Jobs::ObjAccession::LinkedSet,
+            path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_linked_set.csv'),
+            tags: %i[objaccession setup],
+            desc: 'Rows from which acquisitions will be created using LinkedSet approach'
           }
           register :lot_number, {
             creator: Kiba::Tms::Jobs::ObjAccession::LotNumber,

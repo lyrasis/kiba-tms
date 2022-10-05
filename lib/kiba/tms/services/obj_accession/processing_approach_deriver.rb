@@ -37,6 +37,8 @@ module Kiba
               counter.call(:obj_accession__lot_number) > 0
             approaches << :linkedlot if mod.used? &&
               counter.call(:obj_accession__linked_lot) > 0
+            approaches << :linkedset if mod.used? &&
+              counter.call(:obj_accession__linked_set) > 0
           rescue StandardError => err
             Failure(err)
           else
