@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = []
+            base = %i[objects__number_lookup]
             if Tms::AccessionMethods.used? &&
                 config.fields.any?(Tms::AccessionMethods.id_field)
               base << :prep__accession_methods
@@ -53,6 +53,11 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: '-1'
+
+              transform Merge::MultiRowLookup,
+                lookup: objects__number_lookup,
+                keycolumn: :objectid,
+                fieldmap: {objectnumber: :objectnumber}
 
               if accmeth.used? && config.fields.any?(accmeth.id_field)
                 transform Merge::MultiRowLookup,
