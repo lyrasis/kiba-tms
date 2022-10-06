@@ -41,7 +41,9 @@ toc::[]
 
 [WARNING]
 ====
-*Do not add or delete any rows and do not edit any columns other than `correctname` and `correctauthoritytype`.*
+*Do not add or delete any rows.*
+
+*Do not edit any columns other than `correctname` and `correctauthoritytype`.*
 
 If you edit other columns, those changes *_will not_* be merged into the migration. Editing some columns may prevent your allowed changes from being merged back into the migration.
 ====
@@ -50,7 +52,9 @@ You may:
 
 * Filter and sort the rows however you like
 * Change the order of columns
-* Add your own columns to support your work. Data in these will be ignored in the actual migration, but will be kept in any future iterations of the worksheet for your reference. Avoid using formulas or color coding/other formatting. These will be lost in future iterations of the worksheet, since all data is converted to plain text CSV format for processing.
+* Add your own columns to support your work. Data in these will be ignored in the actual migration, but will be kept in any future iterations of the worksheet for your reference.
+
+CAUTION: Avoid using color coding/other formatting or formulas to indicate anything you wish to see in future iterations of the worksheet. The worksheet you return is converted to plain text CSV format for processing, so formatting and formulas are lost. Future iterations of the worksheet are produced as plain text CSV and imported into Excel.
 
 == Suggested steps
 
