@@ -372,4 +372,4 @@ Note that:
 
 == Background/more information
 
-Refer to xref:name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet.
+Refer to xref:data_preparation_details/name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet.
