@@ -69,6 +69,28 @@ module Kiba
         },
         reader: true
 
+      def proviso_sources
+        base = []
+        if dog_dates_treatment == :acquisitionprovisos
+          base << %i[deedofgiftsentiso deedofgiftreceivediso]
+        end
+        if percentowned_treatment == :acquisitionprovisos
+          base << :currpercentownership
+        end
+        base.flatten
+      end
+
+      def note_sources
+        base = []
+        if dog_dates_treatment == :acquisitionnote
+          base << %i[deedofgiftsentiso deedofgiftreceivediso]
+        end
+        if percentowned_treatment == :acquisitionnote
+          base << :currpercentownership
+        end
+        base.flatten
+      end
+
       def set_deletes(value)
         if accessionvalue_treatment == :valuation_control
           value << :accessionvalue
