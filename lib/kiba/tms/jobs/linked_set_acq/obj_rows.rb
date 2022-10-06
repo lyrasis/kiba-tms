@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module LinkedSetAcq
-        module Rows
+        module ObjRows
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :linked_set_acq__obj_rows,
-                destination: :linked_set_acq__rows
+                source: :prep__obj_accession,
+                destination: :linked_set_acq__obj_rows
               },
               transformer: xforms
             )
@@ -21,7 +21,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Deduplicate::Table, field: :registrationsetid
+              transform FilterRows::AllFieldsPopulated,
+                action: :keep,
+                fields: %i[acquisitionlotid registrationsetid]
             end
           end
         end

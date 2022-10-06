@@ -28,16 +28,65 @@ module Kiba
             base
           end
 
+          def multifield_hash
+            fieldhash = Tms::ObjAccession.con_ref_target_fields
+              .map{ |field| [field, [field]] }
+              .to_h
+            Tms::AccessionLot.con_ref_target_fields.each do |field|
+              if fieldhash.key?(field)
+                fieldhash[field] << "lot_#{field}".to_sym
+              else
+                fieldhash[field] = ["lot_#{field}".to_sym]
+              end
+            end
+            Tms::RegistrationSets.con_ref_target_fields.each do |field|
+              if fieldhash.key?(field)
+                fieldhash[field] << "set_#{field}".to_sym
+              else
+                fieldhash[field] = ["set_#{field}".to_sym]
+              end
+            end
+            fieldhash
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              fmap = Tms::AccessionLot.content_fields.map do |field|
-                [field, "lot_#{field}".to_sym]
-              end.to_h
+              config = bind.receiver.send(:config)
+
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+
+              almap = Tms::Table::ContentFields.call(
+                jobkey: :prep__accession_lot
+              )
+                .map{ |field| ["lot_#{field}".to_sym, field] }
+                .to_h
               transform Merge::MultiRowLookup,
                 lookup: prep__accession_lot,
                 keycolumn: :acquisitionlotid,
-                fieldmap: fmap
+                fieldmap: almap
               transform Delete::Fields, fields: :acquisitionlotid
+
+              rsmap = Tms::Table::ContentFields.call(
+                jobkey: :prep__registration_sets
+              )
+                .map{ |field| ["set_#{field}".to_sym, field] }
+                .to_h
+              transform Merge::MultiRowLookup,
+                lookup: prep__registration_sets,
+                keycolumn: :registrationsetid,
+                fieldmap: rsmap
+              transform Delete::Fields, fields: :registrationsetid
+
+              bind.receiver.send(:multifield_hash).each do |target, fields|
+                  transform Tms::Transforms::CollapseMultisourceField,
+                    fields: fields,
+                    target: target
+                end
+
 
               # if config.multi_set_lots
               #   warn("Need to write multi_set_lots handling")

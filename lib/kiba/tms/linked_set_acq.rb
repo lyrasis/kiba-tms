@@ -8,6 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :delete_fields,
+        default: %i[objectid objectvalueid objectnumber],
+        reader: true
       setting :source_job_key,
         default: :linked_set_acq__rows,
         reader: true
