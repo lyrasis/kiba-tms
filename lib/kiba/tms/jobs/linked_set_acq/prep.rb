@@ -79,59 +79,69 @@ module Kiba
                 lookup: prep__registration_sets,
                 keycolumn: :registrationsetid,
                 fieldmap: rsmap
-              transform Delete::Fields, fields: :registrationsetid
 
               bind.receiver.send(:multifield_hash).each do |target, fields|
                   transform Tms::Transforms::CollapseMultisourceField,
                     fields: fields,
                     target: target
-                end
+              end
 
+              # The target should be the form used in ObjAccession, so we can
+              #   reuse field handling methods from its config module
+              {
+                acquisitionauthorizerdate:
+                  %i[set_approvaldateiso approvalisodate1],
+                accessiondategroup: %i[set_accessiondateiso accessionisodate],
+                deedofgiftsentiso: %i[set_deedofgiftsentiso deedofgiftsentiso],
+                deedofgiftreceivediso:
+                  %i[set_deedofgiftreceivediso deedofgiftreceivediso],
+                currpercentownership: %i[set_percentowned currpercentownership],
+                acquisitionmethod: %i[set_accessionmethod accessionmethod]
+              }.each do |target, fields|
+                transform Tms::Transforms::RankedSourceFields,
+                  fields: fields,
+                  target: target
+              end
 
-              # if config.multi_set_lots
-              #   warn("Need to write multi_set_lots handling")
-              # else
-              #   transform Rename::Field,
-              #     from: :lotnumber,
-              #     to: :acquisitionreferencenumber
-              # end
+              if Tms::RegistrationSets.multi_set_lots
+                warn("Need to write multi_set_lots handling")
+              else
+                transform Rename::Field,
+                  from: :lot_lotnumber,
+                  to: :acquisitionreferencenumber
+              end
 
-              # transform Rename::Fields, fieldmap: {
-              #   accessiondateiso: :accessiondategroup,
-              #   approvaldateiso: :acquisitionauthorizerdate,
-              #   accessionmethod: :acquisitionmethod
-              # }
+              unless Tms::ObjAccession.dog_dates_treatment == :drop
+                transform Prepend::ToFieldValue,
+                  field: :deedofgiftsentiso,
+                  value: 'Deed of gift sent: '
+                transform Prepend::ToFieldValue,
+                  field: :deedofgiftreceivediso,
+                  value: 'Deed of gift received: '
+              end
 
-              # unless Tms::ObjAccession.dog_dates_treatment == :drop
-              #   transform Prepend::ToFieldValue,
-              #     field: :deedofgiftsentiso,
-              #     value: 'Deed of gift sent: '
-              #   transform Prepend::ToFieldValue,
-              #     field: :deedofgiftreceivediso,
-              #     value: 'Deed of gift received: '
-              # end
+              unless Tms::ObjAccession.percentowned_treatment == :drop
+                transform Prepend::ToFieldValue,
+                  field: :currpercentownership,
+                  value: Tms::ObjAccession.percentowned_prefix
+              end
 
-              # unless Tms::ObjAccession.percentowned_treatment == :drop
-              #   transform Prepend::ToFieldValue,
-              #     field: :percentowned,
-              #     value: Tms::ObjAccession.percentowned_prefix
-              # end
-
-              # unless config.note_sources.empty?
-              #   transform CombineValues::FromFieldsWithDelimiter,
-              #     sources: config.note_sources,
-              #     target: :acquisitionnote,
-              #     sep: '%CR%',
-              #     delete_sources: true
-              # end
-              # unless config.proviso_sources.empty?
-              #   transform CombineValues::FromFieldsWithDelimiter,
-              #     sources: config.proviso_sources,
-              #     target: :acquisitionprovisos,
-              #     sep: '%CR%',
-              #     delete_sources: true
-              # end
-
+              notesrcs = Tms::ObjAccession.note_sources
+              unless notesrcs.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: notesrcs,
+                  target: :acquisitionnote,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
+              provsrcs = Tms::ObjAccession.proviso_sources
+              unless provsrcs.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: provsrcs,
+                  target: :acquisitionprovisos,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
             end
           end
         end
