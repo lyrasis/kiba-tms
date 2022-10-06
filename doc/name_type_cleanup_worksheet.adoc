@@ -17,11 +17,14 @@ This page is about the name type review/cleanup worksheet provided to clients as
 
 For an overview of the name cleanup workflow, see: xref:name_cleanup_workflow_overview.adoc[Name cleanup workflow overview]
 
-This worksheet allows you to make sure names in your TMS data are migrated into the correct Person or Organization authorities in CollectionSpace (CS).
+This worksheet allows you to:
 
-It also allows you to indicate names that should not be migrated and perform simple name corrections that can be merged into the next phase of name processing.
+* make sure names in your TMS data are migrated into the correct Person or Organization authorities in CollectionSpace (CS);
+* indicate names that should not be migrated at all;
+* indicate "name" values that should be treated as notes instead of names in the records where they are used; and
+* perform simple name corrections that can be merged into the next phase of name processing
 
-Finally, it may inform cleanup you want to do in TMS prior to migration.
+Finally, it may inform cleanup you wish to do in TMS prior to migration.
 
 [NOTE]
 ====
@@ -40,7 +43,7 @@ toc::[]
 ====
 *Do not add or delete any rows and do not edit any columns other than `correctname` and `correctauthoritytype`.*
 
-If you edit other columns, those changes *_will not_* be merged into the migration. Editing some columns may prevent your allowed changes from being merged back into the migration. 
+If you edit other columns, those changes *_will not_* be merged into the migration. Editing some columns may prevent your allowed changes from being merged back into the migration.
 ====
 
 You may:
@@ -53,13 +56,27 @@ You may:
 
 === Review `termsources`
 
-Your data entry practices may mean that we should remove some tables or fields from being treated as names.
+Many name fields throughout the TMS database are populated by linking to an established Constituent value.
 
-Filter the `termsource` column to remove all sources beginning with `TMS Constituents` or `TMS ConAltNames`. Sort on `termsource` column.
+However, there are some name fields in TMS (for example `ObjAccession.authorizer`) that appear to be free text. In a default migration, these fields map to CS fields that are controlled by a name authority, so we have extracted values from these fields as names.
 
-A `termsource` value like "TMS ObjIncoming.approver.handler" means the name value of the row appears in the approver and handler fields of the TMS ObjIncoming table.
+Your data entry practices have included regularly recording non-name info in any of these fields, then you may want to exclude that field across the board from being treated as a name in the migration.
 
-*Let your migration specialist know if you want any fields or tables removed from being treated as names in the migration*. They will regenerate your name type cleanup worksheet without values from the specified fields/tables. 
+[IMPORTANT]
+====
+Opting to drop an entire termsource field or table is fairly rare, but has been requested in a few cases of really "free" data entry a client preferred to deal with post-migration.
+
+If there are term sources where many of the values should be treated as names, but others shouldn't, you can indicate that per-row. You can instruct us to drop the value from the migration or treat it as a note. See the procedures section below for details.
+====
+
+.Steps
+* Filter the `termsource` column to remove all sources beginning with `TMS Constituents` or `TMS ConAltNames` (the known controlled name sources in TMS).
+* Sort on `termsource` column (and/or filter on one `termsource` value at a time)
+* Eyeball the values from each source to determine if the values are primarily actual name data
+* *Let your migration specialist know if you want any fields or tables removed from being treated as names in the migration*. They will regenerate your name type cleanup worksheet without values from the specified fields/tables.
+
+
+NOTE: A `termsource` value like "TMS ObjIncoming.approver.handler" means the name value of the row appears in the approver and handler fields of the TMS ObjIncoming table.
 
 === Filter to `authoritytype` = (Blanks) and categorize the names
 
@@ -78,6 +95,10 @@ If the `?`/`derived` value is good, you don't need to do anything.
 Otherwise, follow the examples under https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#correct-authority-type[Procedures > Correct authority type].
 
 === Sort by name and eyeball to find similar names that can be cleaned up via this worksheet
+
+Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#cleaning-up-names[Procedures > Cleaning up names].
+
+=== Indicate name values that should be dropped from migration or treated as notes
 
 Refer to https://github.com/lyrasis/kiba-tms/blob/main/doc/name_type_cleanup_worksheet.adoc#cleaning-up-names[Procedures > Cleaning up names].
 
@@ -118,7 +139,7 @@ The above would create an authority for "artist" and all ObjIncoming records wit
 
 To avoid a second authority record being created for Bob, which includes his phone number as part of his name, move the phone number to Constituent information for Bob in TMS. If it is important to have the phone number in the loan record, move it to remarks.
 
-Alternately, we migrate this as two separate Person names in CS, and you can later https://collectionspace.atlassian.net/wiki/spaces/COL/pages/905445377/User+Manual+Data+Updates+Merge+Authority+Items[merge them]. 
+Alternately, we migrate this as two separate Person names in CS, and you can later https://collectionspace.atlassian.net/wiki/spaces/COL/pages/905445377/User+Manual+Data+Updates+Merge+Authority+Items[merge them].
 
 == Procedures
 
@@ -235,7 +256,7 @@ The migration process will try to look up "Acquisition committee" and see that t
 | Acquisitions committee |                        | Organization  |                      | TMS ObjAccession.authorizer |
 ....
 
-IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). This step is intended to handle simple/obvious misspellings/variations in form. If creating a variant is important to you, wait until the next cleanup phase, which allows you to specify some more sophisticated operations in terms of variant and related names. 
+IMPORTANT: The solution above will *not* create a variant form of name "Acquisition committee" in the authority for "Acquisitions committee" (See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]). This step is intended to handle simple/obvious misspellings/variations in form. If creating a variant is important to you, wait until the next cleanup phase, which allows you to specify some more sophisticated operations in terms of variant and related names.
 
 
 NOTE: If `authoritytype` needs to be added or corrected for the names, it needs to be done on each row!
@@ -348,6 +369,3 @@ Note that:
 == Background/more information
 
 Refer to xref:name_compilation.adoc[Name compilation data preparation details] for details on how data was processed to create this worksheet.
-
-
-
