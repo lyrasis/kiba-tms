@@ -6,7 +6,7 @@ module Kiba
   module Tms
     module NameCompile
       module_function
-      
+
       extend Dry::Configurable
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
       setting :sources,
@@ -127,4 +127,3 @@ module Kiba
     end
   end
 end
-

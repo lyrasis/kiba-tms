@@ -6,23 +6,36 @@ module Kiba
       module ConAltNames
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_alt_names,
                 destination: :prep__con_alt_names,
-                lookup: %i[
-                           prep__constituents
-                           constituents__by_norm
-                          ]
+                lookup: lookups
               },
               transformer: prep_xforms
             )
           end
 
+          def lookups
+            base = %i[
+                      prep__constituents
+                      constituents__by_norm
+                     ]
+            if Tms::NameTypeCleanup.done &&
+                Tms::NameTypeCleanup.targets.any?(config.table_name)
+              base << :name_type_cleanup__for_con_alt_names
+            end
+            base
+          end
+
           def prep_xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
 
               # Removes rows where alt name value matches linked name in Constituents table
@@ -46,7 +59,7 @@ module Kiba
               if Tms::Constituents.altnames.qualify_anonymous
                 transform Tms::Transforms::ConAltNames::QualifyAnonymous
               end
-              
+
               # If preferred name field = alphasort, move org names from displayname to alphasort
               if Tms::Constituents.preferred_name_field == :alphasort
                 transform do |row|
@@ -72,7 +85,7 @@ module Kiba
                 target: :altnorm
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: :conname,
-                target: :connorm              
+                target: :connorm
               transform do |row|
                 altnorm = row[:altnorm]
                 connorm = row[:connorm]
@@ -80,7 +93,7 @@ module Kiba
 
                 row
               end
-              
+
               transform Merge::MultiRowLookup,
                 lookup: constituents__by_norm,
                 keycolumn: :altnorm,
@@ -101,7 +114,28 @@ module Kiba
                 row[:altauthtype] = alttype.split(Tms.delim).uniq.join(Tms.delim)
                 row
               end
-              
+
+              if Tms::NameTypeCleanup.done &&
+                  Tms::NameTypeCleanup.targets.any?(config.table_name)
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__for_con_alt_names,
+                  keycolumn: :altnameid,
+                  fieldmap: {
+                    correctname: :correctname,
+                    correctauthoritytype: :correctauthoritytype
+                  }
+                transform FilterRows::FieldEqualTo,
+                  action: :reject,
+                  field: :correctauthoritytype,
+                  value: 'd'
+                transform Tms::Transforms::NameTypeCleanup::OverlayType,
+                  target: :altauthtype
+                transform Tms::Transforms::NameTypeCleanup::OverlayName,
+                  target: Tms::Constituents.preferred_name_field
+                transform Delete::Fields,
+                  fields: %i[correctname correctauthoritytype]
+              end
+
               # add :typematch column
               transform do |row|
                 con = row[:conauthtype]
@@ -127,6 +161,7 @@ module Kiba
               unless Tms::Constituents.include_flipped_as_variant
                 transform Delete::Fields, fields: Tms::Constituents.var_name_field
               end
+
             end
           end
         end

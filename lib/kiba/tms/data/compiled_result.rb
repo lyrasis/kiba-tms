@@ -14,7 +14,11 @@ module Kiba
           return if failures.empty?
 
           puts "\n\nFAILURES"
-          failures.each{ |f| puts f.formatted }
+          failures.each do |f|
+            puts f.failure.formatted
+            puts f.trace
+            puts ''
+          end
         end
 
         def output_to(path)

@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module NameTypeCleanup
-        module FromBaseData
+        module ForConOrgWithNameParts
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_compile__unique,
-                destination: :name_type_cleanup__from_base_data
+                source: :name_type_cleanup__returned_prep,
+                destination: :name_type_cleanup__for_con_org_with_name_parts
               },
               transformer: xforms
             )
@@ -21,13 +21,9 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo,
                 action: :keep,
-                field: :relation_type,
-                value: '_main term'
-              transform Delete::Fields,
-                fields: %i[
-                           sort relation_type variant_term variant_qualifier
-                           related_term related_role note_text
-                          ]
+                field: :termsource,
+                value: 'TMS Constituents.orgs_name_detail'
+              transform Delete::Fields, fields: :termsource
             end
           end
         end

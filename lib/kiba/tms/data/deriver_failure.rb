@@ -4,6 +4,9 @@ module Kiba
   module Tms
     module Data
       class DeriverFailure
+
+        attr_reader :mod
+
         # @param mod [Module]
         # @param name [String, NilValue]
         # @param sym [Symbol, NilValue]
@@ -12,18 +15,23 @@ module Kiba
           @mod = mod
           @name = name
           @sym = sym
-          @err = err.msg if err
+          @err = err.message if err
         end
 
         def formatted
+          context = [mod, name].compact
+            .join('.')
+          [context, msg].reject(&:blank?)
+            .join(': ')
         end
 
         private
 
-        attr_reader :mod, :name, :err, :sym
+        attr_reader :name, :err, :sym
 
         def msg
-          [sym, err].join(': ')
+          [sym, err].compact
+            .join(': ')
         end
       end
     end

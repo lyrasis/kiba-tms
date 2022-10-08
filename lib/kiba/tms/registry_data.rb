@@ -481,9 +481,16 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('linked_set_acq') do
+          register :obj_rows, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::ObjRows,
+            path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq__obj_rows.csv'),
+            desc: 'All ObjAccession rows to be treated as :linkedset',
+            tags: %i[acquisitions]
+          }
           register :rows, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::Rows,
             path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq_rows.csv'),
+            desc: ':obj_rows, deduplicated on regsetid',
             tags: %i[acquisitions]
           }
           register :prep, {
@@ -1060,7 +1067,37 @@ module Kiba
             tags: %i[names cleanup],
             dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
-          end
+          register :returned_prep, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedPrep,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_returned_prep.csv'),
+            tags: %i[names cleanup]
+          }
+          register :for_con_alt_names, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConAltNames,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_for_con_alt_names.csv'),
+            tags: %i[names cleanup],
+            lookup_on: :altnameid
+          }
+          register :for_constituents, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConstituents,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_for_constituents.csv'),
+            tags: %i[names cleanup],
+            lookup_on: :constituentid
+          }
+          register :for_con_org_with_name_parts, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConOrgWithNameParts,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_for_con_org_with_name_parts.csv'),
+            tags: %i[names cleanup],
+            lookup_on: :constituentid
+          }
+          register :for_con_person_with_inst, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConPersonWithInst,
+            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_for_con_person_with_inst.csv'),
+            tags: %i[names cleanup],
+            lookup_on: :constituentid
+          }
+        end
+
         Kiba::Tms.registry.namespace('names') do
           register :compiled, {
             creator: Kiba::Tms::Jobs::Names::CompiledData,

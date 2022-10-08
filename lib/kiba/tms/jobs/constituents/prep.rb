@@ -22,19 +22,33 @@ module Kiba
             base = []
             base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
+            if Tms::NameTypeCleanup.done
+              ntctargets = Tms::NameTypeCleanup.targets
+              if ntctargets.any?('Constituents')
+                base << :name_type_cleanup__for_constituents
+              end
+            end
+
             base
           end
-          
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              ntctargets = Tms::NameTypeCleanup.targets
               prefname = Tms::Constituents.preferred_name_field
-              
+
+
               transform Tms::Transforms::DeleteTmsFields
               if Tms::Constituents.omitting_fields?
                 transform Delete::Fields, fields: Tms::Constituents.omitted_fields
               end
-              
-              transform Delete::FieldValueContainingString, fields: %i[defaultdisplaybioid], match: '-1'
+
+              transform Delete::FieldValueContainingString,
+                fields: %i[defaultdisplaybioid],
+                match: '-1'
 
               if Tms::ConTypes.used?
                 transform Merge::MultiRowLookup,
@@ -47,7 +61,28 @@ module Kiba
               if Tms::Constituents.prep_transform_pre
                 transform Tms::Constituents.prep_transform_pre
               end
-              
+
+              if Tms::NameTypeCleanup.done &&
+                  ntctargets.any?('Constituents')
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__for_constituents,
+                  keycolumn: :constituentid,
+                  fieldmap: {
+                    correctname: :correctname,
+                    correctauthoritytype: :correctauthoritytype
+                  }
+                transform FilterRows::FieldEqualTo,
+                  action: :reject,
+                  field: :correctauthoritytype,
+                  value: 'd'
+                transform Tms::Transforms::NameTypeCleanup::OverlayType,
+                  target: :constituenttype
+                transform Tms::Transforms::NameTypeCleanup::OverlayName,
+                  target: prefname
+                transform Delete::Fields,
+                  fields: %i[correctname correctauthoritytype]
+              end
+
               transform Tms::Transforms::Constituents::DeriveType
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituenttype derivedcontype],
@@ -56,7 +91,7 @@ module Kiba
                 delete_sources: false
               transform Copy::Field, from: :contype, to: :contype_norm
               transform Tms::Transforms::Constituents::NormalizeContype
-              
+
               # # not used by anything?
               # transform CombineValues::FromFieldsWithDelimiter,
               #   sources: [:contype_norm, prefname],
@@ -86,7 +121,7 @@ module Kiba
 
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
               transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
-              
+
               # tag rows as to whether they do or do not actually contain any name data
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,
@@ -113,7 +148,7 @@ module Kiba
                   delim: '%CR%%CR%',
                   sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
               end
-              
+
               if Kiba::Tms::Constituents.date_append.to_type == :duplicate
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: Tms::Constituents.preferred_name_field,

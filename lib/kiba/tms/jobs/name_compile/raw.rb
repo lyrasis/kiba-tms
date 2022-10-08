@@ -35,7 +35,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Append::NilFields, fields: Tms::NameCompile.multi_source_normalizer.get_fields
-              transform Rename::Field, from: Tms::Constituents.preferred_name_field, to: :name 
+              transform Rename::Field, from: Tms::Constituents.preferred_name_field, to: :name
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid contype name relation_type termsource],
                 target: :fingerprint,

@@ -70,7 +70,7 @@ module Kiba
         reader: true
 
       def proviso_sources
-        base = []
+        base = %i[acquisitionterms]
         if dog_dates_treatment == :acquisitionprovisos
           base << %i[deedofgiftsentiso deedofgiftreceivediso]
         end
@@ -81,7 +81,7 @@ module Kiba
       end
 
       def note_sources
-        base = []
+        base = %i[source remarks]
         if dog_dates_treatment == :acquisitionnote
           base << %i[deedofgiftsentiso deedofgiftreceivediso]
         end

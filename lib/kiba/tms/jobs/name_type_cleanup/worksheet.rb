@@ -18,14 +18,13 @@ module Kiba
           end
 
           def source
-            cleanup_done = Tms::NameTypeCleanup.cleanup_done
-            if cleanup_done
+            if config.done
               :name_type_cleanup__supplied_cleanup_merged
             else
               :name_type_cleanup__from_base_data
             end
           end
-          
+
           def xforms
             Kiba.job_segment do
               transform Rename::Field, from: :contype, to: :authoritytype

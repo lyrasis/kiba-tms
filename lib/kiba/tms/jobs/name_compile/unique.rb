@@ -35,9 +35,12 @@ module Kiba
                            note_duplicate
                           ]
               transform Delete::Fields,
-                fields: %i[constituent_duplicate name_duplicate variant_duplicate related_duplicate
-                           note_duplicate constituent_duplicate_all name_duplicate_all variant_duplicate_all
-                           related_duplicate_all note_duplicate_all combined duplicate varname]
+                fields: %i[constituent_duplicate name_duplicate
+                           variant_duplicate related_duplicate
+                           note_duplicate constituent_duplicate_all
+                           name_duplicate_all variant_duplicate_all
+                           related_duplicate_all note_duplicate_all
+                           combined duplicate varname]
             end
           end
         end

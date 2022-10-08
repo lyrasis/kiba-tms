@@ -19,10 +19,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :namedata
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :namedata
               transform Delete::Fields,
-                fields: %i[constituenttype derivedcontype inconsistent_org_names defaultnameid
-                          defaultdisplaybioid namedata norm]
+                fields: %i[constituenttype derivedcontype inconsistent_org_names
+                           defaultnameid defaultdisplaybioid namedata norm]
             end
           end
         end

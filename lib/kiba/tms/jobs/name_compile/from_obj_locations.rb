@@ -20,9 +20,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              namefields = %i[approver handler requestedby]
+              namefields = %i[handler requestedby approver]
               transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
-                table: 'ObjIncoming',
+                table: 'ObjLocations',
                 fields: namefields
             end
           end

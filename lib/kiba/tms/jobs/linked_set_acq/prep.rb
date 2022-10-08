@@ -96,7 +96,8 @@ module Kiba
                 deedofgiftreceivediso:
                   %i[set_deedofgiftreceivediso deedofgiftreceivediso],
                 currpercentownership: %i[set_percentowned currpercentownership],
-                acquisitionmethod: %i[set_accessionmethod accessionmethod]
+                acquisitionmethod: %i[set_accessionmethod accessionmethod],
+                creditline: %i[set_creditline creditline]
               }.each do |target, fields|
                 transform Tms::Transforms::RankedSourceFields,
                   fields: fields,
@@ -142,6 +143,10 @@ module Kiba
                   sep: '%CR%',
                   delete_sources: true
               end
+
+              transform Rename::Fields, fieldmap: {
+                set_objectstatus: :objectstatus
+              }
             end
           end
         end
