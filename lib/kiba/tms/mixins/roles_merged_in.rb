@@ -17,7 +17,7 @@ module Kiba
       #
       # Modules/classes mixing this in must:
       #
-      # extend Tms::Mixins::Tableable
+      # extend Tms::Mixins::RolesMergedIn
       module RolesMergedIn
         include Dry::Monads[:result]
 
