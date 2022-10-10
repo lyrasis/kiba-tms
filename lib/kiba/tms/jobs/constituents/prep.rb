@@ -22,6 +22,9 @@ module Kiba
             base = []
             base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
+            if Tms::TextEntries.for?(config.table_name)
+              base << :text_entries_for__constituents
+            end
             if ntc_needed?
               base << :name_type_cleanup__for_constituents
             end
@@ -204,6 +207,12 @@ module Kiba
                 transform Rename::Field,
                   from: :isprivate,
                   to: :is_private_collector
+              end
+
+              temerger = Tms::TextEntries.for_constituents_merge
+              if Tms::TextEntries.for?(config.table_name) && temerger
+                transform temerger,
+                  lookup: text_entries_for__constituents
               end
             end
           end

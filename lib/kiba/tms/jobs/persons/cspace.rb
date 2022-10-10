@@ -19,7 +19,6 @@ module Kiba
                            con_alt_names__to_merge_person
                            con_email__for_persons
                            con_phones__for_persons
-                           text_entries_for__constituents
                           ]
               },
               transformer: xforms
@@ -28,13 +27,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Merge::MultiRowLookup,
-                lookup: text_entries_for__constituents,
-                keycolumn: :fp_constituentid,
-                fieldmap: { text_entry: :text_entry},
-                delim: Tms.delim,
-                sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
-
               transform Delete::Fields,
                 fields: %i[migration_action constituenttype alt_names
                            institution contact_person contact_role fingerprint

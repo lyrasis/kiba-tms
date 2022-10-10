@@ -20,7 +20,6 @@ module Kiba
                            con_address__for_orgs
                            con_email__for_orgs
                            con_phones__for_orgs
-                           text_entries_for__constituents
                           ]
               },
               transformer: xforms
@@ -29,13 +28,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Merge::MultiRowLookup,
-                lookup: text_entries_for__constituents,
-                keycolumn: :fp_constituentid,
-                fieldmap: { text_entry: :text_entry},
-                delim: Tms.delim,
-                sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
-
               transform Delete::Fields,
                 fields: %i[migration_action constituenttype alt_names institution
                            contact_person contact_role nametitle firstname
