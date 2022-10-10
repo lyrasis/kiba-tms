@@ -19,28 +19,30 @@ module Kiba
             )
           end
 
+          def ntc_needed?
+            ntc_targets.any?('Constituents.orgs_name_detail') &&
+              treatment == :contact_person
+          end
+          extend Tms::Mixins::NameTypeCleanupable
+
           def lookups
             base = []
-            if cleanup_ready?
+            if ntc_needed?
               base << :name_type_cleanup__for_con_org_with_name_parts
             end
             base
           end
 
-          def cleanup_ready?
-            return false unless Tms::NameTypeCleanup.done
-
-            ntctargets = Tms::NameTypeCleanup.targets
-            ntctargets.any?('Constituents.orgs_name_detail')
+          def treatment
+            job = :name_compile__from_con_org_with_name_parts
+            config.source_treatment[job]
           end
 
           def xforms
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-              job = :name_compile__from_con_org_with_name_parts
-              treatment = config.source_treatment[job]
+              treatment = bind.receiver.send(:treatment)
 
               transform Tms::Transforms::NameCompile::SelectConOrgsWithNameParts
 
@@ -61,7 +63,7 @@ module Kiba
                   person_name_from: :nameparts
               end
 
-              if bind.receiver.send(:cleanup_ready?)
+              if bind.receiver.send(:ntc_needed?)
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   lookup: name_type_cleanup__for_con_org_with_name_parts,
                   typetarget: {'_main term'=>:contype},

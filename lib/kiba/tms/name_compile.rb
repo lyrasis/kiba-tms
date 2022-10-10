@@ -8,7 +8,23 @@ module Kiba
       module_function
 
       extend Dry::Configurable
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+      setting :multi_source_normalizer,
+        default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
+        reader: true
+      # Used to auto generate transform jobs for these tables. Key is the config
+      #   module for the table, which must implement a :name_fields method.
+      #   Value is 'tms' or 'prep', which is the prefix of the job destination
+      #   key to be used as source
+      setting :uncontrolled_name_source_tables,
+        default: {
+          Tms::Loans => 'tms',
+          Tms::LocApprovers => 'prep',
+          Tms::LocHandlers => 'prep',
+          Tms::ObjAccession => 'tms',
+          Tms::ObjIncoming => 'tms',
+          Tms::ObjLocations => 'tms'
+        },
+        reader: true
       setting :sources,
         default: %i[
                     name_compile__from_con_org_plain

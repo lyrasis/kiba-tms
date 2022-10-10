@@ -11,6 +11,10 @@ module Kiba
       module_function
 
       extend Tms::Mixins::Tableable
+
+      setting :name_fields,
+        default: %i[approver],
+        reader: true
     end
   end
 end

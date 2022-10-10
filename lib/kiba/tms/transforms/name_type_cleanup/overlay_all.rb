@@ -6,6 +6,7 @@ module Kiba
       module NameTypeCleanup
         class OverlayAll
           def initialize(lookup:,
+                         keycolumn: :constituentid,
                          typetarget: :contype,
                          nametarget: Tms::Constituents.preferred_name_field
                         )
@@ -13,7 +14,7 @@ module Kiba
             @nametarget = nametarget
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
-              keycolumn: :constituentid,
+              keycolumn: keycolumn,
               fieldmap: {
                 correctname: :correctname,
                 correctauthoritytype: :correctauthoritytype

@@ -8,6 +8,9 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+            return unless Tms::Loans.used?
+
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :tms__loans,
@@ -20,8 +23,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              namefields = %i[approvedby contact requestedby]
-              transform Tms::Transforms::NameCompile::ExtractNamesFromTable, table: 'Loans', fields: namefields
+              transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
+                table: 'Loans',
+                fields: Tms::Loans.name_fields
             end
           end
         end

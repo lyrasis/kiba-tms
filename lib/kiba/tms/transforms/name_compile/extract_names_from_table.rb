@@ -9,7 +9,9 @@ module Kiba
           # @param fields [Array(Symbol)]
           def initialize(table:, fields:)
             @table = table
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: fields)
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: fields
+            )
             @names = {}
             @namefield = Tms::Constituents.preferred_name_field
             @orgchecker = Tms::Services::Names::OrgNameChecker.new(field: namefield)
@@ -28,7 +30,7 @@ module Kiba
             names.map{ |name, fields| build_name_row(name, fields) }
               .each{ |row| yield row }
           end
-          
+
           private
 
           attr_reader :table, :getter, :names, :namefield, :orgchecker
@@ -50,11 +52,11 @@ module Kiba
             row[:contype] = orgchecker.call(row) ? 'Organization?' : nil
             row
           end
-          
+
           def new_name(field, name)
             names[name] = [field]
           end
-          
+
           def populate_names(vals)
             vals.each{ |field, name| populate_names_from(field, name) }
           end

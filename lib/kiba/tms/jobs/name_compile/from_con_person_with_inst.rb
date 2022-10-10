@@ -19,33 +19,29 @@ module Kiba
             )
           end
 
+          def ntc_needed?
+            ntc_targets.any?('Constituents.person_with_institution') &&
+              treatment == :contact_person
+          end
+          extend Tms::Mixins::NameTypeCleanupable
+
           def lookups
             base = []
-            if Tms::NameTypeCleanup.done
-              ntctargets = Tms::NameTypeCleanup.targets
-              if ntctargets.any?('Constituents.person_with_institution')
+            if ntc_needed?
                 base << :name_type_cleanup__for_con_person_with_inst
-              end
             end
             base
           end
 
-          def cleanup_ready?
-            return false unless Tms::NameTypeCleanup.done
-
-            ntctargets = Tms::NameTypeCleanup.targets
-            ntctargets.any?('Constituents.person_with_institution')
+          def treatment
+              job = :name_compile__from_con_person_with_inst
+              config.source_treatment[job]
           end
 
           def xforms
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
-              job = :name_compile__from_con_person_with_inst
-              treatment = config.source_treatment[job]
-
               transform Tms::Transforms::NameCompile::SelectConPersonWithInst
 
               transform Append::ToFieldValue,
@@ -55,6 +51,7 @@ module Kiba
                 target: :termsource,
                 value: 'TMS Constituents.person_with_institution'
 
+              treatment = bind.receiver.send(:treatment)
               if treatment == :variant
                 transform Merge::ConstantValue,
                   target: :relation_type, value: 'variant term'
@@ -69,8 +66,7 @@ module Kiba
                   mode: :main
               end
 
-              if bind.receiver.send(:cleanup_ready?) &&
-                  treatment == :contact_person
+              if bind.receiver.send(:ntc_needed?)
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   lookup: name_type_cleanup__for_con_person_with_inst,
                   typetarget: {'_main term'=>:contype},

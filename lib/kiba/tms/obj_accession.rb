@@ -55,6 +55,10 @@ module Kiba
         constructor: Proc.new{ |value| set_deletes(value) }
       extend Tms::Mixins::Tableable
 
+      setting :name_fields,
+        default: %i[authorizer initiator],
+        reader: true
+
       # approaches required for creation of CS acquisitions and obj/acq
       #   relations
       #   options: :onetone, :lotnumber, :linkedlot, :linkedset

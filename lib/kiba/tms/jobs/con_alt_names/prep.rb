@@ -23,12 +23,16 @@ module Kiba
                       prep__constituents
                       constituents__by_norm
                      ]
-            if Tms::NameTypeCleanup.done &&
-                Tms::NameTypeCleanup.targets.any?(config.table_name)
+            if ntc_needed?
               base << :name_type_cleanup__for_con_alt_names
             end
             base
           end
+
+          def ntc_needed?
+            ntc_targets.any?('ConAltNames')
+          end
+          extend Tms::Mixins::NameTypeCleanupable
 
           def prep_xforms
             bind = binding
@@ -38,7 +42,8 @@ module Kiba
 
               transform Tms::Transforms::DeleteTmsFields
 
-              # Removes rows where alt name value matches linked name in Constituents table
+              # Removes rows where alt name value matches linked name in
+              #   Constituents table
               transform Merge::MultiRowLookup,
                 lookup: prep__constituents,
                 keycolumn: :constituentid,
@@ -60,7 +65,8 @@ module Kiba
                 transform Tms::Transforms::ConAltNames::QualifyAnonymous
               end
 
-              # If preferred name field = alphasort, move org names from displayname to alphasort
+              # If preferred name field = alphasort, move org names from
+              #   displayname to alphasort
               if Tms::Constituents.preferred_name_field == :alphasort
                 transform do |row|
                   alphasort = row[:alphasort]
@@ -76,10 +82,13 @@ module Kiba
                 end
               end
 
-              transform FilterRows::FieldPopulated, action: :keep, field: Tms::Constituents.preferred_name_field
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: Tms::Constituents.preferred_name_field
 
-              # removes rows where preferred form of alt name (normalized) is the same as preferred form
-              #   of linked constituent name (normalized)
+              # removes rows where preferred form of alt name (normalized) is
+              #   the same as preferred form of linked constituent name
+              #   (normalized)
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
                 target: :altnorm
@@ -106,7 +115,8 @@ module Kiba
 
               transform Tms::Transforms::Constituents::DeriveType, mode: :alt
 
-              # force separate constituent type value as altauthtype where available
+              # force separate constituent type value as altauthtype where
+              #   available
               transform do |row|
                 alttype = row[:altconauthtype]
                 next row if alttype.blank?
@@ -115,25 +125,11 @@ module Kiba
                 row
               end
 
-              if Tms::NameTypeCleanup.done &&
-                  Tms::NameTypeCleanup.targets.any?(config.table_name)
-                transform Merge::MultiRowLookup,
+              if bind.receiver.send(:ntc_needed?)
+                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   lookup: name_type_cleanup__for_con_alt_names,
                   keycolumn: :altnameid,
-                  fieldmap: {
-                    correctname: :correctname,
-                    correctauthoritytype: :correctauthoritytype
-                  }
-                transform FilterRows::FieldEqualTo,
-                  action: :reject,
-                  field: :correctauthoritytype,
-                  value: 'd'
-                transform Tms::Transforms::NameTypeCleanup::OverlayType,
-                  target: :altauthtype
-                transform Tms::Transforms::NameTypeCleanup::OverlayName,
-                  target: Tms::Constituents.preferred_name_field
-                transform Delete::Fields,
-                  fields: %i[correctname correctauthoritytype]
+                  typetarget: :altauthtype
               end
 
               # add :typematch column
@@ -157,11 +153,12 @@ module Kiba
 
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
 
-              # remove non-preferred form of name if not including flipped as variant
+              # remove non-preferred form of name if not including flipped as
+              #   variant
               unless Tms::Constituents.include_flipped_as_variant
-                transform Delete::Fields, fields: Tms::Constituents.var_name_field
+                transform Delete::Fields,
+                  fields: Tms::Constituents.var_name_field
               end
-
             end
           end
         end

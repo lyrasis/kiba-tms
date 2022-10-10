@@ -12,6 +12,11 @@ module Kiba
         default: %i[objincomingid objectid],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :name_fields,
+        default: %i[approvedby requestedby courierin courierout cratepaidby
+                    ininsurpaidby shippingpaidby],
+        reader: true
     end
   end
 end

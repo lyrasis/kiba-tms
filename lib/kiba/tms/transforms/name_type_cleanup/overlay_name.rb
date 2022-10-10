@@ -7,7 +7,7 @@ module Kiba
         class OverlayName
           include Overlayable
           # @param target [Symbol, Hash{Symbol=>Symbol}] indication of field (or
-          #   row relation_type/field combination in which to update name.
+          #   row relation_type/field combination in which to update the value.
           #
           # If a Symbol is given, value in that field is updated if the field
           #   exists.

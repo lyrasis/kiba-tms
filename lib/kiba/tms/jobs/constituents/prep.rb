@@ -22,22 +22,23 @@ module Kiba
             base = []
             base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
-            if Tms::NameTypeCleanup.done
-              ntctargets = Tms::NameTypeCleanup.targets
-              if ntctargets.any?('Constituents')
-                base << :name_type_cleanup__for_constituents
-              end
+            if ntc_needed?
+              base << :name_type_cleanup__for_constituents
             end
 
             base
           end
+
+          def ntc_needed?
+            ntc_targets.any?('Constituents')
+          end
+          extend Tms::Mixins::NameTypeCleanupable
 
           def xforms
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              ntctargets = Tms::NameTypeCleanup.targets
               prefname = Tms::Constituents.preferred_name_field
 
 
@@ -62,8 +63,7 @@ module Kiba
                 transform Tms::Constituents.prep_transform_pre
               end
 
-              if Tms::NameTypeCleanup.done &&
-                  ntctargets.any?('Constituents')
+              if bind.receiver.send(:ntc_needed?)
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__for_constituents,
                   keycolumn: :constituentid,

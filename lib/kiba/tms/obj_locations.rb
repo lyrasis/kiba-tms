@@ -15,6 +15,10 @@ module Kiba
         },
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :name_fields,
+        default: %i[handler requestedby approver],
+        reader: true
     end
   end
 end
