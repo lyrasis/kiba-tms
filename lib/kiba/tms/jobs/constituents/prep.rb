@@ -44,7 +44,8 @@ module Kiba
 
               transform Tms::Transforms::DeleteTmsFields
               if Tms::Constituents.omitting_fields?
-                transform Delete::Fields, fields: Tms::Constituents.omitted_fields
+                transform Delete::Fields,
+                  fields: Tms::Constituents.omitted_fields
               end
 
               transform Delete::FieldValueContainingString,
@@ -101,19 +102,22 @@ module Kiba
               # transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
               # transform Delete::Fields, fields: :combined
 
-              # remove institution value if it is the same as what is in preferred name field
+              # remove institution value if it is the same as what is in
+              #   preferred name field
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: :institution,
                 if_equal_to: prefname,
                 casesensitive: false
 
-              # remove non-preferred form name value if it is the same as what is in preferred name field
+              # remove non-preferred form name value if it is the same as what
+              #   is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: Tms::Constituents.var_name_field,
                 if_equal_to: prefname,
                 casesensitive: false
 
-              # remove institution value if it is the same as non-preferred form name value
+              # remove institution value if it is the same as non-preferred
+              #   form name value
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: :institution,
                 if_equal_to: Tms::Constituents.var_name_field,
@@ -122,14 +126,20 @@ module Kiba
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
               transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
 
-              # tag rows as to whether they do or do not actually contain any name data
+              # tag rows as to whether they do or do not actually contain any
+              #   name data
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[displayname alphasort lastname firstname middlename institution], target: :namedata,
-                sep: '', delete_sources: false
+                sources: %i[displayname alphasort lastname firstname middlename
+                            institution],
+                target: :namedata,
+                sep: '',
+                delete_sources: false
 
-              # remove non-preferred form of name if not including flipped as variant
+              # remove non-preferred form of name if not including flipped as
+              #   variant
               unless Tms::Constituents.include_flipped_as_variant
-                transform Delete::Fields, fields: Tms::Constituents.var_name_field
+                transform Delete::Fields,
+                  fields: Tms::Constituents.var_name_field
               end
 
               if Tms::Constituents.dates.merging
@@ -158,7 +168,9 @@ module Kiba
                   target: :combined,
                   sep: ' ',
                   delete_sources: false
-                transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate
+                transform Deduplicate::FlagAll,
+                  on_field: :combined,
+                  in_field: :duplicate
               end
 
               unless Kiba::Tms::Constituents.date_append.to_type == :none
@@ -173,7 +185,10 @@ module Kiba
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
-              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
+              transform Deduplicate::FlagAll,
+                on_field: :combined,
+                in_field: :duplicate,
+                explicit_no: false
               transform Delete::Fields, fields: %i[contype_norm]
 
               boolfields = []
@@ -186,7 +201,9 @@ module Kiba
               end
 
               if Tms::Constituents.map_isprivate
-                transform Rename::Field, from: :isprivate, to: :is_private_collector
+                transform Rename::Field,
+                  from: :isprivate,
+                  to: :is_private_collector
               end
             end
           end

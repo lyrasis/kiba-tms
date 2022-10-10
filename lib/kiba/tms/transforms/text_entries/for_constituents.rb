@@ -8,40 +8,41 @@ module Kiba
           def initialize
             @target = :text_entry
           end
-          
+
           # @private
           def process(row)
             label_and_note = [label(row), note(row)].compact.join(': ')
             final = [label_and_note, author(row)].compact.join(' --')
             row[target] = final
-            %i[purpose textdate textentry remarks texttype org_author person_author].each do |field|
+            %i[purpose textdate textentry remarks texttype org_author
+               person_author].each do |field|
               next unless row.key?(field)
 
               row.delete(field)
             end
-            
+
             row
           end
 
           private
 
           attr_reader :target
-          
+
           def author(row)
             vals = [row.fetch(:person_author, nil), row.fetch(:org_author, nil)]
               .reject{ |val| val.blank? }
-            
+
             return nil if vals.empty?
 
             vals.first
           end
-          
+
 
           def date_the_label(row)
             label = purpose_type_for_label(row)
             date = row.fetch(:textdate, nil)
             return label if date.blank?
-            
+
             label.blank? ? date : "#{label}, #{date}"
           end
 
@@ -51,7 +52,7 @@ module Kiba
 
             val
           end
-          
+
           def label(row)
             val = date_the_label(row)
             return nil if val.blank?
@@ -65,7 +66,7 @@ module Kiba
 
             val.length == 1 ? val.first : val.join('%CR%%CR%REMARKS ON NOTE: ')
           end
-          
+
           def purpose_type_for_label(row)
             val = [row.fetch(:texttype, ''), row.fetch(:purpose, '')]
               .reject{ |val| val.blank? }
@@ -81,7 +82,6 @@ module Kiba
 
             val
           end
-          
         end
       end
     end
