@@ -7,7 +7,6 @@ gem 'emendate', branch: 'main', :github => 'kspurgin/emendate'
 
 group :development, :test do
   gem 'pry', '~> 0.13.0'
-  gem "debug", "~> 1.6"
   gem 'rake', '~> 12.0'
   gem 'rspec', '~> 3.11'
 end
