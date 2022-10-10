@@ -141,10 +141,15 @@ module Kiba
         end
 
         def self.check_source_job_key(mod)
-          return if mod.supplied?
           return if mod.respond_to?(:source_job_key)
 
-          warn("#{mod} needs :source_job_key defined before extending Tableable")
+          if mod.supplied?
+            key = "tms__#{mod.filekey}"
+            str = "setting :source_job_key, default: :#{key}, reader: true"
+            mod.module_eval(str)
+          else
+            warn("#{mod} needs :source_job_key defined before extending Tableable")
+          end
         end
         private_class_method :check_source_job_key
 
@@ -164,7 +169,8 @@ module Kiba
         def self.set_non_content_fields_setting(mod)
           return if mod.respond_to?(:non_content_fields)
 
-          mod.module_eval('setting :non_content_fields, default: [], reader: true')
+          str = 'setting :non_content_fields, default: [], reader: true'
+          mod.module_eval(str)
         end
       end
     end
