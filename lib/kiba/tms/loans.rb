@@ -16,6 +16,8 @@ module Kiba
       setting :name_fields,
         default: %i[approvedby contact requestedby],
         reader: true
+      extend Tms::Mixins::UncontrolledNameCompileable
+
       # Some TMS installs use :constituentidold, which is a direct constituent
       #   table lookup and must be merged in differently
       #

@@ -58,6 +58,7 @@ module Kiba
       setting :name_fields,
         default: %i[authorizer initiator],
         reader: true
+      extend Tms::Mixins::UncontrolledNameCompileable
 
       # approaches required for creation of CS acquisitions and obj/acq
       #   relations

@@ -19,6 +19,7 @@ module Kiba
       setting :name_fields,
         default: %i[handler requestedby approver],
         reader: true
+      extend Tms::Mixins::UncontrolledNameCompileable
     end
   end
 end

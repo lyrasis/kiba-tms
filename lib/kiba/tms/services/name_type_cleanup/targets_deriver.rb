@@ -48,6 +48,15 @@ module Kiba
             ) > 0
               targets << 'Constituents.person_with_institution'
             end
+            Tms::NameCompile.uncontrolled_name_source_tables
+              .keys
+              .map{ |key| Tms.const_get(key) }
+              .each do |mod|
+                jobkey = "name_type_cleanup_for__#{mod.filekey}".to_sym
+                if counter.call(jobkey) > 0
+                  targets << mod.to_s.split('::').last
+                end
+              end
           rescue StandardError => err
             Failure(err)
           else

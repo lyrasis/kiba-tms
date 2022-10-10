@@ -41,6 +41,42 @@ module Kiba
         base
       end
 
+      def register_uncontrolled_ntc_jobs
+        ns = build_registry_namespace(
+          "name_type_cleanup_for",
+          Tms::NameCompile.uncontrolled_name_source_tables.keys
+            .map{ |n| Tms.const_get(n) }
+            .select{ |mod| mod.used? }
+        )
+        Tms.registry.import(ns)
+      end
+
+      def build_registry_namespace(ns_name, tables)
+        bind = binding
+        Dry::Container::Namespace.new(ns_name) do
+          compilemod = bind.receiver
+          tables.each do |tablemod|
+            params = [compilemod, ns_name, tablemod]
+            register tablemod.filekey, compilemod.send(:target_job_hash, *params)
+          end
+        end
+      end
+
+      def target_job_hash(compilemod, ns_name, tablemod)
+        {
+          path: File.join(Tms.datadir,
+                          'working',
+                          "#{ns_name}_#{tablemod.filekey}.csv"
+                         ),
+          creator: {callee: Tms::Jobs::NameTypeCleanup::ForUncontrolledNameTable,
+                    args: {
+                      mod: tablemod
+                    }
+                   },
+          tags: %i[nametypecleanup nametypecleanupfor],
+          lookup_on: :constituentid
+        }
+      end
     end
   end
 end

@@ -17,14 +17,17 @@ module Kiba
       #   key to be used as source
       setting :uncontrolled_name_source_tables,
         default: {
-          Tms::Loans => 'tms',
-          Tms::LocApprovers => 'prep',
-          Tms::LocHandlers => 'prep',
-          Tms::ObjAccession => 'tms',
-          Tms::ObjIncoming => 'tms',
-          Tms::ObjLocations => 'tms'
+          'Loans' => 'tms',
+          'LocApprovers' => 'prep',
+          'LocHandlers' => 'prep',
+          'ObjAccession' => 'tms',
+          'ObjIncoming' => 'tms',
+          'ObjLocations' => 'tms'
         },
-        reader: true
+        reader: true,
+        constructor: proc{ |value|
+          value.select{ |name| Tms.const_get(name).used? }
+        }
       setting :sources,
         default: %i[
                     name_compile__from_con_org_plain
@@ -45,14 +48,14 @@ module Kiba
                     name_compile__from_can_typemismatch_main_org
                     name_compile__from_can_no_altnametype
                     name_compile__from_assoc_parents_for_con
-                    name_compile__from_loans
-                    name_compile__from_loc_approvers
-                    name_compile__from_loc_handlers
-                    name_compile__from_obj_accession
-                    name_compile__from_obj_incoming
-                    name_compile__from_obj_locations
                    ],
-        reader: true
+        reader: true,
+        constructor: proc{ |value|
+          ( value +
+            uncontrolled_name_source_tables.keys
+            .map{ |k| Tms.const_get(k).name_compile_dest_job_key }
+          ).flatten
+        }
 
       # potential sources not included by default:
       #   name_compile__from_reference_master
@@ -140,6 +143,47 @@ module Kiba
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
       # fields to delete from name compilation report
       setting :delete_fields, default: [], reader: true
+
+      def used?
+        true
+      end
+
+      def register_uncontrolled_name_compile_jobs
+        ns = build_registry_namespace(
+          "name_compile_from",
+          uncontrolled_name_source_tables.keys
+            .map{ |n| Tms.const_get(n) }
+            .select{ |mod| mod.used? }
+        )
+        Tms.registry.import(ns)
+      end
+
+      def build_registry_namespace(ns_name, tables)
+        bind = binding
+        Dry::Container::Namespace.new(ns_name) do
+          compilemod = bind.receiver
+          tables.each do |tablemod|
+            params = [compilemod, ns_name, tablemod]
+            register tablemod.filekey, compilemod.send(:target_job_hash, *params)
+          end
+        end
+      end
+
+      def target_job_hash(compilemod, ns_name, tablemod)
+        {
+          path: File.join(Tms.datadir,
+                          'working',
+                          "#{ns_name}_#{tablemod.filekey}.csv"
+                         ),
+          creator: {callee: Tms::Jobs::NameCompile::ForUncontrolledNameTable,
+                    args: {
+                      mod: tablemod
+                    }
+                   },
+          tags: %i[namecompilefrom]
+        }
+      end
+
     end
   end
 end

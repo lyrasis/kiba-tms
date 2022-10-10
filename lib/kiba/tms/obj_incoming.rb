@@ -17,6 +17,7 @@ module Kiba
         default: %i[approvedby requestedby courierin courierout cratepaidby
                     ininsurpaidby shippingpaidby],
         reader: true
+      extend Tms::Mixins::UncontrolledNameCompileable
     end
   end
 end

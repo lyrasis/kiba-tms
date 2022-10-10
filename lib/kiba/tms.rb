@@ -178,6 +178,8 @@ module Kiba
 
     def meta_config
       Tms::Utils::ConRefTargetExtender.call
+      Tms::NameCompile.register_uncontrolled_name_compile_jobs
+      Tms::NameTypeCleanup.register_uncontrolled_ntc_jobs
       per_job_tables.each do |srctable|
         srctable.target_tables.each do |target|
           srctable.define_for_table_module(target)
