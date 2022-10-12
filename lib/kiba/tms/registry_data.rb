@@ -1093,6 +1093,16 @@ module Kiba
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
+          register :for_uncontrolled_name_tables, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ForUncontrolledNameTables,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'name_type_cleanup_for_uncontrolled_tables.csv'
+            ),
+            tags: %i[names cleanup],
+            lookup_on: :norm
+          }
         end
 
         Kiba::Tms.registry.namespace('names') do
