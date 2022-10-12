@@ -37,7 +37,7 @@ module Kiba
 
       def initial_headers
         base = %i[name correctname authoritytype correctauthoritytype termsource]
-        base.unshift(:to_review) if Tms::Names.cleanup_iteration
+        base.unshift(:to_review) if done
         base
       end
 
