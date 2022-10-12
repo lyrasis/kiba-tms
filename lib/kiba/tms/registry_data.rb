@@ -1030,6 +1030,19 @@ module Kiba
             desc: 'Names extracted from reference_master table',
             tags: %i[names reference_master]
           }
+          register :from_uncontrolled_name_tables, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromUncontrolledNameTables,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_from_uncontrolled_name_tables.csv'
+            ),
+            desc: 'Names from uncontrolled fields in tables, compiled, '\
+              'normalized, termsource changed to "Uncontrolled field '\
+              'value. Normalized value is in :constituentid field',
+            tags: %i[names],
+            lookup_on: :constituentid
+          }
           register :variants_from_duplicate_constituents, {
             creator: Kiba::Tms::Jobs::NameCompile::VariantsFromDuplicateConstituents,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_variants_from_duplicate_constituents.csv'),
