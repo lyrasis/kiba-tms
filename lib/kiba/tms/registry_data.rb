@@ -1032,42 +1032,6 @@ module Kiba
             desc: 'Names extracted from AssocParents (for constituents) table',
             tags: %i[names assoc_parents]
           }
-          register :from_loans, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromLoans,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loans.csv'),
-            desc: 'Names extracted from loans table',
-            tags: %i[names loans]
-          }
-          register :from_loc_approvers, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromLocApprovers,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_approvers.csv'),
-            desc: 'Names extracted from LocApprovers table',
-            tags: %i[names loc_approvers]
-          }
-          register :from_loc_handlers, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromLocHandlers,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_handlers.csv'),
-            desc: 'Names extracted from LocHandlers table',
-            tags: %i[names loc_handlers]
-          }
-          register :from_obj_accession, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromObjAccession,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),
-            desc: 'Names extracted from obj_accession table',
-            tags: %i[names obj_accession]
-          }
-          register :from_obj_incoming, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromObjIncoming,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_incoming.csv'),
-            desc: 'Names extracted from obj_incoming table',
-            tags: %i[names obj_incoming]
-          }
-          register :from_obj_locations, {
-            creator: Kiba::Tms::Jobs::NameCompile::FromObjLocations,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
-            desc: 'Names extracted from obj_locations table',
-            tags: %i[names obj_locations]
-          }
           register :from_reference_master, {
             creator: Kiba::Tms::Jobs::NameCompile::FromReferenceMaster,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_from_reference_master.csv'),
