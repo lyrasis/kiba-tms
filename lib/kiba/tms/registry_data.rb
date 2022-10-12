@@ -861,26 +861,6 @@ module Kiba
             tags: %i[names],
             lookup_on: :combined
           }
-          register :constituent_duplicates, {
-            creator: Kiba::Tms::Jobs::NameCompile::ConstituentDuplicates,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_constituent_duplicates.csv'),
-            desc: 'Only direct constituent names from initial compiled terms flagged as duplicates',
-            tags: %i[names],
-            lookup_on: :fingerprint
-          }
-          register :constituent_duplicate_report, {
-            creator: Kiba::Tms::Jobs::NameCompile::ConstituentDuplicateReport,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'constituent_duplicates.csv'),
-            desc: 'Client-facing report of direct constituent names from initial compiled terms flagged as duplicates',
-            tags: %i[names],
-            dest_special_opts: {
-              initial_headers:
-              %i[
-                 normalized name constituentid
-                 birth_foundation_date death_dissolution_date datenote
-                 salutation nametitle firstname middlename lastname suffix
-                ] }
-          }
 
           register :main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::MainDuplicates,

@@ -11,7 +11,8 @@ module Kiba
             <<~DESC
             Intermediate file for review and generating reports
 
-            - Initial compiled terms with duplicate terms flagged according to :deduplicate_categories config
+            - Initial compiled terms with duplicate terms flagged according to
+              :deduplicate_categories config
             - :sort field added (contype + norm + relation type
             DESC
           end
@@ -29,25 +30,22 @@ module Kiba
 
           def lookups
             base = %i[
-                      name_compile__constituent_duplicates
                       name_compile__main_duplicates
                      ]
-            base << :name_compile__variant_duplicates if Tms::NameCompile.deduplicate_categories.any?(:variant)
-            base << :name_compile__related_duplicates if Tms::NameCompile.deduplicate_categories.any?(:related)
-            base << :name_compile__note_duplicates if Tms::NameCompile.deduplicate_categories.any?(:note)
+            if Tms::NameCompile.deduplicate_categories.any?(:variant)
+              base << :name_compile__variant_duplicates
+            end
+            if Tms::NameCompile.deduplicate_categories.any?(:related)
+              base << :name_compile__related_duplicates
+            end
+            if Tms::NameCompile.deduplicate_categories.any?(:note)
+              base << :name_compile__note_duplicates
+            end
             base
           end
-          
+
           def xforms
             Kiba.job_segment do
-              transform Merge::MultiRowLookup,
-                lookup: name_compile__constituent_duplicates,
-                keycolumn: :fingerprint,
-                fieldmap: {
-                  constituent_duplicate_all: :duplicate_all,
-                  constituent_duplicate: :duplicate
-                }
-
               transform Merge::MultiRowLookup,
                 lookup: name_compile__main_duplicates,
                 keycolumn: :fingerprint,
