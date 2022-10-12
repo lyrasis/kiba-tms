@@ -5,7 +5,6 @@ module Kiba
     module Jobs
       module NameTypeCleanup
         module ForUncontrolledNameTable
-          extend Tms::Mixins::ForTable
           module_function
 
           def job(mod:)
