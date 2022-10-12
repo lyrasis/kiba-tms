@@ -856,12 +856,16 @@ module Kiba
           }
           register :from_con_to_deduplicate_against, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConToDeduplicateAgainst,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_con_to_deduplicate_against.csv'),
-            desc: 'Lookup of normalized conname + contype for deduplicating names from other sources',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_from_con_to_deduplicate_against.csv'
+            ),
+            desc: 'Lookup of normalized conname + contype for deduplicating '\
+              'names from other sources',
             tags: %i[names],
             lookup_on: :combined
           }
-
           register :main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::MainDuplicates,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_main_duplicates.csv'),

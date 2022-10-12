@@ -19,7 +19,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: '_main term'
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :relation_type,
+                value: '_main term'
               transform FilterRows::FieldMatchRegexp,
                 action: :keep,
                 field: :termsource,
