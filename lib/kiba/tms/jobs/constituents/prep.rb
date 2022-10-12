@@ -55,6 +55,8 @@ module Kiba
                 fields: %i[defaultdisplaybioid],
                 match: '-1'
 
+              transform Tms::Transforms::Constituents::PrefFromNonPref
+
               if Tms::ConTypes.used?
                 transform Merge::MultiRowLookup,
                   keycolumn: :constituenttypeid,

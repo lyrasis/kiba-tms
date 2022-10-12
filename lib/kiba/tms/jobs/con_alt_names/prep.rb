@@ -42,6 +42,8 @@ module Kiba
 
               transform Tms::Transforms::DeleteTmsFields
 
+              transform Tms::Transforms::Constituents::PrefFromNonPref
+
               # Removes rows where alt name value matches linked name in
               #   Constituents table
               transform Merge::MultiRowLookup,
