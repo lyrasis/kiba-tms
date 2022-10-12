@@ -15,6 +15,7 @@ module Kiba
                            name_compile__untyped_main_duplicates
                           ],
                 destination: :name_compile__main_duplicates
+
               },
               transformer: xforms
             )
@@ -22,6 +23,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Delete::Fields, fields: %i[fromcon combined]
             end
           end
         end
