@@ -20,9 +20,12 @@ module Kiba
                 correctauthoritytype: :correctauthoritytype
               }
             )
+            @dropper = OverlayDrop.new(
+              target: nametarget
+            )
             @typeoverlayer = OverlayType.new(
               target: typetarget
-              )
+            )
             @nameoverlayer = OverlayName.new(
               target: nametarget
             )
@@ -33,10 +36,12 @@ module Kiba
 
           def process(row)
             merger.process(row)
-            return if row[:correctauthoritytype] == 'd'
-
-            typeoverlayer.process(row)
-            nameoverlayer.process(row)
+            if row[:correctauthoritytype] == 'd'
+              dropper.process(row)
+            else
+              typeoverlayer.process(row)
+              nameoverlayer.process(row)
+            end
             deleter.process(row)
             row
           end
@@ -44,7 +49,7 @@ module Kiba
           private
 
           attr_reader :typetarget, :nametarget,
-            :merger, :typeoverlayer, :nameoverlayer, :deleter
+            :merger, :dropper, :typeoverlayer, :nameoverlayer, :deleter
         end
       end
     end
