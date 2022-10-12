@@ -30,7 +30,7 @@ module Kiba
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
-              transform Delete::FieldsExcept, fields: %i[combined]
+              transform Delete::FieldsExcept, fields: %i[combined norm]
               transform Deduplicate::Table, field: :combined
             end
           end
