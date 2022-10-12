@@ -387,6 +387,17 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('constituents') do
+          register :text_entries_merged, {
+            creator: Kiba::Tms::Jobs::Constituents::TextEntriesMerged,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working', 'constituents_text_entries_merged.csv'
+            ),
+            desc: 'Prepped constituents with text entries merged in. This '\
+              'cannot be handled in prep because prep of the TextEntries '\
+              'table requires looking up names in prep__constituents',
+            tags: %i[con textentries]
+          }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Constituents::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
@@ -396,44 +407,74 @@ module Kiba
           }
           register :clean_dates, {
             creator: Kiba::Tms::Jobs::Constituents::CleanDates,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_clean_dates.csv'),
-            desc: 'Just begin/end dates extracted from displaydate, and resulting :datenote values, for reconciliation with ConDates, if using, or otherwise merging back into Constituents',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_clean_dates.csv'
+            ),
+            desc: 'Just begin/end dates extracted from displaydate, and '\
+              'resulting :datenote values, for reconciliation with ConDates, '\
+              'if using, or otherwise merging back into Constituents',
             tags: %i[con],
             lookup_on: :constituentid
           }
           register :for_compile, {
             creator: Kiba::Tms::Jobs::Constituents::ForCompile,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_for_compile.csv'),
-            desc: 'Removes fields not needed for NameCompile; removes fields with no name data',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_for_compile.csv'
+            ),
+            desc: 'Removes fields not needed for NameCompile; removes fields '\
+              'with no name data',
             tags: %i[con],
             lookup_on: :combined
           }
           register :duplicates, {
             creator: Kiba::Tms::Jobs::Constituents::Duplicates,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_duplicates.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_duplicates.csv'
+            ),
             desc: 'Duplicate constituent data for creating variant name entries',
             tags: %i[con],
             lookup_on: :combined
           }
           register :persons, {
             creator: Kiba::Tms::Jobs::Constituents::Persons,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_persons.csv'),
-            desc: 'Orig (not cleaned up) constituent values mapped to :constituenttype or :derivedcontype = Person',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_persons.csv'
+            ),
+            desc: 'Orig (not cleaned up) constituent values mapped to '\
+              ':constituenttype or :derivedcontype = Person',
             tags: %i[con],
             lookup_on: :constituentid
           }
           register :orgs, {
             creator: Kiba::Tms::Jobs::Constituents::Orgs,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_orgs.csv'),
-            desc: 'Orig (not cleaned up) constituent values mapped to :constituenttype or :derivedcontype = Organization',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_orgs.csv'
+            ),
+            desc: 'Orig (not cleaned up) constituent values mapped to '\
+              ':constituenttype or :derivedcontype = Organization',
             tags: %i[con],
             lookup_on: :constituentid
           }
           register :alt_name_mismatch, {
             creator: Kiba::Tms::Jobs::Constituents::AltNameMismatch,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'constituents_alt_name_mismatch.csv'),
-            desc: 'Constituents where value looked up on defaultnameid (in con_alt_names table) does
-                   not match value of preferred name field in constituents table',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'constituents_alt_name_mismatch.csv'
+            ),
+            desc: 'Constituents where value looked up on defaultnameid (in '\
+              'con_alt_names table) does not match value of preferred name '\
+              'field in constituents table',
             tags: %i[con reports]
           }
           register :alt_names_merged, {

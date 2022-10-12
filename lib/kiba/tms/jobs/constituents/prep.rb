@@ -22,9 +22,6 @@ module Kiba
             base = []
             base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
-            if Tms::TextEntries.for?(config.table_name)
-              base << :text_entries_for__constituents
-            end
             if ntc_needed?
               base << :name_type_cleanup__for_constituents
             end
@@ -42,13 +39,13 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              prefname = Tms::Constituents.preferred_name_field
+              prefname = config.preferred_name_field
 
 
               transform Tms::Transforms::DeleteTmsFields
-              if Tms::Constituents.omitting_fields?
+              if config.omitting_fields?
                 transform Delete::Fields,
-                  fields: Tms::Constituents.omitted_fields
+                  fields: config.omitted_fields
               end
 
               transform Delete::FieldValueContainingString,
@@ -65,8 +62,8 @@ module Kiba
               end
               transform Delete::Fields, fields: :constituenttypeid
 
-              if Tms::Constituents.prep_transform_pre
-                transform Tms::Constituents.prep_transform_pre
+              if config.prep_transform_pre
+                transform config.prep_transform_pre
               end
 
               if bind.receiver.send(:ntc_needed?)
@@ -117,7 +114,7 @@ module Kiba
               # remove non-preferred form name value if it is the same as what
               #   is in preferred name field
               transform Delete::FieldValueIfEqualsOtherField,
-                delete: Tms::Constituents.var_name_field,
+                delete: config.var_name_field,
                 if_equal_to: prefname,
                 casesensitive: false
 
@@ -125,7 +122,7 @@ module Kiba
               #   form name value
               transform Delete::FieldValueIfEqualsOtherField,
                 delete: :institution,
-                if_equal_to: Tms::Constituents.var_name_field,
+                if_equal_to: config.var_name_field,
                 casesensitive: false
 
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
@@ -142,12 +139,12 @@ module Kiba
 
               # remove non-preferred form of name if not including flipped as
               #   variant
-              unless Tms::Constituents.include_flipped_as_variant
+              unless config.include_flipped_as_variant
                 transform Delete::Fields,
-                  fields: Tms::Constituents.var_name_field
+                  fields: config.var_name_field
               end
 
-              if Tms::Constituents.dates.merging
+              if config.dates.merging
                 transform Merge::MultiRowLookup,
                   lookup: con_dates__to_merge,
                   keycolumn: :constituentid,
@@ -164,9 +161,9 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
               end
 
-              if Kiba::Tms::Constituents.date_append.to_type == :duplicate
+              if Kiba::config.date_append.to_type == :duplicate
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                  source: Tms::Constituents.preferred_name_field,
+                  source: config.preferred_name_field,
                   target: :norm
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
@@ -178,12 +175,12 @@ module Kiba
                   in_field: :duplicate
               end
 
-              unless Kiba::Tms::Constituents.date_append.to_type == :none
+              unless Kiba::config.date_append.to_type == :none
                 transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
               end
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: Tms::Constituents.preferred_name_field,
+                source: config.preferred_name_field,
                 target: :norm
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
@@ -197,24 +194,18 @@ module Kiba
               transform Delete::Fields, fields: %i[contype_norm]
 
               boolfields = []
-              boolfields << :approved unless Tms::Constituents.map_approved
-              boolfields << :active unless Tms::Constituents.map_active
-              boolfields << :isstaff unless Tms::Constituents.map_isstaff
-              boolfields << :isprivate unless Tms::Constituents.map_isprivate
+              boolfields << :approved unless config.map_approved
+              boolfields << :active unless config.map_active
+              boolfields << :isstaff unless config.map_isstaff
+              boolfields << :isprivate unless config.map_isprivate
               unless boolfields.empty?
                 transform Delete::Fields, fields: boolfields
               end
 
-              if Tms::Constituents.map_isprivate
+              if config.map_isprivate
                 transform Rename::Field,
                   from: :isprivate,
                   to: :is_private_collector
-              end
-
-              temerger = Tms::TextEntries.for_constituents_merge
-              if Tms::TextEntries.for?(config.table_name) && temerger
-                transform temerger,
-                  lookup: text_entries_for__constituents
               end
             end
           end
