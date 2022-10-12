@@ -161,7 +161,7 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
               end
 
-              if Kiba::config.date_append.to_type == :duplicate
+              if config.date_append.to_type == :duplicate
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: config.preferred_name_field,
                   target: :norm
@@ -175,7 +175,7 @@ module Kiba
                   in_field: :duplicate
               end
 
-              unless Kiba::config.date_append.to_type == :none
+              unless config.date_append.to_type == :none
                 transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
               end
 
