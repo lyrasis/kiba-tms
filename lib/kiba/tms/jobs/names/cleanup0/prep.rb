@@ -32,7 +32,7 @@ module Kiba
                   delim: '|||',
                   prefix: 'fp'
 
-                transform FilterRows::FieldEqualTo, action: :reject, field: :migration_action, value: 'skip'
+#                transform FilterRows::FieldEqualTo, action: :reject, field: :migration_action, value: 'skip'
                 transform Cspace::NormalizeForID,
                   source: Tms::Constituents.preferred_name_field,
                   target: :norm

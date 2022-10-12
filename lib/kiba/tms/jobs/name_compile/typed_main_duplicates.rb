@@ -19,20 +19,39 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: '_main term'
-              transform FilterRows::FieldPopulated, action: :keep, field: :contype
+              transform FilterRows::FieldMatchRegexp,
+                action: :reject,
+                field: :termsource,
+                match: '^TMS Constituents\.(orgs|persons)$'
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :relation_type,
+                value: '_main term'
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :contype
               transform Tms::Transforms::Constituents::NormalizeContype
-              transform Delete::FieldsExcept, fields: %i[fingerprint contype_norm norm]
+              transform Delete::FieldsExcept,
+                fields: %i[fingerprint contype_norm norm]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
                 target: :combined,
                 sep: ' ',
                 delete_sources: false
-              transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate_all, explicit_no: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate_all
-              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate,
-                using: {}, explicit_no: false
-              transform Delete::FieldsExcept, fields: %i[fingerprint duplicate_all duplicate]
+              transform Deduplicate::FlagAll,
+                on_field: :combined,
+                in_field: :duplicate_all,
+                explicit_no: false
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :duplicate_all
+              transform Deduplicate::Flag,
+                on_field: :combined,
+                in_field: :duplicate,
+                using: {},
+                explicit_no: false
+              transform Delete::FieldsExcept,
+                fields: %i[fingerprint duplicate_all duplicate combined]
             end
           end
         end

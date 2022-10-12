@@ -20,20 +20,33 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :reject, field: :contype
-              transform FilterRows::FieldEqualTo, action: :keep, field: :relation_type, value: '_main term'
-              
+              transform FilterRows::FieldMatchRegexp,
+                action: :reject,
+                field: :termsource,
+                match: '^TMS Constituents\.(orgs|persons)$'
+              transform FilterRows::FieldPopulated,
+                action: :reject,
+                field: :contype
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :relation_type,
+                value: '_main term'
               transform Delete::FieldsExcept, fields: %i[fingerprint norm]
-              transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate_self,
-                using: {}, explicit_no: false
-              
+              transform Deduplicate::Flag,
+                on_field: :norm,
+                in_field: :duplicate_self,
+                using: {},
+                explicit_no: false
+
               transform Merge::MultiRowLookup,
                 lookup: name_compile__raw,
                 keycolumn: :norm,
                 fieldmap: {typed: :contype},
                 constantmap: {duplicate_typed: 'y'},
                 conditions: ->(this, those) do
-                  those.select{ |row| !row[:contype].blank? && row[:relation_type] == '_main term' }
+                  those.select do |row|
+                    !row[:contype].blank? && row[:relation_type] == '_main term'
+                  end
                 end
               transform Append::NilFields, fields: :duplicate_all
 
@@ -48,9 +61,13 @@ module Kiba
 
                 row
               end
-              
-              transform Delete::FieldsExcept, fields: %i[fingerprint duplicate_all duplicate]
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
+
+              transform Rename::Field, from: :norm, to: :combined
+              transform Delete::FieldsExcept,
+                fields: %i[fingerprint duplicate_all duplicate combined]
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :duplicate
             end
           end
         end
