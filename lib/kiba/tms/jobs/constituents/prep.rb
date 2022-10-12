@@ -67,23 +67,11 @@ module Kiba
               end
 
               if bind.receiver.send(:ntc_needed?)
-                transform Merge::MultiRowLookup,
+                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   lookup: name_type_cleanup__for_constituents,
                   keycolumn: :constituentid,
-                  fieldmap: {
-                    correctname: :correctname,
-                    correctauthoritytype: :correctauthoritytype
-                  }
-                transform FilterRows::FieldEqualTo,
-                  action: :reject,
-                  field: :correctauthoritytype,
-                  value: 'd'
-                transform Tms::Transforms::NameTypeCleanup::OverlayType,
-                  target: :constituenttype
-                transform Tms::Transforms::NameTypeCleanup::OverlayName,
-                  target: prefname
-                transform Delete::Fields,
-                  fields: %i[correctname correctauthoritytype]
+                  typetarget: :constituenttype,
+                  nametarget: prefname
               end
 
               transform Tms::Transforms::Constituents::DeriveType
@@ -94,15 +82,6 @@ module Kiba
                 delete_sources: false
               transform Copy::Field, from: :contype, to: :contype_norm
               transform Tms::Transforms::Constituents::NormalizeContype
-
-              # # not used by anything?
-              # transform CombineValues::FromFieldsWithDelimiter,
-              #   sources: [:contype_norm, prefname],
-              #   target: :combined,
-              #   sep: ' ',
-              #   delete_sources: false
-              # transform Deduplicate::FlagAll, on_field: :combined, in_field: :duplicate, explicit_no: false
-              # transform Delete::Fields, fields: :combined
 
               # remove institution value if it is the same as what is in
               #   preferred name field
