@@ -12,6 +12,10 @@ module Kiba
           true
         end
 
+        def ntc_done?
+          Tms::NameTypeCleanup.done
+        end
+
         def ntc_targets
           Tms::NameTypeCleanup.targets
         end
