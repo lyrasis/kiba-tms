@@ -27,11 +27,11 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::NameTypeCleanup::ExtractIdSegment,
-                target: :origname,
+                target: :name,
                 segment: :name
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: :origname,
-                target: :norm
+                source: :name,
+                target: :constituentid
             end
           end
         end

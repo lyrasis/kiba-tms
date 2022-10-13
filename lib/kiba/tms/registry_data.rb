@@ -1113,8 +1113,7 @@ module Kiba
               'name_type_cleanup_for_uncontrolled_tables.csv'
             ),
             tags: %i[names cleanup],
-            lookup_on: :norm
-          }
+            lookup_on: :constituentid          }
         end
 
         Kiba::Tms.registry.namespace('names') do
