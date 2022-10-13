@@ -23,8 +23,8 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              # add column with value if orig authoritytype was derived or
-              #   questionable
+              # Add :authtypetent column with value if orig authoritytype was
+              #   derived or questionable
               transform do |row|
                 row[:authtypetent] = nil
 
@@ -41,8 +41,8 @@ module Kiba
                 action: :keep,
                 fields: %i[correctname correctauthoritytype authtypetent]
 
-              # populate blank correctauthoritytype with code for derived
-              #   or questionable authoritytype value
+              # Populate blank :correctauthoritytype with code for derived
+              #   or questionable authoritytype value if :authtypetent
               transform do |row|
                 cat = row[:correctauthoritytype]
                 next row unless cat.blank?
