@@ -116,13 +116,6 @@ module Kiba
                 sep: '',
                 delete_sources: false
 
-              # remove non-preferred form of name if not including flipped as
-              #   variant
-              unless config.include_flipped_as_variant
-                transform Delete::Fields,
-                  fields: config.var_name_field
-              end
-
               if config.dates.merging
                 transform Merge::MultiRowLookup,
                   lookup: con_dates__to_merge,
