@@ -401,7 +401,19 @@ module Kiba
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Constituents::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
-            desc: 'Orig (not cleaned up) constituent table lookup by norm',
+            desc: 'Prepped constituent table lookup by norm prefname',
+            tags: %i[con],
+            lookup_on: :norm
+          }
+          register :by_nonpref_norm, {
+            creator: Kiba::Tms::Jobs::Constituents::ByNonprefNorm,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_by_nonpref_norm.csv'
+            ),
+            desc: 'Prepped constituent table lookup by norm form of '\
+              'nonpreferred name field',
             tags: %i[con],
             lookup_on: :norm
           }
