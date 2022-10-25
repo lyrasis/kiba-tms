@@ -25,21 +25,26 @@ module Kiba
               :name_compile__unique
             end
           end
-          
+
           def xforms
             Kiba.job_segment do
               unless Tms::Names.cleanup_iteration
                 pref = Tms::Constituents.preferred_name_field
-                
+
                 transform FilterRows::WithLambda,
                   action: :keep,
                   lambda: ->(row) do
                     ctype = row[:contype]
                     rtype = row[:relation_type]
-                    ctype && rtype && ctype.start_with?('Organization') && rtype == '_main term'
+                    ctype &&
+                      rtype &&
+                      ctype.start_with?('Organization') &&
+                      rtype == '_main term'
                   end
                 transform Delete::FieldsExcept, fields: pref
-                transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: pref, target: :norm
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: pref,
+                  target: :norm
               end
             end
           end
@@ -48,4 +53,3 @@ module Kiba
     end
   end
 end
-
