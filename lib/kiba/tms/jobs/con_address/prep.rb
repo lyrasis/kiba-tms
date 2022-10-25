@@ -12,7 +12,7 @@ module Kiba
               files: {
                 source: :tms__con_address,
                 destination: :prep__con_address,
-                lookup: :nameclean__by_constituentid
+                lookup: :names__by_constituentid
               },
               transformer: xforms
             )
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Merge::MultiRowLookup,
-                lookup: nameclean__by_constituentid,
+                lookup: names__by_constituentid,
                 keycolumn: :constituentid,
                 fieldmap: { matches_constituent: :constituentid }
               transform Tms::Transforms::ConAddress::AddRetentionFlag

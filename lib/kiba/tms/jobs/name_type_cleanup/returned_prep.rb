@@ -63,8 +63,11 @@ module Kiba
                 row
               end
               transform Delete::FieldsExcept,
-                fields: %i[correctname correctauthoritytype termsource
-                           constituentid]
+                fields: %i[correctname authoritytype correctauthoritytype
+                           constituentid origname termsource]
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: :origname,
+                target: :orignorm
             end
           end
         end

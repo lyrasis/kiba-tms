@@ -322,15 +322,23 @@ module Kiba
           }
           register :for_persons, {
             creator: Kiba::Tms::Jobs::ConPhones::ForPersons,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_phones_for_persons.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'con_phones_for_persons.csv'
+            ),
             tags: %i[con conphones],
-            lookup_on: :person
+            lookup_on: :constituentid
           }
           register :for_orgs, {
             creator: Kiba::Tms::Jobs::ConPhones::ForOrgs,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_phones_for_orgs.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'con_phones_for_orgs.csv'
+            ),
             tags: %i[con conphones],
-            lookup_on: :org
+            lookup_on: :constituentid
           }
         end
 
@@ -398,10 +406,42 @@ module Kiba
               'table requires looking up names in prep__constituents',
             tags: %i[con textentries]
           }
-          register :by_norm, {
+          register :prep_clean, {
+            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_prepped_clean.csv'
+            ),
+            desc: 'Prepped constituents with name type cleanup merged in',
+            tags: %i[con]
+          }
+          register :by_norm_orig, {
             creator: Kiba::Tms::Jobs::Constituents::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
-            desc: 'Prepped constituent table lookup by norm prefname',
+            desc: 'Uncleaned con data lookup by norm prefname',
+            tags: %i[con],
+            lookup_on: :norm
+          }
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_prepped_clean.csv'
+            ),
+            desc: 'Cleaned con data lookup by norm prefname',
+            tags: %i[con],
+            lookup_on: :norm
+          }
+          register :clean_by_norm_orig, {
+            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_prepped_clean.csv'
+            ),
+            desc: 'Cleaned con data lookup by origninal/uncleaned norm prefname',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -533,16 +573,52 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('linked_lot_acq') do
+          register :obj_rows, {
+            creator: Kiba::Tms::Jobs::LinkedLotAcq::ObjRows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_lot_acq__obj_rows.csv'
+            ),
+            desc: 'All ObjAccession rows to be treated as :linkedlot',
+            tags: %i[acquisitions]
+          }
+          register :rows, {
+            creator: Kiba::Tms::Jobs::LinkedLotAcq::Rows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_lot_acq_rows.csv'
+            ),
+            desc: ':obj_rows, deduplicated on regsetid',
+            tags: %i[acquisitions]
+          }
+          # register :prep, {
+          #   creator: Kiba::Tms::Jobs::LinkedLotAcq::Prep,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'linked_lot_acq.csv'),
+          #   tags: %i[acquisitions]
+          # }
+        end
+
         Kiba::Tms.registry.namespace('linked_set_acq') do
           register :obj_rows, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::ObjRows,
-            path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq__obj_rows.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_set_acq__obj_rows.csv'
+            ),
             desc: 'All ObjAccession rows to be treated as :linkedset',
             tags: %i[acquisitions]
           }
           register :rows, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::Rows,
-            path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq_rows.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_set_acq_rows.csv'
+            ),
             desc: ':obj_rows, deduplicated on regsetid',
             tags: %i[acquisitions]
           }
@@ -729,11 +805,37 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('lot_num_acqs') do
-          register :prep, {
-            creator: Kiba::Tms::Jobs::LotNumAcqs::Prep,
-            path: File.join(Kiba::Tms.datadir, 'working', 'lot_num_acqs.csv'),
+        Kiba::Tms.registry.namespace('lot_num_acq') do
+          register :obj_rows, {
+            creator: Kiba::Tms::Jobs::LotNumAcq::ObjRows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'lot_num_acq_obj_rows.csv'
+            ),
             desc: 'ObjAccession rows to be processed with :lotnumber approach',
+            tags: %i[acquisitions]
+          }
+          register :rows, {
+            creator: Kiba::Tms::Jobs::LotNumAcq::Rows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'lot_num_acq_rows.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :lotnumber approach '\
+              'deduplicated on :acquisitionlot value',
+            tags: %i[acquisitions]
+          }
+          register :prep, {
+            creator: Kiba::Tms::Jobs::LotNumAcq::Prep,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'lot_num_acq_prepped.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :lotnumber '\
+              'approach, prepped',
             tags: %i[acquisitions]
           }
         end
@@ -1072,13 +1174,74 @@ module Kiba
           }
           register :worksheet, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::Worksheet,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'name_type_cleanup_worksheet.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'to_client',
+              'name_type_cleanup_worksheet.csv'
+            ),
             tags: %i[names cleanup],
             dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
+          register :worksheet_prev_version, {
+            path: File.join(
+              Kiba::Tms.datadir,
+              'to_client',
+              'name_type_cleanup_worksheet_prev.csv'
+            ),
+            supplied: true,
+            lookup_on: :constituentid
+          }
+          register :worksheet_completed, {
+            path: File.join(
+              Tms.datadir,
+              'supplied',
+              'nametype_cleanup_worksheet_complete.csv'
+            ),
+            desc: 'Completed nametype cleanup worksheet',
+            tags: %i[names cleanup],
+            supplied: true,
+            lookup_on: :constituentid
+          }
+          register :corrected_orgs, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedOrgs,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'name_type_cleanup_corrected_orgs.csv'
+            ),
+            tags: %i[names cleanup],
+            desc: 'For merge into source data tables',
+            lookup_on: :orignorm
+          }
+          register :corrected_persons, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedPersons,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'name_type_cleanup_corrected_persons.csv'
+            ),
+            tags: %i[names cleanup],
+            desc: 'For merge into source data tables',
+            lookup_on: :orignorm
+          }
           register :returned_prep, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedPrep,
-            path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_returned_prep.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'name_type_cleanup_returned_prep.csv'
+            ),
+            tags: %i[names cleanup],
+            desc: 'Prepares supplied cleanup spreadsheet for use in '\
+              'overlaying cleaned up data and generating phase 2 name '\
+              'cleanup worksheet'
+          }
+          ntc_supp_path = Tms.registry
+            .resolve(:name_type_cleanup__worksheet_completed)[:path]
+            .to_s
+          register :convert_returned_to_uncontrolled, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
+            path: ntc_supp_path.sub('.csv', '_converted.csv'),
             tags: %i[names cleanup]
           }
           register :for_con_alt_names, {
@@ -1140,6 +1303,27 @@ module Kiba
             desc: Proc.new{ Kiba::Tms::Jobs::Names::MapByNorm.desc },
             tags: %i[names],
             lookup_on: :orig_norm
+          }
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Names::ByConstituentid,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_by_constituentid.csv'
+            ),
+            desc: Proc.new{ Kiba::Tms::Jobs::Names::ByConstituentid.desc },
+            tags: %i[names],
+            lookup_on: :constituentid
+          }
+          register :orgs, {
+            creator: Kiba::Tms::Jobs::Names::Orgs,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_orgs.csv'
+            ),
+            tags: %i[names],
+            lookup_on: :constituentid
           }
           register :flagged_duplicates, {
             creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,

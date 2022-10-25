@@ -20,6 +20,13 @@ module Kiba
         Tms::ObjAccession.processing_approaches.any?(:linkedset)
       end
 
+      def select_xform
+        Kiba.job_segment do
+          transform FilterRows::AllFieldsPopulated,
+            action: :keep,
+            fields: %i[registrationsetid acquisitionlotid]
+        end
+      end
     end
   end
 end

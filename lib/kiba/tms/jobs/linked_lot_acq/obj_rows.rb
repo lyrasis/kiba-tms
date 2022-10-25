@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjAccession
-        module LotNumber
+      module LinkedLotAcq
+        module ObjRows
           module_function
 
           def job
@@ -12,10 +12,10 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_accession,
-                destination: :obj_accession__lot_number
+                source: :prep__obj_accession,
+                destination: :linked_lot_acq__obj_rows
               },
-              transformer: Tms::LotNumAcq.select_xform
+              transformer: Tms::LinkedLotAcq.select_xform
             )
           end
         end

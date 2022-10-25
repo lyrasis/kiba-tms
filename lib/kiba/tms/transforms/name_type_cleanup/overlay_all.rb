@@ -35,8 +35,6 @@ module Kiba
           end
 
           def process(row)
-            row[:origname] = row[nametarget]
-
             merger.process(row)
             if row[:correctauthoritytype] == 'd'
               dropper.process(row)

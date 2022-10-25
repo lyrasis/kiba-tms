@@ -15,16 +15,8 @@ module Kiba
                 source: :prep__obj_accession,
                 destination: :linked_set_acq__obj_rows
               },
-              transformer: xforms
+              transformer: Tms::LinkedSetAcq.select_xform
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform FilterRows::AllFieldsPopulated,
-                action: :keep,
-                fields: %i[acquisitionlotid registrationsetid]
-            end
           end
         end
       end

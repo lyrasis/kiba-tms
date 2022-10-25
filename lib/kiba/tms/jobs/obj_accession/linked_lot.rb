@@ -15,19 +15,8 @@ module Kiba
                 source: :tms__obj_accession,
                 destination: :obj_accession__linked_lot
               },
-              transformer: xforms
+              transformer: Tms::LinkedLotAcq.select_xform
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform FilterRows::FieldPopulated,
-                action: :reject,
-                field: :registrationsetid
-              transform FilterRows::FieldPopulated,
-                action: :keep,
-                field: :acquisitionlotid
-            end
           end
         end
       end

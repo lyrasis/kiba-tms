@@ -20,6 +20,8 @@ module Kiba
           end
 
           def ntc_needed?
+            return false unless ntc_done?
+
             ntc_targets.any?('Constituents.person_with_institution') &&
               treatment == :contact_person
           end

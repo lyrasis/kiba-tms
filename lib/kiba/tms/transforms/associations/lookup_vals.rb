@@ -15,7 +15,7 @@ module Kiba
             @con_lookup = con_lookup
             @obj_lookup = obj_lookup
             @tablefield = tablefield
-            @prefname = Tms::Constituents.preferred_name_field
+            @prefname = :prefname
             setup_single_warning
           end
 

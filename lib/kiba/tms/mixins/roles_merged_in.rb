@@ -95,10 +95,15 @@ module Kiba
         private_class_method :set_checkable
 
         def self.set_treatment_mappings(mod)
-          return if mod.respond_to?(:con_role_treatment_mappings)
+          unless mod.respond_to?(:con_role_treatment_mappings)
           mod.module_eval(
             "setting :con_role_treatment_mappings, default: {}, reader: true"
           )
+          end
+
+          if mod.send(:con_role_treatment_mappings).empty?
+            warn("Need to set up :con_role_treatment_mappings for #{mod}")
+          end
         end
         private_class_method :set_treatment_mappings
 

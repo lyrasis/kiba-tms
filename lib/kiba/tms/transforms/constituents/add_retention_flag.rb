@@ -6,8 +6,8 @@ module Kiba
       module Constituents
         # for use on tables to merge with constituents on constituentid
         class AddRetentionFlag
-          def initialize
-            @matches_field = :matches_constituent
+          def initialize(field: :matches_constituent)
+            @matches_field = field
             @target = :keeping
           end
 
@@ -19,7 +19,7 @@ module Kiba
             row[target] = result
             row
           end
-          
+
           private
 
           attr_reader :matches_field, :target

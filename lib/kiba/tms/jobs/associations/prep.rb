@@ -24,7 +24,7 @@ module Kiba
             base = []
             base << :prep__relationships if Tms::Relationships.used?
             if config.target_tables.any?('Constituents')
-              base << :nameclean__by_constituentid
+              base << :names__by_constituentid
             end
             if config.target_tables.any?('Objects')
               base << :objects__number_lookup
@@ -58,7 +58,7 @@ module Kiba
               conlkup = ->(config){
                 return nil unless config.target_tables.any?('Constituents')
 
-                nameclean__by_constituentid
+                names__by_constituentid
               }
               objlkup = ->(config){
                 return nil unless config.target_tables.any?('Objects')

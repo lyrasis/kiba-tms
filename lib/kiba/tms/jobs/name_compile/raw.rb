@@ -23,12 +23,6 @@ module Kiba
             unless Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Cconstituents')
               base.delete(:name_compile__from_assoc_parents_for_con)
             end
-            base.delete(:name_compile__from_loans) unless Tms::Loans.used?
-            base.delete(:name_compile__from_loc_approvers) unless Tms::LocApprovers.used?
-            base.delete(:name_compile__from_loc_handlers) unless Tms::LocHandlers.used?
-            base.delete(:name_compile__from_obj_accession) unless Tms::ObjAccession.used?
-            base.delete(:name_compile__from_obj_incoming) unless Tms::ObjIncoming.used?
-            base.delete(:name_compile__from_obj_locations) unless Tms::ObjLocations.used?
             base
           end
 

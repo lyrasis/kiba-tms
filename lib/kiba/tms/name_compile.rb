@@ -51,10 +51,11 @@ module Kiba
                    ],
         reader: true,
         constructor: proc{ |value|
-          ( value +
-            uncontrolled_name_source_tables.keys
-            .map{ |k| Tms.const_get(k).name_compile_dest_job_key }
-          ).flatten
+          if uncontrolled_name_source_tables.empty?
+            value
+          else
+            value + [:name_compile__from_uncontrolled_name_tables]
+          end
         }
 
       # potential sources not included by default:

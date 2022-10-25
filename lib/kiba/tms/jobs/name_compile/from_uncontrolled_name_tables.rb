@@ -60,12 +60,16 @@ module Kiba
               prefname = Tms::Constituents.preferred_name_field
 
               transform Tms::Transforms::NameTypeCleanup::ExtractIdSegment,
-                target: :origname,
+                target: :orignameval,
                 segment: :name
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: :origname,
+                source: :orignameval,
                 target: :constituentid
+              transform Delete::Fields, fields: :orignameval
               transform Deduplicate::Table, field: :constituentid
+              transform Merge::ConstantValue,
+                target: :termsource,
+                value: 'Uncontrolled'
 
               [constituents__by_nonpref_norm,
                constituents__by_norm].each do |lkup|
@@ -92,10 +96,10 @@ module Kiba
 
 
 
-              if cleanable
-                # transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                #   lookup: name_type_cleanup__for_uncontrolled_name_tables
-              end
+              # if cleanable
+              #   transform Tms::Transforms::NameTypeCleanup::OverlayAll,
+              #     lookup: name_type_cleanup__for_uncontrolled_name_tables
+              # end
             end
           end
         end

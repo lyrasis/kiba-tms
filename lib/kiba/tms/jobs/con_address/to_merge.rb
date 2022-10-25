@@ -29,7 +29,7 @@ module Kiba
               files: {
                 source: :prep__con_address,
                 destination: :con_address__to_merge,
-                lookup: %i[prep__countries nameclean__by_constituentid]
+                lookup: %i[prep__countries names__by_constituentid]
               },
               transformer: xforms
             )
@@ -44,7 +44,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: Tms::Constituents.address_fields,
                 find: '^n\/a$', replace: ''
-              
+
               # SECTION remove rows with no address info
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: Tms::Constituents.address_fields,
@@ -61,7 +61,7 @@ module Kiba
                 fieldmap: {addresscountry: :country}
               transform Delete::Fields, fields: :countryid
               transform Cspace::AddressCountry
-              
+
               if Tms::Constituents.address_active
                 transform Replace::FieldValueWithStaticMapping, source: :active, target: :addressstatus,
                   mapping: ACTIVE
@@ -127,23 +127,11 @@ module Kiba
                 row
               end
 
-              # merge in alphasort and displayname for constituents to prepare for clearing redundant address
-              #   lines
-              transform Merge::MultiRowLookup,
-                lookup: nameclean__by_constituentid,
-                keycolumn: :constituentid,
-                fieldmap: {
-                  alphasort: :alphasort,
-                  displayname: :displayname,
-                  person: :person,
-                  org: :org
-                }
-              transform Tms::Transforms::ConAddress::RemoveRedundantAddressLines
-              transform Delete::Fields, fields: %i[alphasort displayname]
+              transform Tms::Transforms::ConAddress::RemoveRedundantAddressLines,
+                lookup: names__by_constituentid
 
-              
               transform Tms::Transforms::ConAddress::ReshapeAddressData
-              
+
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[remarks address_dates addressstatus shipping billing mailing],
                 target: :address_notes,

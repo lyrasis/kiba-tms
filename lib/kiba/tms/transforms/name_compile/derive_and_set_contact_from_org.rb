@@ -25,11 +25,13 @@ module Kiba
 
           # @private
           def process(row)
+            return nil if row[namefield] == 'DROPPED FROM MIGRATION'
+
             row[:personname] = personbuilder.call(row)
             build_rows(row).each{ |row| yield row }
             nil
           end
-          
+
           private
 
           attr_reader :mode, :namefield, :personbuilder, :contactadder
@@ -38,7 +40,7 @@ module Kiba
             (fields - row.keys).each{ |field| row[field] = nil }
             row
           end
-          
+
           def build_rows(row)
             initial = [
               derive_main_person(row.dup, :personname, mode),

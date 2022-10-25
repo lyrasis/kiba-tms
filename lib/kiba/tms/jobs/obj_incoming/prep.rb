@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_incoming,
@@ -21,18 +21,18 @@ module Kiba
           end
 
           def lookups
-            base = [:prep__constituents]
+            base = [:constituents__prep_clean]
             base << :prep__shipping_methods if Tms::ShippingMethods.used?
             base << :prep__obj_inc_purposes if Tms::ObjIncPurposes.used?
             base
           end
-          
+
           def xforms
             bind = binding
-            
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              
+
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::TmsTableNames
               unless Tms::ObjIncoming.delete_fields.empty?
@@ -42,7 +42,7 @@ module Kiba
               %i[approver handler].each do |field|
                 transform Tms::Transforms::DeleteNoValueTypes, field: field
               end
-              
+
               transform Merge::MultiRowLookup,
                 lookup: prep__obj_inc_purposes,
                 keycolumn: :inpurposeid,

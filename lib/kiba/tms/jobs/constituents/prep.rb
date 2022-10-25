@@ -22,17 +22,8 @@ module Kiba
             base = []
             base << :prep__con_types if Tms::ConTypes.used?
             base << :con_dates__to_merge if Tms::Constituents.dates.merging
-            if ntc_needed?
-              base << :name_type_cleanup__for_constituents
-            end
-
             base
           end
-
-          def ntc_needed?
-            ntc_targets.any?('Constituents')
-          end
-          extend Tms::Mixins::NameTypeCleanupable
 
           def xforms
             bind = binding
@@ -64,14 +55,6 @@ module Kiba
 
               if config.prep_transform_pre
                 transform config.prep_transform_pre
-              end
-
-              if bind.receiver.send(:ntc_needed?)
-                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  lookup: name_type_cleanup__for_constituents,
-                  keycolumn: :constituentid,
-                  typetarget: :constituenttype,
-                  nametarget: prefname
               end
 
               transform Tms::Transforms::Constituents::DeriveType

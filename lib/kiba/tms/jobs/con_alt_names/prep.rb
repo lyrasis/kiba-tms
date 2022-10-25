@@ -30,7 +30,7 @@ module Kiba
           end
 
           def ntc_needed?
-            ntc_targets.any?('ConAltNames')
+            ntc_done? && ntc_targets.any?('ConAltNames')
           end
           extend Tms::Mixins::NameTypeCleanupable
 
@@ -132,6 +132,7 @@ module Kiba
                   lookup: name_type_cleanup__for_con_alt_names,
                   keycolumn: :altnameid,
                   typetarget: :altauthtype
+
               end
 
               # add :typematch column

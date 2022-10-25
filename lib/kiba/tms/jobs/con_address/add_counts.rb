@@ -6,11 +6,11 @@ module Kiba
       module ConAddress
         module AddCounts
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :nameclean__by_constituentid,
+                source: :names__by_constituentid,
                 destination: :con_address__add_counts,
                 lookup: :con_address__to_merge
               },

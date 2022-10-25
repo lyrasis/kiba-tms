@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module LotNumAcqs
-        module Prep
+      module LinkedLotAcq
+        module Rows
           module_function
 
           def job
@@ -12,22 +12,16 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: config.source_job_key,
-                destination: :lot_num_acqs__prep
+                source: :linked_lot_acq__obj_rows,
+                destination: :linked_lot_acq__rows
               },
               transformer: xforms
             )
           end
 
           def xforms
-            bind = binding
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
-              if config.omitting_fields?
-                transform Delete::Fields, fields: config.omitted_fields
-              end
-
+              transform Deduplicate::Table, field: :acquisitionlotid
             end
           end
         end

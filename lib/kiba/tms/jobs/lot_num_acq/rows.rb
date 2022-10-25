@@ -3,15 +3,17 @@
 module Kiba
   module Tms
     module Jobs
-      module NameTypeCleanup
-        module ForUncontrolledNameTables
+      module LotNumAcq
+        module Rows
           module_function
 
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_type_cleanup__returned_prep,
-                destination: :name_type_cleanup__for_uncontrolled_name_tables
+                source: :lot_num_acq__obj_rows,
+                destination: :lot_num_acq__rows
               },
               transformer: xforms
             )
@@ -19,10 +21,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo,
-                action: :keep,
-                field: :termsource,
-                value: 'Uncontrolled'
+              transform Deduplicate::Table,
+                field: :acquisitionlot
             end
           end
         end

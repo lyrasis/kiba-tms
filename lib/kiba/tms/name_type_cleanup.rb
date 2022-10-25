@@ -36,7 +36,10 @@ module Kiba
         reader: true
 
       def initial_headers
-        base = %i[name correctname authoritytype correctauthoritytype termsource]
+        base = %i[
+                  name correctname authoritytype correctauthoritytype termsource
+                  constituentid
+                 ]
         base.unshift(:to_review) if done
         base
       end

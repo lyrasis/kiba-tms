@@ -5,12 +5,13 @@ module Kiba
     module Transforms
       module Constituents
         class PrefixMergeTableDescription
-          include Kiba::Extend::Transforms::Helpers
-
           def initialize(fields:)
             @fields = fields
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: fields
+            )
           end
-          
+
           # @private
           def process(row)
             desc = row[:description]
@@ -24,12 +25,13 @@ module Kiba
             row[:description] = "#{label}#{desc}"
             row
           end
-          
+
           private
-          attr_reader :fields
-          
+
+          attr_reader :fields, :getter
+
           def row_type(row)
-            vals = field_values(row: row, fields: %i[email web])
+            vals = getter.call(row)
             return vals.keys.first
           end
         end

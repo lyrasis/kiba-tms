@@ -4,11 +4,11 @@ require 'dry-configurable'
 
 module Kiba
   module Tms
-    module LotNumAcqs
+    module LotNumAcq
       extend Dry::Configurable
       module_function
 
-      setting :source_job_key, default: :obj_accession__lot_number, reader: true
+      setting :source_job_key, default: :lot_num_acq__rows, reader: true
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid],
         reader: true,
@@ -21,6 +21,16 @@ module Kiba
         default: %i[objectid],
         reader: true
       extend Tms::Mixins::Tableable
+
+      def select_xform
+        Kiba.job_segment do
+          transform FilterRows::AnyFieldsPopulated,
+            action: :reject,
+            fields: %i[acquisitionlotid registrationsetid]
+          transform FilterRows::FieldPopulated, action: :keep,
+            field: :acquisitionlot
+        end
+      end
     end
   end
 end

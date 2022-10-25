@@ -32,7 +32,7 @@ module Kiba
             elsif Tms::Names.cleanup_iteration && !Tms::Names.cleanup_workflow == :old
               warn("#{self.name}: Need to implement new workflow when cleanup iteration")
             else
-              :prep__constituents
+              :constituents__prep_clean
             end
           end
 
@@ -46,7 +46,7 @@ module Kiba
               end
             end
           end
-          
+
           def old_cleanup_xforms
             Kiba.job_segment do
               prefname = Tms::Constituents.preferred_name_field
