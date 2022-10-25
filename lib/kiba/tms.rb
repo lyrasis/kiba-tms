@@ -219,5 +219,14 @@ module Kiba
     def needconfig
       configs.reject{ |c| c.respond_to?(:used?) }
     end
+
+    def job_output?(jobkey)
+      reg = Tms.registry.resolve(jobkey)
+      return false unless reg
+      return true if File.exist?(reg.path)
+
+      res = Kiba::Extend::Command::Run.job(jobkey)
+      res.outrows == 0 ? false : true
+    end
   end
 end
