@@ -8,17 +8,23 @@ module Kiba
           module_function
 
           def job
+            return if sources.empty?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: %i[
-                           name_compile__typed_main_duplicates
-                           name_compile__untyped_main_duplicates
-                          ],
+                source: sources,
                 destination: :name_compile__main_duplicates
 
               },
               transformer: xforms
             )
+          end
+
+          def sources
+            %i[name_compile__untyped_main_duplicates
+               name_compile__typed_main_duplicates].select do |src|
+                Tms.job_output?(src)
+              end
           end
 
           def xforms
