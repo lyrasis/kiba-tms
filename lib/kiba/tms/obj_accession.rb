@@ -20,11 +20,12 @@ module Kiba
       setting :accessionvalue_type,
         default: 'Original Value',
         reader: true
-
       setting :dog_dates_treatment,
         default: :acquisitionnote,
         reader: true
-
+      setting :initiator_treatment,
+        default: :acquisitionreason,
+        reader: true
       setting :percentowned_treatment,
         default: :acquisitionprovisos,
         reader: true
@@ -92,6 +93,14 @@ module Kiba
         end
         if percentowned_treatment == :acquisitionnote
           base << :currpercentownership
+        end
+        base.flatten
+      end
+
+      def reason_sources
+        base = %i[acqjustification]
+        if initiator_treatment == :acquisitionreason
+          base << %i[initiation_note]
         end
         base.flatten
       end
