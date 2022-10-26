@@ -18,7 +18,7 @@ module Kiba
           end
 
           def sources
-            base = Tms::NameCompile.sources - Tms::NameCompile.empty_sources
+            base = Tms::NameCompile.sources
             base.reject{ |src| src.to_s['__from_can'] unless Tms::ConAltNames.used? }
             unless Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Cconstituents')
               base.delete(:name_compile__from_assoc_parents_for_con)

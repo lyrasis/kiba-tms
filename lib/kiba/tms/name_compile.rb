@@ -52,16 +52,16 @@ module Kiba
         reader: true,
         constructor: proc{ |value|
           if uncontrolled_name_source_tables.empty?
-            value
+            result = value
           else
-            value + [:name_compile__from_uncontrolled_name_tables]
+            result = value + [:name_compile__from_uncontrolled_name_tables]
           end
+          result.select{ |job| Tms.job_output?(job) }
         }
 
       # potential sources not included by default:
       #   name_compile__from_reference_master
 
-      setting :empty_sources, default: %i[], reader: true
       setting :source_treatment,
         default: {
           name_compile__from_con_org_with_inst: :variant,
