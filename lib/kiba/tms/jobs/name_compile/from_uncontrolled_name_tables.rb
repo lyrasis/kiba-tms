@@ -94,6 +94,9 @@ module Kiba
                   row
                 end
                 transform Delete::Fields, fields: %i[concontype conprefname]
+                transform Copy::Field,
+                  from: :constituentid,
+                  to: :prefnormorig
               end
 
 
