@@ -35,7 +35,10 @@ module Kiba
           end
 
           def empty_tables
-            File.read(Tms.empty_table_list_path)
+            path = Tms.empty_table_list_path
+            return [] unless File.exist?(path)
+
+            File.read(path)
               .split("\n")
           end
         end
