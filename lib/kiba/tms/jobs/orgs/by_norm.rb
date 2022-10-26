@@ -29,8 +29,6 @@ module Kiba
           def xforms
             Kiba.job_segment do
               unless Tms::Names.cleanup_iteration
-                pref = Tms::Constituents.preferred_name_field
-
                 transform FilterRows::WithLambda,
                   action: :keep,
                   lambda: ->(row) do
@@ -41,9 +39,9 @@ module Kiba
                       ctype.start_with?('Organization') &&
                       rtype == '_main term'
                   end
-                transform Delete::FieldsExcept, fields: pref
+                transform Delete::FieldsExcept, fields: :name
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                  source: pref,
+                  source: :name,
                   target: :norm
               end
             end
