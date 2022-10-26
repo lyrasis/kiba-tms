@@ -11,6 +11,7 @@ end
 require_relative '../lib/kiba/tms'
 require 'dry/configurable/test_interface'
 
+Tms.base_config
 Tms.loader
 
 module Tms
