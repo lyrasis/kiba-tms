@@ -14,14 +14,14 @@ module Kiba
 
           # @private
           def process(row)
-            row[target] = nil
+            row[target] = nil unless source == target
             type = row[source]
             return row if type.blank?
-            
+
             row[target] = normalizer.call(type)
             row
           end
-          
+
           private
 
           attr_reader :source, :target, :normalizer
