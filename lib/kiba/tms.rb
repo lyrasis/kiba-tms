@@ -226,6 +226,8 @@ module Kiba
       return true if File.exist?(reg.path)
 
       res = Kiba::Extend::Command::Run.job(jobkey)
+      return false unless res
+
       res.outrows == 0 ? false : true
     end
   end
