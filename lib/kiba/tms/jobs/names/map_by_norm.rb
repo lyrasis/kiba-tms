@@ -28,21 +28,24 @@ module Kiba
                 keycolumn: :norm,
                 fieldmap: {person: :name},
                 conditions: ->(_r, rows) do
-                  rows.select{ |row| row[:contype] == 'Person' }
+                  res = rows.select{ |row| row[:contype] == 'Person' }
+                  res.empty? ? res :  [res.first]
                 end
               transform Merge::MultiRowLookup,
                 lookup: names__prep_map_by_norm,
                 keycolumn: :norm,
                 fieldmap: {organization: :name},
                 conditions: ->(_r, rows) do
-                  rows.select{ |row| row[:contype] == 'Organization' }
+                  res = rows.select{ |row| row[:contype] == 'Organization' }
+                  res.empty? ? res :  [res.first]
                 end
               transform Merge::MultiRowLookup,
                 lookup: names__prep_map_by_norm,
                 keycolumn: :norm,
                 fieldmap: {note: :name},
                 conditions: ->(_r, rows) do
-                  rows.select{ |row| row[:contype] == 'Note' }
+                  res = rows.select{ |row| row[:contype] == 'Note' }
+                  res.empty? ? res :  [res.first]
                 end
             end
           end
