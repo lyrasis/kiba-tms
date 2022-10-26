@@ -1297,12 +1297,28 @@ module Kiba
                  approved active isstaff is_private_collector code
                 ] }
           }
+          register :prep_map_by_norm, {
+            creator: Kiba::Tms::Jobs::Names::PrepMapByNorm,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'allnames_prep_map_by_norm.csv'
+            ),
+            desc: 'Simplifies :name_compile__unique to only normalized '\
+              ':contype, :name, and :norm values, where :norm is the '\
+              'normalized ORIG value of the name',
+            tags: %i[names],
+            lookup_on: :norm
+          }
           register :map_by_norm, {
             creator: Kiba::Tms::Jobs::Names::MapByNorm,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_map_by_norm.csv'),
-            desc: Proc.new{ Kiba::Tms::Jobs::Names::MapByNorm.desc },
+            path: File.join(Kiba::Tms.datadir, 'working', 'allnames_map_by_norm.csv'),
+            desc: 'With lookup on normalized version of original name value (i.e. '\
+              'from any table, not controlled by constituentid), gives '\
+              '`:person` and `:organization` column from which to merge '\
+              'authorized form of name',
             tags: %i[names],
-            lookup_on: :orig_norm
+            lookup_on: :norm
           }
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Names::ByConstituentid,
