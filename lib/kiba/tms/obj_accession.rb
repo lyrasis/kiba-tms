@@ -20,8 +20,17 @@ module Kiba
       setting :accessionvalue_type,
         default: 'Original Value',
         reader: true
-      setting :approval_date_2_treatment,
+      setting :approval_date_treatment,
         default: :acquisitionnote,
+        reader: true
+      setting :approval_date_note_format,
+        default: :combined,
+        reader: true
+      setting :approval_date_combined_prefix,
+        default: 'Approval date(s): ',
+        reader: true
+      setting :approval_date_1_prefix,
+        default: 'Initial approval date: ',
         reader: true
       setting :approval_date_2_prefix,
         default: 'Subsequent approval date: ',
@@ -99,8 +108,14 @@ module Kiba
       def proviso_sources
         base = %i[acquisitionterms]
         field = :acquisitionprovisos
-        if approval_date_2_treatment == field
-          base << :approvalisodate2
+        if approval_date_treatment == field
+          case approval_date_note_format
+          when :combined
+            base << :approvaldate_note
+          when :separate
+            base << :approvalisodate1 if fields.any?(:approvalisodate1)
+            base << :approvalisodate2 if fields.any?(:approvalisodate2)
+          end
         end
         if authorizer_note_treatment == field
           base << :authorizer_note
@@ -123,8 +138,14 @@ module Kiba
       def note_sources
         base = %i[source remarks]
         field = :acquisitionnote
-        if approval_date_2_treatment == field
-          base << :approvalisodate2
+        if approval_date_treatment == field
+          case approval_date_note_format
+          when :combined
+            base << :approvaldate_note
+          when :separate
+            base << :approvalisodate1 if fields.any?(:approvalisodate1)
+            base << :approvalisodate2 if fields.any?(:approvalisodate2)
+          end
         end
         if authorizer_note_treatment == field
           base << :authorizer_note

@@ -95,21 +95,23 @@ One CS Valuation Control (VC) procedure is created to reflect the recorded value
 .Related options
 * `:accessionvalue_type` - :valuetype to enter in VC procedures derived from this data. Default: "Original Value"
 
-=== :approval_date_2_treatment
-Applies to :approvalisodate2 field in ObjAccession table.
+=== :approval_date_treatment
+Applies to `:approvalisodate1` and `:approvalisodate2` fields in ObjAccession table.
 
-`:approvalisodate1` field is mapped to CS `:acquisitionauthorizerdate` field, but that is a single-valued field.
+The TMS `:authdate` field is mapped to CS `:acquisitionauthorizerdate` field, but that is a single-valued field.
 
-The option specifies what to do with this data.
+The option specifies what to do with approval date data.
 
 Default option:: `:acquisitionnote` -- map into this note field
 
 * `:acquisitionprovisos`-- map into this note field
-* `:prefer`-- map to `:acquisitionauthorizerdate` field. Drops any `:approvalisodate1` value.
 * `:drop` - do not migrate this information
 
 .Related options:
-* `:approval_date_2_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Subsequent approval date: "
+* `:approval_date_note_format` -- if treatment involves mapping the value(s) to a note, should it be one combined note or two separate note values. Default: `:combined`. Alternate value(s): `:separate`
+* `:approval_date_combined_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:combined`, this is the string prepended to the value to clarify the meaning of the value. Default: "Approval date(s): "
+* `:approval_date_1_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate1`. Default: "Initial approval date: "
+* `:approval_date_2_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate2`. Default: "Subsequent approval date: "
 
 Other options may be developed on client request, if feasible.
 
