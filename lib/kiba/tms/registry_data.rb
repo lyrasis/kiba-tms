@@ -660,7 +660,18 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::Prep,
             path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq.csv'),
-            tags: %i[acquisitions]
+            tags: %i[acquisitions],
+            lookup_on: :registrationsetid
+          }
+          register :object_statuses, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::ObjectStatuses,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_set_acq_object_statuses.csv'
+            ),
+            tags: %i[acquisitions],
+            lookup_on: :objectid
           }
         end
 

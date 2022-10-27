@@ -42,6 +42,9 @@ module Kiba
             if Tms::ObjComponents.merging_text_entries?
               base << :obj_components__with_object_numbers
             end
+            if Tms::LinkedSetAcq.used?
+              base << :linked_set_acq__object_statuses
+            end
             base
           end
 
@@ -135,16 +138,38 @@ module Kiba
                   value: config.department_coll_prefix
               end
 
+              statusfields = []
               if Tms::ObjectStatuses.used?
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectstatusid,
                   lookup: prep__object_statuses,
                   fieldmap: {
-                    objectstatus: :objectstatus
+                    main_objectstatus: :objectstatus
                   },
                   delim: Tms.delim
+                statusfields << :main_objectstatus
               end
               transform Delete::Fields, fields: :objectstatusid
+              if Tms::LinkedSetAcq.used?
+                transform Merge::MultiRowLookup,
+                  lookup: linked_set_acq__object_statuses,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    linkedset_objectstatus: :objectstatus
+                  },
+                  delim: Tms.delim
+                statusfields << :linkedset_objectstatus
+              end
+              unless statusfields.empty?
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: statusfields,
+                target: :objectstatus,
+                sep: Tms.delim,
+                delete_sources: true
+              transform Deduplicate::FieldValues,
+                fields: :objectstatus,
+                sep: Tms.delim
+              end
 
               if Tms::ObjTitles.used?
                 transform Merge::MultiRowLookup,
