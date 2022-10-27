@@ -52,11 +52,10 @@ module Kiba
         reader: true,
         constructor: proc{ |value|
           if uncontrolled_name_source_tables.empty?
-            result = value
+            value
           else
-            result = value + [:name_compile__from_uncontrolled_name_tables]
+            value + [:name_compile__from_uncontrolled_name_tables]
           end
-          result.select{ |job| Tms.job_output?(job) }
         }
 
       # potential sources not included by default:

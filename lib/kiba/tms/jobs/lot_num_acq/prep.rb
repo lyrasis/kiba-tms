@@ -28,6 +28,9 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
+              transform Rename::Fields, fieldmap: {
+                acquisitionlot: :acquisitionreferencenumber
+              }
             end
           end
         end

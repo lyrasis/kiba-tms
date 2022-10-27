@@ -38,7 +38,7 @@ We can run checks to identify any ObjAccession rows associated with AccessionLot
 
 The three treatment categories are treated as follows in the migration:
 
-=== `:linkedlot`
+=== `:linkedset`
 
 One CS Acquisition procedure created per Registration Set. All objects in ObjAccession table related to a given Registration Set are related to the Acquisition procedure.
 
@@ -46,7 +46,12 @@ If there is one Registration Set associated with an Accession Lot, the resulting
 
 If there are multiple Registration Sets per Accession Lot, the resulting Acquisition procedure's reference number begins with the :lotnumber value from the AccessionLot table. Some additional value must be added to ensure reference number uniqueness. If present, the AccessionLot.lotpattern field value will be used as a pattern to derive this. Otherwise a sequential digit segment may be added.
 
+=== `:linkedlot`
+NOTE: It is unknown if this ever occurs. I have not seen it in actual client data. This case would be that objects in ObjAccession are linked to an AccessionLot table record, but no entries in RegistrationSets table are linked to the objects
+
 === `:acquisitionlot`
+
+NOTE: TMS allows population of the `acquisitionlot` field in the ObjAccession table _without_ linking that object to an entry in the AccessionLot table. This is the situation covered by this treatment.
 
 One CS Acquisition procedure created per unique Acquisition Lot number value in ObjAccession table. All objects in ObjAccession table with the given :lotnumber value are related to the Acquisition procedure.
 
@@ -90,20 +95,99 @@ One CS Valuation Control (VC) procedure is created to reflect the recorded value
 .Related options
 * `:accessionvalue_type` - :valuetype to enter in VC procedures derived from this data. Default: "Original Value"
 
+=== :approval_date_2_treatment
+Applies to :approvalisodate2 field in ObjAccession table.
+
+`:approvalisodate1` field is mapped to CS `:acquisitionauthorizerdate` field, but that is a single-valued field.
+
+The option specifies what to do with this data.
+
+Default option:: `:acquisitionnote` -- map into this note field
+
+* `:acquisitionprovisos`-- map into this note field
+* `:prefer`-- map to `:acquisitionauthorizerdate` field. Drops any `:approvalisodate1` value.
+* `:drop` - do not migrate this information
+
+.Related options:
+* `:approval_date_2_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Subsequent approval date: "
+
+Other options may be developed on client request, if feasible.
+
+=== :authorizer_org_treatment
+Applies to :authorizer field in ObjAccession table **if name in field has been categorized by client as an Organization name**
+
+`:authorizer` field is mapped to CS `:acquisitionauthorizer` field if it is a Person name, but Organization names cannot be used in this field.
+
+The option specifies what to do with this data.
+
+Default option:: `:acquisitionnote` -- map into this note field
+
+.Alternate options:
+* `:acquisitionprovisos`-- map into this note field
+* `:acquisitionreason` -- map into this note field
+* `:drop` - do not migrate this information
+
+.Related options:
+* `:authorizer_org_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorized by (organization name): "
+
+Other options may be developed on client request, if feasible.
+
+=== :authorizer_note_treatment
+Applies to :authorizer field in ObjAccession table **if name in field has been categorized by client as treated as a note**
+
+The option specifies what to do with this data.
+
+Default option:: `:acquisitionnote` -- map into this note field
+
+.Alternate options:
+* `:acquisitionprovisos`-- map into this note field
+* `:acquisitionreason` -- map into this note field
+* `:drop` - do not migrate this information
+
+.Related options:
+* `:authorizer_note_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorizer note: "
+
+Other options may be developed on client request, if feasible.
+
 === :dog_dates_treatment
 Applies to :deedofgiftsentiso and :deedofgiftreceivediso fields in ObjAccession and RegistrationSets tables.
 
 CS does not have structured data fields to record this info. The option specifies which note field this data should be mapped into.
 
-"Deed of gift sent: " will be prepended to any :deedofgiftsentiso field values. "Deed of gift received: " will be prepended to any :deedofgiftreceivediso field values.
+"Deed of gift sent: " will be prepended to any :deedofgiftsentiso field values.
+
+"Deed of gift received: " will be prepended to any :deedofgiftreceivediso field values.
 
 Default option:: `:acquisitionnote`
-
-Other options to be developed on client request.
 
 .Alternate options:
 * `:acquisitionprovisos`
 * `:drop` - do not migrate this information
+
+Other options may be developed on client request, if feasible.
+
+=== :initiation_treatment
+Applies to the :initiator and :initdate fields in the ObjAccession table.
+
+CS does not have structured data fields to record this info. The option specifies which note field this data should be mapped into.
+
+https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/obj_accession/initiation_note.rb[`Tms::ObjAccession::InitiationNote` ] generates a string with the following pattern:
+
+`{initiation_prefix} {initiator}, {initdate}`
+
+That string is mapped into the field indicated by this option:
+
+Default option:: `:acquisitionreason`
+
+.Alternate options:
+* `:acquisitionnote`
+* `:acquisitionprovisos`
+* `:drop` - do not migrate this information
+
+.Related options
+* `:initiation_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Initiated: "
+
+Other options may be developed on client request, if feasible.
 
 === :percentowned_treatment
 
@@ -119,3 +203,5 @@ Default option:: `:acquisitionprovisos`
 
 .Related options
 * `:percentowned_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Percent owned: "
+
+Other options may be developed on client request, if feasible.

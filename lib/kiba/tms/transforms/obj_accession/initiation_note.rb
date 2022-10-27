@@ -11,6 +11,7 @@ module Kiba
               fields: fields
             )
             @target = :initiation_note
+            @prefix = Tms::ObjAccession.initiation_prefix
           end
 
           def process(row)
@@ -18,7 +19,7 @@ module Kiba
 
             vals = getter.call(row).values
             unless vals.empty?
-              row[target] = "Initiated: #{vals.join(', ')}"
+              row[target] = "#{prefix}#{vals.join(', ')}"
             end
 
             fields.each{ |f| row.delete(f) if row.key?(f) }
@@ -27,7 +28,7 @@ module Kiba
 
           private
 
-          attr_reader :fields, :getter, :target
+          attr_reader :fields, :getter, :target, :prefix
         end
       end
     end

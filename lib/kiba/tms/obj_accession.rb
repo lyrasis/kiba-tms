@@ -20,11 +20,32 @@ module Kiba
       setting :accessionvalue_type,
         default: 'Original Value',
         reader: true
+      setting :approval_date_2_treatment,
+        default: :acquisitionnote,
+        reader: true
+      setting :approval_date_2_prefix,
+        default: 'Subsequent approval date: ',
+        reader: true
+      setting :authorizer_org_treatment,
+        default: :acquisitionnote,
+        reader: true
+      setting :authorizer_org_prefix,
+        default: 'Authorized by (organization name): ',
+        reader: true
+      setting :authorizer_note_treatment,
+        default: :acquisitionnote,
+        reader: true
+      setting :authorizer_note_prefix,
+        default: 'Authorizer note: ',
+        reader: true
       setting :dog_dates_treatment,
         default: :acquisitionnote,
         reader: true
-      setting :initiator_treatment,
+      setting :initiation_treatment,
         default: :acquisitionreason,
+        reader: true
+      setting :initiation_prefix,
+        default: 'Initiated: ',
         reader: true
       setting :percentowned_treatment,
         default: :acquisitionprovisos,
@@ -77,10 +98,23 @@ module Kiba
 
       def proviso_sources
         base = %i[acquisitionterms]
-        if dog_dates_treatment == :acquisitionprovisos
+        field = :acquisitionprovisos
+        if approval_date_2_treatment == field
+          base << :approvalisodate2
+        end
+        if authorizer_note_treatment == field
+          base << :authorizer_note
+        end
+        if authorizer_org_treatment == field
+          base << :authorizer_org
+        end
+        if dog_dates_treatment == field
           base << %i[deedofgiftsentiso deedofgiftreceivediso]
         end
-        if percentowned_treatment == :acquisitionprovisos
+        if initiation_treatment == field
+          base << %i[initiation_note]
+        end
+        if percentowned_treatment == field
           base << :currpercentownership
         end
         base.flatten
@@ -88,8 +122,21 @@ module Kiba
 
       def note_sources
         base = %i[source remarks]
-        if dog_dates_treatment == :acquisitionnote
+        field = :acquisitionnote
+        if approval_date_2_treatment == field
+          base << :approvalisodate2
+        end
+        if authorizer_note_treatment == field
+          base << :authorizer_note
+        end
+        if authorizer_org_treatment == field
+          base << :authorizer_org
+        end
+        if dog_dates_treatment == field
           base << %i[deedofgiftsentiso deedofgiftreceivediso]
+        end
+        if initiation_treatment == field
+          base << %i[initiation_note]
         end
         if percentowned_treatment == :acquisitionnote
           base << :currpercentownership
@@ -99,7 +146,14 @@ module Kiba
 
       def reason_sources
         base = %i[acqjustification]
-        if initiator_treatment == :acquisitionreason
+        field = :acquisitionreason
+        if authorizer_note_treatment == field
+          base << :authorizer_note
+        end
+        if authorizer_org_treatment == field
+          base << :authorizer_org
+        end
+        if initiation_treatment == field
           base << %i[initiation_note]
         end
         base.flatten

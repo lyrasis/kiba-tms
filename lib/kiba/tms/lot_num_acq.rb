@@ -10,7 +10,8 @@ module Kiba
 
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
       setting :delete_fields,
-        default: %i[acquisitionlotid registrationsetid],
+        default: %i[acquisitionlotid registrationsetid
+                    objectid objectnumber],
         reader: true,
         constructor: proc{ |value|
           value << Tms::ObjAccession.delete_fields
@@ -18,7 +19,7 @@ module Kiba
           value.flatten
         }
       setting :non_content_fields,
-        default: %i[objectid],
+        default: %i[acquisitionlot],
         reader: true
       extend Tms::Mixins::Tableable
 

@@ -21,7 +21,10 @@ module Kiba
           end
 
           def lookups
-            base = %i[tms__objects]
+            base = %i[
+                      tms__objects
+                      names__map_by_norm
+                     ]
             if Tms::AccessionMethods.used? &&
                 config.fields.any?(Tms::AccessionMethods.id_field)
               base << :prep__accession_methods
@@ -85,6 +88,86 @@ module Kiba
                   into: config,
                   keycolumn: :objectid
               end
+
+              if config.fields.any?(:authorizer)
+                transform Tms::Transforms::MergeUncontrolledName,
+                  field: :authorizer,
+                  lookup: names__map_by_norm
+              end
+
+              case config.authorizer_org_treatment
+              when :drop
+                transform Delete::Fields,
+                  fields: :authorizer_org
+              else
+                transform Prepend::ToFieldValue,
+                  field: :authorizer_org,
+                  value: config.authorizer_org_prefix
+              end
+
+              case config.authorizer_note_treatment
+              when :drop
+                transform Delete::Fields,
+                  fields: :authorizer_note
+              else
+                transform Prepend::ToFieldValue,
+                  field: :authorizer_note,
+                  value: config.authorizer_note_prefix
+              end
+
+              if config.fields.any?(:approvalisodate2)
+                case config.approval_date_2_treatment
+                when :drop
+                  transform Delete::Fields,
+                    fields: :approvalisodate2
+                when :prefer
+                  transform do |row|
+                    d2 = row[:approvalisodate2]
+                    next row if d2.blank?
+
+                    row[:approvalisodate1] = d2
+                    row
+                  end
+                else
+                  transform Prepend::ToFieldValue,
+                    field: :approvalisodate2,
+                    value: config.approval_date_2_prefix
+                end
+              end
+
+              if config.initiation_treatment == :drop
+                transform Delete::Fields,
+                  fields: %i[initiator initdate]
+              else
+                transform Tms::Transforms::ObjAccession::InitiationNote
+              end
+
+              unless config.proviso_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.proviso_sources,
+                  target: :acquisitionprovisos,
+                  sep: "\n",
+                  delete_sources: true
+              end
+              unless config.note_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.note_sources,
+                  target: :acquisitionnote,
+                  sep: "\n",
+                  delete_sources: true
+              end
+              unless config.reason_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.reason_sources,
+                  target: :acquisitionreason,
+                  sep: "\n",
+                  delete_sources: true
+              end
+
+              transform Rename::Fields, fieldmap: {
+                approvalisodate1: :acquisitionauthorizerdate,
+                authorizer_person: :acquisitionauthorizer
+              }
             end
           end
         end

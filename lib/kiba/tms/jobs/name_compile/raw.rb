@@ -20,10 +20,10 @@ module Kiba
           def sources
             base = Tms::NameCompile.sources
             base.reject{ |src| src.to_s['__from_can'] unless Tms::ConAltNames.used? }
-            unless Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Cconstituents')
+            unless Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Constituents')
               base.delete(:name_compile__from_assoc_parents_for_con)
             end
-            base
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
