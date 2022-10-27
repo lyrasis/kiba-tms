@@ -29,24 +29,28 @@ ObjAccession rows with no links to AccessionLot/RegistrationSets tables or value
 
 [CAUTION]
 ====
-It is assumed that, if a `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included inthose sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
+It is assumed that, if a `:linkedset`, `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included in those sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
 
-This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary that can be extracted from a TMS database dump.
+This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary.
 
 We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and not well-supported by the CS data model.
 ====
 
-The four treatment categories are treated as follows in the migration:
+The treatment categories are treated as follows in the migration:
+
 
 === `:linkedset`
 
 One CS Acquisition procedure created per Registration Set. All objects in ObjAccession table related to a given Registration Set are related to the Acquisition procedure.
 
-If there is one Registration Set associated with an Accession Lot, the resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
+This treatment has two sub-treatment categories:
 
-If there are multiple Registration Sets per Accession Lot, the resulting Acquisition procedure's reference number begins with the :lotnumber value from the AccessionLot table. Some additional value must be added to ensure reference number uniqueness. If present, the AccessionLot.lotpattern field value will be used as a pattern to derive this. Otherwise a sequential digit segment may be added.
+`:singleset`:: If there is one Registration Set associated with an Accession Lot, the resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
+
+`:multiset`:: If there are multiple Registration Sets per Accession Lot, the resulting Acquisition procedure's reference number begins with the :lotnumber value from the AccessionLot table. Some additional value must be added to ensure reference number uniqueness. If present, the AccessionLot.lotpattern field value will be used as a pattern to derive this. Otherwise a sequential digit segment may be added.
 
 === `:linkedlot`
+
 NOTE: It is unknown if this ever occurs. I have not seen it in actual client data. This case would be that objects in ObjAccession are linked to an AccessionLot table record, but no entries in RegistrationSets table are linked to the objects
 
 === `:acquisitionlot`
@@ -57,7 +61,36 @@ One CS Acquisition procedure created per unique Acquisition Lot number value in 
 
 The resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
 
+NOTE: Any `acquisitionnumber` values in rows with this treatment are collected, deduplicated, and written to a note field in the acquisition procedure, where they will be indexed for keyword search or an advanced search on that note field.
+
+=== `:acqnumber`
+
+This treatment applies to rows where `registrationsetid`, `accessionlotid`, and `acquisitionlot` fields are empty and the `acquisitiontnumber` field is populated.
+
+We have worked with client data where the same `acquisitionnumber` has been applied to many rows in the ObjAccession table, but different information has been entered for each object. A simplified example is shown below:
+
+....
+| acquisitionnumber | objectnumber | acquisitionsource | acquisitionmethod |
+|               123 |        123.1 | Someone           | gift              |
+|               123 |        123.2 | Someone else      | purchase          |
+|               123 |        123.3 | Someone           | gift              |
+|               123 |        123.4 | Someone else      | purchase          |
+....
+
+Therefore, this treatment does the following:
+
+* Groups/clumps the records for each `acquisitionnumber` on unique data in all non-id fields in the record
+* Creates one Acquisition procedure per group. Adds an incrementing numeral value to the `acquisitionnumber` value to create unique `acquisitionreferencenumber` values in CS.
+
+With the above data, we would get two Acquisitions procedures, numbered 123.1 and 123.2.
+
+Objects 123.1 and 123.3 would be related to Acquisition 123.1.
+
+Objects 123.2 and 123.4 would be related to Acquisition 123.2.
+
 === `:onetoone`
+
+This treatment applies to rows where `registrationsetid`, `accessionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
 
 One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure.
 
@@ -68,6 +101,8 @@ The resulting Acquisition procedure's reference number is the related object's o
 As you can see from the table below, there are only two TMS ObjAccessions date fields that have a clear one-to-one mapping to the CS acquisition procedure.
 
 How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping-options,mapping options>> described below.
+
+NOTE: Some "No longer in use" TMS fields are included because we so sometimes find client data in these fields.
 
 [cols="1,2,1,2", options="header"]
 |===
@@ -80,6 +115,16 @@ How to handle the other date values, if they appear in a client's data, is contr
 |Date of Accessioning (ISO date format)
 |accessiondate
 |The date on which an object formally enters the collection and is recorded in the accessions register.
+
+|accessionminutes1
+|No longer in use.  Replaced by ApprovalISODate1
+|
+|
+
+|accessionminutes2
+|No longer in use.  Replaced by ApprovalISODate2
+|
+|
 
 |
 |
@@ -100,6 +145,16 @@ How to handle the other date values, if they appear in a client's data, is contr
 |Date that an acquisition was authorized
 |acquisitionauthorizerdate
 |The date of which the Acquisition authorizer gives final approval for an acquisition to proceed.
+
+|deedofgiftreceivediso
+|Date Deed of Gift was received
+|
+|
+
+|deedofgiftsentiso
+|Date Deed of Gift was sent
+|
+|
 
 |initdate
 |Date that an acquisition was first initiated
