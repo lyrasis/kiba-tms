@@ -115,6 +115,8 @@ module Kiba
                   value: config.authorizer_note_prefix
               end
 
+              transform Tms::Transforms::ObjAccession::AuthDateSetter
+
               if config.fields.any?{ |f| f.to_s.start_with?('approvaliso') }
                 case config.approval_date_treatment
                 when :drop
@@ -171,8 +173,9 @@ module Kiba
               end
 
               transform Rename::Fields, fieldmap: {
-                authdate: :acquisitionauthorizerdate,
-                authorizer_person: :acquisitionauthorizer
+                authorizer_person: :acquisitionauthorizer,
+                accessionisodate: :accessiondategroup,
+                accessionmethod: :acquisitionmethod
               }
             end
           end

@@ -35,6 +35,9 @@ module Kiba
       setting :approval_date_2_prefix,
         default: 'Subsequent approval date: ',
         reader: true
+      setting :auth_date_source_pref,
+        default: %i[authdate approvalisodate1 approvalisodate2],
+        reader: true
       setting :authorizer_org_treatment,
         default: :acquisitionnote,
         reader: true
