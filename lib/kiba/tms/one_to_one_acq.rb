@@ -30,7 +30,7 @@ module Kiba
             fields: %i[acquisitionlotid registrationsetid acquisitionlot
                        acquisitionnumber]
           transform FilterRows::FieldPopulated, action: :keep,
-            field: :objectnumber
+            field: :objectid
         end
       end
     end
