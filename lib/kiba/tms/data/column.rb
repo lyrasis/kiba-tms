@@ -16,7 +16,7 @@ module Kiba
         def initialize(mod:, field:, table_getter: Tms::Data::CsvEnum)
           @mod = set_mod(mod)
           @field = field.to_sym
-          @table_getter = table_getter.call(mod: mod)
+          @table_getter = table_getter.call(mod: @mod)
           @status = Success() unless instance_variable_defined?(:@status)
         end
 
