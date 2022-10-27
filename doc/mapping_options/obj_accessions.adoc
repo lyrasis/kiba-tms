@@ -53,7 +53,7 @@ This treatment has two sub-treatment categories:
 
 NOTE: It is unknown if this ever occurs. I have not seen it in actual client data. This case would be that objects in ObjAccession are linked to an AccessionLot table record, but no entries in RegistrationSets table are linked to the objects
 
-=== `:acquisitionlot`
+=== `:lotnumber`
 
 NOTE: TMS allows population of the `acquisitionlot` field in the ObjAccession table _without_ linking that object to an entry in the AccessionLot table. This is the situation covered by this treatment.
 
@@ -65,7 +65,7 @@ NOTE: Any `acquisitionnumber` values in rows with this treatment are collected, 
 
 === `:acqnumber`
 
-This treatment applies to rows where `registrationsetid`, `accessionlotid`, and `acquisitionlot` fields are empty and the `acquisitiontnumber` field is populated.
+This treatment applies to rows where `registrationsetid`, `acquisitionlotid`, and `acquisitionlot` fields are empty and the `acquisitionnumber` field is populated.
 
 We have worked with client data where the same `acquisitionnumber` has been applied to many rows in the ObjAccession table, but different information has been entered for each object. A simplified example is shown below:
 
@@ -90,7 +90,7 @@ Objects 123.2 and 123.4 would be related to Acquisition 123.2.
 
 === `:onetoone`
 
-This treatment applies to rows where `registrationsetid`, `accessionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
+This treatment applies to rows where `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
 
 One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure.
 
