@@ -67,7 +67,7 @@ The resulting Acquisition procedure's reference number is the related object's o
 
 As you can see from the table below, there are only two TMS ObjAccessions date fields that have a clear one-to-one mapping to the CS acquisition procedure.
 
-How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping options>> described below.
+How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping-options,mapping options>> described below.
 
 [cols="1,2,1,2", options="header"]
 |===
