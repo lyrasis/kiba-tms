@@ -115,23 +115,29 @@ module Kiba
                   value: config.authorizer_note_prefix
               end
 
-              if config.fields.any?(:approvalisodate2)
-                case config.approval_date_2_treatment
+              if config.fields.any?{ |f| f.to_s.start_with?('approvaliso') }
+                case config.approval_date_treatment
                 when :drop
                   transform Delete::Fields,
-                    fields: :approvalisodate2
-                when :prefer
-                  transform do |row|
-                    d2 = row[:approvalisodate2]
-                    next row if d2.blank?
-
-                    row[:approvalisodate1] = d2
-                    row
-                  end
+                    fields: %i[approvalisodate1 approvalisodate2]
                 else
-                  transform Prepend::ToFieldValue,
-                    field: :approvalisodate2,
-                    value: config.approval_date_2_prefix
+                  if config.approval_date_note_format == :combined
+                    transform CombineValues::FromFieldsWithDelimiter,
+                      sources: %i[approvalisodate1 approvalisodate2],
+                      target: :approvaldate_note,
+                      sep: ", ",
+                      delete_sources: true
+                    transform Prepend::ToFieldValue,
+                      field: :approvaldate_note,
+                      value: config.approval_date_combined_prefix
+                  else
+                    transform Prepend::ToFieldValue,
+                      field: :approvalisodate1,
+                      value: config.approval_date_1_prefix
+                    transform Prepend::ToFieldValue,
+                      field: :approvalisodate2,
+                      value: config.approval_date_2_prefix
+                  end
                 end
               end
 
@@ -165,7 +171,7 @@ module Kiba
               end
 
               transform Rename::Fields, fieldmap: {
-                approvalisodate1: :acquisitionauthorizerdate,
+                authdate: :acquisitionauthorizerdate,
                 authorizer_person: :acquisitionauthorizer
               }
             end
