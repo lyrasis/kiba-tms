@@ -95,6 +95,52 @@ One CS Valuation Control (VC) procedure is created to reflect the recorded value
 .Related options
 * `:accessionvalue_type` - :valuetype to enter in VC procedures derived from this data. Default: "Original Value"
 
+=== :acquisitionsource vs. :owner mappings
+
+[IMPORTANT]
+.CS definitions of "owner" and "acquisitionsource" fields
+====
+The following are taken from the Acquisition:Common schema https://collectionspace.atlassian.net/wiki/spaces/COL/pages/506953729/Configuration+and+Data+Maps+-+Cataloging+Procedures+and+Vocabularies[available on the CS wiki].
+
+owner:: Details of a People, Person or Organisation who owned an object before title was transferred to the organization
+acquisitionsource:: The People, Person, or Organization from whom an object was obtained, if different from the owner. The Acquisition source may be an agent or other intermediary between the acquiring organization and the Owner. For archaeological archives, use Acquisition source to record the excavating body responsible for preparing and depositing the archive with the organization.
+
+We use these definitions to guide our initial/suggested mappings when developing custom migrations, but clients are not required to follow these. We can customize the role mappings into these fields to make them work for the client.
+====
+
+TMS Constituent names are merged into other TMS tables via the `ConRefs` and `ConRefDetails` tables, which indicate the following for each name to be merged in:
+
+* constituent ID
+* target table
+* target record id (in target table)
+* role id (looks up role values like "Donor" or "Vendor")
+* role type id (looks up role type values like "Object Related" or "Acquisition Related")
+
+The https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/role_types.rb[migration application's RoleTypes configuration] maps all TMS role types to the TMS tables into which Constituent names should be merged. These mappings can be overridden per client on request, but by default names tagged with "Acquisiton Related" role type will be merged into TMS ObjAccessions table, which then gets transformed/mapped into CS Acquisition procedures.
+
+Each client will have used different role values on their Acquisition Related constituent references, so a per-client configuration mapping each role value to the appropriate CS field is set up.
+
+.Example per-client constituent role treatment mapping for ObjAccession
+[source,ruby]
+----
+  Kiba::Tms::ObjAccession.config.con_role_treatment_mappings = {
+    :owner => ["Associated Source", "Attributed Source", "Donor", "Lender",
+               "Source"],
+    :acquisitionsource => ["Vendor"]
+  }
+----
+
+We do an initial mapping based on the definitions in the info box above, but these can be changed on client request.
+
+[NOTE]
+====
+Due to differences in data model granularity between TMS (more granular in this case) and CS, the role values for names mapped to `:owner` and `:acquisitionsource` are, by default, lost in migration.
+
+If you view the Acquisition procedure form in your CS instance, you will see there is no structured place to put this information.
+
+If it is crucial for you to retain the TMS role information in the CS Acquisition procedure, we can develop a mapping of owner/acquisitionsource name + role value into one of the notes fields. Thus far, no TMS client has requested this
+====
+
 === :approval_date_treatment
 Applies to `:approvalisodate1` and `:approvalisodate2` fields in ObjAccession table.
 
