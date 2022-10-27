@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjAccession
-        module OneToOne
+      module OneToOneAcq
+        module ObjRows
           module_function
 
           def job
@@ -12,10 +12,10 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_accession,
-                destination: :obj_accession__one_to_one
+                source: :prep__obj_accession,
+                destination: :one_to_one_acq__obj_rows
               },
-              transformer: Tms::OneToOneAcq.select_xform
+              transformer: config.select_xform
             )
           end
         end

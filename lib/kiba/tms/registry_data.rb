@@ -1616,6 +1616,30 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('one_to_one_acq') do
+          register :obj_rows, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::ObjRows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_acq_obj_rows.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :onetoone approach',
+            tags: %i[acquisitions]
+          }
+          register :prep, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::Prep,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_acq_prepped.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :onetoone '\
+              'approach, prepped',
+            tags: %i[acquisitions]
+          }
+        end
+
         Kiba::Tms.registry.namespace('orgs') do
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
