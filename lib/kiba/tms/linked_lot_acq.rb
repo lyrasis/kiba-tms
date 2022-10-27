@@ -19,14 +19,12 @@ module Kiba
 
       def select_xform
         Kiba.job_segment do
-          Kiba.job_segment do
-            transform FilterRows::FieldPopulated,
-              action: :reject,
-              field: :registrationsetid
-            transform FilterRows::FieldPopulated,
-              action: :keep,
-              field: :acquisitionlotid
-          end
+          transform FilterRows::FieldPopulated,
+            action: :reject,
+            field: :registrationsetid
+          transform FilterRows::FieldPopulated,
+            action: :keep,
+            field: :acquisitionlotid
         end
       end
     end
