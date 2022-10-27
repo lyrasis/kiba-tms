@@ -142,7 +142,7 @@ module Kiba
           base << :currpercentownership
         end
         if valuationnote_treatment == field
-          base << :valuationnote
+          base << :valuationnotes
         end
         base.flatten
       end
@@ -174,7 +174,7 @@ module Kiba
         if percentowned_treatment == :acquisitionnote
           base << :currpercentownership
           if valuationnote_treatment == field
-            base << :valuationnote
+            base << :valuationnotes
           end
         end
         base.flatten

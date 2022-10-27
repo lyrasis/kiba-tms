@@ -183,7 +183,7 @@ Applies to values in ObjAccession.accessionvalue or AccessionLot.accessionvalue
 
 NOTE: recording values in ObjAccession.accessionvalue is apparently no longer supported in newer versions of TMS, replaced by linking to an ObjectValue record. However, we still see it in client data.
 
-If `:valuation_control` option is used, this also causes `valuationnote` field value to be mapped to a valuation control procedure.
+If `:valuation_control` option is used, this also causes `valuationnotes` field value to be mapped to a valuation control procedure.
 
 Default option:: `:valuation_control`
 
@@ -376,7 +376,7 @@ Other options may be developed on client request, if feasible.
 
 === :valuationnote_treatment
 
-This applies to the `valuationnote` field if
+This applies to the `valuationnotes` field if
 
 * there is no `accessionvalue` value, OR
 * `:accessionvalue_treatment` is set to something other than `:valuation_control`

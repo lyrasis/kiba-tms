@@ -152,10 +152,10 @@ module Kiba
 
               if config.valuationnote_treatment == :drop
                 transform Delete::Fields,
-                  fields: %i[valuationnote]
+                  fields: %i[valuationnotes]
               else
                 transform Prepend::ToFieldValue,
-                  field: :valuationnote,
+                  field: :valuationnotes,
                   value: 'Valuation note: '
               end
 
