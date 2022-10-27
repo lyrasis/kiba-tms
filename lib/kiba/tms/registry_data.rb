@@ -70,6 +70,41 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('acq_num_acq') do
+          register :obj_rows, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::ObjRows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_num_acq_obj_rows.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :acqnumber approach',
+            tags: %i[acquisitions]
+          }
+          register :rows, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::Rows,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_num_acq_rows.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :acqnumber approach '\
+              'deduplicated',
+            tags: %i[acquisitions]
+          }
+          register :prep, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::Prep,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_num_acq_prepped.csv'
+            ),
+            desc: 'ObjAccession rows to be processed with :acqnumber '\
+              'approach, prepped',
+            tags: %i[acquisitions]
+          }
+        end
+
         Kiba::Tms.registry.namespace('alt_nums') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::AltNums::NewTables,
@@ -1437,9 +1472,25 @@ module Kiba
           }
           register :lot_number, {
             creator: Kiba::Tms::Jobs::ObjAccession::LotNumber,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_lot_number.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'obj_accession_lot_number.csv'
+            ),
             tags: %i[objaccession setup],
-            desc: 'Rows from which acquisitions will be created using LotNumber approach'
+            desc: 'Rows from which acquisitions will be created using '\
+              'LotNumber approach'
+          }
+          register :acq_number, {
+            creator: Kiba::Tms::Jobs::ObjAccession::AcqNumber,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'obj_accession_acq_number.csv'
+            ),
+            tags: %i[objaccession setup],
+            desc: 'Rows from which acquisitions will be created using '\
+              'AcqNumber approach'
           }
           register :one_to_one, {
             creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,

@@ -33,6 +33,8 @@ module Kiba
           def set_approaches
             approaches << :onetoone if mod.used? &&
               counter.call(:obj_accession__one_to_one) > 0
+            approaches << :acqnumber if mod.used? &&
+              counter.call(:obj_accession__acq_number) > 0
             approaches << :lotnumber if mod.used? &&
               counter.call(:obj_accession__lot_number) > 0
             approaches << :linkedlot if mod.used? &&
