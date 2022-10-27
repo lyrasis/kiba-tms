@@ -63,14 +63,18 @@ One CS Acquisition procedure is created per ObjAccession row. The relevant objec
 
 The resulting Acquisition procedure's reference number is the related object's object number.
 
-== Dates in TMS vs CS
+== Dates in TMS ObjAccessions vs CS Acquisition
+
+As you can see from the table below, there are only two TMS ObjAccessions date fields that have a clear one-to-one mapping to the CS acquisition procedure.
+
+How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping options>> described below.
 
 [cols="1,2,1,2", options="header"]
 |===
 |TMS field
 |TMS data dictionary def
 |CS field
-|CS schema def
+|https://collectionspace.atlassian.net/wiki/spaces/COL/pages/506953729/Configuration+and+Data+Maps+-+Cataloging+Procedures+and+Vocabularies[CS schema] def
 
 |accessionisodate
 |Date of Accessioning (ISO date format)
@@ -118,16 +122,6 @@ The RegistrationSets and AccessionLot tables contain fields that appear in ObjAc
 That is, you cannot opt to have :accessionvalue information treated differently for rows being processed as Registration Sets vs. one-to-one acquisition/object relations.
 ====
 
-=== TMS vs. CS date fields
-
-[IMPORTANT]
-.CS definitions of "accessiondate" and "acquisitiondate" fields
-====
-The following are taken from the Acquisition:Common schema https://collectionspace.atlassian.net/wiki/spaces/COL/pages/506953729/Configuration+and+Data+Maps+-+Cataloging+Procedures+and+Vocabularies[available on the CS wiki].
-
-owner:: Details of a People, Person or Organisation who owned an object before title was transferred to the organization
-
-====
 === :accessionvalue_treatment
 
 Applies to values in ObjAccession.accessionvalue or AccessionLot.accessionvalue
@@ -157,7 +151,7 @@ Applies to `:approvalisodate1` and `:approvalisodate2` fields in ObjAccession ta
 
 The TMS `:authdate` field is mapped to CS `:acquisitionauthorizerdate` field, but that is a single-valued field.
 
-The option specifies what to do with approval date data.
+This option specifies what to do with approval date data.
 
 Default option:: `:acquisitionnote` -- map into this note field
 
