@@ -150,6 +150,26 @@ module Kiba
                 transform Tms::Transforms::ObjAccession::InitiationNote
               end
 
+              if config.valuationnote_treatment == :drop
+                transform Delete::Fields,
+                  fields: %i[valuationnote]
+              else
+                transform Prepend::ToFieldValue,
+                  field: :valuationnote,
+                  value: 'Valuation note: '
+              end
+
+              if config.fields.any?(:deedofgiftsentiso)
+                transform Prepend::ToFieldValue,
+                  field: :deedofgiftsentiso,
+                  value: 'Deed of gift sent: '
+              end
+              if config.fields.any?(:deedofgiftreceivediso)
+                transform Prepend::ToFieldValue,
+                  field: :deedofgiftreceivediso,
+                  value: 'Deed of gift received: '
+              end
+
               unless config.proviso_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.proviso_sources,
@@ -177,6 +197,9 @@ module Kiba
                 accessionisodate: :accessiondategroup,
                 accessionmethod: :acquisitionmethod
               }
+
+              transform Delete::Fields,
+                fields: %i[authdate]
             end
           end
         end

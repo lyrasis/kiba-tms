@@ -65,6 +65,12 @@ module Kiba
       setting :percentowned_prefix,
         default: 'Percent owned: ',
         reader: true
+      setting :valuationnote_treatment,
+        default: :acquisitionnote,
+        reader: true
+      setting :valuationnote_prefix,
+        default: 'Valuation note: ',
+        reader: true
 
       setting :con_ref_field_rules,
         default: {
@@ -135,6 +141,9 @@ module Kiba
         if percentowned_treatment == field
           base << :currpercentownership
         end
+        if valuationnote_treatment == field
+          base << :valuationnote
+        end
         base.flatten
       end
 
@@ -164,6 +173,9 @@ module Kiba
         end
         if percentowned_treatment == :acquisitionnote
           base << :currpercentownership
+          if valuationnote_treatment == field
+            base << :valuationnote
+          end
         end
         base.flatten
       end

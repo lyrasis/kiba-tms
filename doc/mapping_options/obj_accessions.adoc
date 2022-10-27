@@ -183,6 +183,8 @@ Applies to values in ObjAccession.accessionvalue or AccessionLot.accessionvalue
 
 NOTE: recording values in ObjAccession.accessionvalue is apparently no longer supported in newer versions of TMS, replaced by linking to an ObjectValue record. However, we still see it in client data.
 
+If `:valuation_control` option is used, this also causes `valuationnote` field value to be mapped to a valuation control procedure.
+
 Default option:: `:valuation_control`
 
 Other options to be developed on client request.
@@ -369,5 +371,23 @@ Default option:: `:acquisitionprovisos`
 
 .Related options
 * `:percentowned_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Percent owned: "
+
+Other options may be developed on client request, if feasible.
+
+=== :valuationnote_treatment
+
+This applies to the `valuationnote` field if
+
+* there is no `accessionvalue` value, OR
+* `:accessionvalue_treatment` is set to something other than `:valuation_control`
+
+Default option:: `:acquisitionnote`
+
+.Alternate options:
+* `:acquisitionprovisos`
+* `:drop` - do not migrate this information
+
+.Related options
+* `:valuationnote_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Valuation note: "
 
 Other options may be developed on client request, if feasible.
