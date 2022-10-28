@@ -379,6 +379,13 @@ If you view the Acquisition procedure form in your CS instance, you will see the
 If it is crucial for you to retain the TMS role information in the CS Acquisition procedure, we can develop a mapping of owner/acquisitionsource name + role value into one of the notes fields. Thus far, no TMS client has requested this
 ====
 
+=== :note_sources
+Controls what TMS fields will get concatenated together and mapped to CS `acquisitionnote` note field.
+
+Default value(s):: `%i[source remarks]`
+
+Configuring other settings described on this page can add fields to the list.
+
 === :percentowned_treatment
 
 Applies to ObjAccession.currpercentownership and RegistrationSets.percentowned fields.
@@ -395,6 +402,20 @@ Default option:: `:acquisitionprovisos`
 * `:percentowned_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Percent owned: "
 
 Other options may be developed on client request, if feasible.
+
+=== :proviso_sources
+Controls what TMS fields will get concatenated together and mapped to CS `acquisitionprovisos` note field.
+
+Default value(s):: `%i[acquisitionterms]`
+
+Configuring other settings described on this page can add fields to the list.
+
+=== :reason_sources
+Controls what TMS fields will get concatenated together and mapped to CS `acquisitionreason` note field.
+
+Default value(s):: `%i[acqjustification]`
+
+Configuring other settings described on this page can add fields to the list.
 
 === :valuationnote_treatment
 
