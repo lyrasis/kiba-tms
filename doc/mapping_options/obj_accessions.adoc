@@ -17,31 +17,17 @@ toc::[]
 
 == TMS data structure overview and migration treatment categories
 
-There is one row per object in the system in the ObjAccession table.
+There is one row per object in the system in the ObjAccession table. However, there seems to be a lot of flexibility in how users can enter this data, which calls for different approaches, or _treatments_ for the different patterns of data in the migration process.
 
-Depending on client TMS data entry practice there may or may not be any data in AccessionLot and/or RegistrationSets tables.
-
-These tables can be used to describe the accession of multiple objects as a group accession. One or more objects can be associated with a Registration Set. One or more registration sets can be associated with an Accession Lot. If this structure is used, it appears that the AccessionLot and RegistrationSets tables become populated in TMS, and IDs linking objects to the appropriate records are added to the ObjAccession table. This is referred to in the migration as `:linkedlot` treatment.
-
-It also appears that objects can be associated with an Accession Lot without creation of any RegistrationSets. Or, at least, there is some way of entering data that causes the AccessionLot and RegistationSets tables to be blank, but there is a lot number value in the `:acquisitionlot` field of ObjAccession, and all rows having the same lot number have the same other accession information. This is referred to as `:lotnumber` treatment in the migration.
-
-ObjAccession rows with no links to AccessionLot/RegistrationSets tables or values in :acquisitionlot field are treated as `:onetoone` in the migration.
-
-[CAUTION]
-====
-It is assumed that, if a `:linkedset`, `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included in those sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
-
-This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary.
-
-We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and not well-supported by the CS data model.
-====
-
-The treatment categories are treated as follows in the migration:
-
+The treatments we have identified are detailed below.
 
 === `:linkedset`
+Registration sets containing one or more objects can be linked to an accession lot, which results in population of:
 
-One CS Acquisition procedure created per Registration Set. All objects in ObjAccession table related to a given Registration Set are related to the Acquisition procedure.
+* AccessionLot and RegistrationSets tables
+* `acquisitionlotid` and `registrationsetid` fields in ObjAccession table
+
+One CS Acquisition procedure is created per Registration Set. All objects in ObjAccession table related to a given Registration Set are related to the Acquisition procedure.
 
 This treatment has two sub-treatment categories:
 
@@ -50,22 +36,33 @@ This treatment has two sub-treatment categories:
 `:multiset`:: If there are multiple Registration Sets per Accession Lot, the resulting Acquisition procedure's reference number begins with the :lotnumber value from the AccessionLot table. Some additional value must be added to ensure reference number uniqueness. If present, the AccessionLot.lotpattern field value will be used as a pattern to derive this. Otherwise a sequential digit segment may be added.
 
 === `:linkedlot`
+This treatment is applied if one or more objects are linked to an accession lot without being assigned to a registration set, in a way that results in:
 
-NOTE: It is unknown if this ever occurs. I have not seen it in actual client data. This case would be that objects in ObjAccession are linked to an AccessionLot table record, but no entries in RegistrationSets table are linked to the objects
+* population of AccessionLot table but not RegistrationSets table
+* population of `acquisitionlotid` field, but not `registrationsetid` field, in ObjAccession table
+
+
+NOTE: It is unknown if this ever occurs. I have not seen it in actual client data, but it looks as though it may be supported
+
+One CS Acquisition procedure is created per accession lot. The `AccessionLot.LotNumber` value becomes the CS `acquisitionreferencenumber` value.
+
+Relationships are created between the procedure and the linked objects from the ObjAccession table.
 
 === `:lotnumber`
 
-NOTE: TMS allows population of the `acquisitionlot` field in the ObjAccession table _without_ linking that object to an entry in the AccessionLot table. This is the situation covered by this treatment.
+Due to patterns seen in client data, we gather that TMS allows population of the `acquisitionlot` field in the ObjAccession table _without_ linking that object to an entry in the AccessionLot table.
 
-One CS Acquisition procedure created per unique Acquisition Lot number value in ObjAccession table. All objects in ObjAccession table with the given :lotnumber value are related to the Acquisition procedure.
+From reviewing multiple TMS data sets from different clients, it looks like all the acquisition details in objects given the same `acquisitionlot` value are the same for all objects.
 
-The resulting Acquisition procedure's reference number is the :lotnumber value from the AccessionLot table.
+One CS Acquisition procedure is created per unique `acquisitionlot` value in the ObjAccession table. The `acquisitionlot` value becomes the CS `acquisitionreferencenumber`.
 
-NOTE: Any `acquisitionnumber` values in rows with this treatment are collected, deduplicated, and written to a note field in the acquisition procedure, where they will be indexed for keyword search or an advanced search on that note field.
+All objects in ObjAccession table with the given `acquisitionlot` value are related to the Acquisition procedure.
+
+NOTE: Any `acquisitionnumber` values in rows with this treatment are collected, deduplicated, and written to a note field in the acquisition procedure, where they will be indexed for keyword search or an advanced search on that note field. See (<<acq_number_treatment,:acq_number_treatment>>).
 
 === `:acqnumber`
 
-This treatment applies to rows where `registrationsetid`, `acquisitionlotid`, and `acquisitionlot` fields are empty and the `acquisitionnumber` field is populated.
+This treatment applies to rows where ObjAccession `registrationsetid`, `acquisitionlotid`, and `acquisitionlot` fields are empty and the `acquisitionnumber` field is populated.
 
 We have worked with client data where the same `acquisitionnumber` has been applied to many rows in the ObjAccession table, but different information has been entered for each object. A simplified example is shown below:
 
@@ -82,19 +79,32 @@ Therefore, this treatment does the following:
 * Groups/clumps the records for each `acquisitionnumber` on unique data in all non-id fields in the record
 * Creates one Acquisition procedure per group. Adds an incrementing numeral value to the `acquisitionnumber` value to create unique `acquisitionreferencenumber` values in CS.
 
-With the above data, we would get two Acquisitions procedures, numbered 123.1 and 123.2.
+With the above data, we would get two Acquisitions procedures, numbered 123.001 and 123.002.
 
-Objects 123.1 and 123.3 would be related to Acquisition 123.1.
+Objects 123.1 and 123.3 would be related to Acquisition 123.001.
 
-Objects 123.2 and 123.4 would be related to Acquisition 123.2.
+Objects 123.2 and 123.4 would be related to Acquisition 123.002.
+
+NOTE: It is not currently possible to turn off the addition of the incrementing suffix if there is only one group of objects.
+
 
 === `:onetoone`
 
-This treatment applies to rows where `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
+This treatment applies to rows where the ObjAccession `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
 
 One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure.
 
 The resulting Acquisition procedure's reference number is the related object's object number.
+
+
+[IMPORTANT]
+====
+It is assumed that, if a `:linkedset`, `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included in those sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
+
+This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary.
+
+We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and the data pattern is not well-supported by the CS data model.
+====
 
 == Dates in TMS ObjAccessions vs CS Acquisition
 
