@@ -116,6 +116,16 @@ module Kiba
             tags: %i[acquisitions],
             desc: 'Compiles acquisitions from all treatments'
           }
+          register :obj_rels, {
+            creator: Kiba::Tms::Jobs::Acquisitions::ObjRels,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_obj_rels.csv'
+            ),
+            tags: %i[acquisitions objects nhr],
+            desc: 'Compiles acquisition-object nhrs from all treatments'
+          }
           register :from_linked_set, {
             creator: Kiba::Tms::Jobs::Acquisitions::FromLinkedSet,
             path: File.join(
@@ -684,6 +694,15 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'linked_set_acq.csv'),
             tags: %i[acquisitions],
             lookup_on: :registrationsetid
+          }
+          register :acq_obj_rel, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::AcqObjRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_set_acq_nhr.csv'
+            ),
+            tags: %i[acquisitions objects nhr]
           }
           register :object_statuses, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::ObjectStatuses,
