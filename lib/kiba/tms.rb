@@ -122,6 +122,7 @@ module Kiba
     #   generically applied before finalizing initial data prep jobs (or writing
     #   out final data for ingest)
     setting :boolean_yn_mapping, default: {'0'=>'n', '1'=>'y'}, reader: true
+    # initial data cleaner, before processing
     setting :data_cleaner, default: nil, reader: true
     # TMS-internal fields to be deleted
     setting :inverted_boolean_yn_mapping,
