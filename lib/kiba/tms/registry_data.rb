@@ -135,6 +135,15 @@ module Kiba
             ),
             tags: %i[acquisitions]
           }
+          register :from_lot_num, {
+            creator: Kiba::Tms::Jobs::Acquisitions::FromLotNum,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_from_lot_num.csv'
+            ),
+            tags: %i[acquisitions]
+          }
         end
 
         Kiba::Tms.registry.namespace('alt_nums') do
@@ -925,6 +934,15 @@ module Kiba
             desc: 'ObjAccession rows to be processed with :lotnumber '\
               'approach, prepped',
             tags: %i[acquisitions]
+          }
+          register :acq_obj_rel, {
+            creator: Kiba::Tms::Jobs::LotNumAcq::AcqObjRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'lot_num_acq_obj_rel.csv'
+            ),
+            tags: %i[acquisitions objects nhr]
           }
         end
 

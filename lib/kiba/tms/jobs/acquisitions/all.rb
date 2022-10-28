@@ -24,6 +24,9 @@ module Kiba
             if Tms::LinkedSetAcq.used?
               base << :acquisitions__from_linked_set
             end
+            if Tms::LotNumAcq.used?
+              base << :acquisitions__from_lot_num
+            end
             base
           end
 
