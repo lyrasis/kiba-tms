@@ -164,6 +164,15 @@ module Kiba
             ),
             tags: %i[acquisitions]
           }
+          register :from_one_to_one, {
+            creator: Kiba::Tms::Jobs::Acquisitions::FromOneToOne,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_from_one_to_one.csv'
+            ),
+            tags: %i[acquisitions]
+          }
         end
 
         Kiba::Tms.registry.namespace('alt_nums') do
@@ -1728,6 +1737,15 @@ module Kiba
             desc: 'ObjAccession rows to be processed with :onetoone '\
               'approach, prepped',
             tags: %i[acquisitions]
+          }
+          register :acq_obj_rel, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::AcqObjRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_acq_nhr.csv'
+            ),
+            tags: %i[acquisitions objects nhr]
           }
         end
 

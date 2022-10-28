@@ -30,6 +30,9 @@ module Kiba
             if Tms::AcqNumAcq.used?
               base << :acquisitions__from_acq_num
             end
+            if Tms::OneToOneAcq.used?
+              base << :acquisitions__from_one_to_one
+            end
             base
           end
 

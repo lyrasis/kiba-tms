@@ -28,7 +28,9 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
-              #todo
+              transform Rename::Field,
+                from: :objectnumber,
+                to: :acquisitionreferencenumber
             end
           end
         end
