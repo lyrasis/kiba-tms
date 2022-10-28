@@ -57,6 +57,9 @@ module Kiba
                 value: '-1'
               transform Tms::Transforms::DeleteTimestamps,
                 fields: config.date_fields
+              transform Delete::FieldValueMatchingRegexp,
+                fields: %i[objectvalueid],
+                match: '^-1$'
 
               transform Merge::MultiRowLookup,
                 lookup: tms__objects,
