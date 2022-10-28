@@ -100,6 +100,13 @@ module Kiba
         reader: true
       extend Tms::Mixins::UncontrolledNameCompileable
 
+      setting :date_fields,
+        default: %i[accessionisodate authdate
+                           approvalisodate1 approvalisodate2
+                           initdate suggestedvalueisodate],
+        reader: true,
+        constructor: proc{ |value| value.select{ |f| fields.any?(f) } }
+
       # approaches required for creation of CS acquisitions and obj/acq
       #   relations
       #   options: :onetone, :lotnumber, :linkedlot, :linkedset

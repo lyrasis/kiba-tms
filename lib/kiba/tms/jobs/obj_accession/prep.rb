@@ -51,11 +51,12 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objectid,
                 value: '-1'
+              transform Tms::Transforms::DeleteTimestamps,
+                fields: config.date_fields
 
               transform Merge::MultiRowLookup,
                 lookup: tms__objects,
