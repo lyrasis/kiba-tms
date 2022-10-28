@@ -8,10 +8,18 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :acq_number_treatment,
+        default: :acquisitionnote,
+        reader: true
+      setting :acq_number_prefix,
+        default: 'Acquisition number value(s): ',
+        reader: true
+
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid
-                    objectid objectnumber],
+                    objectid objectnumber
+                    objectvalueid],
         reader: true,
         constructor: proc{ |value|
           value << Tms::ObjAccession.delete_fields

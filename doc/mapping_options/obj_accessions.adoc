@@ -203,6 +203,27 @@ One CS Valuation Control (VC) procedure is created to reflect the recorded value
 .Related options
 * `:accessionvalue_type` - :valuetype to enter in VC procedures derived from this data. Default: "Original Value"
 
+=== :acq_number_treatment
+
+This applies only:
+
+* to rows handled with `:lotnumber` treatment
+* where there is a separate `acquisitionnumber` value
+
+TIP: This is configured in the TMS::LotNumAcq config module.
+
+The value of the setting is the name of the CS note field the `acquisitionnumber`(s) should be mapped to.
+
+Default option:: `:acquisitionnote` -- map into this note field
+
+.Alternate options
+* `:acquisitionprovisos`
+* `:acquisitionreason`
+* `:drop` - do not migrate this information
+
+.Related options
+* `:acq_number_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Acquisition number value(s): "
+
 === :auth_date_source_pref
 Due to differing data entry practices in TMS and the <<dates-in-tms-objaccessions-vs-cs-acquisition,data model differences in the date table above>> we need to build in flexibility for the source of data mapped to CS `acquisitionauthorizerdate` field.
 
@@ -224,6 +245,7 @@ This option specifies what to do with approval date data.
 
 Default option:: `:acquisitionnote` -- map into this note field
 
+.Alternate options
 * `:acquisitionprovisos`-- map into this note field
 * `:drop` - do not migrate this information
 

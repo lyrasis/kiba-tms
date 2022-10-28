@@ -901,7 +901,8 @@ module Kiba
               'lot_num_acq_obj_rows.csv'
             ),
             desc: 'ObjAccession rows to be processed with :lotnumber approach',
-            tags: %i[acquisitions]
+            tags: %i[acquisitions],
+            lookup_on: :acquisitionlot
           }
           register :rows, {
             creator: Kiba::Tms::Jobs::LotNumAcq::Rows,

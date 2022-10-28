@@ -200,6 +200,10 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[authdate]
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :acquisitionnumber,
+                find: '\|',
+                replace: '%PIPE%'
             end
           end
         end

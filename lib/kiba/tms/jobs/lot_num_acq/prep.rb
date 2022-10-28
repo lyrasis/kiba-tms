@@ -31,6 +31,22 @@ module Kiba
               transform Rename::Fields, fieldmap: {
                 acquisitionlot: :acquisitionreferencenumber
               }
+
+              unless config.acq_number_treatment == :drop
+                transform Prepend::ToFieldValue,
+                  field: :acquisitionnumber,
+                  value: config.acq_number_prefix
+                targetfield = config.acq_number_treatment
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: [targetfield, :acquisitionnumber],
+                  target: targetfield,
+                  sep: "\n",
+                  delete_sources: true
+                transform Clean::RegexpFindReplaceFieldVals,
+                  fields: targetfield,
+                  find: '%PIPE%',
+                  replace: '|'
+              end
             end
           end
         end
