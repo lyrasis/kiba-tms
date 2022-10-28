@@ -36,6 +36,10 @@ module Kiba
             if Tms::ConRefs.for?('ObjAccession')
               base << :con_refs_for__obj_accession
             end
+            if config.fields.any?(:accessionvalue) &&
+                config.fields.any?(:objectvalueid)
+              base << :tms__obj_insurance
+            end
             base
           end
 
@@ -57,9 +61,34 @@ module Kiba
                 value: '-1'
               transform Tms::Transforms::DeleteTimestamps,
                 fields: config.date_fields
+              transform Tms::Transforms::DeleteEmptyMoney,
+                fields: %i[accessionvalue]
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[objectvalueid],
                 match: '^-1$'
+
+              # removes :accessionvalue if equal to the value in a linked
+              #   ObjInsurance (valuation) record
+              if config.fields.any?(:accessionvalue) &&
+                  config.fields.any?(:objectvalueid)
+                transform Merge::MultiRowLookup,
+                  lookup: tms__obj_insurance,
+                  keycolumn: :objectvalueid,
+                  fieldmap: {vc_value: :value}
+
+                transform do |row|
+                  av = row[:accessionvalue]
+                  next row if av.blank?
+
+                  vc = row[:vc_value]
+                  next row if vc.blank?
+
+                  if av == vc
+                    row[:accessionvalue] = nil
+                  end
+                  row
+                end
+              end
 
               transform Merge::MultiRowLookup,
                 lookup: tms__objects,

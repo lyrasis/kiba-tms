@@ -203,9 +203,6 @@ module Kiba
       end
 
       def set_deletes(value)
-        if accessionvalue_treatment == :valuation_control
-          value << :accessionvalue
-        end
         if dog_dates_treatment == :drop
           value << %i[deedofgiftsentiso deedofgiftreceivediso]
         end

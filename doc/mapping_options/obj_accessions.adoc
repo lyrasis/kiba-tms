@@ -112,7 +112,7 @@ As you can see from the table below, there are only two TMS ObjAccessions date f
 
 How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping-options,mapping options>> described below.
 
-NOTE: Some "No longer in use" TMS fields are included because we so sometimes find client data in these fields.
+NOTE: Some "No longer in use" TMS fields are included because we sometimes find client data in these fields.
 
 [cols="1,2,1,2", options="header"]
 |===
@@ -189,7 +189,7 @@ That is, you cannot opt to have :accessionvalue information treated differently 
 
 === :accessionvalue_treatment
 
-Applies to values in ObjAccession.accessionvalue or AccessionLot.accessionvalue
+Applies to values in `ObjAccession.accessionvalue` or `AccessionLot.accessionvalue` fields
 
 NOTE: recording values in ObjAccession.accessionvalue is apparently no longer supported in newer versions of TMS, replaced by linking to an ObjectValue record. However, we still see it in client data.
 
@@ -202,9 +202,9 @@ Other options to be developed on client request.
 ==== :valuation_control
 Preprocessing for ObjAccession table/:onetoone treatment rows:
 
-* First we merge in the values of any linked ObjectValue records
-* If the value of :accessionvalue field = the value in the linked ObjectValue record, we delete it from ObjAccession (because we are going to create the relevant Valuation Control (VC) procedure from the ObjectValue record)
-* If the value of :accessionvalue field is different from the value in the linked ObjectValue record, or if there is no linked ObjectValue record, the value is retained for further processing.
+* First we merge in the values of any linked ObjInsurance records
+* If the value of :accessionvalue field = the value in the linked ObjInsurance record, we delete it from ObjAccession (because we are going to create the relevant Valuation Control (VC) procedure from the ObjInsurance record)
+* If the value of :accessionvalue field is different from the value in the linked ObjInsurance record, or if there is no linked ObjInsurance record, the value is retained for further processing.
 
 No preprocessing for AccessionLot.accessionvalue/:linkedlot treatment rows.
 
