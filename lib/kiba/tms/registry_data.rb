@@ -1770,6 +1770,12 @@ module Kiba
             tags: %i[orgs cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
           }
+          register :brief, {
+            creator: Kiba::Tms::Jobs::Orgs::Brief,
+            path: File.join(Kiba::Tms.datadir, 'cs', 'orgs_brief.csv'),
+            tags: %i[orgs cspace],
+            desc: 'Only termdisplayname values, for bootstrap ingests'
+          }
         end
 
         Kiba::Tms.registry.namespace('org_contacts') do
@@ -1812,6 +1818,12 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'persons_for_cspace.csv'),
             tags: %i[persons cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]},
+          }
+          register :brief, {
+            creator: Kiba::Tms::Jobs::Persons::Brief,
+            path: File.join(Kiba::Tms.datadir, 'cs', 'persons_brief.csv'),
+            tags: %i[persons cspace],
+            desc: 'Only termdisplayname values, for bootstrap ingests'
           }
         end
 
