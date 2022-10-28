@@ -105,6 +105,28 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('acquisitions') do
+          register :all, {
+            creator: Kiba::Tms::Jobs::Acquisitions::All,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_all.csv'
+            ),
+            tags: %i[acquisitions],
+            desc: 'Compiles acquisitions from all treatments'
+          }
+          register :from_linked_set, {
+            creator: Kiba::Tms::Jobs::Acquisitions::FromLinkedSet,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_from_linked_set.csv'
+            ),
+            tags: %i[acquisitions]
+          }
+        end
+
         Kiba::Tms.registry.namespace('alt_nums') do
           register :new_tables, {
             creator: Kiba::Tms::Jobs::AltNums::NewTables,
