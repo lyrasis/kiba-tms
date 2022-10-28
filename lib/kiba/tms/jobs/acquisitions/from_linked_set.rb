@@ -24,6 +24,9 @@ module Kiba
             Kiba.job_segment do
               transform Delete::Fields,
                 fields: %i[registrationsetid objectstatus]
+              transform Merge::ConstantValue,
+                target: :objaccessiontreatment,
+                value: 'linkedset'
             end
           end
         end

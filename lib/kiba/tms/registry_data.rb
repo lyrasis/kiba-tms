@@ -89,8 +89,10 @@ module Kiba
               'acq_num_acq_rows.csv'
             ),
             desc: 'ObjAccession rows to be processed with :acqnumber approach '\
-              'deduplicated',
-            tags: %i[acquisitions]
+              'deduplicated on combined row values. Generated id merged in as '\
+              ':acquisitionreferencenumber',
+            tags: %i[acquisitions],
+            lookup_on: :combined
           }
           register :prep, {
             creator: Kiba::Tms::Jobs::AcqNumAcq::Prep,
@@ -102,6 +104,15 @@ module Kiba
             desc: 'ObjAccession rows to be processed with :acqnumber '\
               'approach, prepped',
             tags: %i[acquisitions]
+          }
+          register :acq_obj_rel, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::AcqObjRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_num_acq_obj_rel.csv'
+            ),
+            tags: %i[acquisitions objects nhr]
           }
         end
 
@@ -125,6 +136,15 @@ module Kiba
             ),
             tags: %i[acquisitions objects nhr],
             desc: 'Compiles acquisition-object nhrs from all treatments'
+          }
+          register :from_acq_num, {
+            creator: Kiba::Tms::Jobs::Acquisitions::FromAcqNum,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_from_acq_num.csv'
+            ),
+            tags: %i[acquisitions]
           }
           register :from_linked_set, {
             creator: Kiba::Tms::Jobs::Acquisitions::FromLinkedSet,

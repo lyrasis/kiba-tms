@@ -20,8 +20,22 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              #complicated
+              config = bind.receiver.send(:config)
+
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+              transform CombineValues::FullRecord, target: :combined
+              transform Deduplicate::Table,
+                field: :combined,
+                delete_field: false
+              transform Tms::Transforms::IdGenerator,
+                id_source: :acquisitionnumber,
+                id_target: :acquisitionreferencenumber,
+                sort_on: :combined
             end
           end
         end

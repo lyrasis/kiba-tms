@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: config.source_job_key,
+                source: :acq_num_acq__rows,
                 destination: :acq_num_acq__prep
               },
               transformer: xforms
@@ -24,11 +24,8 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              if config.omitting_fields?
-                transform Delete::Fields, fields: config.omitted_fields
-              end
-
-              #todo
+              transform Delete::Fields,
+                fields: %i[objectvalueid combined]
             end
           end
         end

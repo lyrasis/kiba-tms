@@ -4,16 +4,16 @@ module Kiba
   module Tms
     module Jobs
       module Acquisitions
-        module FromLotNum
+        module FromAcqNum
           module_function
 
           def job
-            return unless Tms::LotNumAcq.used?
+            return unless Tms::AcqNumAcq.used?
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :lot_num_acq__prep,
-                destination: :acquisitions__from_lot_num
+                source: :acq_num_acq__prep,
+                destination: :acquisitions__from_acq_num
               },
               transformer: xforms,
               helper: config.multisource_normalizer
@@ -24,7 +24,7 @@ module Kiba
             Kiba.job_segment do
               transform Merge::ConstantValue,
                 target: :objaccessiontreatment,
-                value: 'lotnumber'
+                value: 'acqnumber'
             end
           end
         end

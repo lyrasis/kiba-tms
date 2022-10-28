@@ -8,7 +8,7 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :source_job_key, default: :acq_num_acq__rows, reader: true
+      setting :source_job_key, default: :acq_num_acq__obj_rows, reader: true
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid acquisitionlot
                     objectid objectnumber],
@@ -30,6 +30,10 @@ module Kiba
             fields: %i[acquisitionlotid registrationsetid acquisitionlot]
           transform FilterRows::FieldPopulated, action: :keep,
             field: :acquisitionnumber
+          transform Clean::RegexpFindReplaceFieldVals,
+            fields: :acquisitionnumber,
+            find: '%PIPE%',
+            replace: '|'
         end
       end
     end

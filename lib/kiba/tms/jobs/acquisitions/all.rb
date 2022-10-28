@@ -27,6 +27,9 @@ module Kiba
             if Tms::LotNumAcq.used?
               base << :acquisitions__from_lot_num
             end
+            if Tms::AcqNumAcq.used?
+              base << :acquisitions__from_acq_num
+            end
             base
           end
 
