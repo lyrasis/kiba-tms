@@ -10,6 +10,22 @@ module Kiba
       # - If B contains A, set value of A to nil
       class ClearContainedFields
 
+        # @param a [Symbol] the first field to compare
+        # @param b [Symbol] the second field to compare
+        # @param delim [nil, String] if given, value of each field will be split
+        #   using the value given and each separate value in one field compared
+        #   to each separate value in the other field. If nil, the whole value
+        #   each field is compared against the other as one string
+        # @param b_only [Boolean] If false, will set value of `a` to nil if
+        #   value of `b` contains value of `a`. If true, the value of `a` is
+        #   never set to nil. NOTE: `a` = `b` is always checked first. If true,
+        #   value of `b` is set to nil. Then "does `a` contain `b`?" is
+        #   checked. If so, `b` is set to nil.
+        # @param casesensitive [Boolean] whether to downcase all values for
+        #   comparison
+        # @param normalized [Boolean] whether to apply Unicode normalization and
+        #   strip non alphanumeric characters from values for comparison. Does
+        #   not change case on its own.
         def initialize(a:, b:, delim: nil, b_only: false,
                        casesensitive: false,
                        normalized: true)
