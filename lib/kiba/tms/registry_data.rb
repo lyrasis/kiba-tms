@@ -1708,7 +1708,11 @@ module Kiba
             tags: %i[objects]
           }
           register :number_lookup, {
-            path: File.join(Kiba::Tms.datadir, 'prepped', 'object_number_lookup.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'prepped',
+              'object_number_lookup.csv'
+            ),
             creator: Kiba::Tms::Jobs::Objects::NumberLookup,
             desc: 'Just id and objectnumber, retrievable by id',
             lookup_on: :objectid,
