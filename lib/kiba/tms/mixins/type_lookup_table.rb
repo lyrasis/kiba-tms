@@ -38,6 +38,7 @@ module Kiba
           []
         end
 
+        # example of use: Tms::DDLanguages
         def pre_transforms
           []
         end
