@@ -43,6 +43,7 @@ module Kiba
             dd_languages: :languageid,
             departments: :departmentid,
             dimension_elements: :elementid,
+            dimension_methods: :methodid,
             dimension_types: :dimensiontypeid,
             dimension_units: :unitid,
             dimensions: :dimitemelemxrefid,
