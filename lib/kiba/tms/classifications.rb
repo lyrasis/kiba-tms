@@ -23,6 +23,10 @@ module Kiba
         reader: true
       extend Tms::Mixins::TypeLookupTable
 
+      def mappable_type?
+        false
+      end
+
       setting :object_merge_fieldmap,
         default: {
           classification: :classification,

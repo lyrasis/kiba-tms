@@ -1,0 +1,65 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Object title, name, and classification field handling
+
+The CollectionSpace (CS) data model does not include fields like TMS' classification fields. If a client has data in the TMS Classification fields, we need to determine how to migrate this data into CS.
+
+This decision will depend on a number of things, including:
+
+* how classification and related fields have been used in TMS
+* how client wishes this data to behave in CS
+* preferences for data entry practices going forward in CS
+
+This page documents:
+
+* the TMS data model for object classification and related fields
+* the CS data model for this information
+* types of data patterns we've seen and implications for how to handle them
+* tradeoffs in different ways of handling this information in CS
+
+toc::[]
+
+NOTE: We discuss title information here because, for some types of collections, objects don't have assigned titles and may be a description of the type of object. In such collections, there is often overlap in the information recorded in title, vs. object name and/or classification.
+
+== Sample TMS data patterns
+
+The table below demonstrates data patterns we have seen in different client data. Hopefully the practices used in a single clients's data will be more homogeneous.
+
+....
+| objectnumber | objectname | title                        | classification       | subclassification  | subclassification3       | subclassification2 |
+|--------------+------------+------------------------------+----------------------+--------------------+--------------------------+--------------------|
+|     2022.1.1 | painting   | View of hay field at dusk #3 | Art                  | Painting           | Rural landscape painting | Landscape painting |
+|     2022.1.2 | basket     | Navajo basket                | Basketry             |                    |                          |                    |
+|     2022.1.3 | bass drum  | Liberty Bass Drum            | Percussion           | Untuned percussion |                          | Bass drum          |
+|     2022.1.4 | Photograph | Arrow piercing a pineapple   | Photography          |                    |                          |                    |
+|     2022.1.5 | Photograph | Awl piercing a blueberry     | Art                  |                    |                          |                    |
+|     2022.1.6 |            | Pin piercing a currant       | Photography          |                    |                          |                    |
+|     2022.1.7 | Photograph | Beam piercing a jackfruit    | Manuscripts/Archives |                    |                          |                    |
+|     2022.1.7 | Photograph | Beam piercing a jackfruit    | Photography          |                    |                          |                    |
+....
+
+2022.1.2 and 2022.1.3 demonstrate how titles for artifacts without assigned titles may overlap with other fields.
+
+2022.1.1 and 2022.1.3 show use of subclassification, to different levels.
+
+2022.1.2 and 2022.1.4 show objectname and classification values that are nearly identical.
+
+2022.1.6 shows a record where no objectname is assigned, but a classification has been assigned.
+
+2022.1.7 has 2 rows, demonstrating that multiple classifications may be assigned to an object.
+
+
+== TMS data model
+image::object_name_field_group.png[2292]
++++&nbsp;+++

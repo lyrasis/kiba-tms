@@ -29,17 +29,18 @@ module Kiba
                 id: :recordid,
                 displayorder: :sort
               }
-              transform Replace::FieldValueWithStaticMapping,
-                source: :tableid, target: :table, mapping: Tms::TABLES, fallback_val: nil, delete_source: false
+              transform Tms::Transforms::TmsTableNames
 
-              # transform Merge::MultiRowLookup,
-              #   keycolumn: :classificationid,
-              #   lookup: prep__classifications,
-              #   fieldmap: Tms.classifications.fieldmap,
-              #   null_placeholder: '%NULLVALUE%',
-              #   delim: Kiba::Tms.delim
-              # transform Delete::Fields, fields: :classificationid
-              # transform FilterRows::FieldPopulated, action: :keep, field: :classification
+              transform Merge::MultiRowLookup,
+                keycolumn: :classificationid,
+                lookup: prep__classifications,
+                fieldmap: Tms::Classifications.object_merge_fieldmap,
+                null_placeholder: '%NULLVALUE%',
+                delim: Kiba::Tms.delim
+              transform Delete::Fields, fields: :classificationid
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :classification
             end
           end
         end

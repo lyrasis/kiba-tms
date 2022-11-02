@@ -1718,6 +1718,17 @@ module Kiba
             lookup_on: :objectid,
             tags: %i[objects]
           }
+          register :classification_report, {
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'obj_title_name_class.csv'
+            ),
+            creator: Kiba::Tms::Jobs::Objects::ClassificationReport,
+            desc: 'Object number, title, objectname, and classification '\
+              'values for client review/decision making',
+            tags: %i[objects]
+          }
         end
 
         Kiba::Tms.registry.namespace('one_to_one_acq') do
