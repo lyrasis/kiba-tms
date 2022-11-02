@@ -100,10 +100,6 @@ module Kiba
             "setting :con_role_treatment_mappings, default: {}, reader: true"
           )
           end
-
-          if mod.send(:con_role_treatment_mappings).empty?
-            warn("Need to set up :con_role_treatment_mappings for #{mod}")
-          end
         end
         private_class_method :set_treatment_mappings
 
