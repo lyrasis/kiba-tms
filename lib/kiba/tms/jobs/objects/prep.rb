@@ -35,8 +35,9 @@ module Kiba
             end
             base << :alt_nums_for__objects if Tms::AltNums.for?('Objects')
             base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
+            base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
-            if Tms::DimItemElemXrefs.used?
+            if Tms::DimItemElemXrefs.for?('Objects')
               base << :dim_item_elem_xrefs_for__objects
             end
             if Tms::ObjComponents.merging_text_entries?
@@ -89,6 +90,29 @@ module Kiba
                 transform Prepend::ToFieldValue,
                   field: config.department_target,
                   value: config.department_coll_prefix
+              end
+
+              if Tms::ObjectNames.used?
+                transform Rename::Field,
+                  from: :objectname,
+                  to: :obj_objectname
+                transform Append::NilFields,
+                  fields: %i[obj_objectnametype obj_objectnamelanguage
+                             obj_objectnamenote]
+                transform Merge::MultiRowLookup,
+                  lookup: prep__object_names,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    on_objectname: :objectname,
+                    on_objectnametype: :objectnametype,
+                    on_objectnamelanguage: :language,
+                    on_objectnamenote: :remarks
+                  },
+                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
+                transform Tms::Transforms::ClearContainedFields,
+                  a: :obj_objectname,
+                  b: :on_objectname,
+                  delim: Tms.delim
               end
 
               statusfields = []
@@ -237,7 +261,6 @@ module Kiba
                 )
                 transform{ |row| xform.process(row) }
               end
-
 
               bind.receiver.send(:field_cleaners).each do |cleaner|
                   transform do |row|
