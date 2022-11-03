@@ -1,0 +1,40 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+=  Mapping options for Objects
+
+
+toc::[]
+
+== Mapping options for tables merged into Objects
+
+=== ObjectNames
+
+==== :migrate_inactive
+
+Whether to migrate ObjectNames rows where `active` = 0
+
+Default:: true
+
+.Alternative options
+* false
+
+=== ObjectNameTypes
+
+==== :mappings
+
+Controls how values from ObjectNameTypes table _that are used in migrating data_ will map to CS nameTypes static option list.
+
+Values not used in migrating data are not added to CS.
+
+Default:: none, as this is very client-specific.

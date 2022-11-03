@@ -70,6 +70,8 @@ module Kiba
             obj_locations: :objlocationid,
             obj_rights_types: :objrightstypeid,
             obj_titles: :objectid,
+            object_name_types: Tms::ObjectNameTypes.id_field,
+            object_names: :objectid,
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             overall_conditions: :overallconditionid,
