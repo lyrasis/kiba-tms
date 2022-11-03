@@ -59,6 +59,9 @@ module Kiba
       setting :initiation_prefix,
         default: 'Initiated: ',
         reader: true
+      setting :loaned_object_treatment,
+        default: :creditline_to_loanin,
+        reader: true
       setting :percentowned_treatment,
         default: :acquisitionprovisos,
         reader: true

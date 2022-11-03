@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_accession,
+                source: :obj_accession__in_migration,
                 destination: :obj_accession__linked_set
               },
               transformer: Tms::LinkedSetAcq.select_xform

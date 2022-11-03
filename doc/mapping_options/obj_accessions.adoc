@@ -199,7 +199,7 @@ Default option:: `:valuation_control`
 
 Other options to be developed on client request.
 
-==== :valuation_control
+==== :accessionvalue_treatment = :valuation_control details
 Preprocessing for ObjAccession table/:onetoone treatment rows:
 
 * First we merge in the values of any linked ObjInsurance records
@@ -342,6 +342,17 @@ Default option:: `:acquisitionreason`
 * `:initiation_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Initiated: "
 
 Other options may be developed on client request, if feasible.
+
+=== :loaned_object_treatment
+TMS creates an ObjAccession row for every Object entered, whether it is a loaned object or you ever intend to enter acquisitions-related data for it.
+
+This setting controls how to handle data in the ObjAccession (and related tables) for Objects that are linked to Loans In.
+
+Default option:: `:creditline_to_loanin` -- unique ObjAccession `creditline` values for all objects linked to a given Loan In are gathered, and mapped into the Loan In record. Currently this data maps as a `loanStatusNote` value, with the `loanStatusType` value set to `Credit line`. Rows for these objects are removed from ObjAccession before transforming that data into CS Acquisition procedures.
+
+.Alternate options:
+* `:drop` - ObjAccession rows for objects linked to Loans In are removed from the ObjAccession table before we start creating CS Acquisition procedures
+* `:as_acquisitions` - Rows for objects linked to Loans In will be treated like any other ObjAccession rows. If other settings result in an Acquisition procedure being created for such objects, they will be related to both an Acquisition record and a Loan In record in CS.
 
 === Mapping names into :acquisitionsource vs. :owner
 

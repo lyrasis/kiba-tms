@@ -761,6 +761,17 @@ module Kiba
             tags: %i[loans objects relations],
             lookup_on: :objectid
           }
+          register :loanin_obj_lookup, {
+            creator: Kiba::Tms::Jobs::LoanObjXrefs::LoaninObjLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'loanin_obj_lookup.csv'
+            ),
+            tags: %i[loans objects],
+            lookup_on: :objectid,
+            desc: 'Outputs single field: :objectid'
+          }
         end
 
         Kiba::Tms.registry.namespace('loans') do
@@ -768,6 +779,15 @@ module Kiba
             creator: Kiba::Tms::Jobs::Loans::In,
             path: File.join(Kiba::Tms.datadir, 'working', 'loans_in.csv'),
             desc: 'Loans with :loantype = `loan in`',
+            tags: %i[loans loansin],
+            lookup_on: :loanid
+          }
+          register :in_lookup, {
+            creator: Kiba::Tms::Jobs::Loans::InLookup,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loans_in_lookup.csv'),
+            desc: 'Loans with :loantype = `loan in`; does NOT require running '\
+              'prep__loans job as a dependency; outputs single field: '\
+              ':loanid',
             tags: %i[loans loansin],
             lookup_on: :loanid
           }
@@ -1558,6 +1578,17 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('obj_accession') do
+          register :in_migration, {
+            creator: Kiba::Tms::Jobs::ObjAccession::InMigration,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'obj_accession_in_migration.csv'
+            ),
+            tags: %i[objaccession setup],
+            desc: 'Removes rows for objects linked to loansin, if configured '\
+              'to do so. Otherwise passes through all rows.'
+          }
           register :linked_lot, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_accession_linked_lot.csv'),
