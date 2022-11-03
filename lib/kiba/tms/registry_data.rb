@@ -1749,6 +1749,17 @@ module Kiba
             lookup_on: :objectid,
             tags: %i[objects]
           }
+          register :loan_in_creditlines, {
+            creator: Kiba::Tms::Jobs::Objects::LoanInCreditlines,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'loan_in_creditlines.csv'
+            ),
+            tags: %i[objects loansin],
+            desc: ':creditline values for objects linked to loansin',
+            lookup_on: :objectid
+          }
           register :classification_report, {
             path: File.join(
               Kiba::Tms.datadir,
