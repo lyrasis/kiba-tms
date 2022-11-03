@@ -74,53 +74,6 @@ module Kiba
                 field: :objectid,
                 value: '-1'
 
-              if config.classifications_xform
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: prep__classification_xrefs,
-                  fieldmap: {xrefclassid: :classificationid},
-                  delim: Tms.delim
-
-                transform do |row|
-                  row[:cids] = nil
-                  cid = row[:classificationid]
-                  xcid = row[:xrefclassid]
-                  if xcid.blank?
-                    row[:cids] = cid
-                    next row
-                  end
-
-                  added = xcid.split(Tms.delim)
-                    .reject{ |val| val == cid }
-                    .join(Tms.delim)
-                  row[:cids] = [cid, added].reject{ |val| val.blank? }
-                    .join(Tms.delim)
-                  row
-                end
-                transform Delete::Fields,
-                  fields: %i[classificationid xrefclassid]
-
-                transform Merge::MultiRowLookup,
-                  keycolumn: :cids,
-                  lookup: prep__classifications,
-                  fieldmap: Tms.classifications.fieldmap,
-                  delim: Tms.delim,
-                  null_placeholder: '%NULLVALUE%',
-                  multikey: true
-                transform Delete::Fields, fields: :cids
-
-                # cxrefmap = Tms.classifications.fieldmap
-                # cxrefmap.transform_keys!{ |key| "xref_#{key}" }
-
-                # sorter = Lookup::RowSorter.new(on: :sort, as: :to_i)
-                # transform Merge::MultiRowLookup,
-                #   keycolumn: :objectid,
-                #   lookup: prep__classification_xrefs,
-                #   fieldmap: cxrefmap,
-                #   delim: Tms.delim,
-                #   sorter: sorter
-              end
-
               if Tms::Departments.used?
                 transform Merge::MultiRowLookup,
                   keycolumn: :departmentid,
