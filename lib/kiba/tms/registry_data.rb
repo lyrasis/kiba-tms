@@ -772,6 +772,16 @@ module Kiba
             lookup_on: :objectid,
             desc: 'Outputs single field: :objectid'
           }
+          register :creditlines, {
+            creator: Kiba::Tms::Jobs::LoanObjXrefs::Creditlines,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'loanin_obj_creditlines.csv'
+            ),
+            tags: %i[loans],
+            lookup_on: :loanid
+          }
         end
 
         Kiba::Tms.registry.namespace('loans') do

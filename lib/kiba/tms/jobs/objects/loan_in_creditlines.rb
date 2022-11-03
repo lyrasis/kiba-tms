@@ -42,6 +42,10 @@ module Kiba
                   fields: %i[loanin creditline]
                 transform Delete::FieldsExcept,
                   fields: %i[objectid creditline]
+                transform Clean::RegexpFindReplaceFieldVals,
+                  fields: :creditline,
+                  find: '(%CR%)+',
+                  replace: ' '
               end
             end
           end
