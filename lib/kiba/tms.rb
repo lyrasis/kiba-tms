@@ -35,6 +35,7 @@ module Kiba
         'classification_xrefs' => 'ClassificationXRefs',
         'dd_languages' => 'DDLanguages',
         'email_types' => 'EMailTypes',
+        'ref_xrefs' => 'RefXRefs',
         'version'   => 'VERSION'
       )
       @loader.enable_reloading
@@ -93,6 +94,7 @@ module Kiba
         '89'=>'ObjAccession',
         '94'=>'ObjComponents',
         '95'=>'Conditions',
+        '97'=>'CondLineItems',
         '102'=>'ObjDeaccession',
         '108'=>'Objects',
         '126'=>'ObjRights',
@@ -114,8 +116,6 @@ module Kiba
 
 
     # PROJECT SPECIFIC CONFIG
-
-
     setting :cspace_profile, default: :fcart, reader: true
 
     # client-specific cleanup of whitespace, special characters, etc. to be
@@ -136,7 +136,6 @@ module Kiba
     setting :tms_fields,
       default: %i[loginid entereddate gsrowversion],
       reader: true
-
     # @return String ready to be converted into a Regexp
     #
     # If :migrate_no_value_types = false, type values matching any of these
@@ -152,7 +151,6 @@ module Kiba
         alts = "(#{value.join('|')})"
         "(\\(|\\[)?#{alts}(\\)|\\])?$"
       }
-
     setting :inventory_status_mapping,
       default: {},
       reader: true,
@@ -161,7 +159,6 @@ module Kiba
           .merge(Tms::ObjCompStatuses.mappings)
           .merge(Tms::ObjectStatuses.mappings)
       end
-
     setting :classifications, reader: true do
       # how to map/merge fields from Classifications table into objects
     end
