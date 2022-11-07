@@ -71,7 +71,7 @@ module Kiba
             .sort
             .uniq
         rescue StandardError => err
-          Failure(err)
+          Failure(Tms::Data::DeriverFailure.new(mod: mod, err: err))
         else
           Success(vals)
         end

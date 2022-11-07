@@ -20,12 +20,20 @@ module Kiba
 
         def call
           parts = str.split('.')
+          mod = parts[0]
+          check_mod(mod)
           col.new(mod: parts[0], field: parts[1])
         end
 
         private
 
         attr_reader :str, :col
+
+        def check_mod(mod)
+          unless Tms.configs.any?{ |cfg| cfg.to_s.end_with?("::#{mod}") }
+            fail(Tms::UnconfiguredModuleError.new(mod.to_s))
+          end
+        end
       end
     end
   end

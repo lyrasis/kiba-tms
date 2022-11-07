@@ -166,6 +166,9 @@ module Kiba
       # how to map/merge fields from Classifications table into objects
     end
 
+    Error = Module.new
+    UnconfiguredModuleError = Class.new(NameError){ include Error }
+
     def configs
       Tms.constants.select do |constant|
         evaled = Tms.const_get(constant)
