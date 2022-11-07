@@ -50,6 +50,9 @@ module Kiba
           if remarks_treatment == :statusnote
             value << :rem
           end
+          if Tms::ObjAccession.loaned_object_treatment == :creditline_to_loanin
+            value << :cl
+          end
           value
         }
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup

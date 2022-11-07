@@ -14,13 +14,19 @@ module Kiba
               files: {
                 source: :loans__in,
                 destination: :loansin__prep,
-                lookup: %i[
-                           orgs__by_norm
-                           persons__by_norm
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = %i[orgs__by_norm persons__by_norm]
+            if Tms::ObjAccession.loaned_object_treatment ==
+                :creditline_to_loanin
+              base << :loan_obj_xrefs__creditlines
+            end
+            base
           end
 
           def xforms
@@ -127,6 +133,24 @@ module Kiba
                 warn("Unknown config.display_date_treatment: #{dd_treatment}")
               end
 
+              if Tms::ObjAccession.loaned_object_treatment ==
+                  :creditline_to_loanin
+                transform Merge::MultiRowLookup,
+                  lookup: loan_obj_xrefs__creditlines,
+                  keycolumn: :loanid,
+                  fieldmap: {cl_loanstatusnote: :creditline},
+                  constantmap: {
+                    cl_loanstatus: 'Credit line',
+                    cl_loanindividual: Tms.nullvalue,
+                    cl_loanstatusdate: Tms.nullvalue
+                  },
+                  delim: Tms.delim
+                transform Deduplicate::GroupedFieldValues,
+                  on_field: :cl_loanstatusnote,
+                  grouped_fields: %i[cl_loanstatus cl_loanindividual
+                                     cl_loanstatusdate]
+              end
+
               if remarks_treatment == :statusnote
                 transform Tms::Transforms::Loansin::RemarksToStatusNote
               end
@@ -169,11 +193,16 @@ module Kiba
               transform Delete::Fields, fields: rolefields
 
               namefields = %i[person org contact]
+              if config.status_targets.any?(:loanindividual)
+                transform Rename::Field,
+                  from: :loanindividual,
+                  to: :li
+                namefields << :li
+              end
               namefields.each do |field|
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: field,
                   target: "#{field}_norm".to_sym,
-                  multival: true,
                   delim: Tms.delim
               end
 
@@ -191,6 +220,14 @@ module Kiba
                 fieldmap: {lenderscontact: pref},
                 multikey: true,
                 delim: Tms.delim
+              if config.status_targets.any?(:loanindividual)
+                transform Merge::MultiRowLookup,
+                  lookup: persons__by_norm,
+                  keycolumn: :li_norm,
+                  fieldmap: {loanindividual: pref},
+                  multikey: true,
+                  delim: Tms.delim
+              end
               transform Merge::MultiRowLookup,
                 lookup: orgs__by_norm,
                 keycolumn: :org_norm,
@@ -198,7 +235,9 @@ module Kiba
                 multikey: true,
                 delim: Tms.delim
 
-              delfields = namefields + namefields.map{ |field| "#{field}_norm".to_sym }
+              delfields = namefields + namefields.map do |field|
+                "#{field}_norm".to_sym
+              end
               transform Delete::Fields, fields: delfields
 
               transform Tms::Transforms::Loansin::CombineLoanStatus
