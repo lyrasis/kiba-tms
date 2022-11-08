@@ -136,6 +136,7 @@ module Kiba
     setting :tms_fields,
       default: %i[loginid entereddate gsrowversion],
       reader: true
+    setting :using_public_browser, default: false, reader: true
     # @return String ready to be converted into a Regexp
     #
     # If :migrate_no_value_types = false, type values matching any of these
