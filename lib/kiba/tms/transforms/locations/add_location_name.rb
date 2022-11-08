@@ -6,19 +6,20 @@ module Kiba
       module Locations
         class AddLocationName
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
-            @delim = Tms.locations.hierarchy_delim
+            @delim = Tms::Locations.hierarchy_delim
             @target = :location_name
+            @fields = Tms::Locations.loc_fields
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: fields
+            )
           end
 
           def process(row)
             row[target] = nil
-            
-            vals = field_values(
-              row: row,
-              fields: %i[brief_address site room unittype unitnumber unitposition]
-            )
+
+            vals = getter.call(row)
             return row if vals.values.empty?
 
             locname = [
@@ -36,15 +37,16 @@ module Kiba
 
           private
 
-          attr_reader :delim, :target
+          attr_reader :delim, :target, :fields, :getter
 
           def get_unit(vals)
-            result = [vals[:unittype], vals[:unitnumber]].compact
+            result = %i[unittype unitnumber].select{ |src| fields.any?(src) }
+              .map{ |src| vals[src] }
+              .compact
             return nil if result.empty?
 
             result.join(' ')
           end
-          
         end
       end
     end

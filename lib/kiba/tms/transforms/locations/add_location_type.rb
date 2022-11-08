@@ -6,7 +6,7 @@ module Kiba
       module Locations
         class AddLocationType
           def initialize
-            @delim = Tms.locations.hierarchy_delim
+            @delim = Tms::Locations.hierarchy_delim
             @target = :locationtype
           end
 
@@ -35,7 +35,7 @@ module Kiba
             elsif is_match?(%w[unit], loc)
               type = 'Unit'
             end
-            
+
             return row unless type
 
             row[target] = type
@@ -52,7 +52,7 @@ module Kiba
             matchers.each do |str|
               return true if loc.match?(/^#{str}(\d+| )| *#{str}\d*$/)
             end
-            false	
+            false
           end
         end
       end

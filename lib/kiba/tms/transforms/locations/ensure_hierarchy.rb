@@ -12,7 +12,7 @@ module Kiba
             @lookup = lookup
             @inherited = inherited
             @handled = {}
-            @delim = Tms.locations.hierarchy_delim
+            @delim = Tms::Locations.hierarchy_delim
           end
 
           def process(row)
@@ -42,7 +42,7 @@ module Kiba
             with_inherited_data = inherit(row, base)
             pad_remaining_fields(row, with_inherited_data)
           end
-          
+
           # [a b c d] -> [ [a b c d], [a b c], [a b], [a] ]
           def get_levels(arr)
             res = []
@@ -52,7 +52,7 @@ module Kiba
             end
             res
           end
-          
+
           def handle_parent(row, parent)
             @handled[parent] = nil
             get_levels(parent.split(delim)).map{ |arr| handle_parent_level(row, arr) }
@@ -65,10 +65,10 @@ module Kiba
 
             @lookup[arr_s] = nil
             @handled[arr_s] = nil
-            
+
             generate_row(row, arr)
           end
-          
+
           def inherit(row, hash)
             inherited.each{ |field| hash[field] = row.fetch(field, nil) }
             hash

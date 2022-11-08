@@ -6,7 +6,7 @@ module Kiba
       module Locations
         class AddParent
           def initialize
-            @delim = Tms.locations.hierarchy_delim
+            @delim = Tms::Locations.hierarchy_delim
             @target = :parent_location
           end
 
@@ -21,7 +21,7 @@ module Kiba
 
             segments.pop
             row[target] = segments.join(delim)
-            
+
             row
           end
 

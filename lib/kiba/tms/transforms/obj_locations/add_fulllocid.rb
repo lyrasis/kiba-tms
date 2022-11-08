@@ -6,14 +6,16 @@ module Kiba
       module ObjLocations
         class AddFulllocid
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
             @target = :fulllocid
-            @fields = Tms.locations.fulllocid_fields
+            @fields = Tms::Locations.fulllocid_fields
             @temp_fields = fields.map{ |field| temp(field) }
             @placeholder = 'nil'
             @delim = Tms.delim
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: temp_fields)
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: temp_fields
+            )
           end
 
           def process(row)
@@ -25,17 +27,18 @@ module Kiba
 
           private
 
-          attr_reader :target, :fields, :temp_fields, :placeholder, :delim, :getter
+          attr_reader :target, :fields, :temp_fields, :placeholder, :delim,
+            :getter
 
           def concat_id(row)
             getter.call(row).values.join(delim)
           end
-          
+
           def populate_temp(row, field)
             val = row.fetch(field, placeholder)
             val.empty? ? row[temp(field)] = placeholder : row[temp(field)] = val
           end
-          
+
           def temp(field)
             "#{field}_tmp".to_sym
           end
