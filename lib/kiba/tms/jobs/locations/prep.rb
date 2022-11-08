@@ -25,40 +25,61 @@ module Kiba
               files: {
                 source: :tms__locations,
                 destination: :prep__locations,
-                lookup: :prep__con_address
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = []
+            base << :prep__con_address if Tms::ConAddress.used?
+            base
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::EmptyFields,
-                consider_blank: {
-                  unitheightcm: '.0000',
-                  unitwidthcm: '.0000',
-                  unitdepthcm: '.0000',
-                  securitycode: '0',
-                }
 
-              transform Delete::FieldValueMatchingRegexp, fields: %i[site], match: '^\([Nn]ot [Aa]ssigned\)$'
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
 
-              # merge in address
-              transform Merge::MultiRowLookup,
-                lookup: prep__con_address,
-                keycolumn: :addressid,
-                fieldmap: {
-                  brief_address: :displayname1,
-                  address: :displayaddress
-                }
-              transform Delete::Fields, fields: :addressid
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :address,
-                find: '%CR%%CR%',
-                replace: ', '
+              if config.initial_data_cleaner
+                transform config.initial_data_cleaner
+              end
 
-              transform Replace::FieldValueWithStaticMapping, source: :active, target: :termstatus, mapping: ACTIVE
+              if Tms::ConAddress.used?
+                # merge in address
+                transform Merge::MultiRowLookup,
+                  lookup: prep__con_address,
+                  keycolumn: :addressid,
+                  fieldmap: {
+                    brief_address: :displayname1,
+                    address: :displayaddress
+                  }
+                transform Delete::Fields, fields: :addressid
+                transform Clean::RegexpFindReplaceFieldVals,
+                  fields: :address,
+                  find: '%CR%%CR%',
+                  replace: ', '
+                ba_mappings = config.brief_address_mappings
+                unless ba_mappings.empty?
+                  transform Replace::FieldValueWithStaticMapping,
+                    source: :brief_address,
+                    target: :brief_address,
+                    mapping: ba_mappings
+                end
+              end
+
+              transform Replace::FieldValueWithStaticMapping,
+                source: :active,
+                target: :termstatus,
+                mapping: ACTIVE
               transform Replace::FieldValueWithStaticMapping,
                 source: :publicaccess,
                 target: :public_access,
@@ -68,12 +89,15 @@ module Kiba
                 target: :storage_location_authority,
                 mapping: EXTERNAL
               transform Delete::Fields, fields: %i[active publicaccess external]
-              
+
               transform Tms::Transforms::Locations::AddLocationName
-              transform Tms::Transforms::Locations::AddParent
-              transform Rename::Field, from: :locationstring, to: :tmslocationstring
+              if config.hierarchy
+                transform Tms::Transforms::Locations::AddParent
+              end
+              transform Rename::Field,
+                from: :locationstring,
+                to: :tmslocationstring
             end
-            
           end
         end
       end
