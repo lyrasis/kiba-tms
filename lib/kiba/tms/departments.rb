@@ -28,6 +28,10 @@ module Kiba
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable
+
+      def default_mapping_treatment
+        :self
+      end
     end
   end
 end
