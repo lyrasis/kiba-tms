@@ -6,10 +6,10 @@ module Kiba
       module ObjLocations
         module Prep
           module_function
-         
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_locations,
@@ -32,27 +32,34 @@ module Kiba
             bind = binding
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              
+
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
               if config.fields.any?(:dateout)
-                transform Delete::FieldValueMatchingRegexp, fields: %i[dateout], match: '^9999-12-31'
+                transform Delete::FieldValueMatchingRegexp,
+                  fields: %i[dateout],
+                  match: '^9999-12-31'
               end
               if config.fields.any?(:tempticklerdate)
-                transform Delete::FieldValueMatchingRegexp, fields: %i[dateout], match: '^1900'
+                transform Delete::FieldValueMatchingRegexp,
+                  fields: %i[dateout],
+                  match: '^1900'
               end
 
-              transform FilterRows::FieldEqualTo, action: :reject, field: :objlocationid, value: '-1'
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
+                field: :objlocationid,
+                value: '-1'
 
               %i[approver handler requestedby].each do |field|
                 next unless config.fields.any?(field)
 
                 transform Tms::Transforms::DeleteNoValueTypes, field: field
               end
-              
+
               transform Tms::Transforms::ObjLocations::AddFulllocid
 
               transform Merge::MultiRowLookup,

@@ -855,26 +855,44 @@ module Kiba
         Kiba::Tms.registry.namespace('locs') do
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locs_from_locations.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_from_locations.csv'
+            ),
             desc: 'Locations extracted from TMS Locations',
             tags: %i[locations]
           }
           register :from_obj_locs_temptext, {
             creator: Kiba::Tms::Jobs::Locations::FromObjLocsTemptext,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locs_from_obj_locs_temptext.csv'),
-            desc: 'Locations created by appending temp text to location id location',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_from_obj_locs_temptext.csv'
+            ),
+            desc: 'Locations created by appending temp text to location id '\
+              'location',
             tags: %i[locations]
           }
           register :compiled_0, {
             creator: Kiba::Tms::Jobs::Locations::Compiled0,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled_0.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_compiled_0.csv'
+            ),
             desc: 'Locations from different sources, compiled, round 0',
             tags: %i[locations],
           }
           register :compiled_hier_0, {
             creator: Kiba::Tms::Jobs::Locations::CompiledHier0,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled_hier_0.csv'),
-            desc: 'Locations from different sources, compiled, hierarchy levels added, round 0',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_compiled_hier_0.csv'
+            ),
+            desc: 'Locations from different sources, compiled, hierarchy '\
+              'levels added, round 0',
             tags: %i[locations]
           }
           register :compiled, {
@@ -885,13 +903,19 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 usage_ct location_name parent_location storage_location_authority current_location_note address term_source fulllocid
+                 usage_ct location_name parent_location
+                 storage_location_authority current_location_note address
+                 term_source fulllocid
                 ] },
             lookup_on: :fulllocid
           }
           register :to_client_0, {
             creator: Kiba::Tms::Jobs::Locations::ToClient0,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'location_review_0.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'location_review_0.csv'
+            ),
             desc: 'Locations for client review',
             tags: %i[locations]
           }
@@ -900,52 +924,89 @@ module Kiba
         Kiba::Tms.registry.namespace('locclean') do
           %i[local offsite organization].each do |loc_type|
             register loc_type, {
-              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}.csv"),
-              creator: {callee: Kiba::Tms::Jobs::LocsClean::Splitter, args: {type: loc_type}},
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                "locations_#{loc_type}.csv"
+              ),
+              creator: {
+                callee: Kiba::Tms::Jobs::LocsClean::Splitter,
+                args: {type: loc_type}
+              },
               tags: %i[locations],
               lookup_on: :location_name
             }
           end
-
           Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_hier".to_sym, {
-              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_hier.csv"),
-              creator: {callee: Kiba::Tms::Jobs::LocsClean::HierarchyAdder, args: {type: loc_type}},
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                "locations_#{loc_type}_hier.csv"
+              ),
+              creator: {
+                callee: Kiba::Tms::Jobs::LocsClean::HierarchyAdder,
+                args: {type: loc_type}
+              },
               tags: %i[locations],
             }
           end
-
           Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_cspace".to_sym, {
-              path: File.join(Kiba::Tms.datadir, 'working', "locations_#{loc_type}_cspace.csv"),
-              creator: {callee: Kiba::Tms::Jobs::LocsClean::Cspace, args: {type: loc_type}},
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                "locations_#{loc_type}_cspace.csv"
+              ),
+              creator: {
+                callee: Kiba::Tms::Jobs::LocsClean::Cspace,
+                args: {type: loc_type}
+              },
               tags: %i[locations cspace],
             }
           end
-
           Kiba::Tms::Locations.authorities.each do |loc_type|
             register "#{loc_type}_hier_cspace".to_sym, {
-              path: File.join(Kiba::Tms.datadir, 'cspace', "locations_#{loc_type}_hier.csv"),
-              creator: {callee: Kiba::Tms::Jobs::LocsClean::HierCspace, args: {type: loc_type}},
+              path: File.join(
+                Kiba::Tms.datadir,
+                'cspace',
+                "locations_#{loc_type}_hier.csv"
+              ),
+              creator: {
+                callee: Kiba::Tms::Jobs::LocsClean::HierCspace,
+                args: {type: loc_type}
+              },
               tags: %i[locations cspace relations],
             }
           end
-
           register :unknown_types, {
             creator: Kiba::Tms::Jobs::LocsClean::UnknownTypes,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'locations_unknown_types.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'locations_unknown_types.csv'
+            ),
             desc: 'Cleaned locations with unrecognized authority type',
             tags: %i[locations reports todochk]
           }
           register :org_lookup, {
             creator: Kiba::Tms::Jobs::LocsClean::OrgLookup,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locations_org_lookup.csv'),
-            desc: 'Organization locations matched to existing organization termdisplaynames',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locations_org_lookup.csv'
+            ),
+            desc: 'Organization locations matched to existing organization '\
+              'termdisplaynames',
             tags: %i[locations orgs]
           }
           register :new_orgs, {
             creator: Kiba::Tms::Jobs::LocsClean::NewOrgs,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locations_new_orgs.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locations_new_orgs.csv'
+            ),
             desc: 'Organization locations that need to be added',
             tags: %i[locations orgs]
           }
@@ -954,7 +1015,11 @@ module Kiba
         Kiba::Tms.registry.namespace('locclean0') do
           register :prep, {
             creator: Kiba::Tms::Jobs::LocsClean0::Prep,
-            path: File.join(Kiba::Tms.datadir, 'working', 'locations_cleaned_0.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locations_cleaned_0.csv'
+            ),
             desc: 'Initial cleaned location data with info-only fields removed',
             tags: %i[locations]
           }
