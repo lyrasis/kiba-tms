@@ -19,6 +19,7 @@ module Kiba
           return row unless active
 
           filter.process(row)
+          row
         end
 
         private
