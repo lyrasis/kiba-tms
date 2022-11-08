@@ -80,6 +80,12 @@ module Kiba
               end
               transform Delete::Fields,
                 fields: %i[thumbpathid mediastatusid mediatypeid]
+
+              if Tms::ConRefs.for?('MediaRenditions')
+                transform Tms::Transforms::ConRefs::Merger,
+                  into: config,
+                  keycolumn: :renditionid
+              end
             end
           end
         end

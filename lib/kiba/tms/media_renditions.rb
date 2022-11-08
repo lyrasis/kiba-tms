@@ -13,6 +13,33 @@ module Kiba
                     thumbblobsize loctermid quantitymade quantityavailable],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :con_ref_field_rules,
+        default: {
+          fcart: {
+            contributor: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false,
+              role_suffix: nil
+            },
+            creator: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false,
+              role_suffix: nil
+            },
+            publisher: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false,
+              role_suffix: nil
+            },
+            rightsholder: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false,
+              role_suffix: nil
+            }
+          }
+        },
+        reader: true
     end
   end
 end
