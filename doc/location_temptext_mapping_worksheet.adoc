@@ -28,7 +28,7 @@ toc::[]
 
 === Option 1: all the same
 
-Let us know to apply one of the <available-temptext-mappings> to all of your `temptext` values.
+Let us know to apply one of the <<available-temptext-mappings>> to all of your `temptext` values.
 
 Do not edit and return the spreadsheet to us.
 
