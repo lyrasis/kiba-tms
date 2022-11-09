@@ -32,7 +32,10 @@ Let us know to apply one of the <<available-temptext-mappings>> to all of your `
 
 Do not edit and return the spreadsheet to us.
 
+You cannot make corrections to `temptext` values with this option.
+
 === Option 2: individual mappings
+
 
 == Interpreting the worksheet
 To create the worksheet, we create a temporary `combinedvalue` field concatenating the values of the `temptext`, `loclevel` and `sublevel` fields for every record in the ObjLocations table.
@@ -228,9 +231,8 @@ The value of `temptext` (or the provided `corrected_value` if given) is mapped t
 image::temptext_inventorynote.png[2302]
 +++&nbsp;+++
 
-== Important things re: working with the worksheet
+== Instructions for editing the worksheet
 
-Make sure to follow these instructions if you are
 * **Only enter/change data in the following columns**
 ** `mapping`
 ** `corrected_value`
@@ -240,10 +242,3 @@ Make sure to follow these instructions if you are
 * Feel free to change the order of the columns to support your work.
 
 If you find issues that cannot be cleaned up/fixed via this spreadsheet, you will need to fix them either in TMS prior to providing final data for production migration, or in CS after the production migration.
-
-=== General way this spreadsheet works in the migration
-You make changes and additions in the spreadsheet as per the instructions below. You return the completed worksheet to LYRASIS migration staff.
-
-The spreadsheet then becomes another data source in the migration. The `fulllocid` column allows us to match each row up to the original TMS data it came from. Essentially, we use this to create a "just in the migration process" virtual version of your data.
-
-At the beginning of the final phase of the migration, when you send us the final data to migrate into your production CS, we will run the final data through this process, generate the "just in the migration process" version of your data, and re-check it for new duplicates or any other issues. At this point, you may need to complete a smaller version of this spreadsheet to handle any issues introduced by new data in the system.
