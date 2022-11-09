@@ -25,6 +25,9 @@ module Kiba
             base << :prep__loc_purposes if Tms::LocPurposes.used?
             base << :prep__trans_status if Tms::TransStatus.used?
             base << :prep__trans_codes if Tms::TransCodes.used?
+            if config.temptext_mapping_done
+              base << :obj_locations__temptext_mapped_for_merge
+            end
             base
           end
 
@@ -38,6 +41,11 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
+              if config.fields.any?(:loclevel)
+                transform Delete::FieldValueMatchingRegexp,
+                  fields: %i[loclevel],
+                  match: '^0$'
+              end
               if config.fields.any?(:dateout)
                 transform Delete::FieldValueMatchingRegexp,
                   fields: %i[dateout],
@@ -53,11 +61,32 @@ module Kiba
                 action: :reject,
                 field: :objlocationid,
                 value: '-1'
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
+                field: :locationid,
+                value: '-1'
 
               %i[approver handler requestedby].each do |field|
                 next unless config.fields.any?(field)
 
                 transform Tms::Transforms::DeleteNoValueTypes, field: field
+              end
+
+              if config.temptext_mapping_done
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[temptext loclevel sublevel],
+                  target: :lookupid,
+                  sep: ' ',
+                  delete_sources: false,
+                  prepend_source_field_name: true
+                transform Merge::MultiRowLookup,
+                  lookup: obj_locations__temptext_mapped_for_merge,
+                  keycolumn: :lookupid,
+                  fieldmap: {
+                    ttmapping: :mapping,
+                    ttcorrect: :corrected_value
+                  }
+                transform Tms::Transforms::ObjLocations::TemptextMappings
               end
 
               transform Tms::Transforms::ObjLocations::AddFulllocid

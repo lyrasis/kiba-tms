@@ -1796,6 +1796,28 @@ module Kiba
                                  ]
             }
           }
+          if Tms::ObjLocations.temptext_mapping_done
+            register :temptext_mapped, {
+              path: File.join(
+                Kiba::Tms.datadir,
+                'supplied',
+                'location_temptext_for_mapping.csv'
+              ),
+              tags: %i[obj_locations locs],
+              supplied: true
+            }
+            register :temptext_mapped_for_merge, {
+              creator: Tms::Jobs::ObjLocations::TemptextMappedForMerge,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'temptext_mapped_for_merge.csv'
+              ),
+              tags: %i[obj_locations locs],
+              desc: 'Removes unneeded fields; adds :lookup column',
+              lookup_on: :lookup
+            }
+          end
           register :fulllocid_lookup, {
             creator: Kiba::Tms::Jobs::ObjLocations::FulllocidLookup,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_by_fulllocid.csv'),

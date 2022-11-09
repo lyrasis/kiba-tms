@@ -166,6 +166,7 @@ module Kiba
 
     Error = Module.new
     UnconfiguredModuleError = Class.new(NameError){ include Error }
+    UnknownObjLocTempTextMappingError = Class.new(StandardError){ include Error }
 
     def configs
       Tms.constants.select do |constant|
