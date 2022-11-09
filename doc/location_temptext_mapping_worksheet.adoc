@@ -49,9 +49,7 @@ Example client has requested that ", " be used to separate Storage Location hier
 
 All of the examples are made up data based on patterns seen in real client data.
 
-== Available `temptext` mappings explained
-
-
+== Available `temptext` mappings
 
 === :drop
 Do not migrate the `temptext` value.
@@ -192,8 +190,39 @@ The value of `temptext` (or the provided `corrected_value` if given) is mapped t
 image::temptext_currentlocationnote.png[2303]
 +++&nbsp;+++
 
+=== :movementnote
 
+No additional Storage Location authority term is created.
 
+The value of `temptext` (or the provided `corrected_value` if given) is mapped to the movement note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc3`+`sublevel/loc5` values.
+
+.:movementnote mapping example
+....
+| temptext                                  | mapping      | corrected_value | loc1                   | loc3 | loc5 |
+|-------------------------------------------+--------------+-----------------+------------------------+------+------|
+| S18. Put into mylar for long term storage | movementnote |                 | MUS, 10 2, Vault, T290 |      |      |
+....
+
+.:movementnote result
+image::temptext_movementnote.png[2302]
++++&nbsp;+++
+
+=== :inventorynote
+
+No additional Storage Location authority term is created.
+
+The value of `temptext` (or the provided `corrected_value` if given) is mapped to the inventory note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc3`+`sublevel/loc5` values.
+
+.:inventorynote mapping example
+....
+| temptext                                  | mapping       | corrected_value | loc1                   | loc3 | loc5 |
+|-------------------------------------------+---------------+-----------------+------------------------+------+------|
+| S18. Put into mylar for long term storage | inventorynote |                 | MUS, 10 2, Vault, T290 |      |      |
+....
+
+.:inventorynote result
+image::temptext_inventorynote.png[2302]
++++&nbsp;+++
 
 == Important things re: working with the worksheet
 
