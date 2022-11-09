@@ -36,6 +36,13 @@ You cannot make corrections to `temptext` values with this option.
 
 === Option 2: individual mappings
 
+This option lets you specify different <<available-temptext-mappings,`temptext` treatment mappings>> per `temptext` value.
+
+It also lets you make corrections to the content of `temptext` values.
+
+Make sure to follow the <<instructions-for-editing-the-worksheet>>.
+
+Let your Migration Specialist know if you have any questions in the process.
 
 == Interpreting the worksheet
 To create the worksheet, we create a temporary `combinedvalue` field concatenating the values of the `temptext`, `loclevel` and `sublevel` fields for every record in the ObjLocations table.
