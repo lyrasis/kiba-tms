@@ -1762,6 +1762,40 @@ module Kiba
             desc: 'Merges location names (using fulllocid) into location, prevloc, nextloc, and scheduled loc fields',
             lookup_on: :objectnumber
           }
+          register :mappable_temptext, {
+            creator: Kiba::Tms::Jobs::ObjLocations::MappableTemptext,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'location_temptext_for_mapping.csv'
+            ),
+            tags: %i[obj_locations locs cleanup],
+            desc: 'Unique tmslocationstring + temptext values for client to '\
+              'categorize/map into sublocations or notes',
+            dest_special_opts: {
+              initial_headers: %i[temptext mapping corrected_value
+                                  loc1 loc3 loc5
+                                  objectnumber transdate dateout
+                                 ]
+            }
+          }
+          register :mappable_temptext_support, {
+            creator: Kiba::Tms::Jobs::ObjLocations::MappableTemptextSupport,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'objlocations_reference_for_temptext_mapping.csv'
+            ),
+            tags: %i[obj_locations locs],
+            desc: 'ObjLocations rows with temptext values, with '\
+              'tmslocationstring values merged in. Provided to client to '\
+              'support completing mappable_temptext worksheet',
+            dest_special_opts: {
+              initial_headers: %i[temptext loc1 loc3 loc5
+                                  objectnumber transdate dateout
+                                 ]
+            }
+          }
           register :fulllocid_lookup, {
             creator: Kiba::Tms::Jobs::ObjLocations::FulllocidLookup,
             path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_by_fulllocid.csv'),

@@ -9,7 +9,7 @@ module Kiba
 
           def initialize
             @target = :fulllocid
-            @fields = Tms::Locations.fulllocid_fields
+            @fields = Tms::ObjLocations.fulllocid_fields
             @temp_fields = fields.map{ |field| temp(field) }
             @placeholder = 'nil'
             @delim = Tms.delim

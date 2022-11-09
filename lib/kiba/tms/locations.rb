@@ -15,13 +15,6 @@ module Kiba
       setting :authorities, default: %i[local offsite], reader: true
       setting :brief_address_mappings, default: {}, reader: true
       setting :cleanup_iteration, default: 0, reader: true
-      # Which fields in obj_locations need to be concatenated with the location
-      #   value to create additional location values (and thus need a unique id
-      #   added to look them up)
-      setting :fulllocid_fields,
-        default: %i[locationid loclevel searchcontainer temptext shipmentid
-                    crateid sublevel],
-        reader: true
       # Whether client wants the migration to include construction of a location
       #   hierarchy
       setting :hierarchy, default: true, reader: true
