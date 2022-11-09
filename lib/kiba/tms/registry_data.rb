@@ -1412,68 +1412,70 @@ module Kiba
             tags: %i[names cleanup],
             dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
-          register :worksheet_prev_version, {
-            path: File.join(
-              Kiba::Tms.datadir,
-              'to_client',
-              'name_type_cleanup_worksheet_prev.csv'
-            ),
-            supplied: true,
-            lookup_on: :constituentid
-          }
-          register :worksheet_completed, {
-            path: File.join(
-              Tms.datadir,
-              'supplied',
-              'nametype_cleanup_worksheet_complete.csv'
-            ),
-            desc: 'Completed nametype cleanup worksheet',
-            tags: %i[names cleanup],
-            supplied: true,
-            lookup_on: :constituentid
-          }
-          register :corrected_orgs, {
-            creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedOrgs,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'name_type_cleanup_corrected_orgs.csv'
-            ),
-            tags: %i[names cleanup],
-            desc: 'For merge into source data tables',
-            lookup_on: :orignorm
-          }
-          register :corrected_persons, {
-            creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedPersons,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'name_type_cleanup_corrected_persons.csv'
-            ),
-            tags: %i[names cleanup],
-            desc: 'For merge into source data tables',
-            lookup_on: :orignorm
-          }
-          register :returned_prep, {
-            creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedPrep,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'name_type_cleanup_returned_prep.csv'
-            ),
-            tags: %i[names cleanup],
-            desc: 'Prepares supplied cleanup spreadsheet for use in '\
-              'overlaying cleaned up data and generating phase 2 name '\
-              'cleanup worksheet'
-          }
-          ntc_supp_path = Tms.registry
-            .resolve(:name_type_cleanup__worksheet_completed)[:path]
-            .to_s
-          register :convert_returned_to_uncontrolled, {
-            creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
-            path: ntc_supp_path.sub('.csv', '_converted.csv'),
-            tags: %i[names cleanup]
-          }
+          if Tms::NameTypeCleanup.done
+            register :worksheet_prev_version, {
+              path: File.join(
+                Kiba::Tms.datadir,
+                'to_client',
+                'name_type_cleanup_worksheet_prev.csv'
+              ),
+              supplied: true,
+              lookup_on: :constituentid
+            }
+            register :worksheet_completed, {
+              path: File.join(
+                Tms.datadir,
+                'supplied',
+                'nametype_cleanup_worksheet_complete.csv'
+              ),
+              desc: 'Completed nametype cleanup worksheet',
+              tags: %i[names cleanup],
+              supplied: true,
+              lookup_on: :constituentid
+            }
+            register :corrected_orgs, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedOrgs,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_type_cleanup_corrected_orgs.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'For merge into source data tables',
+              lookup_on: :orignorm
+            }
+            register :corrected_persons, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedPersons,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_type_cleanup_corrected_persons.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'For merge into source data tables',
+              lookup_on: :orignorm
+            }
+            register :returned_prep, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedPrep,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_type_cleanup_returned_prep.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'Prepares supplied cleanup spreadsheet for use in '\
+                'overlaying cleaned up data and generating phase 2 name '\
+                'cleanup worksheet'
+            }
+            ntc_supp_path = Tms.registry
+              .resolve(:name_type_cleanup__worksheet_completed)[:path]
+              .to_s
+            register :convert_returned_to_uncontrolled, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
+              path: ntc_supp_path.sub('.csv', '_converted.csv'),
+              tags: %i[names cleanup]
+            }
+          end
           register :for_con_alt_names, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConAltNames,
             path: File.join(Kiba::Tms.datadir, 'working', 'name_type_cleanup_for_con_alt_names.csv'),
