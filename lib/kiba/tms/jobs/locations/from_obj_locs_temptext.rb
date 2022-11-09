@@ -15,14 +15,16 @@ module Kiba
                 lookup: :prep__locations
               },
               transformer: xforms,
-              helper: Tms.locations.multi_source_normalizer
+              helper: Tms::Locations.multi_source_normalizer
             )
           end
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :temptext
-              
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :temptext
+
               transform Merge::MultiRowLookup,
                 lookup: prep__locations,
                 keycolumn: :locationid,
@@ -35,12 +37,17 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[parent_location temptext],
                 target: :location_name,
-                sep: Tms.locations.hierarchy_delim,
+                sep: Tms::Locations.hierarchy_delim,
                 delete_sources: false
               transform Delete::FieldsExcept,
-                fields: %i[fulllocid location_name parent_location storage_location_authority address]
-              transform Deduplicate::Table, field: :fulllocid, delete_field: false
-              transform Merge::ConstantValue, target: :term_source, value: 'ObjLocations.temptext'
+                fields: %i[fulllocid location_name parent_location
+                           storage_location_authority address]
+              transform Deduplicate::Table,
+                field: :fulllocid,
+                delete_field: false
+              transform Merge::ConstantValue,
+                target: :term_source,
+                value: 'ObjLocations.temptext'
             end
           end
         end
