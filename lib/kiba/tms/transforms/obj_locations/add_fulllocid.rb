@@ -5,8 +5,6 @@ module Kiba
     module Transforms
       module ObjLocations
         class AddFulllocid
-          include Kiba::Extend::Transforms::Helpers
-
           def initialize
             @target = :fulllocid
             @fields = Tms::ObjLocations.fulllocid_fields
@@ -36,7 +34,7 @@ module Kiba
 
           def populate_temp(row, field)
             val = row.fetch(field, placeholder)
-            val.empty? ? row[temp(field)] = placeholder : row[temp(field)] = val
+            val.blank? ? row[temp(field)] = placeholder : row[temp(field)] = val
           end
 
           def temp(field)
