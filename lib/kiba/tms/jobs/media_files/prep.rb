@@ -84,6 +84,9 @@ module Kiba
                   keycolumn: :renditionid,
                   fieldmap: fm
               end
+
+              transform Delete::Fields,
+                fields: %i[pathid]
             end
           end
         end
