@@ -15,9 +15,14 @@ endif::[]
 toc::[]
 
 == Important things re: working with the worksheet
+* By default, https://github.com/lyrasis/kiba-tms/blob/main/doc/mapping_options/locations.adoc#populate_storage_loc_type[we do not populate the CS Storage location type field in a migration]. **If you want to to generate values for this field in the migration, let your Migration Specialist know before you begin working in this spreadsheet.** We will re-generate a the worksheet so that it includes the Storage location type field values we are able to derive from your TMS data, and a column for you to provide new values or make corrections.
+* **Only edit the following columns:**
+** correct_location_name
+** correct_authority
+** correct_address
+* **Do not edit any values in columns not listed above**. If you do so, we may not be able to merge your work back into the migration.
 * It is fine to sort/filter the worksheet however you want in order to review and edit your data.
-* Feel free to change the order of the columns to support your work. 
-* **Do not edit any values in grey-ed out columns**. If you change data in the grey-ed out  columns, we may not be able to merge your work back into the migration.
+* Feel free to change the order of the columns to support your work.
 * **Do not change column names** or we may not be able to merge your work back into the migration.
 * **Do not delete any rows**. Adding rows is ok when needed, as explained in examples below.
 
@@ -30,16 +35,17 @@ At the beginning of the final phase of the migration, when you send us the final
 
 == Explanation of selected worksheet columns
 usage_ct:: Number of object location records this location is used in.
+to_review:: Only appears if you have previously completed this worksheet, and are doing a followup review after sending updated data.
 location_name:: maps to Display name field of storage location term record
 storage_location_authority:: as coded in TMS; more on this below
-locationtype:: derived from final segment of `location_name` -- maps to Storage location type field. Values are managed in Tools > Term Lists > Location Type
+locationtype:: only included if you are opting to create migrate Storage location type field values in the migration process. See the first item in the "Important things" liist above.
 address:: derived from TMS
 term_source:: where the term came from in TMS (explained below)
 fulllocid:: id for merging changes back into the migration
 
 === `term_source` values
 Locations:: taken from the TMS Locations table
-ObjLocations.temptext:: Because of differences in how TMS and CS model temporary locations, we create additional locations from any ObjLocation records having a `temptext` value. We append the `temptext` value to the name of the location. These are worth particular attention in your review. We frequently see that some of them should legitimately be separate locations, while the `temptext` value for some should be mapped to LMI > Current location > Note field. 
+ObjLocations:: If data in your TMS ObjLocations table will be used to generate Storage Location authority terms. See https://github.com/lyrasis/kiba-tms/blob/main/doc/mapping_options/locations.adoc[Locations mapping options] for more information.
 
 == Background, and important things about location authorities in CS that affect this work
 
@@ -53,16 +59,16 @@ Please see the details for each step below.
 
 * Let your Migration Specialist know whether you want a location hierarchy built as part of your migration.
 * Review/revise `storage_location_authority` value
-* Review/revise location names for consistency, with an eye to shortening them
-* Review/revise `locationtype` value
+* Review/revise location names for correctness and consistency, with an eye to shortening them
 * Review/revise `address` value
+* Review/revise `locationtype` value (if migrating Storage location type field)
 
 == Step details
 === Let your Migration Specialist know whether you want a location hierarchy built as part of your migration
 
 See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#do-you-want-a-location-hierarchy[Do you want a location hierarchy?]
 
-If you want a location hierarchy, there will be another location review step after you finalize the location names. We will generate the hierarchy from the names and ask you to review that. 
+If you want a location hierarchy, there will be another location review step after you finalize the location names. We will generate the hierarchy from the names and ask you to review that they have been generated as expected.
 
 
 === Review/revise `storage_location_authority` value
@@ -78,45 +84,45 @@ Please read https://github.com/lyrasis/collectionspace-migration-explainers/blob
 
 **If you want them all mapped to the Local vocabulary**, you can just let me know that. You don't need to edit the values in the spreadsheet.
 
-**If you want them split into Local and Offsite**, correct the values in the column as necessary.
+**If you want them split into Local and Offsite**, enter the correct value in the `correct_authority` column as necessary.
 
-**If any of them are actually _Organizations_**, you can put `Organization` in the column. Make sure the `location_name` value exactly matches whatever you have as the `use_name` in the names cleanup spreadsheet, or a new Organization record will be added.
+**If any of them are actually _Organizations_**, you can put `Organization` in the `correct_authority` column. If there is already a constituent recorded in TMS for the organzation, make sure the `location_name` value here exactly matches whatever you have as the `correctname` in the name type cleanup spreadsheet. If not, enter the name type cleanup sheet's `correctname` in the `correct_location_name` column, or a new Organization record will be added.
 
-It is fine to tag locations that don't exist in the names sheet as Organizations, if you do want an additional Organization record to be created. 
+It is fine to tag locations that don't exist in the names sheet as Organizations, if you do want an additional Organization record to be created.
 
 === Review/revise location names for consistency, with an eye to shortening them
 
 Please see https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#review-location-names-for-consistency-with-an-eye-to-shortening-them[this section] for reasoning and examples.
 
-Make any corrections/changes directly in the `location_name` column.
+Make any corrections/changes in the `correct_location_name` column.
 
 ==== Removing location values
-*If the `usage_ct` value for the row is 0* and you want to not migrate a given location into CS, just delete the `location_name` value in that row.
+*If the `usage_ct` value for the row is 0* and you want to not migrate a given location into CS, enter "DO NOT MIGRATE" in the `correct_location_name` value in that row.
 
-*If the `usage_ct` value for the row is > 0,* doing this will cause any object location records that used that location to be dropped from the migration. This is because you can't have a Location/Movement/Inventory (LMI) procedure in CS with no location information.
+*If the `usage_ct` value for the row is > 0,* you _can_ put "DO NOT MIGRATE" in the `correct_location_name`. However, in addition to not creating an Storage Location authority for the location, the ObjLocations records using this location will be dropped from the migration. This is because you can't have a Location/Movement/Inventory (LMI) procedure in CS with no location information.
 
 ==== Merge multiple different location values into one location
 
-We can merge multiple rows into one location if you make the `location_name` the same in the spreadsheet.
+We can merge multiple rows into one location if you make the `correct_location_name` the same in the spreadsheet.
 
 .Before
 ....
-| usage_ct | location_name                                     | fulllocid |
-|----------+---------------------------------------------------+-----------|
-|        3 | Museum > Curator's office cabinet                 |         2 |
-|        1 | Museum > Curator's office cabinet > Top drawer    |         3 |
-|        2 | Museum > Curator's office cabinet > Bottom drawer |         4 |
+| usage_ct | location_name                                     | correct_location_name | fulllocid |
+|----------+---------------------------------------------------+-----------------------+-----------|
+|        3 | Museum > Curator's office cabinet                 |                       |         2 |
+|        1 | Museum > Curator's office cabinet > Top drawer    |                       |         3 |
+|        2 | Museum > Curator's office cabinet > Bottom drawer |                       |         4 |
 ....
 
-The following will cause 6 items to be assigned to `Museum > Curator's office cabinet` location in CS.
+The following will cause 6 items to be assigned to `Museum > Curator's office cabinet` location in CS. Separate location authorities for the top and bottom drawer will not be created.
 
 .After
 ....
-| usage_ct | location_name                     | fulllocid |
-|----------+-----------------------------------+-----------|
-|        3 | Museum > Curator's office cabinet |         2 |
-|        1 | Museum > Curator's office cabinet |         3 |
-|        2 | Museum > Curator's office cabinet |         4 |
+| usage_ct | location_name                                     | correct_location_name             | fulllocid |
+|----------+---------------------------------------------------+-----------------------------------+-----------|
+|        3 | Museum > Curator's office cabinet                 |                                   |         2 |
+|        1 | Museum > Curator's office cabinet > Top drawer    | Museum > Curator's office cabinet |         3 |
+|        2 | Museum > Curator's office cabinet > Bottom drawer | Museum > Curator's office cabinet |         4 |
 ....
 
 ==== Keep location values from being merged into one in CS when they should not
@@ -125,10 +131,10 @@ Depending on the source data, it is possible that we could have a situation like
 
 .Before
 ....
-| usage_ct | location_name | fulllocid |
-|----------+---------------+-----------|
-|       53 | Gallery 23    |         2 |
-|       27 | Gallery 23    |         3 |
+| usage_ct | location_name | correct_location_name | fulllocid |
+|----------+---------------+-----------------------+-----------|
+|       53 | Gallery 23    |                       |         2 |
+|       27 | Gallery 23    |                       |         3 |
 ....
 
 If left this way, you will end up with *one* `Gallery 23` location in CS, with 80 object location records using that one location.
@@ -137,54 +143,25 @@ You would need to add something to the `location_names` to differentiate them:
 
 .After
 ....
-| usage_ct | location_name           | fulllocid |
-|----------+-------------------------+-----------|
-|       53 | Building 1 > Gallery 23 |         2 |
-|       27 | Building 2 > Gallery 23 |         3 |
+| usage_ct | location_name | correct_location_name   | fulllocid |
+|----------+---------------+-------------------------+-----------|
+|       53 | Gallery 23    | Building 1 > Gallery 23 |         2 |
+|       27 | Gallery 23    | Building 2 > Gallery 23 |         3 |
 ....
 
 NOTE: I expect this situation to be rare. I don't know if TMS allows you to enter data that would result in this situation. If we run into it as a broader pattern, it may be that we need to tweak the migration logic to pull data from additional places.
 
-==== Moving information from `location_name` to `current_location_note`
-This is usually most relevant to rows where `term_source` value is not `Locations`, where extra info from ObjLocations table has been appended to locations to create more specific locations. 
-
-If part of the location_name should really be treated as a note instead of a location, handle it as follows:
-
-.Before
-....
-| usage_ct | location_name                             | current_location_note | fulllocid |
-|----------+-------------------------------------------+-----------------------+-----------|
-|       22 | Museum > Curator's office                 |                       |         1 |
-|        3 | Museum > Curator's office > Incoming tray |                       |         2 |
-|       12 | Museum > Curator's office > Storage shelf |                       |         3 |
-....
-
-The following will create 25 LMI records having location `Museum > Curator's office`. 3 of those will get the note value populated with `Incoming tray`. A separate location will be created for the storage shelf.
-
-.After
-....
-| usage_ct | location_name                             | current_location_note | fulllocid |
-|----------+-------------------------------------------+-----------------------+-----------|
-|       22 | Museum > Curator's office                 |                       |         1 |
-|        3 | Museum > Curator's office                 | Incoming tray         |         2 |
-|       12 | Museum > Curator's office > Storage shelf |                       |         3 |
-....
-
 === Review/revise `locationtype` value
 
-*This is optional. Please see https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#storage-location-type-field[Storage location type field] and decide whether you want to include these values in your migration.*
+*This is optional and you will only see this field if you have told your Migration specialist that you wish to include this field in the migration. Please see https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/location_authority.adoc#storage-location-type-field[Storage location type field] and decide whether you want to include these values in your migration.*
 
-The default locationtype values have been provided.
+The default `locationtype` values derived by the migration process have been provided.
 
-*If you do not want to include locationtype values in your migration,* let your migration specialist know and just ignore this column.
-
-*If you do want to include locationtype values in your migration,* review and add desired values directly in this column.
+Add or correct the `locationtype` value in the `correct_locationtype` column.
 
 === Review/revise `address` value
 *This is optional*
 
 *If you don't want address migrated into location authority records,* let your migration specialist know and ignore this column.
 
-*If you do want address migrated into location authority records,* add/correct any info directly in this column.
-
-
+*If you do want address migrated into location authority records,* add/correct any info in the `correct_address` column.
