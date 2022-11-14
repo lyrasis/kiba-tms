@@ -8,8 +8,8 @@ module Kiba
           def initialize
             @mappingsrc = :ttmapping
             @correctsrc = :ttcorrect
-            @targets = %i[loc2 loc4 loc6 currentlocationnote
-                         movementnote inventorynote]
+            @targets = Tms::ObjLocations.temptext_target_fields +
+              Tms::ObjLocations.temptext_note_targets
           end
 
           def process(row)

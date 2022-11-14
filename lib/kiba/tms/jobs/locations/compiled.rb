@@ -8,11 +8,9 @@ module Kiba
           module_function
 
           def job
-            src = Tms.locations.hierarchy ? :locs__compiled_hier_0 : :locs__compiled_0
-            
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: src,
+                source: sources,
                 destination: :locs__compiled,
                 lookup: :obj_locations__fulllocid_lookup
               },
@@ -20,22 +18,34 @@ module Kiba
             )
           end
 
+          def sources
+            base = [:locs__from_locations]
+            base << :locs__from_obj_locs if Tms::ObjLocations.adds_sublocations
+            base
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
+              transform Append::NilFields,
+                fields: config.multi_source_normalizer.get_fields
+
               transform Count::MatchingRowsInLookup,
                 lookup: obj_locations__fulllocid_lookup,
                 keycolumn: :fulllocid,
                 targetfield: :usage_ct
-              unless Tms.locations.hierarchy
-                transform Delete::Fields, fields: :parent_location
+              transform Delete::Fields, fields: :parent_location
+
+              if Tms.final_data_cleaner
+                transform Tms.final_data_cleaner
               end
 
-              transform Append::NilFields, fields: %i[current_location_note]
-
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '%QUOT%',
-                replace: '"'
+              if config.post_compile_xform
+                transform config.post_compile_xform
+              end
             end
           end
         end

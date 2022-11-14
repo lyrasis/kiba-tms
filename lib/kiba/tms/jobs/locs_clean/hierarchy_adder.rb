@@ -7,8 +7,6 @@ module Kiba
         module HierarchyAdder
           module_function
 
-          ITERATION = Tms::Locations.cleanup_iteration
-
           def job(type:)
             Kiba::Extend::Jobs::Job.new(
               files: {

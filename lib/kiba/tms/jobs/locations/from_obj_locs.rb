@@ -4,14 +4,18 @@ module Kiba
   module Tms
     module Jobs
       module Locations
-        module FromObjLocsTemptext
+        module FromObjLocs
           module_function
 
           def job
+            return unless Tms::ObjLocations.used? &&
+              Tms::ObjLocations.temptext_mapping_done &&
+              Tms::ObjLocations.adds_sublocations
+
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :prep__obj_locations,
-                destination: :locs__from_obj_locs_temptext,
+                destination: :locs__from_obj_locs,
                 lookup: :prep__locations
               },
               transformer: xforms,
@@ -21,9 +25,15 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated,
-                action: :keep,
-                field: :temptext
+              transform FilterRows::WithLambda,
+                action: :reject,
+                lambda: ->(row) do
+                  fli = row[:fulllocid]
+                    .split(Tms.delim)
+                  fli.shift
+                  fli.reject{ |val| val == 'nil' || val.blank? }
+                    .empty?
+                end
 
               transform Merge::MultiRowLookup,
                 lookup: prep__locations,
@@ -34,8 +44,10 @@ module Kiba
                   address: :address
                 },
                 delim: Tms.delim
+              locsrc = [:parent_location,
+                        Tms::ObjLocations.temptext_target_fields].flatten
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[parent_location temptext],
+                sources: locsrc,
                 target: :location_name,
                 sep: Tms::Locations.hierarchy_delim,
                 delete_sources: false
@@ -47,7 +59,7 @@ module Kiba
                 delete_field: false
               transform Merge::ConstantValue,
                 target: :term_source,
-                value: 'ObjLocations.temptext'
+                value: 'ObjLocations'
             end
           end
         end

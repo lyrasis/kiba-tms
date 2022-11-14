@@ -863,26 +863,16 @@ module Kiba
             desc: 'Locations extracted from TMS Locations',
             tags: %i[locations]
           }
-          register :from_obj_locs_temptext, {
-            creator: Kiba::Tms::Jobs::Locations::FromObjLocsTemptext,
+          register :from_obj_locs, {
+            creator: Kiba::Tms::Jobs::Locations::FromObjLocs,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'locs_from_obj_locs_temptext.csv'
+              'locs_from_obj_locs.csv'
             ),
-            desc: 'Locations created by appending temp text to location id '\
-              'location',
+            desc: 'Locations created by appending :loclevel and/or :sublevel '\
+              'to locationid location value',
             tags: %i[locations]
-          }
-          register :compiled_0, {
-            creator: Kiba::Tms::Jobs::Locations::Compiled0,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'locs_compiled_0.csv'
-            ),
-            desc: 'Locations from different sources, compiled, round 0',
-            tags: %i[locations],
           }
           register :compiled_hier_0, {
             creator: Kiba::Tms::Jobs::Locations::CompiledHier0,
@@ -904,21 +894,43 @@ module Kiba
               initial_headers:
               %i[
                  usage_ct location_name parent_location
-                 storage_location_authority current_location_note address
+                 storage_location_authority address
                  term_source fulllocid
                 ] },
             lookup_on: :fulllocid
           }
-          register :to_client_0, {
-            creator: Kiba::Tms::Jobs::Locations::ToClient0,
+          register :worksheet, {
+            creator: Kiba::Tms::Jobs::Locations::Worksheet,
             path: File.join(
               Kiba::Tms.datadir,
-              'reports',
-              'location_review_0.csv'
+              'to_client',
+              'location_review.csv'
             ),
             desc: 'Locations for client review',
             tags: %i[locations]
           }
+          register :worksheet_prev_version, {
+            creator: Kiba::Tms::Jobs::Locations::Worksheet,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'to_client',
+              'location_cleanup_worksheet.csv'
+            ),
+            desc: 'Locations for client review',
+            tags: %i[locations]
+          }
+          if Tms::Locations.cleanup_done
+            register :worksheet_prev_version, {
+              path: File.join(
+                Kiba::Tms.datadir,
+                'to_client',
+                'location_cleanup_worksheet_prev.csv'
+              ),
+              supplied: true,
+              lookup_on: :fulllocid
+            }
+
+          end
         end
 
         Kiba::Tms.registry.namespace('locclean') do
@@ -1710,20 +1722,51 @@ module Kiba
 
         Kiba::Tms.registry.namespace('obj_components') do
           register :with_object_numbers, {
-            desc: %q{Merges in the human-readable :objectnumber value for each row; Flags "top objects", i.e. not separate components, i.e. :objectnumber = :componentnumber; Adds :existingobject field, which, if populated, means there is an object in Objects table with the same ID as the component (this is expected for "top objects" but not other rows.},
+            desc: 'Merges in the human-readable :objectnumber value for each '\
+              'row; Flags "top objects", i.e. not separate components, i.e. '\
+              ':objectnumber = :componentnumber; Adds :existingobject field, '\
+              'which, if populated, means there is an object in Objects table '\
+              'with the same ID as the component (this is expected for "top '\
+              'objects" but not other rows.',
             creator: Kiba::Tms::Jobs::ObjComponents::WithObjectNumbers,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_components_with_object_numbers.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'obj_components_with_object_numbers.csv'
+            ),
             tags: %i[obj_components reports cleanup],
             dest_special_opts: {
               initial_headers:
               %i[
-                 parentobjectnumber componentnumber is_top_object problemcomponent existingobject duplicate
+                 parentobjectnumber componentnumber is_top_object
+                 problemcomponent existingobject duplicate
                  componentname parentname parenttitle
                  physdesc parentdesc
                  component_type objcompstatus active
                  physdesc
                 ] },
             lookup_on: :objectid
+          }
+          register :with_object_numbers_by_compid, {
+            desc: 'Same as :with_object_numbers, but lookup on :componentid',
+            creator: Kiba::Tms::Jobs::ObjComponents::WithObjectNumbers,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'obj_components_with_object_numbers.csv'
+            ),
+            tags: %i[obj_components reports cleanup],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 parentobjectnumber componentnumber is_top_object
+                 problemcomponent existingobject duplicate
+                 componentname parentname parenttitle
+                 physdesc parentdesc
+                 component_type objcompstatus active
+                 physdesc
+                ] },
+            lookup_on: :componentid
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,

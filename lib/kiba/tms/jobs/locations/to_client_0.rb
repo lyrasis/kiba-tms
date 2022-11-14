@@ -19,7 +19,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Deduplicate::Table, field: :location_name, delete_field: false
+              transform Deduplicate::Table,
+                field: :location_name,
+                delete_field: false
             end
           end
         end

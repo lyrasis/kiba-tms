@@ -7,12 +7,10 @@ module Kiba
         module UnknownTypes
           module_function
 
-          ITERATION = Tms::Locations.cleanup_iteration
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: "locclean#{ITERATION}__prep".to_sym,
+                source: :locclean0__prep,
                 destination: :locclean__unknown_types
               },
               transformer: xforms

@@ -7,12 +7,10 @@ module Kiba
         module Splitter
           module_function
 
-          ITERATION = Tms::Locations.cleanup_iteration
-
           def job(type:)
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: "locclean#{ITERATION}__prep".to_sym,
+                source: :locclean0__prep,
                 destination: "locclean__#{type}".to_sym
               },
               transformer: xforms(type)

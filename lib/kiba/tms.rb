@@ -116,15 +116,18 @@ module Kiba
 
 
     # PROJECT SPECIFIC CONFIG
+    setting :boolean_active_mapping,
+      default: {'0'=>'inactive', '1'=>'active'},
+      reader: true
     setting :cspace_profile, default: :fcart, reader: true
-
+    setting :boolean_yn_mapping, default: {'0'=>'n', '1'=>'y'}, reader: true
+    # client-specific initial data cleaner, applied before processing
+    setting :data_cleaner, default: nil, reader: true
+    # TMS-internal fields to be deleted
     # client-specific cleanup of whitespace, special characters, etc. to be
     #   generically applied before finalizing initial data prep jobs (or writing
     #   out final data for ingest)
-    setting :boolean_yn_mapping, default: {'0'=>'n', '1'=>'y'}, reader: true
-    # initial data cleaner, before processing
-    setting :data_cleaner, default: nil, reader: true
-    # TMS-internal fields to be deleted
+    setting :final_data_cleaner, default: nil, reader: true
     setting :inverted_boolean_yn_mapping,
       default: {'0'=>'y', '1'=>'n'},
       reader: true

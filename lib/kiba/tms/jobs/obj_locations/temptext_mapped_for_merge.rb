@@ -24,8 +24,8 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              transform Delete::FieldsExcept,
-                fields: %i[temptext mapping corrected_value loc3 loc5]
+              transform Delete::Fields,
+                fields: %i[loc1 objectnumber transdate dateout]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[temptext loc3 loc5],
                 target: :lookup,

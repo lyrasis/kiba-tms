@@ -7,20 +7,9 @@ module Kiba
         module Prep
           module_function
 
-          ACTIVE = {
-            '1' => 'active',
-            '0' => 'inactive'
-          }
-          PUBLIC = {
-            '1' => 'yes',
-            '0' => 'no'
-          }
-          EXTERNAL = {
-            '1' => 'Offsite',
-            '0' => 'Local'
-          }
-
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__locations,
@@ -79,16 +68,12 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :active,
                 target: :termstatus,
-                mapping: ACTIVE
-              transform Replace::FieldValueWithStaticMapping,
-                source: :publicaccess,
-                target: :public_access,
-                mapping: PUBLIC
+                mapping: Tms.boolean_active_mapping
               transform Replace::FieldValueWithStaticMapping,
                 source: :external,
                 target: :storage_location_authority,
-                mapping: EXTERNAL
-              transform Delete::Fields, fields: %i[active publicaccess external]
+                mapping: config.authority_vocab_mapping
+              transform Delete::Fields, fields: %i[active external]
 
               transform Tms::Transforms::Locations::AddLocationName
               if config.hierarchy

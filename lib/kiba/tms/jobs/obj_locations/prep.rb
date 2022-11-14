@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = [:obj_components__with_object_numbers]
+            base = [:obj_components__with_object_numbers_by_compid]
             base << :prep__loc_purposes if Tms::LocPurposes.used?
             base << :prep__trans_status if Tms::TransStatus.used?
             base << :prep__trans_codes if Tms::TransCodes.used?
@@ -39,6 +39,13 @@ module Kiba
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
+              end
+
+              if config.drop_inactive
+                transform FilterRows::FieldEqualTo,
+                  action: :reject,
+                  field: :inactive,
+                  value: '1'
               end
 
               if config.fields.any?(:loclevel)
@@ -72,13 +79,13 @@ module Kiba
                 transform Tms::Transforms::DeleteNoValueTypes, field: field
               end
 
+              # renames fulllocid_fields to their hierarchical positions
+              transform Rename::Fields,
+                fieldmap: config.hier_lvl_lookup
+
               if config.temptext_mapping_done
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: %i[temptext loclevel sublevel],
-                  target: :lookupid,
-                  sep: ' ',
-                  delete_sources: false,
-                  prepend_source_field_name: true
+                transform Tms::Transforms::ObjLocations::AddTemptextid,
+                  target: :lookupid
                 transform Merge::MultiRowLookup,
                   lookup: obj_locations__temptext_mapped_for_merge,
                   keycolumn: :lookupid,
@@ -87,12 +94,15 @@ module Kiba
                     ttcorrect: :corrected_value
                   }
                 transform Tms::Transforms::ObjLocations::TemptextMappings
+                if config.temptext_mapping_post_xform
+                  transform config.temptext_mapping_post_xform
+                end
               end
 
               transform Tms::Transforms::ObjLocations::AddFulllocid
 
               transform Merge::MultiRowLookup,
-                lookup: obj_components__with_object_numbers,
+                lookup: obj_components__with_object_numbers_by_compid,
                 keycolumn: :componentid,
                 fieldmap: {
                   objectnumber: :componentnumber,
@@ -114,10 +124,10 @@ module Kiba
                 source: :tempflag,
                 target: :is_temp?,
                 mapping: Tms.boolean_yn_mapping
-              transform Replace::FieldValueWithStaticMapping,
-                source: :inactive,
-                target: :active?,
-                mapping: Tms.inverted_boolean_yn_mapping
+
+              unless config.drop_inactive
+                transform Tms::Transforms::ObjLocations::HandleInactive
+              end
 
               if Tms::TransStatus.used?
                 transform Merge::MultiRowLookup,

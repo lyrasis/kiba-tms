@@ -35,12 +35,8 @@ module Kiba
                   %i[objectnumber transdate dateout temptext]
                 ).uniq
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[temptext loclevel sublevel],
-                target: :combined,
-                sep: ' ',
-                delete_sources: false,
-                prepend_source_field_name: true
+              transform Tms::Transforms::ObjLocations::AddTemptextid,
+                target: :combined
               transform Deduplicate::Table,
                 field: :combined,
                 delete_field: true

@@ -24,7 +24,7 @@ module Kiba
                 lookup: obj_locations__fulllocid_lookup,
                 keycolumn: :fulllocid,
                 targetfield: :usage_ct
-              unless Tms.locations.hierarchy
+              unless Tms::Locations.hierarchy
                 transform Delete::Fields, fields: :parent_location
               end
 
