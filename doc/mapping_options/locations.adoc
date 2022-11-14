@@ -156,11 +156,20 @@ Default value:: nil
 
 ===== :adds_sublocations
 
-Programmatically derived setting indicating whether, after client has completed xref:../location_temptext_mapping_worksheet[Location `temptext` review and mapping], any additional Storage Location terms will be derived from the ObjLocations table.
+Programmatically derived setting indicating whether, after client has completed https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc[Location `temptext` review and mapping], any additional Storage Location terms will be derived from the ObjLocations table.
 
 ===== :fulllocid_fields_hier
 
 Programmatically derived setting that controls the renaming/mapping of ObjLocation table `:fulllocid_fields` to reflect their hierarchy levels.
 
 ===== :temptext_mapping_done
-Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have completed xref:../location_temptext_mapping_worksheet.adoc[location `temptext` review/mapping].
+
+Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have completed https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc[location `temptext` review/mapping].
+
+Controls subsequent processing of ObjLocations data.
+
+===== :temptext_target_fields
+
+Indicates which, if any, of the https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc#available-temptext-mappings[location `temptext` review/mapping options] a client's completed review/mapping includes.
+
+Controls subsequent processing of ObjLocations data.
