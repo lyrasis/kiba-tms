@@ -163,4 +163,4 @@ Programmatically derived setting indicating whether, after client has completed 
 Programmatically derived setting that controls the renaming/mapping of ObjLocation table `:fulllocid_fields` to reflect their hierarchy levels.
 
 ===== :temptext_mapping_done
-Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have completed xref:../location_temptext_mapping_worksheet[location `temptext` review/mapping].
+Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have completed xref:../location_temptext_mapping_worksheet.adoc[location `temptext` review/mapping].
