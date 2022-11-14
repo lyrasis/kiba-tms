@@ -1,0 +1,72 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= ObjLocations mapping options
+
+This page is about mapping options for the values in the TMS ObjLocations table, which records individual object location history data.
+
+This page covers only ObjLocations options related to how Location/Movement/Inventory (LMI) procedures are created and related to objects. ObjLocations options related to extracting Location authority terms from this table are covered in https://github.com/lyrasis/kiba-tms/blob/main/doc/mapping_options/locations.adoc[Locations mapping options].
+
+
+.See also:
+* https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/object_locations_lmi.adoc[Object location, Location/movement/inventory (LMI) procedure, and Storage location authority]
+* https://collectionspace.atlassian.net/wiki/spaces/COL/pages/536379393/CollectionSpace+User+Manual[CS User Manual]
+
+toc::[]
+
+== Mapping options
+
+=== :drop_inactive
+
+This table contains an `inactive` field, defined in TMS data dictionary as: "Indicates that location transaction has been made inactive".
+
+If false, all rows from this table are migrated.
+
+If true, rows marked inactive in TMS are dropped before any further processing of this table is done.
+
+Default value:: `false`
+
+=== :inactive_note_string
+
+If `:inactive_treatment` setting indicates to make a note, this is the value put in the note.
+
+Default value:: 'INACTIVE OBJECT LOCATION PROCEDURE'
+
+Client may specify any other desired value.
+
+=== :inactive_treatment
+
+Has no effect if `:drop_inactive` = `true`
+
+CS does not model LMIs as active vs. inactive, so there is no clear place to record the fact that ObjLocation was marked inactive in TMS. The best we can do is add a consistent string indicating this in one of the notes fields.
+
+Default value:: `:inventorynote` -- Value of `:inactive_note_string` setting will be mapped to the `inventoryNote` field. (This field is less frequently populated that the `currentLocationNote` field, but is still searchable)
+
+.Alternate values
+* `:ignore` - Since CS has no inactive vs. active behavior, we do not retain this info in the migration.
+* `:currentlocationnote` - Value of `:inactive_note_string` setting will be mapped to the `currentLocationNote` field
+* `:currentlocationnote` - Value of `:inactive_note_string` setting will be mapped to the `movementNote` field
+
+=== :name_fields
+
+Fields in ObjLocations table that will be extracted as uncontrolled name values for name review/cleanup, and mapped to preferred name form in migration.
+
+Default value:: `%i[handler requestedby approver]`
+
+=== Options internal to migration
+
+==== :temptext_note_targets
+
+Indicates which, if any, of the https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc#available-temptext-mappings[location `temptext` review/mapping options] that map to a note field that a client's completed review/mapping includes.
+
+Controls subsequent processing of ObjLocations data.
