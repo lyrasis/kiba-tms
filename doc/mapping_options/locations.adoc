@@ -1,0 +1,137 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Locations mapping options
+
+This page is about mapping options for the values in the TMS Locations table, which is the primary data source in the migration for populating the CollectionSpace (CS) Storage Location authority.
+
+Depending on client data entry practice, we may also need to derive some Storage Location authority information from the TMS ObjLocations table. This is the table recording individual object location history data. This page also covers options related to extracting location authority data from ObjLocations table.
+
+.See also:
+* https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc[Storage Location authority info and decisions]
+* https://collectionspace.atlassian.net/wiki/spaces/COL/pages/536379393/CollectionSpace+User+Manual[CS User Manual]
+
+toc::[]
+
+== Background/concepts
+
+=== TMS location fields and hierarchy levels
+
+....
+| TMS hier lvl | Table        | Field           | Mig hier lvl | Notes                         |
+|--------------+--------------+-----------------+--------------+-------------------------------|
+|            1 | Locations    | Site            |            1 |                               |
+|            2 | Locations    | Room            |            2 |                               |
+|          3.1 | Locations    | UnitType        |            3 | Values concat w/" "           |
+|          3.2 | Locations    | UnitNumber      |            3 | Values concat w/" "           |
+|          3.3 | Locations    | UnitPosition    |            4 |                               |
+|              | ObjLocations | TempText        |          (5) | If :loc5 temptext mapping     |
+|            4 | ObjLocations | LocLevel        |            6 |                               |
+|              | ObjLocations | TempText        |          (7) | If :loc7 temptext mapping     |
+|            5 | ObjLocations | SearchContainer |       8 or 9 | :searchcontainer_lvl setting  |
+|            5 | ObjLocations | Sublevel        |       8 or 9 | :sublevel_lvl setting         |
+|              | ObjLocations | TempText        |         (10) | If :loc10 temptext mapping    |
+|              | ObjLocations | ShipmentId      |     11 or 12 | :shipmentnumber_lvl setting   |
+|              | ObjLocations | CrateId         |     11 or 12 | :cratenumber_lvl setting      |
+....
+
+== Mapping options
+
+=== :authorities
+
+More info: https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc#which-storage-location-authority-vocabulary-should-each-location-term-be-assigned-to[Which Storage Location authority vocabulary should each location term be assigned to?]
+
+
+The TMS Locations table contains a boolean `external` column indicating whether each location is internal or external. This option indicates whether we should use this data to map Storage Location terms to different Storage Location authority vocabularies in the migration.
+
+Default value:: `%i[local offsite]`
+
+The default option will create any location terms from rows with `external` = `1` to the CS locations/offsite authority vocabulary.
+
+.Alternate options
+Remove `offsite` from list:: All location terms will be created in the CS locations/local authority vocabulary.
+
+=== :brief_address_mappings
+
+Only relevant if `brief_address` is included in `:loc_fields` setting.
+
+Allows replacement of `brief_address` field values with other values when building the location term display name.
+
+Example: if your institution's `brief_address` value in TMS is "The Regional Museum of a Subtopic of a Specific Topic", we can map that to "Museum" so that all CS location terms do not begin with such a long string.
+
+=== :hierarchy
+
+Whether we should generate hierarchical relationships between CS Storage Location terms.
+
+See also: https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc#do-you-want-a-location-hierarchy[Do you want a location hierarchy?]
+
+[NOTE]
+====
+Even if this is set to `false`, the location hierarchy expressed in TMS is always reflected in the CS Storage Location term display name, to ensure unique location term values. Example:
+
+`Museum > Gallery 1 > Room 2 > Case 3`
+
+Setting this to `true` means that, regardless of whether they are defined as locations in TMS, the following location terms are created in CS, and hierarchical relationships created between them:
+
+* Museum
+** Museum > Gallery 1
+*** Museum > Gallery 1 > Room 2
+**** Museum > Gallery 1 > Room 2 > Case 3
+====
+Default value:: `true`
+
+=== :hierarchy_delim
+
+String used to delimit hierarchy levels in Storage Location term display name.
+
+Default value:: ' > '
+
+Example: `Museum > Gallery 1 > Room 2 > Case 3`
+
+The client can request other strings be used. TMS creates a location string using ', ' as delimiter. If we use this as `:hierarchy_delim` in the migration:
+
+Example: `Museum, Gallery 1, Room 2, Case 3`
+
+CAUTION: Using ', ' as `:hierarchy_delim` will cause processing problems if location names themselves contain that string. Example: `Museum, Gallery 1, Room 2, Cases 3, 4, 5`
+
+=== :loc_fields
+The TMS Locations table fields whose values will be concatenated into the Storage Location term display name. Order is important here.
+
+Default value:: `%i[brief_address site room unittype unitnumber unitposition]`
+
+=== :populate_storage_loc_type
+Whether to populate https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc#storage-location-type-field[the Storage location type field] via a simple mapping based on the last segment of the location name.
+
+Default value:: `false`
+
+The default value is `false` because previous clients have opted not to have the field populated after considering the questions at the end of https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc#storage-location-type-field[the documentation section here].
+
+=== Options internal to migration
+
+==== :cleanup_done
+
+Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have returned location review worksheet.
+
+Controls data sources used to produce location values for merging into other tables.
+
+==== :initial_data_cleaner
+
+Allows Migration Specialist to define a custom, client-specific transform that will be applied to the TMS Locations table prior to any other processing, if necessary.
+
+Default value:: nil
+
+==== :post_compile_xform
+
+Allows Migration Specialist to define a custom, client-specific transform that will be applied, if necessary, at the end of the `Locations::Compiled` job.
+
+Default value:: nil

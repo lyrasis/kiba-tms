@@ -45,21 +45,30 @@ Make sure to follow the <<instructions-for-editing-the-worksheet>>.
 Let your Migration Specialist know if you have any questions in the process.
 
 == Interpreting the worksheet
-To create the worksheet, we create a temporary `combinedvalue` field concatenating the values of the `temptext`, `loclevel` and `sublevel` fields for every record in the ObjLocations table.
+Prior to preparing the worksheet, your Migration Specialist has analyzed your ObjLocations table data. You will only be asked to complete this worksheet if there are `temptext` values to review.
 
-Then, we deduplicate on the `combinedvalue` field and remove it. `loclevel` gets renamed to `loc3`, and `sublevel` gets renamed to `loc5` to make the levels of the location hierarchy clearer.
+They will also look at the other, more structured fields potentially containing location hierarchy information, and configure your migration to include only those having data. See the table under xref:mapping_options/locations.adoc#tms-location-fields-and-hierarchy-levels[Locations mapping options: TMS location fields and hierarchy levels] for details on these fields. Any of these fields in your ObjLocation data will be renamed to reflect its hierarchy level. For example, if you have `loclevel` data, that field is renamed `loc6`. The remainder of this section refers to these fields as *_sublevel fields_*.
 
-The worksheet has one row per _unique_ `temptext`+`loclevel`+`sublevel` value used in your ObjLocations table. The worksheet may have 100 rows, but these 100 `temptext` values may be used in 10,000 different ObjLocations rows.
+To create the worksheet, we create a temporary `combinedvalue` field concatenating the values of the `temptext` and any sublevel fields for every record in the ObjLocations table.
+
+Then, we deduplicate on the `combinedvalue` field and remove it.
+
+The worksheet has one row per _unique_ `temptext`+`sublevel fields` value used in your ObjLocations table. The worksheet may have 100 rows, but these 100 `temptext` values may be used in 10,000 different ObjLocations rows.
 
 IMPORTANT: This allows you to make one change in this "migration layer", rather than having to change values in many records either in TMS prior to migration, or CS after.
 
-NOTE: You might see the same `temptext` value multiple times in the worksheet if it has been used in combination with `loclevel` and/or `sublevel` values. This is because, if the `temptext` is to be treated as a sub-location in the migration, we need to know where in the location hierarchy to insert the `temptext` value.
+NOTE: You might see the same `temptext` value multiple times in the worksheet if it has been used in combination with different sublevel field values. This is because, if the `temptext` is to be treated as a sub-location in the migration, we need to know where in the location hierarchy to insert the `temptext` value.
 
 The other data to the right of the `temptext` value is *example data from one row* in which the given `temptext` value is found. It is given to make the review task a bit less abstract, and hopefully make it possible to compare the under-the-hood data we are working with to what you see working in TMS.
 
 == Interpreting the examples below
 
-Example client has requested that ", " be used to separate Storage Location hierarchy levels in location term strings.
+Example client's migration has the following configuration settings:
+
+* Tms::Locations.hierarchy_delim = ", "
+* Tms::ObjLocations.fulllocid_fields = %i[loclevel sublevel]
+* Tms::ObjLocations.sublevel_lvl = :loc9
+
 
 All of the examples are made up data based on patterns seen in real client data.
 
@@ -72,22 +81,22 @@ OPTION 1: If you tell us to apply this treatment to all `temptext` values, we wi
 
 OPTION 2: If you map individual `temptext` values to :drop, those values will not be included in the lookup table
 
-=== :loc2
+=== :loc5
 
-Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, before any `loclevel/loc3` value.
+Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, before any `loclevel/loc6` value.
 
-.:loc2 mapping example
+.:loc5 mapping example
 ....
-| temptext       | mapping | corrected_value | loc1                     | loc3 | loc5 |
+| temptext       | mapping | corrected_value | loc1                     | loc6 | loc9 |
 |----------------+---------+-----------------+--------------------------+------+------|
-| In Smith Room. | loc2    | Smith Room      | MUS, 10 2, Admin Offices |      |      |
-| In Smith.      | loc2    | Smith Room      | MUS, 10 2, Admin Offices |      |      |
-| T19            | loc2    |                 | MUS, 10 2, Vault         |   27 |      |
+| In Smith Room. | loc5    | Smith Room      | MUS, 10 2, Admin Offices |      |      |
+| In Smith.      | loc5    | Smith Room      | MUS, 10 2, Admin Offices |      |      |
+| T19            | loc5    |                 | MUS, 10 2, Vault         |   27 |      |
 ....
 
 Given the above mapping and the following data in TMS (first 5 columns), the values in `migratedlocation` will be created as Storage Location terms in CS, and used as the location value in the LMI procedure.
 
-.:loc2 results
+.:loc5 results
 ....
 | objectnumber | location                 | temptext       | loclevel | sublevel | migratedlocation                     |
 |--------------+--------------------------+----------------+----------+----------+--------------------------------------|
@@ -101,32 +110,32 @@ Given the above mapping and the following data in TMS (first 5 columns), the val
 |     2021.1.8 | MUS, 13 7, Vault         | T19            |       42 |          | ?                                    |
 ....
 
-The first 4 rows have no `loclevel/loc3` or `sublevel/loc5` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
+The first 4 rows have no `loclevel/loc6` or `sublevel/loc9` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
 
-The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc3` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` values (which may differ).
+The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc6` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` values (which may differ).
 
 TIP: If you are concerned about the combination of a given `temptext` values with different location values, we can provide a partially processed version of the ObjLocations table in CSV format that will allow you to identify what main location values a given `temptext` value has been used with.
 
-The last 2 rows do not match anything in the given mapping example, because their `temptext`+`loclevel/loc3`+`sublevel/loc5` values are different. What we'd get in `migratedlocation` would depend on how we mapped additional rows in the mapping worksheet.
+The last 2 rows do not match anything in the given mapping example, because their `temptext`+`loclevel/loc6`+`sublevel/loc9` values are different. What we'd get in `migratedlocation` would depend on how we mapped additional rows in the mapping worksheet.
 
 
-=== :loc4
+=== :loc7
 
-Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, after any `loclevel/loc3` value, but before any `sublevel/loc5` value.
+Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, after any `loclevel/loc6` value, but before any `sublevel/loc5` value.
 
-.:loc4 mapping example
+.:loc7 mapping example
 ....
-| temptext       | mapping | corrected_value | loc1                     | loc3 | loc5  |
+| temptext       | mapping | corrected_value | loc1                     | loc6 | loc9  |
 |----------------+---------+-----------------+--------------------------+------+-------|
-| In Smith Room. | loc4    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
-| In Smith.      | loc4    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
-| T19            | loc4    |                 | MUS, 10 2, Vault         |   27 |       |
-| T19            | loc4    |                 | MUS, 10 2, Vault         |   27 | Right |
+| In Smith Room. | loc7    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
+| In Smith.      | loc7    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
+| T19            | loc7    |                 | MUS, 10 2, Vault         |   27 |       |
+| T19            | loc7    |                 | MUS, 10 2, Vault         |   27 | Right |
 ....
 
 Given the above mapping and the following data in TMS (first 5 columns), the values in `migratedlocation` will be created as Storage Location terms in CS, and used as the location value in the LMI procedure.
 
-.:loc4 results
+.:loc7 results
 ....
 | objectnumber | location                 | temptext       | loclevel | sublevel | migratedlocation                     |
 |--------------+--------------------------+----------------+----------+----------+--------------------------------------|
@@ -140,32 +149,32 @@ Given the above mapping and the following data in TMS (first 5 columns), the val
 |     2021.1.8 | MUS, 13 7, Vault         | T19            |       42 |          | ?                                    |
 ....
 
-The first 4 rows have no `loclevel/loc3` or `sublevel/loc5` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
+The first 4 rows have no `loclevel/loc6` or `sublevel/loc9` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
 
-The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc3` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` value (which may differ), and after the `loclevel/loc3` value.
+The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc6` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` value (which may differ), and after the `loclevel/loc6` value.
 
-The 2021.1.7 example matches the final row in the example mappings, and shows that the `temptext` value is inserted between `loclevel/loc3` and `sublevel/loc5` values.
+The 2021.1.7 example matches the final row in the example mappings, and shows that the `temptext` value is inserted between `loclevel/loc6` and `sublevel/loc9` values.
 
-The last row does not match anything in the given mapping example, because the `temptext`+`loclevel/loc3`+`sublevel/loc5` value is different. What we'd get in `migratedlocation` would depend on how we mapped additional rows in the mapping worksheet.
+The last row does not match anything in the given mapping example, because the `temptext`+`loclevel/loc6`+`sublevel/loc9` value is different. What we'd get in `migratedlocation` would depend on how we mapped additional rows in the mapping worksheet.
 
-=== :loc6
+=== :loc10
 
-Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, and after any `loclevel/loc3` or `sublevel/loc5` values.
+Creates a new Storage Location authority term by inserting the value (or corrected_value, if given) of `temptext` after the main location value, and after any `loclevel/loc6` or `sublevel/loc9` values.
 
-.:loc6 mapping example
+.:loc10 mapping example
 ....
-| temptext       | mapping | corrected_value | loc1                     | loc3 | loc5  |
-|----------------+---------+-----------------+--------------------------+------+-------|
-| In Smith Room. | loc6    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
-| In Smith.      | loc6    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
-| T19            | loc6    |                 | MUS, 10 2, Vault         |   27 |       |
-| T19            | loc6    |                 | MUS, 10 2, Vault         |   27 | Right |
-| T19            | loc6    |                 | MUS, 10 2, Vault         |   42 |       |
+| temptext       | mapping  | corrected_value | loc1                     | loc6 | loc9  |
+|----------------+----------+-----------------+--------------------------+------+-------|
+| In Smith Room. | loc10    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
+| In Smith.      | loc10    | Smith Room      | MUS, 10 2, Admin Offices |      |       |
+| T19            | loc10    |                 | MUS, 10 2, Vault         |   27 |       |
+| T19            | loc10    |                 | MUS, 10 2, Vault         |   27 | Right |
+| T19            | loc10    |                 | MUS, 10 2, Vault         |   42 |       |
 ....
 
 Given the above mapping and the following data in TMS (first 5 columns), the values in `migratedlocation` will be created as Storage Location terms in CS, and used as the location value in the LMI procedure.
 
-.:loc6 results
+.:loc10 results
 ....
 | objectnumber | location                 | temptext       | loclevel | sublevel | migratedlocation                     |
 |--------------+--------------------------+----------------+----------+----------+--------------------------------------|
@@ -179,11 +188,11 @@ Given the above mapping and the following data in TMS (first 5 columns), the val
 |     2021.1.8 | MUS, 13 7, Vault         | T19            |       42 |          | MUS, 13 7, Vault, 42, T19            |
 ....
 
-The first 4 rows have no `loclevel/loc3` or `sublevel/loc5` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
+The first 4 rows have no `loclevel/loc6` or `sublevel/loc9` value, so our mapping is based only on a `temptext` match. ", Smith Room" is inserted after the main `location` value to create the `migratedlocation`.
 
-The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc3` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` value (which may differ), and after the `loclevel/loc3` value.
+The examples 2021.1.5 and 2021.1.6 show the same treatment, but there is a `loclevel/loc6` value. Because both the `temptext` and `loclevel` value match our mapping, ", T19" is inserted after the main `location` value (which may differ), and after the `loclevel/loc6` value.
 
-The 2021.1.7 example matches the final row in the example mappings, and shows that the `temptext` value is inserted after the `loclevel/loc3` and `sublevel/loc5` values.
+The 2021.1.7 example matches the final row in the example mappings, and shows that the `temptext` value is inserted after the `loclevel/loc6` and `sublevel/loc9` values.
 
 The last row matches the final row of our mapping, so now shows the `temptext` value inserted in the `migratedlocation` value.
 
@@ -191,11 +200,11 @@ The last row matches the final row of our mapping, so now shows the `temptext` v
 
 No additional Storage Location authority term is created.
 
-The value of `temptext` (or the provided `corrected_value` if given) is mapped to the current location note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc3`+`sublevel/loc5` values.
+The value of `temptext` (or the provided `corrected_value` if given) is mapped to the current location note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc6`+`sublevel/loc9` values.
 
 .:currentlocationnote mapping example
 ....
-| temptext                                  | mapping             | corrected_value | loc1                   | loc3 | loc5 |
+| temptext                                  | mapping             | corrected_value | loc1                   | loc6 | loc9 |
 |-------------------------------------------+---------------------+-----------------+------------------------+------+------|
 | S18. Put into mylar for long term storage | currentlocationnote |                 | MUS, 10 2, Vault, T290 |      |      |
 ....
@@ -208,11 +217,11 @@ image::temptext_currentlocationnote.png[2303]
 
 No additional Storage Location authority term is created.
 
-The value of `temptext` (or the provided `corrected_value` if given) is mapped to the movement note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc3`+`sublevel/loc5` values.
+The value of `temptext` (or the provided `corrected_value` if given) is mapped to the movement note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc6`+`sublevel/loc9` values.
 
 .:movementnote mapping example
 ....
-| temptext                                  | mapping      | corrected_value | loc1                   | loc3 | loc5 |
+| temptext                                  | mapping      | corrected_value | loc1                   | loc6 | loc9 |
 |-------------------------------------------+--------------+-----------------+------------------------+------+------|
 | S18. Put into mylar for long term storage | movementnote |                 | MUS, 10 2, Vault, T290 |      |      |
 ....
@@ -225,11 +234,11 @@ image::temptext_movementnote.png[2302]
 
 No additional Storage Location authority term is created.
 
-The value of `temptext` (or the provided `corrected_value` if given) is mapped to the inventory note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc3`+`sublevel/loc5` values.
+The value of `temptext` (or the provided `corrected_value` if given) is mapped to the inventory note field of LMI procedures derived from rows with matching `temptext`+`loclevel/loc6`+`sublevel/loc9` values.
 
 .:inventorynote mapping example
 ....
-| temptext                                  | mapping       | corrected_value | loc1                   | loc3 | loc5 |
+| temptext                                  | mapping       | corrected_value | loc1                   | loc6 | loc9 |
 |-------------------------------------------+---------------+-----------------+------------------------+------+------|
 | S18. Put into mylar for long term storage | inventorynote |                 | MUS, 10 2, Vault, T290 |      |      |
 ....
