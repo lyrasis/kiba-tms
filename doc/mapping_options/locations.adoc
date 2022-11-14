@@ -38,12 +38,14 @@ toc::[]
 |              | ObjLocations | TempText        |          (5) | If :loc5 temptext mapping     |
 |            4 | ObjLocations | LocLevel        |            6 |                               |
 |              | ObjLocations | TempText        |          (7) | If :loc7 temptext mapping     |
-|            5 | ObjLocations | SearchContainer |       8 or 9 | :searchcontainer_lvl setting  |
-|            5 | ObjLocations | Sublevel        |       8 or 9 | :sublevel_lvl setting         |
+|            5 | ObjLocations | SearchContainer |     _8_ or 9 | :searchcontainer_lvl setting  |
+|            5 | ObjLocations | Sublevel        |     8 or _9_ | :sublevel_lvl setting         |
 |              | ObjLocations | TempText        |         (10) | If :loc10 temptext mapping    |
-|              | ObjLocations | ShipmentId      |     11 or 12 | :shipmentnumber_lvl setting   |
-|              | ObjLocations | CrateId         |     11 or 12 | :cratenumber_lvl setting      |
+|              | ObjLocations | ShipmentId      |   _11_ or 12 | :shipmentnumber_lvl setting   |
+|              | ObjLocations | CrateId         |   11 or _12_ | :cratenumber_lvl setting      |
 ....
+
+Where migration hierarchy level is controlled by a setting, the italicized value above is the default value of the setting.
 
 == Mapping options
 
@@ -116,6 +118,20 @@ Default value:: `false`
 
 The default value is `false` because previous clients have opted not to have the field populated after considering the questions at the end of https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/location_authority.adoc#storage-location-type-field[the documentation section here].
 
+=== ObjLocations table settings
+
+==== Settings indicating how ObjLocations table field values should be hierarchically ordered
+
+These are referenced in the <<tms-location-fields-and-hierarchy-levels,table above>>.
+
+The fields covered by these settings either are not treated as hierarchical levels in the TMS data dictionary, or are said to indicate the same hierarchy level.
+
+Note that most clients do not actually have data in all (or even most) of these fields, so some hierarchy levels get skipped/omitted due to lack of data.
+
+==== :fulllocid_fields
+
+Fields in the ObjLocations table that contribute to creation of additional location authorities. Will be different per-client, depending on whether any data exists in the field(s).
+
 === Options internal to migration
 
 ==== :cleanup_done
@@ -135,3 +151,16 @@ Default value:: nil
 Allows Migration Specialist to define a custom, client-specific transform that will be applied, if necessary, at the end of the `Locations::Compiled` job.
 
 Default value:: nil
+
+==== ObjLocations table settings
+
+===== :adds_sublocations
+
+Programmatically derived setting indicating whether, after client has completed xref:../location_temptext_mapping_worksheet[Location `temptext` review and mapping], any additional Storage Location terms will be derived from the ObjLocations table.
+
+===== :fulllocid_fields_hier
+
+Programmatically derived setting that controls the renaming/mapping of ObjLocation table `:fulllocid_fields` to reflect their hierarchy levels.
+
+===== :temptext_mapping_done
+Boolean setting. Defaults to `false`. Migration specialist will change to `true` when you have completed xref:../location_temptext_mapping_worksheet[location `temptext` review/mapping].
