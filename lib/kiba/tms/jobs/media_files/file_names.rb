@@ -6,7 +6,7 @@ module Kiba
       module MediaFiles
         module FileNames
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -19,7 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, keepfields: %i[filename]
+              transform Delete::FieldsExcept, fields: %i[filename]
               transform FilterRows::FieldPopulated, action: :keep, field: :filename
             end
           end
