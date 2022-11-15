@@ -170,6 +170,6 @@ Controls subsequent processing of ObjLocations data.
 
 ===== :temptext_target_fields
 
-Indicates which, if any, of the https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc#available-temptext-mappings[location `temptext` review/mapping options] a client's completed review/mapping includes.
+Indicates which, if any, of the https://github.com/lyrasis/kiba-tms/blob/main/doc/location_temptext_mapping_worksheet.adoc#available-temptext-mappings[location `temptext` review/mapping options] a client's completed review/mapping includes. Limited to target fields forming part of location hierarchy (not note fields).
 
 Controls subsequent processing of ObjLocations data.

@@ -1,0 +1,55 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Unmigratable Media Files Report
+
+This page describes the `media_files_unmigratable.csv` report you may receive as part of your migration process.
+
+This report lists media files managed in TMS that we do not expect to ingest into CollectionSpace (CS) as part of the migration.
+
+toc::[]
+
+== Categories of unmigratable Media Files
+
+=== MediaFiles rows without a filename value in TMS
+
+If there is no filename value, we are unable to link data in a TMS MediaFiles row to a file. Thus, we cannot ingest a file.
+
+By default we do not create Media Handling procedures without associated files. A Media Handling procedure without an associated file isn't really handling any media!
+
+Your Migration Specialist can change this in the `Tms::MediaFiles.migrate_fileless` migration config setting.
+
+In the report:: the `filename` column will be empty.
+
+=== Files not related to any other records in TMS
+
+In this case, we don't have anything to relate the file to in CS, either, so the default is not to ingest the file.
+
+Your Migration Specialist can change this in the `Tms::MediaFiles.migrate_unreferenced` migration config setting.
+
+In the report:: the `targettable` column will be empty.
+
+=== Files related only to records that become authorities in CS
+
+In CS, media can be related to objects and other procedures. Media cannot be related to authority terms.
+
+Thus, if a media file is only related to a Constituentfootnote:[Becomes Person or Organization authority term in CS] or ReferenceMasterfootnote:[Becomes Citation authority term in CS] record in TMS, by default it is not ingested into CS.
+
+Your Migration Specialist can change this in the `Tms::MediaFiles.migrate_unmigratable` migration config setting.
+
+In the report:: neither `targettable` nor `filename` columns are empty
+
+== Actions for client
+
+. Let your Migration Specialist know if you want them to change any of the migration settings described above
+. If there are any files that will not be ingested into CS, and your TMS (and related file storage) will be turned off at some point, determine another place to store/manage these files.
