@@ -907,7 +907,10 @@ module Kiba
               'location_review.csv'
             ),
             desc: 'Locations for client review',
-            tags: %i[locations]
+            tags: %i[locations],
+            dest_special_opts: {
+              initial_headers: proc{ Tms::Locations.worksheet_columns }
+            }
           }
           register :worksheet_prev_version, {
             creator: Kiba::Tms::Jobs::Locations::Worksheet,
@@ -1085,9 +1088,87 @@ module Kiba
         Kiba::Tms.registry.namespace('media_files') do
           register :file_names, {
             creator: Kiba::Tms::Jobs::MediaFiles::FileNames,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'media_file_names.csv'),
-            desc: 'Media file names',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_file_names.csv'
+            ),
+            desc: 'List of media file names only',
             tags: %i[mediafiles reports]
+          }
+          register :no_filename, {
+            creator: Kiba::Tms::Jobs::MediaFiles::NoFilename,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_no_filename.csv'
+            ),
+            desc: 'MediaXrefs::TargetReport rows where :filename is not '\
+              'populated. MediaXrefs::TargetReport is the source only so '\
+              'output columns will match unmigratable and unreferenced',
+            tags: %i[mediafiles]
+          }
+          register :target_report, {
+            creator: Kiba::Tms::Jobs::MediaFiles::TargetReport,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_file_target_tables.csv'
+            ),
+            desc: 'Merges MediaXrefs target tables into MediaFiles::Prep',
+            tags: %i[mediafiles reports],
+            dest_special_opts: {
+              initial_headers: %i[targettable]
+            }
+          }
+          register :unmigratable_report, {
+            creator: Kiba::Tms::Jobs::MediaFiles::UnmigratableReport,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_files_unmigratable.csv'
+            ),
+            desc: 'MediaXrefs::TargetReport rows where :targettable is empty '\
+              'or contains only tables that cannot be related to Media '\
+              'Handling procedures',
+            tags: %i[mediafiles reports],
+            lookup_on: :fileid
+          }
+          register :unmigratable, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Unmigratable,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_unmigratable.csv'
+            ),
+            desc: 'MediaXrefs::TargetReport rows where :targettable contains '\
+              'only tables that cannot be related to Media Handling procedures',
+            tags: %i[mediafiles]
+          }
+          register :unreferenced, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Unreferenced,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_unreferenced.csv'
+            ),
+            desc: 'MediaXrefs::TargetReport rows where :targettable is empty',
+            tags: %i[mediafiles]
+          }
+        end
+
+        Kiba::Tms.registry.namespace('media_xrefs') do
+          register :for_target_report, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::ForTargetReport,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_xrefs_for_target_report.csv'
+            ),
+            desc: 'Lookup table used to merge target tables into media files '\
+              'report',
+            tags: %i[mediaxrefs reports],
+            lookup_on: :mediamasterid
           }
         end
 

@@ -52,6 +52,11 @@ module Kiba
                 initial_headers:
                 %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
               },
+              media_files: {
+                initial_headers:
+                %i[path filename rend_renditionnumber filesize memorysize
+                   rend_mediatype]
+              },
               obj_incoming: {
                 initial_headers: Proc.new{ Tms::ObjIncoming.fields }
               },
