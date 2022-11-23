@@ -25,7 +25,7 @@ module Kiba
           FIELDS = {
             accession_lot: :acquisitionlotid,
             accession_methods: :accessionmethodid,
-            alt_nums: :description,
+            alt_nums: :lookupkey,
             classifications: :classificationid,
             classification_notations: :classificationnotationid,
             classification_xrefs: :recordid,

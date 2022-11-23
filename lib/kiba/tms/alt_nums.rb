@@ -11,7 +11,14 @@ module Kiba
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
 
+      setting :initial_cleaner, default: nil, reader: true
       setting :description_cleaner, default: nil, reader: true
+      setting :target_table_type_cleanup_needed,
+        default: [],
+        reader: true
+      setting :target_table_type_cleanup_done,
+        default: [],
+        reader: true
     end
   end
 end

@@ -34,6 +34,7 @@ module Kiba
             obj_components: :componentid,
             obj_insurance: :objinsuranceid,
             objects: :objectid,
+            reference_master: :referenceid,
             registration_sets: :lotid,
             thesaurus_bases: :thesaurusbaseid
           }

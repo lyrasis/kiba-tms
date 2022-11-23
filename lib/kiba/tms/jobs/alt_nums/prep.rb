@@ -8,56 +8,110 @@ module Kiba
           module_function
 
           def job
+            return unless config.used?
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__alt_nums,
                 destination: :prep__alt_nums,
-                lookup: %i[
-                           tms__constituents
-                           tms__objects
-                           ]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = []
+            if config.target_tables.any?('Constituents')
+              base << :tms__constituents
+            end
+            if config.target_tables.any?('Objects')
+              base << :tms__objects
+            end
+            if config.target_tables.any?('ReferenceMaster')
+              base << :tms__reference_master
+            end
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::TmsTableNames
               transform Rename::Fields, fieldmap: {
                 id: :recordid,
                 altnumid: :sort
               }
-              transform Clean::RegexpFindReplaceFieldVals, fields: :description, find: '\\\\n', replace: ''
-              transform Clean::RegexpFindReplaceFieldVals, fields: :all, find: '^(%CR%%LF%)+', replace: ''
-              transform Clean::RegexpFindReplaceFieldVals, fields: :all, find: '(%CR%%LF%)+$', replace: ''
-              transform Merge::MultiRowLookup,
-                lookup: tms__constituents,
-                keycolumn: :recordid,
-                fieldmap: {constituent: Tms::Constituents.preferred_name_field},
-                conditions: ->(origrow, mergerows) do
-                  return [] unless origrow[:tablename] == 'Constituents'
-                  
-                  mergerows
-                end
-              transform Merge::MultiRowLookup,
-                lookup: tms__objects,
-                keycolumn: :recordid,
-                fieldmap: {object: :objectnumber},
-                conditions: ->(origrow, mergerows) do
-                  return [] unless origrow[:tablename] == 'Objects'
-                  
-                  mergerows
-                end
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :description,
+                find: '\\\\n',
+                replace: ''
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '^(%CR%%(CR|LF)%)+',
+                replace: ''
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '(%CR%%(CR|LF)%)+$',
+                replace: ''
+
+              transform config.initial_cleaner if config.initial_cleaner
+
+              recnumfields = []
+
+              if config.target_tables.any?('Constituents')
+                transform Merge::MultiRowLookup,
+                  lookup: tms__constituents,
+                  keycolumn: :recordid,
+                  fieldmap: {constituent: Tms::Constituents.preferred_name_field},
+                  conditions: ->(origrow, mergerows) do
+                    return [] unless origrow[:tablename] == 'Constituents'
+
+                    mergerows
+                  end
+                recnumfields << :constituent
+              end
+              if config.target_tables.any?('Objects')
+                transform Merge::MultiRowLookup,
+                  lookup: tms__objects,
+                  keycolumn: :recordid,
+                  fieldmap: {object: :objectnumber},
+                  conditions: ->(origrow, mergerows) do
+                    return [] unless origrow[:tablename] == 'Objects'
+
+                    mergerows
+                  end
+                recnumfields << :object
+              end
+              if config.target_tables.any?('ReferenceMaster')
+                transform Merge::MultiRowLookup,
+                  lookup: tms__reference_master,
+                  keycolumn: :recordid,
+                  fieldmap: {reference: :title},
+                  conditions: ->(origrow, mergerows) do
+                    return [] unless origrow[:tablename] == 'ReferenceMaster'
+
+                    mergerows
+                  end
+                recnumfields << :reference
+              end
+
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[constituent object],
+                sources: recnumfields,
                 target: :targetrecord,
                 sep: '',
                 delete_sources: true
 
-              
-              transform Tms::AltNums.description_cleaner if Tms::AltNums.description_cleaner
+              transform config.description_cleaner if config.description_cleaner
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[tablename description],
+                target: :lookupkey,
+                sep: ' ',
+                delete_sources: false
             end
           end
         end

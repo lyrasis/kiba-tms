@@ -19,7 +19,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :desc_occs, value: '1'
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :desc_occs,
+                value: '1'
             end
           end
         end
