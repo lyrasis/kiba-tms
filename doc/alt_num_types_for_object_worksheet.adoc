@@ -1,0 +1,85 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Alternate number types for objects worksheet
+
+toc::[]
+
+== Background/rationale
+
+=== Data model differences
+
+==== TMS
+
+From our experience analyzing client data, it appears that TMS allows you to enter:
+
+* an alternate number value (or not, sometimes the `altnum` field is empty!)
+* free text alternate number description (optional)
+* free text remarks on alternate number (optional)
+* start and end dates for the use of the number (or its assignment/removal)
+
+There appears to be no controlled vocabulary for types of alternate numbers.
+
+There appears to be no data validation/checks. For example, we often find that users have entered the description in the `altnum` field and the number in the `description` field. This is common enough that we know to look for this pattern and flip the values.
+
+==== CollectionSpace (CS)
+
+===== Other number field group
+
+This is the typical, obvious mapping for object AltNum data, however, the data model is much simpler and much more constrained than TMS'.
+
+image::obj_other_number.png[1152]
++++&nbsp;+++
+
+* The other number _value_ is free text
+* The other number _type_ is field is populated from a controlled vocabulary
+* The `numberType` controlled vocabulary is an https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/controlled_vocabulary_types.adoc#option-lists[option list], intended for relatively short lists of terms that do not change often
+
+This is the preferred mapping for most clients.
+
+===== Alternative mapping: Annotation field group with controlled number type terms
+
+This approach may work better if you:
+* have a large number of alt number types in TMS (i.e. unique AltNums.description field values)
+* need to be able to add new number types without waiting for Lyrasis staff to make, review, and deploy UI configuration code changes
+* have remarks and/or date information associated with alternate numbers
+
+.Authorized staff manage number type terms in Annotation Types https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/controlled_vocabulary_types.adoc#term-lists[term list]
+image::term_list_annotation_type.png[348]
++++&nbsp;+++
+
+The "numtype: " prefix is added so that annotation terms for number types are grouped together for term management. Also, during data entry in your Object records, this limits term options to just number types if you start typing "numtype". This prefix is optional and can be changed to another string or omitted.
+
+.In Object record, alternate number value(s) recorded as Annotations
+image::obj_other_number_annotation.png[736]
++++&nbsp;+++
+
+This allows for precise advanced search queries on alternate number values, by type:
+
+.In Object record, alternate number value(s) recorded as Annotations
+image::obj_other_number_annotation_term_search.png[883]
++++&nbsp;+++
+
+NOTE: Only one calendar date can be recorded as Annotation date, so that field cannot be used to record start/end dates for alternate numbers. If start/end dates are present in the TMS data, they are converted to text and concatenated to the Annotation note value.
+
+===== Alternative mapping: Annotation field group with uncontrolled number types
+
+In this option, `alternate number` is added as an annotation type term.
+
+All alternate numbers recorded as annotations are assigned this Annotation type.
+
+The alternate number itself, its description, remarks, and any begin/end date info are all concatenated into the Annotation note field:
+
+image::obj_other_number_annotation_freetext.png[733]
++++&nbsp;+++
