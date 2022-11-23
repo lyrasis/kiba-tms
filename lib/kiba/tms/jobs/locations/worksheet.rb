@@ -27,7 +27,7 @@ module Kiba
             if prev_version_exist?
               base << :locations__worksheet_prev_version
             end
-            if config.done
+            if config.cleanup_done
               base << :locations__worksheet_completed
             end
             base
@@ -66,7 +66,7 @@ module Kiba
                   }
               end
 
-              if config.done
+              if config.cleanup_done
                 transform Merge::MultiRowLookup,
                   lookup: locations__worksheet_completed,
                   keycolumn: :fulllocid,

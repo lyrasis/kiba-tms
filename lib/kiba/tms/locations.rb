@@ -52,6 +52,17 @@ module Kiba
           {'0'=>'Local', '1'=>'Local'}
         end
       end
+
+      def worksheet_columns
+        base = %i[usage_ct]
+        base << :to_review if cleanup_done
+        base << %i[location_name correct_location_name
+                   storage_location_authority correct_authority
+                   address correct_address
+                   term_source fulllocid origlocname
+                  ]
+        base.flatten
+      end
     end
   end
 end
