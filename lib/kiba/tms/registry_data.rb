@@ -176,44 +176,6 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('alt_nums') do
-          register :new_tables, {
-            creator: Kiba::Tms::Jobs::AltNums::NewTables,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_new_tables.csv'),
-            desc: 'Tables with alt nums where table handling is not yet set up. Non-zero means work to do!',
-            tags: %i[altnums todochk reports]
-          }
-          register :for_constituents, {
-            creator: Kiba::Tms::Jobs::AltNums::ForConstituents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_constituents.csv'),
-            desc: 'AltNums to be merged into Constituents',
-            tags: %i[altnums constituents],
-            lookup_on: :recordid
-          }
-          register :for_objects, {
-            creator: Kiba::Tms::Jobs::AltNums::ForObjects,
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_objects.csv'),
-            tags: %i[altnums objects],
-            lookup_on: :recordid
-          }
-          register :for_reference_master, {
-            creator: Kiba::Tms::Jobs::AltNums::ForReferenceMaster,
-            path: File.join(Kiba::Tms.datadir, 'working', 'alt_nums_for_refs.csv'),
-            desc: 'AltNums to be merged into ReferenceMaster',
-            tags: %i[altnums reference_master],
-            lookup_on: :recordid
-          }
-          register :for_objects_todo, {
-            creator: Kiba::Tms::Jobs::AltNums::ForObjectsTodo,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_objects_todo.csv'),
-            desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
-            tags: %i[altnums todochk]
-          }
-          register :for_reference_master_todo, {
-            creator: Kiba::Tms::Jobs::AltNums::ForReferenceMasterTodo,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_for_refs_todo.csv'),
-            desc: 'Reference AltNums with date values - need to map. Non-zero means work to do!',
-            tags: %i[altnums todochk]
-          }
           register :description_single_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
             path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_single_occ.csv'),
@@ -238,6 +200,38 @@ module Kiba
             desc: 'AltNumber types',
             tags: %i[altnums reports]
           }
+          Tms::AltNums.target_tables.each do |table|
+            tableobj = Tms::Table::Obj.new(table)
+            register "types_for_#{tableobj.filekey}".to_sym, {
+              creator: {callee: Tms::Jobs::AltNums::TypesFor,
+                        args: {table: tableobj}},
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                "alt_num_types_for_#{tableobj.filekey}.csv"
+              ),
+              tags: [:altnums, :altnumtypes, tableobj.filekey.to_sym]
+            }
+          end
+
+          if Tms::AltNums.target_table_type_cleanup_needed.any?('Objects')
+            register :types_for_obj_worksheet, {
+            creator: Kiba::Tms::Jobs::AltNums::TypesForObjWorksheet,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'to_client',
+              'alt_num_types_for_objects.csv'
+            ),
+            tags: %i[altnums objects altnumtypescleanup],
+            dest_special_opts: {
+              initial_headers:
+              %i[number_type correct_type treatment note
+                 occurrences occs_with_remarks occs_with_begindate
+                 occs_with_enddate
+                 example_rec_nums example_values]
+            }
+          }
+          end
         end
 
         Kiba::Tms.registry.namespace('assoc_parents') do
