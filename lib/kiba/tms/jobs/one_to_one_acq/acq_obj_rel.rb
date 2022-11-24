@@ -12,27 +12,52 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :one_to_one_acq__obj_rows,
-                destination: :one_to_one_acq__acq_obj_rel
+                source: :one_to_one_acq__combined,
+                destination: :one_to_one_acq__acq_obj_rel,
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = []
+            unless config.row_treatment == :separate
+              base << :one_to_one_acq__acq_num_lookup
+            end
+            base
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Delete::FieldsExcept,
-                fields: %i[objectnumber]
+                fields: %i[objectnumber combined]
+
+              if config.row_treatment == :separate
+                transform Copy::Field,
+                  from: :objectnumber,
+                  to: :item1_id
+              else
+                transform Merge::MultiRowLookup,
+                  lookup: one_to_one_acq__acq_num_lookup,
+                  keycolumn: :combined,
+                  fieldmap: {item1_id: :acqrefnum}
+              end
+
               transform Rename::Fields, fieldmap: {
                 objectnumber: :item2_id
               }
-              transform Copy::Field,
-                from: :item2_id,
-                to: :item1_id
+
               transform Merge::ConstantValues, constantmap: {
                 item1_type: 'acquisitions',
                 item2_type: 'collectionobjects'
               }
+
+              transform Delete::Fields, fields: :combined
             end
           end
         end

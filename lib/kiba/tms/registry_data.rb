@@ -2035,6 +2035,27 @@ module Kiba
             desc: 'ObjAccession rows to be processed with :onetoone approach',
             tags: %i[acquisitions]
           }
+          register :combined, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::Combined,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_acq_combined.csv'
+            ),
+            desc: ':combined values added as per configured treatment',
+            tags: %i[acquisitions]
+          }
+          register :acq_num_lookup, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::AcqNumLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_acq_acq_num_lookup.csv'
+            ),
+            desc: 'Returns unique :acqrefnum by :combined value.',
+            tags: %i[acquisitions],
+            lookup_on: :combined
+          }
           register :prep, {
             creator: Kiba::Tms::Jobs::OneToOneAcq::Prep,
             path: File.join(

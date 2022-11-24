@@ -90,12 +90,35 @@ NOTE: It is not currently possible to turn off the addition of the incrementing 
 
 === `:onetoone`
 
-This treatment applies to rows where the ObjAccession `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
+This applies to rows where the ObjAccession `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
 
-One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure.
+There are three treatment options for these rows, set in the `OneToOneAcq.row_treatment` setting. The default treatment is `:grouped`.
 
-The resulting Acquisition procedure's reference number is the related object's object number.
+The acquisition reference number deriver transformer is set in the `OneToOneAcq.acq_ref_num_deriver` setting. The default acquisition reference number deriver drops the final segment following a `.` in the given object number. Given object number, `2022.23.18`, it will return `2022.23`. Given object number `TMS1008`, it will return `TMS1008`. If necessary, your Migration Specialist will develop a custom acquisition reference number deriver transformer for your data.
 
+==== `:separate`
+
+One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure. The resulting Acquisition procedure's reference number is the related object's object number.
+
+==== `:grouped`
+
+The values of all fields except `:objectid` are concatenated (with fieldname labels for each value) into one `:combined` field. One CS Acquisition procedure is created per unique `:combined` value.
+
+The Acquisition reference number value is derived from the object number of the first object assigned to the acquistion procedure. The Acquisition reference number deriver will be customized to your data. A three digit incrementing number is added to the end of the derived acquisition number to ensure uniqueness.
+
+All objects represented by rows with that `:combined` value will be linked to the Acquisition procedure.
+
+This option creates fewer Acquisition procedures, with more objects linked to each acquisition, than does the `:onetoone_grouped_with_id` option.
+
+==== `:grouped_with_id`
+
+An Acquisition reference number value is derived from each row's object number. The Acquisition reference number deriver will be customized to your data.
+
+The values of all fields, including the derived acquisition reference number, are concatenated (with fieldname labels for each value) into one `:combined` field. One CS Acquisition procedure is created per unique `:combined` value. A three digit incrementing number is added to the end of the derived acquisition number to ensure uniqueness.
+
+All objects represented by rows with that `:combined` value will be linked to the Acquisition procedure.
+
+This option creates more Acquisition procedures, with fewer objects linked to each acquisition, than does the `:onetoone_grouped` option.
 
 [IMPORTANT]
 ====

@@ -12,11 +12,20 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: config.source_job_key,
-                destination: :one_to_one_acq__prep
+                source: :one_to_one_acq__combined,
+                destination: :one_to_one_acq__prep,
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = []
+            unless config.row_treatment == :separate
+              base << :one_to_one_acq__acq_num_lookup
+            end
+            base
           end
 
           def xforms
@@ -28,9 +37,22 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
-              transform Rename::Field,
-                from: :objectnumber,
-                to: :acquisitionreferencenumber
+              if config.row_treatment == :separate
+                transform Copy::Field,
+                  from: :acqrefnum,
+                  to: :acquisitionreferencenumber
+              else
+                transform Deduplicate::Table,
+                  field: :combined,
+                  delete_field: false
+                transform Merge::MultiRowLookup,
+                  lookup: one_to_one_acq__acq_num_lookup,
+                  keycolumn: :combined,
+                  fieldmap: {acquisitionreferencenumber: :acqrefnum}
+              end
+
+              transform Delete::Fields,
+                fields: %i[objectnumber acqrefnum combined]
             end
           end
         end

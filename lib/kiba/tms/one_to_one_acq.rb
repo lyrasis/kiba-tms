@@ -23,6 +23,14 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      setting :acq_ref_num_deriver,
+        default: Tms::Transforms::OneToOneAcq::AcqRefNumDeriver,
+        reader: true
+      setting :row_treatment,
+        default: :grouped,
+        reader: true
+
+
       def select_xform
         Kiba.job_segment do
           transform FilterRows::AnyFieldsPopulated,
