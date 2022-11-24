@@ -34,6 +34,12 @@ module Kiba
               transform Rename::Field,
                 from: :name,
                 to: :termdisplayname
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: :termdisplayname,
+                target: :norm
+              transform Deduplicate::Table,
+                field: :norm,
+                delete_field: true
             end
           end
         end
