@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[orgs__by_norm persons__by_norm]
+            base = %i[names__map_by_norm]
             if Tms::ObjAccession.loaned_object_treatment ==
                 :creditline_to_loanin
               base << :loan_obj_xrefs__creditlines
@@ -148,7 +148,8 @@ module Kiba
                 transform Deduplicate::GroupedFieldValues,
                   on_field: :cl_loanstatusnote,
                   grouped_fields: %i[cl_loanstatus cl_loanindividual
-                                     cl_loanstatusdate]
+                                     cl_loanstatusdate],
+                  delim: Tms.delim
               end
 
               if remarks_treatment == :statusnote
@@ -206,34 +207,44 @@ module Kiba
                   delim: Tms.delim
               end
 
-              pref = Tms::Constituents.preferred_name_field
-
               transform Merge::MultiRowLookup,
-                lookup: persons__by_norm,
+                lookup: names__map_by_norm,
                 keycolumn: :person_norm,
-                fieldmap: {lenderpersonlocal: pref},
+                fieldmap: {lenderpersonlocal: :person},
                 multikey: true,
-                delim: Tms.delim
+                delim: Tms.delim,
+                conditions: ->(_r, rows) do
+                  rows.reject{ |row| row[:person].blank? }
+                end
               transform Merge::MultiRowLookup,
-                lookup: persons__by_norm,
+                lookup: names__map_by_norm,
                 keycolumn: :contact_norm,
-                fieldmap: {lenderscontact: pref},
+                fieldmap: {lenderscontact: :person},
                 multikey: true,
-                delim: Tms.delim
+                delim: Tms.delim,
+                conditions: ->(_r, rows) do
+                  rows.reject{ |row| row[:person].blank? }
+                end
               if config.status_targets.any?(:loanindividual)
                 transform Merge::MultiRowLookup,
-                  lookup: persons__by_norm,
+                  lookup: names__map_by_norm,
                   keycolumn: :li_norm,
-                  fieldmap: {loanindividual: pref},
+                  fieldmap: {loanindividual: :person},
                   multikey: true,
-                  delim: Tms.delim
+                  delim: Tms.delim,
+                  conditions: ->(_r, rows) do
+                    rows.reject{ |row| row[:person].blank? }
+                  end
               end
               transform Merge::MultiRowLookup,
-                lookup: orgs__by_norm,
+                lookup: names__map_by_norm,
                 keycolumn: :org_norm,
-                fieldmap: {lenderorganizationlocal: pref},
+                fieldmap: {lenderorganizationlocal: :organization},
                 multikey: true,
-                delim: Tms.delim
+                delim: Tms.delim,
+                conditions: ->(_r, rows) do
+                  rows.reject{ |row| row[:organization].blank? }
+                end
 
               delfields = namefields + namefields.map do |field|
                 "#{field}_norm".to_sym
