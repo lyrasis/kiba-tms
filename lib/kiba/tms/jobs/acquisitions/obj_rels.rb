@@ -41,6 +41,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform FilterRows::AllFieldsPopulated,
+                action: :keep,
+                fields: %i[item1_id item2_id]
             end
           end
         end
