@@ -99,12 +99,10 @@ module Kiba
                   to: :prefnormorig
               end
 
-
-
-              # if cleanable
-              #   transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-              #     lookup: name_type_cleanup__for_uncontrolled_name_tables
-              # end
+              if cleanable
+                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
+                  lookup: name_type_cleanup__for_uncontrolled_name_tables
+              end
             end
           end
         end
