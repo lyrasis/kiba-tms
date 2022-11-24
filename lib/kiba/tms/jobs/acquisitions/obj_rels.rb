@@ -24,6 +24,9 @@ module Kiba
             if Tms::LinkedSetAcq.used?
               base << :linked_set_acq__acq_obj_rel
             end
+            if Tms::LinkedLotAcq.used?
+              warn("Implement nhrs for LinkedLotAcq")
+            end
             if Tms::LotNumAcq.used?
               base << :lot_num_acq__acq_obj_rel
             end
