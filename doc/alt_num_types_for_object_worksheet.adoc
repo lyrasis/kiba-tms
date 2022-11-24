@@ -18,8 +18,10 @@ toc::[]
 
 == Background/rationale
 
-=== Data model differences
+Due to differences in how TMS and CollectionSpace (CS) model alternate number data for objects, cleanup of alternate number descriptions is often necessary for a migration.
 
+Also,
+=== Data model differences
 ==== TMS
 
 From our experience analyzing client data, it appears that TMS allows you to enter:
@@ -34,6 +36,8 @@ There appears to be no controlled vocabulary for types of alternate numbers.
 There appears to be no data validation/checks. For example, we often find that users have entered the description in the `altnum` field and the number in the `description` field. This is common enough that we know to look for this pattern and flip the values.
 
 ==== CollectionSpace (CS)
+
+Depending on your data and your needs, you might opt to use one of the mapping approaches described below, OR you might combine some or all of the approaches.
 
 ===== Other number field group
 
