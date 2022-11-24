@@ -1451,13 +1451,13 @@ module Kiba
           }
           register :from_assoc_parents_for_con, {
             creator: Kiba::Tms::Jobs::NameCompile::FromAssocParentsForCon,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_assoc_parents_for_con.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_assoc_parents_for_con.csv'),
             desc: 'Names extracted from AssocParents (for constituents) table',
             tags: %i[names assoc_parents]
           }
           register :from_reference_master, {
             creator: Kiba::Tms::Jobs::NameCompile::FromReferenceMaster,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_reference_master.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_from_reference_master.csv'),
             desc: 'Names extracted from reference_master table',
             tags: %i[names reference_master]
           }
@@ -1466,7 +1466,7 @@ module Kiba
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'names_from_uncontrolled_name_tables.csv'
+              'names_compiled_from_uncontrolled_name_tables.csv'
             ),
             desc: 'Names from uncontrolled fields in tables, compiled, '\
               'normalized, termsource changed to "Uncontrolled field '\
@@ -2080,7 +2080,7 @@ module Kiba
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Orgs::Brief,
-            path: File.join(Kiba::Tms.datadir, 'cs', 'orgs_brief.csv'),
+            path: File.join(Kiba::Tms.datadir, 'cspace', 'orgs_brief.csv'),
             tags: %i[orgs cspace],
             desc: 'Only termdisplayname values, for bootstrap ingests'
           }
@@ -2129,7 +2129,7 @@ module Kiba
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Persons::Brief,
-            path: File.join(Kiba::Tms.datadir, 'cs', 'persons_brief.csv'),
+            path: File.join(Kiba::Tms.datadir, 'cspace', 'persons_brief.csv'),
             tags: %i[persons cspace],
             desc: 'Only termdisplayname values, for bootstrap ingests'
           }
