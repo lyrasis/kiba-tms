@@ -162,30 +162,32 @@ Each example here shows you:
 
 For screenshots of the CS record target fields, see the section on data model differences above.
 
-=== Correcting/collapsing number types
+=== Correcting/collapsing number types; dropping types
 
 .Reference spreadsheet
 ....
-| targetrecord | altnum | description    |
-|--------------+--------+----------------|
-|       2022.1 |    123 | artist number  |
-|       2022.2 |    456 | artists' #     |
-|       2022.3 |      1 | Box number     |
-|       2022.4 |      2 | box no.        |
-|       2022.5 |    789 | Oneoff number  |
-|       2022.6 |    101 | one-off number |
+| targetrecord | altnum | description     |
+|--------------+--------+-----------------|
+|       2022.1 |    123 | artist number   |
+|       2022.2 |    456 | artists' #      |
+|       2022.3 |      1 | Box number      |
+|       2022.4 |      2 | box no.         |
+|       2022.5 |    789 | Oneoff number   |
+|       2022.6 |    101 | one-off number  |
+|       2022.7 |    999 | unneeded number |
 ....
 
 .Worksheet
 ....
-| number_type    | correct_type  | treatment           |
-|----------------+---------------+---------------------|
-| artist number  |               | other_number        |
-| artists' #     | artist number | other_number        |
-| Box number     | box           | numtyped_annotation |
-| box no.        | box           | numtyped_annotation |
-| Oneoff number  | oneoff number | altnum_annotation   |
-| one-off number | oneoff number | altnum_annotation   |
+| number_type     | correct_type  | treatment           |
+|-----------------+---------------+---------------------|
+| artist number   |               | other_number        |
+| artists' #      | artist number | other_number        |
+| Box number      | box           | numtyped_annotation |
+| box no.         | box           | numtyped_annotation |
+| Oneoff number   | oneoff number | altnum_annotation   |
+| one-off number  | oneoff number | altnum_annotation   |
+| unneeded number |               | drop                |
 ....
 
 .CS ingest
@@ -198,6 +200,7 @@ For screenshots of the CS record target fields, see the section on data model di
 |       2022.4 |             |               | numtype: box     | 2                   |
 |       2022.5 |             |               | alternate number | 789 (oneoff number) |
 |       2022.6 |             |               | alternate number | 101 (oneoff number) |
+|       2022.7 |             |               |                  |                     |
 ....
 
 === `note` field and remarks
