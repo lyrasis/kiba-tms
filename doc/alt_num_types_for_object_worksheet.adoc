@@ -20,7 +20,6 @@ toc::[]
 
 Due to differences in how TMS and CollectionSpace (CS) model alternate number data for objects, cleanup of alternate number descriptions is often necessary for a migration.
 
-Also,
 === Data model differences
 ==== TMS
 
@@ -38,6 +37,8 @@ There appears to be no data validation/checks. For example, we often find that u
 ==== CollectionSpace (CS)
 
 Depending on your data and your needs, you might opt to use one of the mapping approaches described below, OR you might combine some or all of the approaches.
+
+This worksheet allows you to specify which of the following treatments should be used for each of your alt number types in TMS.
 
 ===== Other number field group
 
@@ -87,3 +88,101 @@ The alternate number itself, its description, remarks, and any begin/end date in
 
 image::obj_other_number_annotation_freetext.png[733]
 +++&nbsp;+++
+
+== Interpreting the worksheet
+
+TIP: For reference, your Migration Specialist will also provide you with a spreadsheet that shows all individual AltNums rows, so that you can look at the details of what is being summarized in the worksheet.
+
+.Non-editable columns
+`number_type`:: This is the value of the `description` column in the reference spreadsheet
+`occurrences`:: How many times a `number_type` value is used in your data. Small numbers may indicate variant terms, typos, or number types that do not need an established controlled number type term in CS
+`occs_with_remarks`:: How many occurrences of this `number_type` value have associated alt number `remarks`. If non-zero, and you choose `other_number` treatment, any data in this column will be dropped in the migration.
+`occs_with_begindate`:: How many occurrences of this `number_type` value have associated alt number `beginisodate`. If non-zero, and you choose `other_number` treatment, any data in this column will be dropped in the migration.
+`occs_with_enddate`:: How many occurrences of this `number_type` value have associated alt number `endisodate`. If non-zero, and you choose `other_number` treatment, any data in this column will be dropped in the migration.
+`example_rec_nums`:: Up to 3 object numbers having the given `number_type`. Note that, if there are 100 occurrences, and 5 occs_with_remarks (or begin/end date occs), the example_rec_nums may or may not include records that have remarks data. You will need to filter the reference spreadsheet to the given `description` value and `remarks` (or begin/end date not empty) to see what remarks are made for the `number_type`
+`example_values`:: Up to 3 `altnum` values for the given `number_type`. These should correspond to the records in `example_rec_nums`
+
+The other columns are either editable (described below), or internal to the migration (can be ignored).
+
+== Completing the worksheet
+
+[IMPORTANT]
+====
+Only make changes to the following columns:
+
+* `correct_type`
+* `treatment`
+* `note`
+
+If you change values in `number_type`, we will not be able to merge your changes back into the migration.
+====
+
+=== `correct_type`
+
+Use this column to standardize variant forms of number type terms, and fix typos:
+
+.Will collapse four separate strings to one number type in CS
+....
+| number_type   | correct_type  |
+|---------------+---------------|
+| artist number | artist number |
+| artists' #    | artist number |
+| Artist number | artist number |
+| Artist Number | artist number |
+....
+
+NOTE: If `treatment` value is `drop`, any information in this column is discarded.
+
+=== `treatment`
+
+Use this column to indicate the desired treatment for each type of number. See the data model differences section above, and the treatment examples below for further information.
+
+The allowed values are:
+
+* drop
+* other_number
+* numtyped_annotation
+* annotation
+
+=== `note`
+
+Use this column to record specific information from the existing `number_type` value that should be treated as remarks instead.
+
+NOTE: If `treatment` value is `drop` or `other_number`, any information in this column is discarded.
+
+== Examples
+Each example here shows you:
+
+* Sample data from reference spreadsheet
+* Relevant/related data as you might fill it out in the worksheet
+* Resulting data for ingest to CS in CSV format (so we can see results affecting multiple records)
+
+For screenshots of the CS record target fields, see the section on data model differences above.
+
+=== Correcting/collapsing number types
+
+==== `other_number` treatment
+
+.Reference spreadsheet
+....
+| targetrecord | altnum | description      |
+|--------------+--------+------------------|
+|       2022.1 |    123 | artist number    |
+|       2022.2 |    456 | artists' #       |
+....
+
+.Worksheet
+....
+| number_type   | correct_type  | treatment    |
+|---------------+---------------+--------------|
+| artist number | artist number | other_number |
+| artists' #    | artist number | other_number |
+....
+
+.CS ingest
+....
+| objectnumber | numbervalue | numbertype    |
+|--------------+-------------+---------------|
+|       2022.1 |         123 | artist number |
+|       2022.2 |         456 | artist number |
+....
