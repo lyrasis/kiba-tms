@@ -34,6 +34,8 @@ There appears to be no controlled vocabulary for types of alternate numbers.
 
 There appears to be no data validation/checks. For example, we often find that users have entered the description in the `altnum` field and the number in the `description` field. This is common enough that we know to look for this pattern and flip the values.
 
+NOTE: We may have fixed some common issues prior to preparing this worksheet and the reference spreadsheet we send with it. This means, you may in some cases see different data in these provided sources than you will if you look up the items in TMS.
+
 ==== CollectionSpace (CS)
 
 Depending on your data and your needs, you might opt to use one of the mapping approaches described below, OR you might combine some or all of the approaches.
@@ -56,6 +58,7 @@ This is the preferred mapping for most clients.
 ===== Alternative mapping: Annotation field group with controlled number type terms
 
 This approach may work better if you:
+
 * have a large number of alt number types in TMS (i.e. unique AltNums.description field values)
 * need to be able to add new number types without waiting for Lyrasis staff to make, review, and deploy UI configuration code changes
 * have remarks and/or date information associated with alternate numbers
