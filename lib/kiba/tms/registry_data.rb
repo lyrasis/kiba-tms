@@ -1255,8 +1255,13 @@ module Kiba
         Kiba::Tms.registry.namespace('name_compile') do
           register :raw, {
             creator: Kiba::Tms::Jobs::NameCompile::Raw,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_raw.csv'),
-            desc: 'Initial compiled terms - adds fingerprint field for main name deduplication merge',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_raw.csv'
+            ),
+            desc: 'Initial compiled terms - adds fingerprint field for main '\
+              'name deduplication merge',
             tags: %i[names],
             dest_special_opts: {
               initial_headers:
@@ -1272,13 +1277,18 @@ module Kiba
           }
           register :worksheet, {
             creator: Kiba::Tms::Jobs::NameCompile::Worksheet,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'names_worksheet.csv'),
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'names_worksheet.csv'
+            ),
             desc: Proc.new{ Kiba::Tms::Jobs::NameCompile::Worksheet.desc },
             tags: %i[names],
             dest_special_opts: {
               initial_headers:
               %i[
-                 authority name relation_type variant_term variant_qualifier related_term related_role
+                 authority name relation_type variant_term variant_qualifier
+                 related_term related_role
                  note_text birth_foundation_date death_dissolution_date datenote
                  salutation nametitle firstname middlename lastname suffix
                  biography code nationality school remarks culturegroup
@@ -1287,8 +1297,13 @@ module Kiba
           }
           register :main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::MainDuplicates,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_compiled_main_duplicates.csv'),
-            desc: 'Only main terms from initial compiled terms flagged as duplicates',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_main_duplicates.csv'
+            ),
+            desc: 'Only main terms from initial compiled terms flagged as '\
+              'duplicates',
             tags: %i[names],
             lookup_on: :fingerprint
           }
