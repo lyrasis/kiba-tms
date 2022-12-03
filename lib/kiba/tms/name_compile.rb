@@ -30,12 +30,12 @@ module Kiba
         }
       setting :sources,
         default: %i[
+                    name_compile__from_con_person_plain
                     name_compile__from_con_org_plain
                     name_compile__from_con_org_with_inst
                     name_compile__variants_from_duplicate_constituents
                     name_compile__from_con_org_with_name_parts
                     name_compile__from_con_org_with_single_name_part_no_position
-                    name_compile__from_con_person_plain
                     name_compile__from_con_person_with_inst
                     name_compile__from_con_person_with_position_no_inst
                     name_compile__from_can_typematch_alt_established
