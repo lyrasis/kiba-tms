@@ -8,7 +8,8 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::AssocParents.used?
+            return unless Tms::AssocParents.used? &&
+              Tms::AssocParents.for?('Constituents')
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
