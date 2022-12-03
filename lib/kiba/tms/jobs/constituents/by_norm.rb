@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Constituents
-        module ByNonprefNorm
+        module ByNorm
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__prep_clean,
-                destination: :constituents__by_nonpref_norm
+                destination: :constituents__by_norm
               },
               transformer: xforms
             )
@@ -21,16 +21,10 @@ module Kiba
             bind = binding
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              nonpref = config.var_name_field
-              pref = config.preferred_name_field
 
               transform FilterRows::FieldPopulated,
                 action: :keep,
-                field: nonpref
-              transform Delete::Fields, fields: :norm
-              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: nonpref,
-                target: :norm
+                field: :norm
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype norm],
                 target: :combined,

@@ -31,6 +31,12 @@ module Kiba
 
       setting :untyped_default, default: 'Person', reader: true
 
+      # fields to retain in :constituents__by_* jobs
+      setting :lookup_job_fields,
+        default: %i[constituentid norm contype combined],
+        reader: true,
+        constructor: proc{ |value| value << preferred_name_field }
+
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
       setting :map_approved, default: false, reader: true

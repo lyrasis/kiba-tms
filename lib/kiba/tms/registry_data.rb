@@ -315,12 +315,25 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('con_alt_names') do
+          register :prep_clean, {
+            creator: Kiba::Tms::Jobs::ConAltNames::PrepClean,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'con_alt_names_prepped_clean.csv'
+            ),
+            tags: %i[con prep],
+            desc: 'Merged cleanup into prepped ConAltNames, merges cleaned up '\
+              'Constituent data into that, and re-preps using cleaned data'
+          }
           register :by_constituent, {
             creator: Kiba::Tms::Jobs::ConAltNames::Prep,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
             tags: %i[con prep],
             lookup_on: :constituentid,
-            desc: 'Removes rows where altname is the same as linked name in constituents table. If preferred name field = alphasort, move org names from displayname to alphasort.'
+            desc: 'Removes rows where altname is the same as linked name in '\
+              'constituents table. If preferred name field = alphasort, move '\
+            'org names from displayname to alphasort.'
           }
           register :categorized_post_cleanup, {
             creator: Kiba::Tms::Jobs::ConAltNames::CategorizedPostCleanup,
@@ -512,35 +525,37 @@ module Kiba
               'working',
               'constituents_prepped_clean.csv'
             ),
-            desc: 'Prepped constituents with name type cleanup merged in',
-            tags: %i[con]
-          }
-          register :by_norm_orig, {
-            creator: Kiba::Tms::Jobs::Constituents::Prep,
-            path: File.join(Kiba::Tms.datadir, 'prepped', 'constituents.csv'),
-            desc: 'Uncleaned con data lookup by norm prefname',
             tags: %i[con],
-            lookup_on: :norm
+            lookup_on: :constituentid,
+            desc: <<~TXT
+              SOURCE: Prepped constituents table.
+              Moves orig :norm to :prefnormorig
+              Moves orig :nonprefnorm to :nonprefnormorig
+              Merges in constituent name type cleanup if cleanup is done
+              Re-normalizes :contype
+              Generates new :norm field
+            TXT
           }
           register :by_norm, {
-            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+            creator: Kiba::Tms::Jobs::Constituents::ByNorm,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'constituents_prepped_clean.csv'
+              'constituents_by_norm.csv'
             ),
-            desc: 'Cleaned con data lookup by norm prefname',
+            desc: 'Cleaned constituent name lookup by norm (cleaned) prefname',
             tags: %i[con],
             lookup_on: :norm
           }
-          register :clean_by_norm_orig, {
-            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+          register :by_norm_orig, {
+            creator: Kiba::Tms::Jobs::Constituents::ByNormOrig,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'constituents_prepped_clean.csv'
+              'constituents_by_norm_orig.csv'
             ),
-            desc: 'Cleaned con data lookup by origninal/uncleaned norm prefname',
+            desc: 'Cleaned constituent name lookup by uncleaned norm '\
+            'prefname',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -551,8 +566,20 @@ module Kiba
               'working',
               'constituents_by_nonpref_norm.csv'
             ),
-            desc: 'Prepped constituent table lookup by norm form of '\
+            desc: 'Cleaned constituent name lookup by norm form of '\
               'nonpreferred name field',
+            tags: %i[con],
+            lookup_on: :norm
+          }
+          register :by_all_norms, {
+            creator: Kiba::Tms::Jobs::Constituents::ByAllNorms,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'constituents_by_all_norms.csv'
+            ),
+            desc: 'Combined table for lookup of cleaned constituent '\
+              'name by cleaned norm, orig norm, or nonpref norm',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -1514,6 +1541,17 @@ module Kiba
             tags: %i[names cleanup],
             dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
           }
+          # Manually tweak this one if you need to use it.
+          register :convert_returned_to_uncontrolled, {
+            creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'to_client',
+              'name_type_cleanup_worksheet_ORIG_CONVERTED.csv'
+            ),
+            tags: %i[names cleanup]
+          }
+
           if Tms::NameTypeCleanup.done
             register :worksheet_prev_version, {
               path: File.join(
@@ -1524,38 +1562,29 @@ module Kiba
               supplied: true,
               lookup_on: :constituentid
             }
-            register :worksheet_completed, {
-              path: File.join(
-                Tms.datadir,
-                'supplied',
-                'nametype_cleanup_worksheet_complete.csv'
-              ),
+            Tms::NameTypeCleanup.returned_file_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('name_type_cleanup__')
+                  .to_sym
+            register jobname, {
+              path: Tms::NameTypeCleanup.returned_files[idx],
               desc: 'Completed nametype cleanup worksheet',
               tags: %i[names cleanup],
-              supplied: true,
-              lookup_on: :constituentid
+              supplied: true
             }
-            register :corrected_orgs, {
-              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedOrgs,
+            end
+            register :returned_compile, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedCompile,
               path: File.join(
                 Kiba::Tms.datadir,
                 'working',
-                'name_type_cleanup_corrected_orgs.csv'
+                'name_type_cleanup_returned_compile.csv'
               ),
               tags: %i[names cleanup],
-              desc: 'For merge into source data tables',
-              lookup_on: :orignorm
-            }
-            register :corrected_persons, {
-              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedPersons,
-              path: File.join(
-                Kiba::Tms.datadir,
-                'working',
-                'name_type_cleanup_corrected_persons.csv'
-              ),
-              tags: %i[names cleanup],
-              desc: 'For merge into source data tables',
-              lookup_on: :orignorm
+              desc: 'Joins completed cleanup worksheets, adds :cleanupid if '\
+                'it does not exist, and deduplicates on :cleanupid',
+              lookup_on: :cleanupid
             }
             register :returned_prep, {
               creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedPrep,
@@ -1568,14 +1597,6 @@ module Kiba
               desc: 'Prepares supplied cleanup spreadsheet for use in '\
                 'overlaying cleaned up data and generating phase 2 name '\
                 'cleanup worksheet'
-            }
-            ntc_supp_path = Tms.registry
-              .resolve(:name_type_cleanup__worksheet_completed)[:path]
-              .to_s
-            register :convert_returned_to_uncontrolled, {
-              creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
-              path: ntc_supp_path.sub('.csv', '_converted.csv'),
-              tags: %i[names cleanup]
             }
           end
           register :for_con_alt_names, {

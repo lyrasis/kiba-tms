@@ -137,6 +137,9 @@ module Kiba
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: config.preferred_name_field,
                 target: :norm
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: config.var_name_field,
+                target: :nonprefnorm
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
                 target: :combined,

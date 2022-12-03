@@ -8,8 +8,8 @@ module Kiba
           module_function
 
           def job
-            if File.exist?(dest_path) && config.done
-              `cp #{dest_path} #{prev_version_path}`
+            if File.exist?(config.worksheet_path) && config.done
+              `cp #{config.worksheet_path} #{config.prev_worksheet_path}`
             end
 
             Kiba::Extend::Jobs::Job.new(
@@ -24,29 +24,23 @@ module Kiba
 
           def lookups
             base = []
-            if prev_version_exist?
-              base << :name_type_cleanup__worksheet_prev_version
-            end
             if config.done
-              base << :name_type_cleanup__worksheet_completed
+              base << :name_type_cleanup__returned_compile
+              if config.prev_worksheet_exist?
+                base << :name_type_cleanup__worksheet_prev_version
+              end
             end
             base
           end
 
-          def prev_version_exist?
-            File.exist?(prev_version_path) && config.done
+          def merge_map(fields)
+            base = ( fields - nomerge_fields ).map{ |field| [field, field] }
+              .to_h
+            base.merge({doneid: :constituentid})
           end
 
-          def dest_path
-            Tms.registry
-              .resolve(:name_type_cleanup__worksheet)
-              .path
-          end
-
-          def prev_version_path
-            Tms.registry
-              .resolve(:name_type_cleanup__worksheet_prev_version)
-              .path
+          def nomerge_fields
+            %i[name authoritytype constituentid cleanupid]
           end
 
           def xforms
@@ -57,14 +51,21 @@ module Kiba
 
               transform Copy::Field, from: :name, to: :origname
 
-              if bind.receiver.send(:prev_version_exist?)
+              if config.prev_worksheet_exist?
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__worksheet_prev_version,
                   keycolumn: :constituentid,
                   fieldmap: {
                     origname: :origname
-                  }
+                  },
+                  conditions: ->(_r, rows){ [rows.first] }
               end
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[constituentid origname],
+                target: :cleanupid,
+                sep: '_',
+                delete_sources: false
 
               transform Rename::Field, from: :contype, to: :authoritytype
               transform Clean::RegexpFindReplaceFieldVals,
@@ -73,14 +74,14 @@ module Kiba
                 replace: '"'
 
               if config.done
+                mergefields = bind.receiver
+                  .send(:merge_map,
+                        name_type_cleanup__returned_compile.first[1][0]
+                          .keys)
                 transform Merge::MultiRowLookup,
-                  lookup: name_type_cleanup__worksheet_completed,
-                  keycolumn: :constituentid,
-                  fieldmap: {
-                    correctauthoritytype: :correctauthoritytype,
-                    correctname: :correctname,
-                    doneid: :constituentid
-                  }
+                  lookup: name_type_cleanup__returned_compile,
+                  keycolumn: :cleanupid,
+                  fieldmap: mergefields
 
                 transform do |row|
                   row[:to_review] = nil
@@ -95,7 +96,6 @@ module Kiba
                 transform Append::NilFields,
                   fields: %i[correctauthoritytype correctname]
               end
-
             end
           end
         end

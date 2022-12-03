@@ -33,10 +33,15 @@ module Kiba
 
             return row unless eligible?(row)
 
-            if corrtype == 'p'
+            case corrtype
+            when 'p'
               val = 'Person'
-            else
+            when 'o'
               val = 'Organization'
+            when 'n'
+              val = 'Note'
+            else
+              fail(Tms::UnknownAuthorityTypeCode, corrtype)
             end
 
             row[row_target(row)] = val

@@ -27,6 +27,18 @@ module Kiba
       setting :untyped_treatment,
         default: 'Person',
         reader: true
+      # Client-specific transform to clean returned worksheet before any further
+      #   processing is done
+      setting :returned_cleaner, default: nil, reader: true
+      # List returned worksheets, most recent first. Assumes they are in the
+      #   client project directory/supplied subdir
+      setting :returned_files,
+        default: [],
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'supplied', filename)
+            end
+        }
 
       setting :targets, default: [], reader: true
 
@@ -43,6 +55,30 @@ module Kiba
         base.unshift(:to_review) if done
         base
       end
+
+      def returned_file_jobs
+        returned_files.map.with_index do |filename, idx|
+          "name_type_cleanup__worksheet_completed_#{idx}".to_sym
+        end
+      end
+
+      # worksheet version stuff
+      def prev_worksheet_exist?
+        File.exist?(prev_worksheet_path)
+      end
+
+      def prev_worksheet_path
+        base = worksheet_path.delete_suffix('.csv')
+        "#{base}_prev.csv"
+      end
+
+      def worksheet_path
+        Tms.registry
+          .resolve(:name_type_cleanup__worksheet)
+          .path
+          .to_s
+      end
+
 
       def register_uncontrolled_ntc_jobs
         ns = build_registry_namespace(

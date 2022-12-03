@@ -23,16 +23,8 @@ module Kiba
                       prep__constituents
                       constituents__by_norm
                      ]
-            if ntc_needed?
-              base << :name_type_cleanup__for_con_alt_names
-            end
             base
           end
-
-          def ntc_needed?
-            ntc_done? && ntc_targets.any?('ConAltNames')
-          end
-          extend Tms::Mixins::NameTypeCleanupable
 
           def prep_xforms
             bind = binding
@@ -113,7 +105,7 @@ module Kiba
                   altconauthtype: :contype,
                   altnameconid: :constituentid
                 }
-              transform Delete::Fields, fields: %i[altnorm connorm]
+              transform Delete::Fields, fields: %i[connorm]
 
               transform Tms::Transforms::Constituents::DeriveType, mode: :alt
 
@@ -125,14 +117,6 @@ module Kiba
 
                 row[:altauthtype] = alttype.split(Tms.delim).uniq.join(Tms.delim)
                 row
-              end
-
-              if bind.receiver.send(:ntc_needed?)
-                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  lookup: name_type_cleanup__for_con_alt_names,
-                  keycolumn: :altnameid,
-                  typetarget: :altauthtype
-
               end
 
               # add :typematch column
@@ -151,7 +135,8 @@ module Kiba
               transform Rename::Fields, fieldmap: {
                 Tms::Constituents.preferred_name_field => :altname,
                 constituentid: :mainconid,
-                nametype: :altnametype
+                nametype: :altnametype,
+                altnorm: :prefnormorig
               }
 
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues

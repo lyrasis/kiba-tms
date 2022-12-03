@@ -39,14 +39,17 @@ module Kiba
               prefname = config.preferred_name_field
 
               if bind.receiver.send(:ntc_needed?)
-                transform Rename::Field, from: :norm, to: :prefnormorig
+                transform Rename::Fields, fieldmap: {
+                  norm: :prefnormorig,
+                  nonprefnorm: :nonprefnormorig
+                }
+
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                  lookup: name_type_cleanup__for_constituents
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  lookup: name_type_cleanup__for_constituents,
-                  keycolumn: :constituentid,
-                  typetarget: :constituenttype,
-                  nametarget: prefname
+                  typetarget: :constituenttype
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                  source: config.preferred_name_field,
+                  source: prefname,
                   target: :norm
                 transform Tms::Transforms::Constituents::NormalizeContype
                 transform CombineValues::FromFieldsWithDelimiter,
@@ -61,6 +64,7 @@ module Kiba
                 transform Delete::Fields, fields: %i[contype_norm]
               else
                 transform Copy::Field, from: :norm, to: :prefnormorig
+                transform Copy::Field, from: :nonprefnorm, to: :nonprefnormorig
               end
             end
           end

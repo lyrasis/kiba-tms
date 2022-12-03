@@ -43,7 +43,7 @@ Paste results into `lib/my_project.rb` file
 
 
 == binding job namespace config into `Kiba.job_segment`
-All jobs 
+All jobs
 
 Model usage: `Kiba::Tms::Jobs::TermMasterThes.xforms`
 
@@ -61,3 +61,10 @@ def xforms
   end
 end
 ----
+
+== Names
+
+* lookup by norm needs to provide cleaned up preferred form of constituent name via look up on
+** orig pref norm
+** orig nonpref norm
+** clean pref norm

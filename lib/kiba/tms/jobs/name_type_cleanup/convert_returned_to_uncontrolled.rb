@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_type_cleanup__worksheet_completed,
+                source: :name_type_cleanup__worksheet,
                 destination: :name_type_cleanup__convert_returned_to_uncontrolled
               },
               transformer: xforms

@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_type_cleanup__worksheet_completed,
+                source: :name_type_cleanup__returned_compile,
                 destination: :name_type_cleanup__returned_prep
               },
               transformer: xforms
@@ -22,6 +22,8 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+
+              transform config.returned_cleaner if config.returned_cleaner
 
               # Add :authtypetent column with value if orig authoritytype was
               #   derived or questionable
@@ -64,7 +66,7 @@ module Kiba
               end
               transform Delete::FieldsExcept,
                 fields: %i[correctname authoritytype correctauthoritytype
-                           constituentid origname termsource]
+                           constituentid origname termsource cleanupid]
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: :origname,
                 target: :orignorm

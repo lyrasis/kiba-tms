@@ -5,21 +5,11 @@ module Kiba
     module Transforms
       module NameTypeCleanup
         class OverlayAll
-          def initialize(lookup:,
-                         keycolumn: :constituentid,
-                         typetarget: :contype,
+          def initialize(typetarget: :contype,
                          nametarget: Tms::Constituents.preferred_name_field
                         )
             @typetarget = typetarget
             @nametarget = nametarget
-            @merger = Merge::MultiRowLookup.new(
-              lookup: lookup,
-              keycolumn: keycolumn,
-              fieldmap: {
-                correctname: :correctname,
-                correctauthoritytype: :correctauthoritytype
-              }
-            )
             @dropper = OverlayDrop.new(
               target: nametarget
             )
@@ -35,7 +25,6 @@ module Kiba
           end
 
           def process(row)
-            merger.process(row)
             if row[:correctauthoritytype] == 'd'
               dropper.process(row)
             else
@@ -49,7 +38,8 @@ module Kiba
           private
 
           attr_reader :typetarget, :nametarget,
-            :merger, :dropper, :typeoverlayer, :nameoverlayer, :deleter
+            :merger, :dropper, :typeoverlayer, :nameoverlayer,
+            :deleter
         end
       end
     end
