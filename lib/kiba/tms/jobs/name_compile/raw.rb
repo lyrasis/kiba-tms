@@ -19,8 +19,11 @@ module Kiba
 
           def sources
             base = Tms::NameCompile.sources
-            base.reject{ |src| src.to_s['__from_can'] unless Tms::ConAltNames.used? }
-            unless Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Constituents')
+            unless Tms::ConAltNames.used?
+              base.reject!{ |src| src.to_s['__from_can']  }
+            end
+            unless Tms::AssocParents.used? &&
+                Tms::AssocParents.target_tables.any?('Constituents')
               base.delete(:name_compile__from_assoc_parents_for_con)
             end
             base.select{ |job| Tms.job_output?(job) }
@@ -28,10 +31,14 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Append::NilFields, fields: Tms::NameCompile.multi_source_normalizer.get_fields
-              transform Rename::Field, from: Tms::Constituents.preferred_name_field, to: :name
+              transform Append::NilFields,
+                fields: Tms::NameCompile.multi_source_normalizer.get_fields
+              transform Rename::Field,
+                from: Tms::Constituents.preferred_name_field,
+                to: :name
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[constituentid contype name relation_type termsource],
+                sources: %i[constituentid contype name relation_type
+                            termsource],
                 target: :fingerprint,
                 sep: ' ',
                 delete_sources: false
