@@ -234,15 +234,6 @@ module Kiba
           end
         end
 
-        Kiba::Tms.registry.namespace('assoc_parents') do
-          register :for_constituents, {
-            creator: Kiba::Tms::Jobs::AssocParents::ForConstituents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'assoc_parents_for_con.csv'),
-            lookup_on: :recordid,
-            tags: %i[assoc_parents con]
-          }
-        end
-
         Kiba::Tms.registry.namespace('associations') do
           register :missing_values, {
             creator: Kiba::Tms::Jobs::Associations::MissingValues,

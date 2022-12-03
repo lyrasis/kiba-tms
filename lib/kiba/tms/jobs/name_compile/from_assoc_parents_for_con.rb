@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :assoc_parents__for_constituents,
+                source: :assoc_parents_for__constituents,
                 destination: :name_compile__from_assoc_parents_for_con
               },
               transformer: xforms,
