@@ -41,7 +41,7 @@ module Kiba
 
           results = configs.map(&:call)
           custom = derive_custom_config
-          all = [results, custom].compact.flatten
+          all = [results, custom].flatten.compact
 
           return resobj.new if all.blank?
 
