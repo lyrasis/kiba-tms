@@ -97,6 +97,7 @@ module Kiba
         '97'=>'CondLineItems',
         '102'=>'ObjDeaccession',
         '108'=>'Objects',
+        '116'=>'ObjInsurance',
         '126'=>'ObjRights',
         '143'=>'ReferenceMaster',
         '187'=>'HistEvents',
