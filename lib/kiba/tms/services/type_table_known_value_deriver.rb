@@ -88,7 +88,7 @@ module Kiba
           vals = value_getter.call
           return nil unless vals
 
-          vals.values
+          vals.value!
             .flatten
             .uniq
         end
