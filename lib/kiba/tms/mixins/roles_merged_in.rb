@@ -73,6 +73,14 @@ module Kiba
             ))
         end
 
+        def self.checkable_as_needed(mod)
+          existing = mod.checkable.dup
+          self.checkable_from_scratch(mod)
+          combined = mod.checkable.merge(existing)
+          mod.config.checkable = combined
+        end
+        private_class_method :checkable_as_needed
+
         def self.checkable_from_scratch(mod)
           code = <<~CODE
             setting :checkable, default: {
@@ -88,6 +96,7 @@ module Kiba
 
         def self.set_checkable(mod)
           if mod.respond_to?(:checkable)
+            self.checkable_as_needed(mod)
           else
             self.checkable_from_scratch(mod)
           end
