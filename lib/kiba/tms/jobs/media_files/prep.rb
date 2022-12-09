@@ -35,15 +35,15 @@ module Kiba
           end
 
           def merges_paths?
-            Tms::MediaPaths.used? && config.fields.any?{ |f| f.to_s['pathid'] }
+            Tms::MediaPaths.used? && config.fields.any?(Tms::MediaPaths.id_field)
           end
 
           def merges_renditions?
-            Tms::MediaRenditions.used?
+            Tms::MediaRenditions.used? && config.fields.any?(:renditionid)
           end
 
           def merges_master?
-            Tms::MediaMaster.used?
+            Tms::MediaMaster.used? && config.fields.any?(:renditionid)
           end
 
           def xforms
