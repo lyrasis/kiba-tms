@@ -25,6 +25,10 @@ module Kiba
             formatted_hash
           elsif value.is_a?(Array)
             formatted_array
+          elsif value.is_a?(FalseClass)
+            "#{setter} false"
+          elsif value.is_a?(TrueClass)
+            "#{setter} true"
           end
         end
 
