@@ -17,6 +17,7 @@ module Kiba
           self.set_for_table_source_job_key_setting(mod)
           self.set_split_on_column_setting(mod)
           self.set_target_tables_setting(mod)
+          self.set_checkable(mod)
         end
 
         def is_multi_table_mergeable?
@@ -189,6 +190,15 @@ module Kiba
         end
 
         # METHODS FOR EXTENDING
+        def self.set_checkable(mod)
+          if mod.respond_to?(:checkable)
+            self.checkable_as_needed(mod)
+          else
+            self.checkable_from_scratch(mod)
+          end
+        end
+        private_class_method :set_checkable
+
         def self.set_for_table_source_job_key_setting(mod)
           return if mod.respond_to?(:for_table_source_job_key)
 
@@ -216,6 +226,34 @@ module Kiba
           mod.module_eval('setting :target_tables, default: [], reader: true')
         end
         private_class_method :set_target_tables_setting
+
+        # METHODS USED BY METHODS USED FOR EXTENDING
+        def self.checkable_as_needed(mod)
+          existing = mod.checkable.dup
+          self.checkable_from_scratch(mod)
+          combined = mod.checkable.merge(existing)
+          mod.config.checkable = combined
+        end
+        private_class_method :checkable_as_needed
+
+        def self.checkable_from_scratch(mod)
+          code = %{
+          setting :checkable,
+            default:              {
+              needed_table_transform_settings: Proc.new{
+                check_needed_table_transform_settings
+              },
+              undefined_table_transforms: Proc.new{
+                check_undefined_table_transforms
+              }
+            },
+            reader: true
+          }.gsub("\n", ' ')
+
+          mod.module_eval(code)
+        end
+        private_class_method :checkable_from_scratch
+
       end
     end
   end
