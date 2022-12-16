@@ -37,7 +37,10 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-              transform FilterRows::FieldEqualTo, action: :reject, field: :dimension, value: '.0000000000'
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
+                field: :dimension,
+                value: '.0000000000'
 
               if Tms::DimensionUnits.used?
                 transform Merge::MultiRowLookup,

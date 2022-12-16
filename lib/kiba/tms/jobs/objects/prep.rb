@@ -64,7 +64,6 @@ module Kiba
               config = bind.receiver.send(:config)
               custom_handled_fields = config.custom_map_fields
 
-
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
@@ -127,6 +126,7 @@ module Kiba
                 statusfields << :main_objectstatus
               end
               transform Delete::Fields, fields: :objectstatusid
+
               if Tms::LinkedSetAcq.used?
                 transform Merge::MultiRowLookup,
                   lookup: linked_set_acq__object_statuses,
@@ -137,15 +137,16 @@ module Kiba
                   delim: Tms.delim
                 statusfields << :linkedset_objectstatus
               end
+
               unless statusfields.empty?
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: statusfields,
-                target: :objectstatus,
-                sep: Tms.delim,
-                delete_sources: true
-              transform Deduplicate::FieldValues,
-                fields: :objectstatus,
-                sep: Tms.delim
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: statusfields,
+                  target: :objectstatus,
+                  sep: Tms.delim,
+                  delete_sources: true
+                transform Deduplicate::FieldValues,
+                  fields: :objectstatus,
+                  sep: Tms.delim
               end
 
               if Tms::ObjTitles.used?

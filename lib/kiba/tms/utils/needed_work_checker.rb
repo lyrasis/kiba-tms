@@ -26,7 +26,6 @@ module Kiba
           results = to_check.map{ |mod| checker.call(mod) }
           handle_successes(extract(results, :successes))
           #          needed_merges
-          binding.pry
           handle_failures(extract(results, :failures))
         end
 

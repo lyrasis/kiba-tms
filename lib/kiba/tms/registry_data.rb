@@ -1187,8 +1187,14 @@ module Kiba
         Kiba::Tms.registry.namespace('nameclean') do
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
-            path: File.join(Kiba::Tms.datadir, 'working', 'by_constituent_id.csv'),
-            desc: 'Lookup authorized form by constituent id. Additional fields: person, org, alphasort, displayname. Person and Org columns contain the normalized form of the constituent name',
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'by_constituent_id.csv'
+            ),
+            desc: 'Lookup authorized form by constituent id. Additional '\
+              'fields: person, org, alphasort, displayname. Person and Org '\
+              'columns contain the normalized form of the constituent name',
             tags: %i[names],
             lookup_on: :constituentid
           }
