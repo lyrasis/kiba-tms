@@ -63,7 +63,30 @@ module Kiba
                   lookup: prep__media_paths,
                   keycolumn: :pathid,
                   fieldmap: {path: Tms::MediaPaths.type_field}
+              else
+                transform Append::NilFields, fields: :path
               end
+
+              # move any path info out of :filename and onto end of :path
+              transform do |row|
+                filename = row[:filename]
+                next row if filename.blank?
+                next row unless filename["\\"]
+
+                path = row[:path] ||= ''
+                parts = filename.split('\\')
+                filename = parts.pop
+
+                row[:filename] = filename
+                row[:path] = [path, parts].flatten
+                  .join('\\')
+                row
+              end
+
+              transform Deduplicate::FlagAll,
+                on_field: :filename,
+                in_field: :duplicate_filename,
+                explicit_no: false
 
               if mod.send(:merges_renditions?)
                 rendfm = config.rendition_merge_fields.map{ |f|
