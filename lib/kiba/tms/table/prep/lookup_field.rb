@@ -98,7 +98,8 @@ module Kiba
             title_types: :titletypeid,
             trans_codes: :transcodeid,
             trans_status: :transstatusid,
-            treatment_priorities: :priorityid
+            treatment_priorities: :priorityid,
+            valuation_purposes: Tms::ValuationPurposes.id_field
           }
         end
       end
