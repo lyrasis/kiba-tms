@@ -1677,6 +1677,16 @@ module Kiba
             tags: %i[names],
             lookup_on: :constituentid
           }
+          register :by_altnameid, {
+            creator: Kiba::Tms::Jobs::Names::ByAltnameid,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_by_altnameid.csv'
+            ),
+            tags: %i[names],
+            lookup_on: :altnameid
+          }
           register :orgs, {
             creator: Kiba::Tms::Jobs::Names::Orgs,
             path: File.join(
