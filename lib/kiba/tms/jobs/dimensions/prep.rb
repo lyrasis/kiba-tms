@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 module Kiba
   module Tms
     module Jobs
@@ -27,6 +29,18 @@ module Kiba
             base
           end
 
+          # @param val [String]
+          # @param conversion [String]
+          # @return [String]
+          def convert(val, conversion)
+            val = BigDecimal(val)
+            conv = BigDecimal(conversion)
+            (val * conv).to_r
+              .round(+3)
+              .to_f
+              .to_s
+          end
+
           def xforms
             bind = binding
 
@@ -46,16 +60,23 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__dimension_units,
                   keycolumn: :primaryunitid,
-                  fieldmap: {measurementunit: :unitname}
+                  fieldmap: {
+                    primaryunit: Tms::DimensionUnits.type_field,
+                    primaryconvert: :conversionfactor
+                  }
+                transform Merge::MultiRowLookup,
+                  lookup: prep__dimension_units,
+                  keycolumn: :secondaryunitid,
+                  fieldmap: {
+                    secondaryunit: Tms::DimensionUnits.type_field,
+                    secondaryconvert: :conversionfactor
+                  }
               end
-              transform Delete::Fields, fields: :primaryunitid
+              transform Delete::Fields,
+                fields: %i[primaryunitid secondaryunitid]
 
               transform Rename::Field, from: :dimension, to: :value
-              transform Append::ConvertedValueAndUnit,
-                value: :value,
-                unit: :measurementunit,
-                delim: Tms.sgdelim,
-                places: 10
+              transform Copy::Field, from: :value, to: :dimvalue
 
               if Tms::DimensionTypes.used?
                 transform Merge::MultiRowLookup,
@@ -66,18 +87,23 @@ module Kiba
               transform Delete::Fields, fields: :dimensiontypeid
 
               transform do |row|
-                dim = row[:dimension]
-                next row if dim.blank?
-
                 val = row[:value]
-                next row if val.blank?
-
-                vals = val.split(Tms.sgdelim)
-                dimval = []
-                vals.length.times{ dimval << dim }
-                row[:dimension] = dimval.join(Tms.sgdelim)
+                dim = row[:dimension]
+                row[:dimension] = [dim, dim].join(Tms.sgdelim)
+                row[:value] = [
+                  bind.receiver.send(:convert, val, row[:primaryconvert]),
+                  bind.receiver.send(:convert, val, row[:secondaryconvert])
+                ].join(Tms.sgdelim)
+                row[:measurementunit] = [
+                  row[:primaryunit],
+                  row[:secondaryunit]
+                ].join(Tms.sgdelim)
                 row
               end
+
+              transform Delete::Fields,
+                fields: %i[primaryunit primaryconvert
+                           secondaryunit secondaryconvert]
             end
           end
         end

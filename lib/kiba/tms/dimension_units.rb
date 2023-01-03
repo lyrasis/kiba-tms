@@ -9,7 +9,7 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[conversionfactor unittypeid unitlabelatend isfractional
+        default: %i[unittypeid unitlabelatend isfractional
                     basedenominator decimalplaces unitcutoff unitspersuperunit
                     unitlabel superunitlabel issuperunit system],
         reader: true

@@ -9,7 +9,7 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[displayed dimensionid secondaryunitid],
+        default: %i[displayed dimensionid],
         reader: true
       extend Tms::Mixins::Tableable
     end
