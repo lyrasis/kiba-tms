@@ -100,8 +100,10 @@ module Kiba
               end
 
               if cleanable
-                transform Tms::Transforms::NameTypeCleanup::OverlayAll,
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   lookup: name_type_cleanup__for_uncontrolled_name_tables
+
+                transform Tms::Transforms::NameTypeCleanup::OverlayAll
               end
             end
           end
