@@ -19,12 +19,11 @@ module Kiba
           return row unless active
 
           filter.process(row)
-          row
         end
 
         private
 
-        attr_reader :fields, :active, :filter
+        attr_reader :field, :active, :filter
       end
     end
   end
