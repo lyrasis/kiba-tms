@@ -178,6 +178,8 @@ module Kiba
               end
 
               if Tms::ObjContext.used?
+                contexts_merged = []
+
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: prep__obj_context,
@@ -185,6 +187,7 @@ module Kiba
                     culture: :culture
                   },
                   delim: Tms.delim
+                contexts_merged << :culture
 
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
@@ -193,6 +196,13 @@ module Kiba
                     period: :period
                   },
                   delim: Tms.delim
+                contexts_merged << :period
+
+                contexts_todo = Tms::ObjContext.content_fields - contexts_merged
+                unless contexts_todo.empty?
+                  warn("Handle merging ObjContext fields: "\
+                       "#{contexts_todo.join(', ')}")
+                end
               end
 
               if Tms::DimItemElemXrefs.used?
