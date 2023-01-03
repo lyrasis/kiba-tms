@@ -160,6 +160,8 @@ module Kiba
                   },
                   delim: Tms.delim,
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
+                transform Delete::DelimiterOnlyFieldValues,
+                  fields: %i[titletype titlelanguage title_comment]
 
                 # if no title merged in from ObjTitles, move :title
                 #   to :obj_title
