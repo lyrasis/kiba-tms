@@ -8,6 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      def non_content_fields
+        %i[objcontextid objectid]
+      end
       extend Tms::Mixins::Tableable
     end
   end
