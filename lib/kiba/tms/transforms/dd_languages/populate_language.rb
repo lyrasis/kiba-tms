@@ -8,7 +8,7 @@ module Kiba
 
           def initialize
             @sources = %i[mnemonic label]
-            @target = :language
+            @target = Tms::DDLanguages.type_field
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: sources
               )

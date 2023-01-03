@@ -7,7 +7,7 @@ module Kiba
         class FormatLanguage
 
           def initialize
-            @target = :language
+            @target = Tms::DDLanguages.type_field
           end
 
           def process(row)
