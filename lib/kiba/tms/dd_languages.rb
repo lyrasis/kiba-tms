@@ -35,8 +35,7 @@ module Kiba
                 fields: %i[languageid mnemonic label]
               ),
           Tms::Transforms::DDLanguages::PopulateLanguage.new,
-          Tms::Transforms::DDLanguages::FormatLanguage.new,
-          Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
+          Tms::Transforms::DDLanguages::FormatLanguage.new
         ]
       end
     end
