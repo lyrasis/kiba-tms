@@ -82,14 +82,13 @@ module Kiba
                     config.department_target => :department
                   },
                   delim: Tms.delim
+                if config.department_coll_prefix
+                  transform Prepend::ToFieldValue,
+                    field: config.department_target,
+                    value: config.department_coll_prefix
+                end
               end
               transform Delete::Fields, fields: :departmentid
-
-              if config.department_coll_prefix
-                transform Prepend::ToFieldValue,
-                  field: config.department_target,
-                  value: config.department_coll_prefix
-              end
 
               if Tms::ObjectNames.used?
                 transform Rename::Field,
