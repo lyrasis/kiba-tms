@@ -31,6 +31,7 @@ module Kiba
             if config.target_tables.any?('ReferenceMaster')
               base << :tms__reference_master
             end
+            base
           end
 
           def xforms
