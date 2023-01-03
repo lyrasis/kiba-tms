@@ -37,9 +37,7 @@ module Kiba
             base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
-            if Tms::DimItemElemXrefs.for?('Objects')
-              base << :dim_item_elem_xrefs_for__objects
-            end
+            base << :dim_item_elem_xrefs_for__objects if merges_dimensions?
             if Tms::ObjComponents.merging_text_entries?
               base << :obj_components__with_object_numbers
             end
@@ -55,6 +53,10 @@ module Kiba
             end.select{ |setting| config.respond_to?(setting) }
               .map{ |setting| config.send(setting) }
               .compact
+          end
+
+          def merges_dimensions?
+            Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?('Objects')
           end
 
           def xforms
@@ -205,17 +207,23 @@ module Kiba
                 end
               end
 
-              if Tms::DimItemElemXrefs.used?
+              if bind.receiver.send(:merges_dimensions?)
+                transform Delete::Fields, fields: :dimensions
                 transform Merge::MultiRowLookup,
                   lookup: dim_item_elem_xrefs_for__objects,
                   keycolumn: :objectid,
                   fieldmap: {
-                    diex_dims: :displaydimensions,
-                    diex_date: :dimensiondate,
-                    diex_desc: :description,
-                    diex_elem: :element
+                    dimensionsummary: :displaydimensions,
+                    valuedate: :valuedate,
+                    measuredpartnote: :description,
+                    measuredpart: :element,
+                    measurementunit: :measurementunit,
+                    value: :value,
+                    dimension: :dimension
                   },
                   sorter: Lookup::RowSorter.new(on: :rank, as: :to_i)
+                transform Delete::DelimiterOnlyFieldValues,
+                  fields: %i[valuedate measurementunit value dimension]
               end
 
               if Tms::ConRefs.for?('Objects')
@@ -294,11 +302,13 @@ module Kiba
                 chat: :viewerscontributionnote,
                 culture: :objectproductionpeople,
                 description: :briefdescription,
-                dimensions: :dimensionsummary,
                 medium: :materialtechniquedescription,
                 notes: :comment,
                 objectcount: :numberofobjects,
               }
+              unless bind.receiver.send(:merges_dimensions?)
+                rename_map[:dimensions] = :dimensionsummary
+              end
               custom_handled_fields.each{ |field| rename_map.delete(field) }
               transform Rename::Fields,
                 fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)

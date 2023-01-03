@@ -9,7 +9,7 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[dimitemelemxrefid displayed],
+        default: %i[displayed],
         reader: true
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable

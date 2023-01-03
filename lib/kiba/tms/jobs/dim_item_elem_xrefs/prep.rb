@@ -22,6 +22,7 @@ module Kiba
 
           def lookups
             base = []
+            base << :prep__dimensions if Tms::Dimensions.used?
             base << :prep__dimension_elements if Tms::DimensionElements.used?
             base << :prep__dimension_methods if Tms::DimensionMethods.used?
             base
@@ -61,6 +62,36 @@ module Kiba
                   fieldmap: {method: :method}
               end
               transform Delete::Fields, fields: :methodid
+
+              if Tms::Dimensions.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__dimensions,
+                  keycolumn: :dimitemelemxrefid,
+                  fieldmap: {
+                    measurementunit: :measurementunit,
+                    value: :value,
+                    dimension: :dimension
+                  },
+                  sorter: Lookup::RowSorter.new(on: :rank, as: :to_i),
+                  delim: Tms.sgdelim
+              end
+              transform Delete::Fields, fields: :dimitemelemxrefid
+
+              transform do |row|
+                row[:valuedate] = nil
+                dimdate = row[:dimensiondate]
+                next row if dimdate.blank?
+
+                val = row[:value]
+                next row if val.blank?
+
+                vals = val.split(Tms.sgdelim)
+                dimdates = []
+                vals.length.times{ dimdates << dimdate }
+                row[:valuedate] = dimdates.join(Tms.sgdelim)
+                row
+              end
+              transform Delete::Fields, fields: :dimensiondate
             end
           end
         end

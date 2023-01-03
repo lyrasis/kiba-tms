@@ -23,10 +23,15 @@ module Kiba
 
           def lookups
             base = []
-            if Tms::DimItemElemXrefs.used?
+            if merges_dimensions?
               base << :dim_item_elem_xrefs_for__obj_components
             end
             base
+          end
+
+          def merges_dimensions?
+            Tms::DimItemElemXrefs.used? &&
+              Tms::DimItemElemXrefs.for?('ObjComponents')
           end
 
           def xforms
@@ -63,17 +68,22 @@ module Kiba
                   delete_sources: true
               end
 
-              if Tms::DimItemElemXrefs.used?
+              if bind.receiver.send(:merges_dimensions?)
                 transform Merge::MultiRowLookup,
                   lookup: dim_item_elem_xrefs_for__obj_components,
                   keycolumn: :componentid,
                   fieldmap: {
-                    diex_dims: :displaydimensions,
-                    diex_date: :dimensiondate,
-                    diex_desc: :description,
-                    diex_elem: :element
+                    dimensionsummary: :displaydimensions,
+                    valuedate: :valuedate,
+                    measuredpartnote: :description,
+                    measuredpart: :element,
+                    measurementunit: :measurementunit,
+                    value: :value,
+                    dimension: :dimension
                   },
                   sorter: Lookup::RowSorter.new(on: :rank, as: :to_i)
+                transform Delete::DelimiterOnlyFieldValues,
+                  fields: %i[valuedate measurementunit value dimension]
               end
             end
           end

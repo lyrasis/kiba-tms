@@ -64,6 +64,20 @@ module Kiba
                   fieldmap: {dimension: :dimensiontype}
               end
               transform Delete::Fields, fields: :dimensiontypeid
+
+              transform do |row|
+                dim = row[:dimension]
+                next row if dim.blank?
+
+                val = row[:value]
+                next row if val.blank?
+
+                vals = val.split(Tms.sgdelim)
+                dimval = []
+                vals.length.times{ dimval << dim }
+                row[:dimension] = dimval.join(Tms.sgdelim)
+                row
+              end
             end
           end
         end
