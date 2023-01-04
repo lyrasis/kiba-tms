@@ -307,6 +307,13 @@ module Kiba
                 objectcount: :numberofobjects,
               }
               unless bind.receiver.send(:merges_dimensions?)
+                unless Tms::Dimensions.migrate_secondary_unit_vals
+                  transform do |row|
+                    display = row[:dimensions]
+                    row[:dimensions] = display.sub(/ \(.*\)$/, '')
+                    row
+                  end
+                end
                 rename_map[:dimensions] = :dimensionsummary
               end
               custom_handled_fields.each{ |field| rename_map.delete(field) }

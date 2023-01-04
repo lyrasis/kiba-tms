@@ -1,0 +1,46 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Dimensions data
+
+This page covers options for migrating data from the following tables in TMS:
+
+* Dimensions
+* DimensionElements
+* DimensionMethods
+* DimensionTypes
+* DimensionUnits
+* DimItemElemXrefs
+
+toc::[]
+
+== Tms::Dimensions
+
+Each row in the Dimensions table records:
+
+* dimension type, eg. height
+* dimension value -- a decimal number
+* primary unit
+* secondary unit (converted values shown in parentheses in dimension display summary)
+
+=== :migrate_secondary_unit_vals
+
+Whether or not to include secondary unit values in the migration.
+
+True or false
+
+Default value:: `true`
+
+If false, the parenthetical secondary display summary dimensions are deleted. One value is migrated per dimension row.
+
+If true, two values are migrated per dimension row.

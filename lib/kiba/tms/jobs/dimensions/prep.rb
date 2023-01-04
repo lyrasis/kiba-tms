@@ -64,19 +64,20 @@ module Kiba
                     primaryunit: Tms::DimensionUnits.type_field,
                     primaryconvert: :conversionfactor
                   }
-                transform Merge::MultiRowLookup,
-                  lookup: prep__dimension_units,
-                  keycolumn: :secondaryunitid,
-                  fieldmap: {
-                    secondaryunit: Tms::DimensionUnits.type_field,
-                    secondaryconvert: :conversionfactor
-                  }
+                if config.migrate_secondary_unit_vals
+                  transform Merge::MultiRowLookup,
+                    lookup: prep__dimension_units,
+                    keycolumn: :secondaryunitid,
+                    fieldmap: {
+                      secondaryunit: Tms::DimensionUnits.type_field,
+                      secondaryconvert: :conversionfactor
+                    }
+                end
               end
               transform Delete::Fields,
                 fields: %i[primaryunitid secondaryunitid]
 
               transform Rename::Field, from: :dimension, to: :value
-              transform Copy::Field, from: :value, to: :dimvalue
 
               if Tms::DimensionTypes.used?
                 transform Merge::MultiRowLookup,
@@ -88,22 +89,34 @@ module Kiba
 
               transform do |row|
                 val = row[:value]
-                dim = row[:dimension]
-                row[:dimension] = [dim, dim].join(Tms.sgdelim)
-                row[:value] = [
-                  bind.receiver.send(:convert, val, row[:primaryconvert]),
-                  bind.receiver.send(:convert, val, row[:secondaryconvert])
-                ].join(Tms.sgdelim)
-                row[:measurementunit] = [
-                  row[:primaryunit],
-                  row[:secondaryunit]
-                ].join(Tms.sgdelim)
+
+                if config.migrate_secondary_unit_vals
+                  dim = row[:dimension]
+                  row[:dimension] = [dim, dim].join(Tms.sgdelim)
+                  row[:value] = [
+                    bind.receiver.send(:convert, val, row[:primaryconvert]),
+                    bind.receiver.send(:convert, val, row[:secondaryconvert])
+                  ].join(Tms.sgdelim)
+                  row[:measurementunit] = [
+                    row[:primaryunit],
+                    row[:secondaryunit]
+                  ].join(Tms.sgdelim)
+                else
+                  row[:value] = bind.receiver.send(
+                    :convert, val, row[:primaryconvert]
+                  )
+                  row[:measurementunit] = row[:primaryunit]
+                end
+
                 row
               end
 
+              deletefields = %i[primaryunit primaryconvert]
+              if config.migrate_secondary_unit_vals
+                deletefields << %i[secondaryunit secondaryconvert]
+              end
               transform Delete::Fields,
-                fields: %i[primaryunit primaryconvert
-                           secondaryunit secondaryconvert]
+                fields: deletefields.flatten
             end
           end
         end

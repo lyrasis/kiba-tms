@@ -12,6 +12,10 @@ module Kiba
         default: %i[displayed dimensionid],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :migrate_secondary_unit_vals,
+        default: true,
+        reader: true
     end
   end
 end
