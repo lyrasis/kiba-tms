@@ -22,22 +22,24 @@ module Kiba
           "ConXrefs.#{id_field}"],
         reader: true
       setting :mappings, default: {
-        "Accession Lot Object Related" => "RegistrationSets",
-        "Accession Lot Related" => "AccessionLot",
-        "Acquisition Related" => "ObjAccession",
-        "Bibliography Related" => "ReferenceMaster",
-        "Ex-Collections Related" => "Objects",
-        "Exhibitions Related" => "Exhibitions",
-        "Incoming Loan Related" => "Loansin",
-        "Media Related" => "MediaRenditions",
-        "Object Related" => "Objects",
-        "Outgoing Loan Related" => "Loansout",
-        "Rights Related" => "ObjRights",
-        "Shipment Related" => "Shipments",
-        "Shipment Step Related" => "ShipmentSteps",
-        "Site Related" => "Sites",
-        "Text Entry Related" => "TextEntries",
-        "Venue Related" => "ExhVenuesXrefs"
+        "Accession Lot Object Related" => "RegistrationSets", #CS Acquisition
+        "Accession Lot Related" => "AccessionLot", #CS Acquisition
+        "Acquisition Related" => "ObjAccession", #CS Acquisition
+        "Bibliography Related" => "ReferenceMaster", #CS Citation authority
+        "Ex-Collections Related" => "Objects", #CS Object - owner, former owner,
+        #  donor, etc.
+        "Exhibitions Related" => "Exhibitions", #CS Exhibition
+        "Incoming Loan Related" => "Loansin", #CS Loan in
+        "Media Related" => "MediaRenditions", #CS Media handling
+        "Object Related" => "Objects", #CS Object
+        "Outgoing Loan Related" => "Loansout", #CS Loan out
+        "Rights Related" => "ObjRights", #CS Object
+        "Shipment Related" => "Shipments", #CS Transport (?)
+        "Shipment Step Related" => "ShipmentSteps", #CS Transport (?)
+        "Site Related" => "Sites", #CS Place authority (?)
+        "Text Entry Related" => "TextEntries", #merged into TMS TextEntries
+        #  table, which itself is split for merge into different record types
+        "Venue Related" => "ExhVenuesXrefs" #CS Exhibition (?)
       },
         reader: true
       extend Tms::Mixins::TypeLookupTable
