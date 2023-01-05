@@ -228,6 +228,21 @@ module Kiba
       configs.reject{ |c| c.respond_to?(:used?) }
     end
 
+    # @param jobkey [Symbol]
+    # @param column [Symbol] keycolumn on which to lookup
+    def get_lookup(jobkey:, column:)
+      reg = Tms.registry.resolve(jobkey)
+      path = reg.path
+      unless File.exist?(path)
+        Kiba::Extend::Command::Run.job(jobkey)
+      end
+      Kiba::Extend::Utils::Lookup.csv_to_hash(
+        file: path,
+        keycolumn: column
+      )
+    end
+
+    # @param jobkey [Symbol]
     def job_output?(jobkey)
       reg = Tms.registry.resolve(jobkey)
       return false unless reg

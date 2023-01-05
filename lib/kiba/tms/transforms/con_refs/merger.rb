@@ -19,7 +19,10 @@ module Kiba
                 "Unmapped role vals for #{into}: #{config[:unmapped].join(', ')}"
               )
             end
-            @lookup = get_lookup
+            @lookup = Tms.get_lookup(
+              jobkey: "con_refs_for__#{into.filekey}".to_sym,
+              column: :recordid
+            )
             @xforms = build_xforms
           end
 
@@ -78,27 +81,6 @@ module Kiba
 
             warn(
               "Add rules for fields to #{into} config: #{missing.join(', ')}"
-            )
-          end
-
-          # def get_fieldrules
-          #   targets = config.keys
-          #   into.con_ref_field_rules[Tms.cspace_profile]
-          #     .select do |field, rules|
-          #       targets.any?(field)
-          #     end
-          # end
-
-          def get_lookup
-            jobkey = "con_refs_for__#{into.filekey}".to_sym
-            reg = Tms.registry.resolve(jobkey)
-            path = reg.path
-            unless File.exist?(path)
-              Kiba::Extend::Command::Run.job(jobkey)
-            end
-            Kiba::Extend::Utils::Lookup.csv_to_hash(
-              file: path,
-              keycolumn: :recordid
             )
           end
         end
