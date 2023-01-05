@@ -75,6 +75,10 @@ module Kiba
       setting :department_target, default: :responsibledepartment, reader: true
       # necessary if :department_target = :dept_namedcollection. Should be a String value if populated
       setting :department_coll_prefix, default: nil, reader: true
+      # Transforms to clean individual fields
+      # Elements should be transform classes that do not need to be initialized
+      #   with arguments
+      setting :field_cleaners, default: [], reader: true
       setting :named_coll_fields, default: [], reader: true
       setting :nontext_inscription_source_fields, default: %i[], reader: true
       setting :nontext_inscription_target_fields, default: %i[], reader: true
@@ -87,15 +91,6 @@ module Kiba
       #   these transforms are defined in settings below with the name pattern
       #   `fieldname_xform`
       setting :transformer_fields, default: [], reader: true
-
-      ##########
-      # Cleaners
-      ##########
-      setting :culture_cleaner, default: nil, reader: true
-      setting :inscribed_cleaner, default: nil, reader: true
-      setting :markings_cleaner, default: nil, reader: true
-      setting :medium_cleaner, default: nil, reader: true
-      setting :signed_cleaner, default: nil, reader: true
 
       ############
       # Transforms

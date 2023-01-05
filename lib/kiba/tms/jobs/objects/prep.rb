@@ -47,14 +47,6 @@ module Kiba
             base
           end
 
-          def field_cleaners
-            %i[culture inscribed markings medium signed].map do |field|
-              "#{field}_cleaner".to_sym
-            end.select{ |setting| config.respond_to?(setting) }
-              .map{ |setting| config.send(setting) }
-              .compact
-          end
-
           def merges_dimensions?
             Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?('Objects')
           end
@@ -284,11 +276,9 @@ module Kiba
                 transform{ |row| xform.process(row) }
               end
 
-              bind.receiver.send(:field_cleaners).each do |cleaner|
-                  transform do |row|
-                    cleaner.process(row)
-                  end
-                end
+              unless config.field_cleaners.empty?
+                config.field_cleaners.each{ |cleaner| transform cleaner }
+              end
 
               config.transformer_fields.each do |field|
                 setting = "#{field}_xform".to_sym
