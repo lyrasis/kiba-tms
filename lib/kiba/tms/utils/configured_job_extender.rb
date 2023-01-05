@@ -3,6 +3,8 @@
 module Kiba
   module Tms
     module Utils
+      # Extends all jobs defined in Tms::Jobs with their relevant config
+      #   modules
       class ConfiguredJobExtender
         class << self
           def call(...)

@@ -29,6 +29,8 @@ module Kiba
       #   hierarchy
       setting :hierarchy, default: true, reader: true
       setting :hierarchy_delim, default: ' > ', reader: true
+      # special/client customized data cleanup of Locations table prior to any
+      #   other transforms
       setting :initial_data_cleaner, default: nil, reader: true
       # base fields from Locations table to concatenate into location name
       setting :loc_fields,

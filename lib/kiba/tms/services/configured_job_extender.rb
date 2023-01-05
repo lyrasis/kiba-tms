@@ -3,6 +3,8 @@
 module Kiba
   module Tms
     module Services
+      # Extends the jobs defined in the given namespace (i.e. subfolder/
+      #   module) under Tms::Jobs with the matching config module
       class ConfiguredJobExtender
         class << self
           def call(...)
