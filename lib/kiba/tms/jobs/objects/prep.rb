@@ -244,6 +244,9 @@ module Kiba
                     into: config,
                     keycolumn: :objectid
                 end
+                if Tms::ConRefs.for_objects_merge
+                  Tms::ConRefs.for_objects_merge.each{ |xform| transform xform }
+                end
               end
 
               if Tms::AltNums.for?('Objects')
