@@ -36,6 +36,8 @@ module Kiba
         end
 
         def fieldrules
+          return nil unless con_ref_field_rules
+
           targets = con_ref_target_base_fields
           con_ref_field_rules[Tms.cspace_profile].select do |field, rules|
             targets.any?(field)
@@ -118,6 +120,8 @@ module Kiba
               'setting :con_ref_field_rules, default: {}, reader: true'
             )
           end
+
+          return if mod.send(:con_ref_field_rules).nil?
 
           if mod.send(:con_ref_field_rules).empty?
             warn("Need to set up :con_ref_field_rules for #{mod}")

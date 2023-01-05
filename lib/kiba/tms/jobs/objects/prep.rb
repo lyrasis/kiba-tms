@@ -227,9 +227,11 @@ module Kiba
               end
 
               if Tms::ConRefs.for?('Objects')
-                transform Tms::Transforms::ConRefs::Merger,
-                  into: config,
-                  keycolumn: :objectid
+                if config.con_ref_field_rules
+                  transform Tms::Transforms::ConRefs::Merger,
+                    into: config,
+                    keycolumn: :objectid
+                end
               end
 
               if Tms::AltNums.for?('Objects')
