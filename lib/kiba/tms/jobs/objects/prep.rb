@@ -197,6 +197,21 @@ module Kiba
                 contexts_merged << :period
                 end
 
+                if contexts.any?(:n_signed)
+                transform Merge::MultiRowLookup,
+                  keycolumn: :objectid,
+                  lookup: prep__obj_context,
+                  fieldmap: {
+                    nsigned_inscriptioncontent: :n_signed
+                  },
+                  constantmap: {
+                    nsigned_inscriptioncontenttype: 'signed'
+                  },
+                  delim: Tms.delim
+                contexts_merged << :n_signed
+                config.text_inscription_source_fields << :nsigned
+                end
+
                 contexts_todo = contexts - contexts_merged
                 unless contexts_todo.empty?
                   warn("Handle merging ObjContext fields: "\
