@@ -339,8 +339,8 @@ module Kiba
                 fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
 
               %w[annotation nontext_inscription text_inscription].each do |type|
-                sources = Tms::Objects.send("#{type}_source_fields".to_sym)
-                targets = Tms::Objects.send("#{type}_target_fields".to_sym)
+                sources = config.send("#{type}_source_fields".to_sym)
+                targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
                   transform Collapse::FieldsToRepeatableFieldGroup,
                     sources: sources,
