@@ -197,7 +197,7 @@ module Kiba
                 contexts_merged << :period
                 end
 
-                contexts_todo = Tms::ObjContext.content_fields - contexts_merged
+                contexts_todo = contexts - contexts_merged
                 unless contexts_todo.empty?
                   warn("Handle merging ObjContext fields: "\
                        "#{contexts_todo.join(', ')}")
