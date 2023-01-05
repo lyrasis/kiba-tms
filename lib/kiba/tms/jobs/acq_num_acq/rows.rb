@@ -35,7 +35,8 @@ module Kiba
               transform Tms::Transforms::IdGenerator,
                 id_source: :acquisitionnumber,
                 id_target: :acquisitionreferencenumber,
-                sort_on: :combined
+                sort_on: :combined,
+                separator: '_'
             end
           end
         end
