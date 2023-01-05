@@ -12,7 +12,7 @@ module Kiba
               files: {
                 source: :prep__obj_incoming,
                 destination: :obj_incoming__for_initial_review,
-                lookup: :tms__objects
+                lookup: :objects__numbers_cleaned
               },
               transformer: xforms
             )
@@ -21,7 +21,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
               transform CombineValues::FromFieldsWithDelimiter,

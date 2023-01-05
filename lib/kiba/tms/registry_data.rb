@@ -2025,6 +2025,16 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('objects') do
+          register :numbers_cleaned, {
+            creator: Kiba::Tms::Jobs::Objects::NumbersCleaned,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'objects_numbers_cleaned.csv'
+            ),
+            lookup_on: :objectid,
+            tags: %i[objects]
+          }
           register :by_number, {
             creator: Kiba::Tms::Jobs::Objects::ByNumber,
             path: File.join(Kiba::Tms.datadir, 'working', 'objects_by_number.csv'),

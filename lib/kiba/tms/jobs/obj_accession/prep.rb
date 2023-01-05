@@ -22,7 +22,7 @@ module Kiba
 
           def lookups
             base = %i[
-                      tms__objects
+                      objects__numbers_cleaned
                       names__map_by_norm
                      ]
             if Tms::AccessionMethods.used? &&
@@ -91,12 +91,12 @@ module Kiba
               end
 
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
 
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {creditline: :creditline}
 

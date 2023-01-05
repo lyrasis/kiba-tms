@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[tms__loans tms__objects]
+            base = %i[tms__loans objects__numbers_cleaned]
             base << :prep__loan_obj_statuses if Tms::LoanObjStatuses.used?
             base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used?
             base
@@ -45,7 +45,7 @@ module Kiba
                 keycolumn: :loanid,
                 fieldmap: {loannumber: :loannumber}
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
 

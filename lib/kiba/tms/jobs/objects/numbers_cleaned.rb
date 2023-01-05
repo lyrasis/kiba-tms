@@ -4,22 +4,28 @@ module Kiba
   module Tms
     module Jobs
       module Objects
-        module NumberLookup
+        module NumbersCleaned
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :objects__numbers_cleaned,
-                destination: :objects__number_lookup
+                source: :tms__objects,
+                destination: :objects__numbers_cleaned
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[objectid objectnumber]
+              config = bind.receiver.send(:config)
+
+              if config.number_cleaner
+                transform config.number_cleaner
+              end
             end
           end
         end

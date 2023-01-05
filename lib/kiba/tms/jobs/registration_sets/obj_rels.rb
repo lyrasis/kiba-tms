@@ -18,7 +18,7 @@ module Kiba
                 destination: :registration_sets__obj_rels,
                 lookup: %i[
                            prep__registration_sets
-                           tms__objects
+                           objects__numbers_cleaned
                           ]
               },
               transformer: xforms
@@ -34,7 +34,7 @@ module Kiba
                 keycolumn: :registrationsetid,
                 fieldmap: {item1_id: :acquisitionreferencenumber}
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {item2_id: :objectnumber}
               transform Merge::ConstantValues,

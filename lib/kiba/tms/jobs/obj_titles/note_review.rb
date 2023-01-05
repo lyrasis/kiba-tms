@@ -6,13 +6,13 @@ module Kiba
       module ObjTitles
         module NoteReview
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__obj_titles,
                 destination: :obj_titles__note_review,
-                lookup: :tms__objects
+                lookup: :objects__numbers_cleaned
               },
               transformer: xforms
             )
@@ -23,7 +23,7 @@ module Kiba
               transform FilterRows::FieldPopulated, action: :keep, field: :titlenote
               transform Delete::FieldsExcept, fields: %i[objectid titlenote]
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
               transform Delete::Fields, fields: :objectid

@@ -26,7 +26,7 @@ module Kiba
               base << :tms__constituents
             end
             if config.target_tables.any?('Objects')
-              base << :tms__objects
+              base << :objects__numbers_cleaned
             end
             if config.target_tables.any?('ReferenceMaster')
               base << :tms__reference_master
@@ -77,7 +77,7 @@ module Kiba
               end
               if config.target_tables.any?('Objects')
                 transform Merge::MultiRowLookup,
-                  lookup: tms__objects,
+                  lookup: objects__numbers_cleaned,
                   keycolumn: :recordid,
                   fieldmap: {object: :objectnumber},
                   conditions: ->(origrow, mergerows) do

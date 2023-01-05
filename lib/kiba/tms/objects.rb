@@ -51,6 +51,14 @@ module Kiba
               suffixes: %w[person organization],
               merge_role: true,
               role_suffix: 'type'
+            },
+            content: {
+              suffixes: %w[personpersonlocal organizationorganizationlocal],
+              merge_role: false
+            },
+            owner: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
             }
           }
         },
@@ -70,6 +78,9 @@ module Kiba
       setting :named_coll_fields, default: [], reader: true
       setting :nontext_inscription_source_fields, default: %i[], reader: true
       setting :nontext_inscription_target_fields, default: %i[], reader: true
+      # client-specific transform to clean/alter object number values prior to
+      #   doing anything else with Objects table
+      setting :number_cleaner, default: nil, reader: true
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
       # TMS fields with associated field-specific transformers defined. Note

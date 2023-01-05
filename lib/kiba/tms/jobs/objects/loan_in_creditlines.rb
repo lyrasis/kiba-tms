@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__objects,
+                source: :objects__numbers_cleaned,
                 destination: :objects__loan_in_creditlines,
                 lookup: lookups
               },

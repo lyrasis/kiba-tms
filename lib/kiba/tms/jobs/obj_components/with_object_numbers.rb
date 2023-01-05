@@ -13,7 +13,7 @@ module Kiba
                 source: :prep__obj_components,
                 destination: :obj_components__with_object_numbers,
                 lookup: %i[
-                           tms__objects
+                           objects__numbers_cleaned
                            objects__by_number
                            ]
               },
@@ -25,7 +25,7 @@ module Kiba
             Kiba.job_segment do
               # merges in human-readable objectnumber
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {
                   parentobjectnumber: :objectnumber,

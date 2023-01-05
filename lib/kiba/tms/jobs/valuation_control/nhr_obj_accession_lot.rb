@@ -20,7 +20,7 @@ module Kiba
                 destination: :valuation_control__nhr_obj_accession_lot,
                 lookup: %i[
                            accession_lot__valuation_prep
-                           tms__objects
+                           objects__numbers_cleaned
                           ]
               },
               transformer: xforms
@@ -39,7 +39,7 @@ module Kiba
                 action: :keep,
                 field: :item2_id
               transform Merge::MultiRowLookup,
-                lookup: tms__objects,
+                lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
                 fieldmap: {item1_id: :objectnumber}
               transform Merge::ConstantValues, constantmap: {
