@@ -842,7 +842,7 @@ module Kiba
           register :rel_obj, {
             creator: Kiba::Tms::Jobs::Loansin::RelObj,
             path: File.join(Kiba::Tms.datadir, 'working', 'loansin__rel_obj.csv'),
-            tags: %i[loans loansin relations]
+            tags: %i[loans loansin relations nhr]
           }
         end
 
