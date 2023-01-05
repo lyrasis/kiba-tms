@@ -28,7 +28,6 @@ module Kiba
         reader: true
       extend Tms::Mixins::TypeLookupTable
 
-#      setting :target_tables, default: %w[Objects], reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       def default_mapping_treatment
