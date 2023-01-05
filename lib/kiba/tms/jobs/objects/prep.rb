@@ -303,13 +303,16 @@ module Kiba
                 config.field_cleaners.each{ |cleaner| transform cleaner }
               end
 
-              config.transformer_fields.each do |field|
-                setting = "#{field}_xform".to_sym
-                xform = config.send(setting)
-                if xform
-                  transform do |row|
-                    xform.process(row)
+              unless config.transformer_fields.empty?
+                xforms = config.transformer_fields
+                  .map{ |field| "#{field}_xform".to_sym }
+                  .map{ |setting| config.send(setting) }
+                  .compact
+                transform do |row|
+                  xforms.each do |xform|
+                    row = xform.process(row)
                   end
+                  row
                 end
               end
 
@@ -351,7 +354,6 @@ module Kiba
                 target: :comment,
                 sep: Tms.delim,
                 delete_sources: true
-
 
               unless Tms::Objects.named_coll_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
