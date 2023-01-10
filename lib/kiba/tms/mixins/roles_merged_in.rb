@@ -10,7 +10,7 @@ module Kiba
       #   this module.
       #
       # `Tms::Utils::InitialDependentConfigDeriver` uses
-      #   `:respond_to(:merges_roles?` to select config modules on which to
+      #   `:respond_to(:merges_roles?)` to select config modules on which to
       #   call `Tms::Services::RoleTreatmentDeriver`.
       #
       # ## Implementation details
@@ -25,6 +25,12 @@ module Kiba
           self.set_treatment_mappings(mod)
           self.set_checkable(mod)
           self.set_con_ref_field_rules(mod)
+          # Adds con_ref_fieldrules_override config setting, which can be used
+          #   to override rules for one or more target fields in a specific
+          #   migration project. To change `owner/note_fields`, you need to
+          #   include the entire `owner` field rule hash, updated as needed
+          #   for your project
+          self.set_con_ref_fieldrules_override(mod)
         end
 
         def gets_roles_merged_in?
@@ -39,9 +45,12 @@ module Kiba
           return nil unless con_ref_field_rules
 
           targets = con_ref_target_base_fields
-          con_ref_field_rules[Tms.cspace_profile].select do |field, rules|
+          base = con_ref_field_rules[Tms.cspace_profile].select do |field, rules|
             targets.any?(field)
           end
+          return base if con_ref_fieldrules_override.empty?
+
+          base.merge(con_ref_fieldrules_override)
         end
 
         def con_ref_suffixed_fields(field)
@@ -128,6 +137,15 @@ module Kiba
           end
         end
         private_class_method :set_con_ref_field_rules
+
+        def self.set_con_ref_fieldrules_override(mod)
+          unless mod.respond_to?(:con_ref_fieldrules_override)
+            mod.module_eval(
+              'setting :con_ref_fieldrules_override, default: {}, reader: true'
+            )
+          end
+        end
+        private_class_method :set_con_ref_fieldrules_override
       end
     end
   end
