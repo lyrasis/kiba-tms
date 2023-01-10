@@ -13,15 +13,8 @@ module Kiba
                 source: :tms__obj_rights_types,
                 destination: :prep__obj_rights_types
               },
-              transformer: xforms
+              transformer: config.xforms(binding)
             )
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :objrightstype
-            end
           end
         end
       end
