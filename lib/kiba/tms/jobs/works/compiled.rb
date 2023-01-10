@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return if sources.empty?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
@@ -21,8 +21,11 @@ module Kiba
 
           def sources
             base = []
-            if Tms::Objects::Config.department_target == :dept_namedcollection
+            if Tms::Objects.named_coll_fields.any?(:dept_namedcollection)
               base << :works__from_object_departments
+            end
+            if Tms::Objects.named_coll_fields.any?(:period)
+              base << :works__from_object_period
             end
             base
           end

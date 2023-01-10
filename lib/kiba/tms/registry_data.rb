@@ -2325,6 +2325,11 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'works_from_obj_depts.csv'),
             tags: %i[works]
           }
+          register :from_object_period, {
+            creator: Kiba::Tms::Jobs::Works::FromObjectPeriod,
+            path: File.join(Kiba::Tms.datadir, 'working', 'works_from_obj_period.csv'),
+            tags: %i[works]
+          }
         end
       end
     end
