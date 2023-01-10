@@ -33,6 +33,8 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
+              transform Tms.data_cleaner if Tms.data_cleaner
+
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :lotcount,
                 find: '^0$',

@@ -34,10 +34,13 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::TmsTableNames
-              unless Tms::ObjIncoming.delete_fields.empty?
-                transform Delete::Fields, fields: Tms::ObjIncoming.delete_fields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
+
+              transform Tms::Transforms::TmsTableNames
 
               %i[approver handler].each do |field|
                 transform Tms::Transforms::DeleteNoValueTypes, field: field

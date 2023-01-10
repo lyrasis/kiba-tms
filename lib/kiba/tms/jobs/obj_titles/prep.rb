@@ -6,7 +6,7 @@ module Kiba
       module ObjTitles
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -22,10 +22,21 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields,
-                fields: [Tms::ObjTitles.delete_fields, Tms::ObjTitles.empty_fields].flatten
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+              unless Tms::ObjTitles.migrate_inactive
+                transform FilterRows::FieldEqualTo, action: :keep, field: :active, value: '1'
+              end
+              transform Delete::Fields, fields: :active
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               transform Merge::MultiRowLookup,
                 lookup: prep__title_types,
@@ -38,11 +49,6 @@ module Kiba
                 keycolumn: :languageid,
                 fieldmap: {language: :language}
               transform Delete::Fields, fields: :languageid
-
-              unless Tms::ObjTitles.migrate_inactive
-                transform FilterRows::FieldEqualTo, action: :keep, field: :active, value: '1'
-              end
-              transform Delete::Fields, fields: :active
 
               if Tms::ObjTitles.note_creator
                 transform Tms::ObjTitles.note_creator

@@ -37,7 +37,6 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: '-1'
-
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[purpose remarks textentry],
                 target: :combined,
@@ -51,6 +50,8 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               transform Rename::Fields, fieldmap: {
                 id: :recordid,

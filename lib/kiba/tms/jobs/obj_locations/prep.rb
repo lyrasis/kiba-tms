@@ -40,14 +40,12 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-
               if config.drop_inactive
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :inactive,
                   value: '1'
               end
-
               if config.fields.any?(:loclevel)
                 transform Delete::FieldValueMatchingRegexp,
                   fields: %i[loclevel],
@@ -63,7 +61,6 @@ module Kiba
                   fields: %i[dateout],
                   match: '^1900'
               end
-
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objlocationid,
@@ -72,6 +69,8 @@ module Kiba
                 action: :reject,
                 field: :locationid,
                 value: '-1'
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               %i[approver handler requestedby].each do |field|
                 next unless config.fields.any?(field)

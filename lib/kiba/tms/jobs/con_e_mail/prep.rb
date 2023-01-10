@@ -19,8 +19,18 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
+
               # merge in email type
               transform Merge::MultiRowLookup,
                 lookup: prep__email_types,

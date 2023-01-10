@@ -40,8 +40,9 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-
               transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               if Tms::ObjComponents.actual_components
                 transform Merge::MultiRowLookup,

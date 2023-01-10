@@ -56,10 +56,10 @@ module Kiba
 
             transform Tms::Transforms::DeleteTmsFields
             transform Tms::Transforms::DeleteNoValueTypes, field: typefield
-
             if config.omitting_fields?
               transform Delete::Fields, fields: config.omitted_fields
             end
+            transform Tms.data_cleaner if Tms.data_cleaner
 
             if config.mappable_type?
               transform Rename::Field, from: typefield, to: origtypefield
@@ -93,6 +93,8 @@ module Kiba
             if config.omitting_fields?
               transform Delete::Fields, fields: config.omitted_fields
             end
+            transform Tms.data_cleaner if Tms.data_cleaner
+
             if config.mappable_type?
               transform Rename::Field, from: typefield, to: origtypefield
               transform Replace::FieldValueWithStaticMapping,

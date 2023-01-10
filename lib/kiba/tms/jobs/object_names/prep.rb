@@ -43,12 +43,12 @@ module Kiba
                     value: '0'
                 end
               end
-
               transform Tms::Transforms::DeleteTmsFields
-
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               if types.used?
                 transform Merge::MultiRowLookup,

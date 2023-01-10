@@ -12,6 +12,11 @@ module Kiba
         %i[objcontextid objectid]
       end
       extend Tms::Mixins::Tableable
+
+      # Transforms to clean individual fields
+      # Elements should be transform classes that do not need to be initialized
+      #   with arguments
+      setting :field_cleaners, default: [], reader: true
     end
   end
 end

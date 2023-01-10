@@ -35,6 +35,8 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
             end
           end
         end

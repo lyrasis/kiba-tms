@@ -7,7 +7,7 @@ module Kiba
         def initialize(filekey)
           @key = filekey
         end
-        
+
         def prep
           Kiba::Extend::Jobs::Job.new(
             files: {
@@ -21,6 +21,7 @@ module Kiba
         def prep_xforms
           Kiba.job_segment do
             transform Tms::Transforms::DeleteTmsFields
+            transform Tms.data_cleaner if Tms.data_cleaner
             transform Delete::EmptyFields
           end
         end

@@ -38,11 +38,12 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::TmsTableNames
-
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
+              transform Tms::Transforms::TmsTableNames
 
               if Tms::Relationships.used?
                 transform Merge::MultiRowLookup,

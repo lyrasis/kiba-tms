@@ -23,6 +23,7 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
+              transform Tms.data_cleaner if Tms.data_cleaner
               if config.number_cleaner
                 transform config.number_cleaner
               end

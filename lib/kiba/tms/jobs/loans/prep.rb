@@ -48,16 +48,18 @@ module Kiba
 
           def xforms
             bind = binding
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
-
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               if Tms::LoanPurposes.used?
                 transform Merge::MultiRowLookup,

@@ -34,7 +34,12 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Delete::Fields, fields: Tms::ReferenceMaster.delete_fields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+
+              transform Tms.data_cleaner if Tms.data_cleaner
+
               transform Merge::MultiRowLookup,
                 lookup: prep__ref_formats,
                 keycolumn: :formatid,

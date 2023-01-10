@@ -35,8 +35,10 @@ module Kiba
                 field: :objectid,
                 value: '-1'
 
-              if Tms.data_cleaner
-                transform Tms.data_cleaner
+              transform Tms.data_cleaner if Tms.data_cleaner
+
+              unless config.field_cleaners.empty?
+                config.field_cleaners.each{ |cleaner| transform cleaner }
               end
             end
           end

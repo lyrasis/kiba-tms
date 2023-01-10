@@ -59,6 +59,8 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: '-1'
+              transform Tms.data_cleaner if Tms.data_cleaner
+
               transform Tms::Transforms::DeleteTimestamps,
                 fields: config.date_fields
               transform Tms::Transforms::DeleteEmptyMoney,
