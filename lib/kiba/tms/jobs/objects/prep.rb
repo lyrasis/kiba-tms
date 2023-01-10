@@ -362,10 +362,6 @@ module Kiba
                   sep: Tms.delim,
                   delete_sources: true
               end
-
-              if Tms.data_cleaner
-                transform Tms.data_cleaner
-              end
             end
           end
         end
