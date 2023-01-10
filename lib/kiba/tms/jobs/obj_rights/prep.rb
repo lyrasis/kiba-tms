@@ -19,10 +19,18 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+              transform Tms.data_cleaner if Tms.data_cleaner
+
               transform Delete::EmptyFields
-              transform Delete::Fields, fields: %i[objrightsid]
 
               transform Merge::MultiRowLookup,
                 lookup: prep__obj_rights_types,
