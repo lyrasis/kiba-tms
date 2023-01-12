@@ -30,7 +30,7 @@ module Kiba
           #   migration project. To change `owner/note_fields`, you need to
           #   include the entire `owner` field rule hash, updated as needed
           #   for your project
-          self.set_con_ref_fieldrules_override(mod)
+          self.set_con_ref_name_merge_rules_override(mod)
         end
 
         def gets_roles_merged_in?
@@ -48,9 +48,9 @@ module Kiba
           base = con_ref_name_merge_rules[Tms.cspace_profile].select do |field, rules|
             targets.any?(field)
           end
-          return base if con_ref_fieldrules_override.empty?
+          return base if con_ref_name_merge_rules_override.empty?
 
-          base.merge(con_ref_fieldrules_override)
+          base.merge(con_ref_name_merge_rules_override)
         end
 
         def con_ref_suffixed_fields(field)
@@ -138,14 +138,16 @@ module Kiba
         end
         private_class_method :set_con_ref_name_merge_rules
 
-        def self.set_con_ref_fieldrules_override(mod)
-          unless mod.respond_to?(:con_ref_fieldrules_override)
+        def self.set_con_ref_name_merge_rules_override(mod)
+          unless mod.respond_to?(:con_ref_name_merge_rules_override)
             mod.module_eval(
-              'setting :con_ref_fieldrules_override, default: {}, reader: true'
+              'setting :con_ref_name_merge_rules_override, '\
+                'default: {}, '\
+                'reader: true'
             )
           end
         end
-        private_class_method :set_con_ref_fieldrules_override
+        private_class_method :set_con_ref_name_merge_rules_override
       end
     end
   end
