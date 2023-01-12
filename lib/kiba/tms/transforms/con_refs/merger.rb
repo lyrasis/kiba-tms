@@ -36,13 +36,30 @@ module Kiba
           attr_reader :into, :keycolumn, :config, :fieldrules, :fields, :lookup,
             :xforms
 
-          def build_fieldmap(field, suffix, rule, source)
-            target = "#{field}#{suffix}".to_sym
-            result = {target => source}
-            return result unless rule[:merge_role]
+          def add_note_to_fieldmap(base, suffix, rule)
+            target = get_note_target(suffix, rule)
+            return base unless target
+
+            base.merge({target => :note})
+          end
+
+          def get_note_target(suffix, rule)
+            target = "#{suffix}_note_target".to_sym
+            rule[target]
+          end
+
+          def add_role_to_fieldmap(base, target, rule)
+            return base unless rule[:merge_role]
 
             roletarget = "#{target}#{rule[:role_suffix]}".to_sym
-            result.merge({roletarget => :role})
+            base.merge({roletarget => :role})
+          end
+
+          def build_fieldmap(field, suffix, rule, source)
+            target = "#{field}#{suffix}".to_sym
+            base = {target => source}
+            role = add_role_to_fieldmap(base, target, rule)
+            add_note_to_fieldmap(role, suffix, rule)
           end
 
           def build_rule_xforms(field, rule)
@@ -57,22 +74,23 @@ module Kiba
               rows.reject{ |row| row[source].blank? }
                 .select{ |row| values.any?(row[:role]) }
             end
-            sorter = Lookup::RowSorter.new(on: :displayorder, as: :to_i)
 
             Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: keycolumn,
               fieldmap: fieldmap,
               conditions: conditions,
-              sorter: sorter,
+              sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
               delim: Tms.delim,
               null_placeholder: Tms.nullvalue
             )
           end
 
           def build_xforms
-            fieldrules.map{ |field, rule| build_rule_xforms(field, rule) }
-              .flatten
+            [
+              fieldrules.map{ |field, rule| build_rule_xforms(field, rule) }
+            ].flatten
+              .compact
           end
 
           def check_for_fields_without_rules
