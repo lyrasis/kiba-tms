@@ -14,7 +14,7 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      setting :con_ref_field_rules,
+      setting :con_ref_name_merge_rules,
         default: {
           fcart: {
             contributor: {

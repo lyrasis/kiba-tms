@@ -24,8 +24,8 @@ module Kiba
           empty_fields.any?(:accessionvalue) ? false : true
         }
 
-      setting :con_ref_field_rules,
-        default: Tms::ObjAccession.con_ref_field_rules,
+      setting :con_ref_name_merge_rules,
+        default: Tms::ObjAccession.con_ref_name_merge_rules,
         reader: true
 
       def set_deletes(value)

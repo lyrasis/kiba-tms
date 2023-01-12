@@ -24,7 +24,7 @@ module Kiba
         def self.extended(mod)
           self.set_treatment_mappings(mod)
           self.set_checkable(mod)
-          self.set_con_ref_field_rules(mod)
+          self.set_con_ref_name_merge_rules(mod)
           # Adds con_ref_fieldrules_override config setting, which can be used
           #   to override rules for one or more target fields in a specific
           #   migration project. To change `owner/note_fields`, you need to
@@ -42,10 +42,10 @@ module Kiba
         end
 
         def fieldrules
-          return nil unless con_ref_field_rules
+          return nil unless con_ref_name_merge_rules
 
           targets = con_ref_target_base_fields
-          base = con_ref_field_rules[Tms.cspace_profile].select do |field, rules|
+          base = con_ref_name_merge_rules[Tms.cspace_profile].select do |field, rules|
             targets.any?(field)
           end
           return base if con_ref_fieldrules_override.empty?
@@ -123,20 +123,20 @@ module Kiba
         end
         private_class_method :set_treatment_mappings
 
-        def self.set_con_ref_field_rules(mod)
-          unless mod.respond_to?(:con_ref_field_rules)
+        def self.set_con_ref_name_merge_rules(mod)
+          unless mod.respond_to?(:con_ref_name_merge_rules)
             mod.module_eval(
-              'setting :con_ref_field_rules, default: {}, reader: true'
+              'setting :con_ref_name_merge_rules, default: {}, reader: true'
             )
           end
 
-          return if mod.send(:con_ref_field_rules).nil?
+          return if mod.send(:con_ref_name_merge_rules).nil?
 
-          if mod.send(:con_ref_field_rules).empty?
-            warn("Need to set up :con_ref_field_rules for #{mod}")
+          if mod.send(:con_ref_name_merge_rules).empty?
+            warn("Need to set up :con_ref_name_merge_rules for #{mod}")
           end
         end
-        private_class_method :set_con_ref_field_rules
+        private_class_method :set_con_ref_name_merge_rules
 
         def self.set_con_ref_fieldrules_override(mod)
           unless mod.respond_to?(:con_ref_fieldrules_override)

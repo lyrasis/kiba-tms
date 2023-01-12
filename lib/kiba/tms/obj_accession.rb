@@ -75,7 +75,7 @@ module Kiba
         default: 'Valuation note: ',
         reader: true
 
-      setting :con_ref_field_rules,
+      setting :con_ref_name_merge_rules,
         default: {
           fcart: {
             acquisitionsource: {

@@ -39,7 +39,7 @@ module Kiba
           default
         end
 
-      setting :con_ref_field_rules,
+      setting :con_ref_name_merge_rules,
         default: {
           fcart: {
             objectproduction: {

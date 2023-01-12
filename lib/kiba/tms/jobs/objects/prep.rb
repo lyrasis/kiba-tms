@@ -70,7 +70,7 @@ module Kiba
                 value: '-1'
 
               if Tms::ConRefs.for?('Objects')
-                if config.con_ref_field_rules
+                if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,
                     keycolumn: :objectid

@@ -46,9 +46,9 @@ module Kiba
       #   classes to merge rows into target tables
       #
       # These transforms should only handle merging not controlled by
-      #  con_ref_field_rules setting in the target table config module. If
+      #  con_ref_name_merge_rules setting in the target table config module. If
       #  you need to override/specially control the entire merge logic for a
-      #  target table, set its `con_ref_field_rules` setting to nil in your
+      #  target table, set its `con_ref_name_merge_rules` setting to nil in your
       #  client config.
       setting :for_exh_venues_xrefs_merge, default: nil, reader: true
       setting :for_exhibitions_merge, default: nil, reader: true
