@@ -445,32 +445,32 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('con_xref_details') do
-          register :for_accession_lot, {
-            creator: Kiba::Tms::Jobs::ConXrefDetails::ForAccessionLot,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_accession_lot.csv'),
-            tags: %i[con_xref_details accession_lot],
-            lookup_on: :recordid
-          }
-          register :for_loans, {
-            creator: Kiba::Tms::Jobs::ConXrefDetails::ForLoans,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_loans.csv'),
-            tags: %i[con_xref_details loans],
-            lookup_on: :recordid
-          }
-          register :for_objects, {
-            creator: Kiba::Tms::Jobs::ConXrefDetails::ForObjects,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_objects.csv'),
-            tags: %i[con_xref_details objects],
-            lookup_on: :recordid
-          }
-          register :for_registration_sets, {
-            creator: Kiba::Tms::Jobs::ConXrefDetails::ForRegistrationSets,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_registration_sets.csv'),
-            tags: %i[con_xref_details registration_sets],
-            lookup_on: :recordid
-          }
-        end
+        # Kiba::Tms.registry.namespace('con_xref_details') do
+        #   register :for_accession_lot, {
+        #     creator: Kiba::Tms::Jobs::ConXrefDetails::ForAccessionLot,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_accession_lot.csv'),
+        #     tags: %i[con_xref_details accession_lot],
+        #     lookup_on: :recordid
+        #   }
+        #   register :for_loans, {
+        #     creator: Kiba::Tms::Jobs::ConXrefDetails::ForLoans,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_loans.csv'),
+        #     tags: %i[con_xref_details loans],
+        #     lookup_on: :recordid
+        #   }
+        # register :for_objects, {
+        #   creator: Kiba::Tms::Jobs::ConXrefDetails::ForObjects,
+        #   path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_objects.csv'),
+        #   tags: %i[con_xref_details objects],
+        #   lookup_on: :recordid
+        # }
+        #   register :for_registration_sets, {
+        #     creator: Kiba::Tms::Jobs::ConXrefDetails::ForRegistrationSets,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'con_xref_details_for_registration_sets.csv'),
+        #     tags: %i[con_xref_details registration_sets],
+        #     lookup_on: :recordid
+        #   }
+        # end
 
         Kiba::Tms.registry.namespace('con_refs') do
           register :create, {
