@@ -35,7 +35,9 @@ module Kiba
       setting :for_media_renditions_transform, default: nil, reader: true
       setting :for_obj_accession_transform, default: nil, reader: true
       setting :for_obj_rights_transform, default: nil, reader: true
-      setting :for_objects_transform, default: nil, reader: true
+      setting :for_objects_transform,
+        default: Tms::Transforms::ConRefs::ForObjects,
+        reader: true
       setting :for_reference_master_transform, default: nil, reader: true
       setting :for_shipment_steps_transform, default: nil, reader: true
       setting :for_shipments_transform, default: nil, reader: true
