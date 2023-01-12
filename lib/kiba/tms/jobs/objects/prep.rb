@@ -44,6 +44,7 @@ module Kiba
             if Tms::LinkedSetAcq.used?
               base << :linked_set_acq__object_statuses
             end
+
             base
           end
 
@@ -67,6 +68,17 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: '-1'
+
+              if Tms::ConRefs.for?('Objects')
+                if config.con_ref_field_rules
+                  transform Tms::Transforms::ConRefs::Merger,
+                    into: config,
+                    keycolumn: :objectid
+                end
+                if Tms::ConRefs.for_objects_merge
+                  Tms::ConRefs.for_objects_merge.each{ |xform| transform xform }
+                end
+              end
 
               if Tms::Departments.used?
                 transform Merge::MultiRowLookup,
@@ -176,40 +188,40 @@ module Kiba
                 contexts_merged = []
 
                 if contexts.any?(:culture)
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: prep__obj_context,
-                  fieldmap: {
-                    culture: :culture
-                  },
-                  delim: Tms.delim
-                contexts_merged << :culture
+                  transform Merge::MultiRowLookup,
+                    keycolumn: :objectid,
+                    lookup: prep__obj_context,
+                    fieldmap: {
+                      culture: :culture
+                    },
+                    delim: Tms.delim
+                  contexts_merged << :culture
                 end
 
                 if contexts.any?(:period)
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: prep__obj_context,
-                  fieldmap: {
-                    period: :period
-                  },
-                  delim: Tms.delim
-                contexts_merged << :period
+                  transform Merge::MultiRowLookup,
+                    keycolumn: :objectid,
+                    lookup: prep__obj_context,
+                    fieldmap: {
+                      period: :period
+                    },
+                    delim: Tms.delim
+                  contexts_merged << :period
                 end
 
                 if contexts.any?(:n_signed)
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: prep__obj_context,
-                  fieldmap: {
-                    nsigned_inscriptioncontent: :n_signed
-                  },
-                  constantmap: {
-                    nsigned_inscriptioncontenttype: 'signed'
-                  },
-                  delim: Tms.delim
-                contexts_merged << :n_signed
-                config.text_inscription_source_fields << :nsigned
+                  transform Merge::MultiRowLookup,
+                    keycolumn: :objectid,
+                    lookup: prep__obj_context,
+                    fieldmap: {
+                      nsigned_inscriptioncontent: :n_signed
+                    },
+                    constantmap: {
+                      nsigned_inscriptioncontenttype: 'signed'
+                    },
+                    delim: Tms.delim
+                  contexts_merged << :n_signed
+                  config.text_inscription_source_fields << :nsigned
                 end
 
                 contexts_todo = contexts - contexts_merged
@@ -236,17 +248,6 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :rank, as: :to_i)
                 transform Delete::DelimiterOnlyFieldValues,
                   fields: %i[valuedate measurementunit value dimension]
-              end
-
-              if Tms::ConRefs.for?('Objects')
-                if config.con_ref_field_rules
-                  transform Tms::Transforms::ConRefs::Merger,
-                    into: config,
-                    keycolumn: :objectid
-                end
-                if Tms::ConRefs.for_objects_merge
-                  Tms::ConRefs.for_objects_merge.each{ |xform| transform xform }
-                end
               end
 
               if Tms::AltNums.for?('Objects')
@@ -338,6 +339,14 @@ module Kiba
               transform Rename::Fields,
                 fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
 
+              transform Delete::DelimiterOnlyFieldValues,
+                fields: %w[contentnote objectproductionnote
+                           objecthistorynote].map{ |prefix|
+                             config.send("#{prefix}_sources".to_sym)
+                          }.flatten,
+                delim: Tms.delim,
+                treat_as_null: Tms.nullvalue
+
               %w[annotation nontext_inscription text_inscription].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
@@ -360,6 +369,17 @@ module Kiba
                   sources: Tms::Objects.named_coll_fields,
                   target: :namedcollection,
                   sep: Tms.delim,
+                  delete_sources: true
+              end
+
+              %w[
+                 contentnote objectproductionnote
+                 objecthistorynote
+                ].each do |target|
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.send("#{target}_sources".to_sym),
+                  target: target,
+                  sep: config.send("#{target}_delim".to_sym),
                   delete_sources: true
               end
             end
