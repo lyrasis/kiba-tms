@@ -45,36 +45,47 @@ module Kiba
             objectproduction: {
               suffixes: %w[person organization],
               merge_role: true,
-              role_suffix: 'role'
+              role_suffix: 'role',
+              person_note_target: :con_refs_p_objectproductionnote,
+              org_note_target: :con_refs_o_objectproductionnote
             },
             assoc: {
               suffixes: %w[person organization],
               merge_role: true,
-              role_suffix: 'type'
+              role_suffix: 'type',
+              person_note_target: :assocpersonnote,
+              org_note_target: :assocorganizationnote
             },
             content: {
               suffixes: %w[personpersonlocal organizationorganizationlocal],
-              merge_role: false
+              merge_role: false,
+              person_note_target: :con_refs_p_contentnote,
+              org_note_target: :con_refs_o_contentnote
             },
             owner: {
               suffixes: %w[personlocal organizationlocal],
-              merge_role: false
+              merge_role: false,
+              person_note_target: :con_refs_p_objecthistorynote,
+              org_note_target: :con_refs_o_objecthistorynote
             }
           }
         },
         reader: true
-
+      setting :contentnote_delim, default: '%CR%%CR%', reader: true
+      setting :contentnote_sources,
+        default: %i[con_refs_p_contentnote con_refs_o_contentnote],
+        reader: true
       # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
       #  in client project
       setting :custom_map_fields, default: [], reader: true
       # will be merged into `Rename::Fields` fieldmap
       setting :custom_rename_fieldmap, default: {}, reader: true
-      # other supported values: :dept_namedcollection
-      # If setting to :dept_namedcollection, see also the following configs:
-      #   department_coll_prefix, named_coll_fields
-      setting :department_target, default: :responsibledepartment, reader: true
       # necessary if :department_target = :dept_namedcollection. Should be a String value if populated
       setting :department_coll_prefix, default: nil, reader: true
+      # If setting to :dept_namedcollection, see also the following configs:
+      #   department_coll_prefix, named_coll_fields
+      # other supported values: :dept_namedcollection
+      setting :department_target, default: :responsibledepartment, reader: true
       # Transforms to clean individual fields
       # Elements should be transform classes that do not need to be initialized
       #   with arguments
@@ -85,6 +96,17 @@ module Kiba
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
       setting :number_cleaner, default: nil, reader: true
+      setting :objectproductionnote_delim, default: '%CR%%CR%', reader: true
+      setting :objectproductionnote_sources,
+        default: %i[con_refs_p_objectproductionnote
+                    con_refs_o_objectproductionnote],
+        reader: true
+      setting :objecthistorynote_delim, default: '%CR%%CR%', reader: true
+      setting :objecthistorynote_sources,
+        default: %i[con_refs_p_objecthistorynote
+                    con_refs_o_objecthistorynote],
+        reader: true
+      setting :period_target, default: nil, reader: true
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
       # TMS fields with associated field-specific transformers defined. Note
