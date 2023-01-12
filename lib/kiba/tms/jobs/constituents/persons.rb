@@ -10,13 +10,13 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :constituents__with_name_data,
+                source: :constituents__prep_clean,
                 destination: :constituents__persons
               },
               transformer: xforms
             )
           end
-          
+
           def xforms
             Kiba.job_segment do
               transform FilterRows::WithLambda,

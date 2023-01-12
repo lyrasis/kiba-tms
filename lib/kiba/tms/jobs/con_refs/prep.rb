@@ -27,7 +27,7 @@ module Kiba
             base << :prep__departments if Tms::Departments.used?
             base << :prep__roles if Tms::Roles.used?
 
-            if Tms::Names.cleanup_iteration
+            if Tms::NameTypeCleanup.done
               base << :persons__by_constituentid
               base << :orgs__by_constituentid
             else
@@ -56,7 +56,7 @@ module Kiba
                   fields: (config.omitted_fields + [:active])
               end
 
-              if Tms::Names.cleanup_iteration
+              if Tms::NameTypeCleanup.done
                 transform Merge::MultiRowLookup,
                   lookup: persons__by_constituentid,
                   keycolumn: :constituentid,
