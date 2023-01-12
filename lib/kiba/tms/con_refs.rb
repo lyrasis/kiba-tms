@@ -28,19 +28,19 @@ module Kiba
 
       # pass in client-specific, target-table-specific transform classes to
       #   clean/prepare data for merging
-      setting :for_exh_venues_xrefs_transform, default: nil, reader: true
-      setting :for_exhibitions_transform, default: nil, reader: true
-      setting :for_loans_in_transform, default: nil, reader: true
-      setting :for_loans_out_transform, default: nil, reader: true
-      setting :for_media_renditions_transform, default: nil, reader: true
-      setting :for_obj_accession_transform, default: nil, reader: true
-      setting :for_obj_rights_transform, default: nil, reader: true
-      setting :for_objects_transform,
+      setting :for_exh_venues_xrefs_prepper, default: nil, reader: true
+      setting :for_exhibitions_prepper, default: nil, reader: true
+      setting :for_loans_in_prepper, default: nil, reader: true
+      setting :for_loans_out_prepper, default: nil, reader: true
+      setting :for_media_renditions_prepper, default: nil, reader: true
+      setting :for_obj_accession_prepper, default: nil, reader: true
+      setting :for_obj_rights_prepper, default: nil, reader: true
+      setting :for_objects_prepper,
         default: Tms::Transforms::ConRefs::ForObjects,
         reader: true
-      setting :for_reference_master_transform, default: nil, reader: true
-      setting :for_shipment_steps_transform, default: nil, reader: true
-      setting :for_shipments_transform, default: nil, reader: true
+      setting :for_reference_master_prepper, default: nil, reader: true
+      setting :for_shipment_steps_prepper, default: nil, reader: true
+      setting :for_shipments_prepper, default: nil, reader: true
 
       # Pass in arrays of client-specific, target-table-specific transform
       #   classes to merge rows into target tables

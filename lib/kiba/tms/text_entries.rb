@@ -18,22 +18,22 @@ module Kiba
 
       # pass in client-specific transform classes to prepare text_entry rows for
       #   merging
-      setting :for_conditions_transform, default: nil, reader: true
-      setting :for_constituents_transform, default: nil, reader: true
-      setting :for_exhibitions_transform, default: nil, reader: true
-      setting :for_exh_obj_xrefs_transform, default: nil, reader: true
-      setting :for_loan_obj_xrefs_transform, default: nil, reader: true
-      setting :for_loans_transform, default: nil, reader: true
-      setting :for_objects_transform, default: nil, reader: true
-      setting :for_obj_accession_transform, default: nil, reader: true
-      setting :for_obj_components_transform, default: nil, reader: true
-      setting :for_obj_context_transform, default: nil, reader: true
-      setting :for_obj_deaccession_transform, default: nil, reader: true
-      setting :for_obj_rights_transform, default: nil, reader: true
-      setting :for_reference_master_transform, default: nil, reader: true
-      setting :for_shipments_transform, default: nil, reader: true
-      setting :for_shipment_steps_transform, default: nil, reader: true
-      setting :for_term_master_thes_transform, default: nil, reader: true
+      setting :for_conditions_prepper, default: nil, reader: true
+      setting :for_constituents_prepper, default: nil, reader: true
+      setting :for_exhibitions_prepper, default: nil, reader: true
+      setting :for_exh_obj_xrefs_prepper, default: nil, reader: true
+      setting :for_loan_obj_xrefs_prepper, default: nil, reader: true
+      setting :for_loans_prepper, default: nil, reader: true
+      setting :for_objects_prepper, default: nil, reader: true
+      setting :for_obj_accession_prepper, default: nil, reader: true
+      setting :for_obj_components_prepper, default: nil, reader: true
+      setting :for_obj_context_prepper, default: nil, reader: true
+      setting :for_obj_deaccession_prepper, default: nil, reader: true
+      setting :for_obj_rights_prepper, default: nil, reader: true
+      setting :for_reference_master_prepper, default: nil, reader: true
+      setting :for_shipments_prepper, default: nil, reader: true
+      setting :for_shipment_steps_prepper, default: nil, reader: true
+      setting :for_term_master_thes_prepper, default: nil, reader: true
 
 
       # pass in client-specific transform classes to merge text_entry rows into

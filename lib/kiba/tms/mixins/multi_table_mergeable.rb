@@ -61,7 +61,7 @@ module Kiba
         def target_transform_settings
           self.settings
             .map(&:to_s)
-            .select{ |meth| meth.match?(/^for_.*_transform$/) }
+            .select{ |meth| meth.match?(/^for_.*_prepper$/) }
             .map(&:to_sym)
         end
 
@@ -76,7 +76,7 @@ module Kiba
         def target_transform_settings_expected
           target_tables.map do |target|
             tobj = Tms::Table::Obj.new(target)
-            "for_#{tobj.filekey}_transform".to_sym
+            "for_#{tobj.filekey}_prepper".to_sym
           end
         end
 
@@ -117,7 +117,7 @@ module Kiba
         end
 
         def target_xform(xforms, targetobj)
-          sym = "for_#{targetobj.filekey}_transform".to_sym
+          sym = "for_#{targetobj.filekey}_prepper".to_sym
           if xforms.any?(sym)
             [send(sym)].flatten
           else
