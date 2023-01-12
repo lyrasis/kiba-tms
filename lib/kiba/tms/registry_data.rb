@@ -216,21 +216,21 @@ module Kiba
 
           if Tms::AltNums.target_table_type_cleanup_needed.any?('Objects')
             register :types_for_obj_worksheet, {
-            creator: Kiba::Tms::Jobs::AltNums::TypesForObjWorksheet,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'to_client',
-              'alt_num_types_for_objects.csv'
-            ),
-            tags: %i[altnums objects altnumtypescleanup],
-            dest_special_opts: {
-              initial_headers:
-              %i[number_type correct_type treatment note
-                 occurrences occs_with_remarks occs_with_begindate
-                 occs_with_enddate
-                 example_rec_nums example_values]
+              creator: Kiba::Tms::Jobs::AltNums::TypesForObjWorksheet,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'to_client',
+                'alt_num_types_for_objects.csv'
+              ),
+              tags: %i[altnums objects altnumtypescleanup],
+              dest_special_opts: {
+                initial_headers:
+                %i[number_type correct_type treatment note
+                   occurrences occs_with_remarks occs_with_begindate
+                   occs_with_enddate
+                   example_rec_nums example_values]
+              }
             }
-          }
           end
         end
 
@@ -324,7 +324,7 @@ module Kiba
             lookup_on: :constituentid,
             desc: 'Removes rows where altname is the same as linked name in '\
               'constituents table. If preferred name field = alphasort, move '\
-            'org names from displayname to alphasort.'
+              'org names from displayname to alphasort.'
           }
           register :categorized_post_cleanup, {
             creator: Kiba::Tms::Jobs::ConAltNames::CategorizedPostCleanup,
@@ -546,7 +546,7 @@ module Kiba
               'constituents_by_norm_orig.csv'
             ),
             desc: 'Cleaned constituent name lookup by uncleaned norm '\
-            'prefname',
+              'prefname',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -1184,97 +1184,97 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('nameclean') do
-          register :by_constituentid, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'by_constituent_id.csv'
-            ),
-            desc: 'Lookup authorized form by constituent id. Additional '\
-              'fields: person, org, alphasort, displayname. Person and Org '\
-              'columns contain the normalized form of the constituent name',
-            tags: %i[names],
-            lookup_on: :constituentid
-          }
-        end
+        # Kiba::Tms.registry.namespace('nameclean') do
+        #   register :by_constituentid, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup::ByConstituentId,
+        #     path: File.join(
+        #       Kiba::Tms.datadir,
+        #       'working',
+        #       'by_constituent_id.csv'
+        #     ),
+        #     desc: 'Lookup authorized form by constituent id. Additional '\
+        #       'fields: person, org, alphasort, displayname. Person and Org '\
+        #       'columns contain the normalized form of the constituent name',
+        #     tags: %i[names],
+        #     lookup_on: :constituentid
+        #   }
+        # end
 
-        Kiba::Tms.registry.namespace('nameclean0') do
-          register :prep, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_cleaned_up.csv'),
-            desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip, normalizes cleaned up forms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::Kept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_kept.csv'),
-            desc: 'Names which are marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :constituents_kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::ConstituentsKept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituent_names_kept.csv'),
-            desc: 'Names with constituent IDs which are marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :orgs_kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsKept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'org_names_kept.csv'),
-            desc: 'Organization names which are marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :persons_kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsKept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'person_names_kept.csv'),
-            desc: 'Person names which are marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :orgs_not_kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'org_names_not_kept.csv'),
-            desc: 'Organization names which are NOT marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :persons_not_kept, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKept,
-            path: File.join(Kiba::Tms.datadir, 'working', 'person_names_not_kept.csv'),
-            desc: 'Person names which are NOT marked to be used as authority terms',
-            tags: %i[names],
-            lookup_on: :norm
-          }
-          register :orgs_not_kept_missing_target, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKeptMissingTarget,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_not_kept_missing_target.csv'),
-            desc: 'Organization names which are NOT marked to be used as authority terms, but have no term to be merged into',
-            tags: %i[names]
-          }
-          register :persons_not_kept_missing_target, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKeptMissingTarget,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_not_kept_missing_target.csv'),
-            desc: 'Person names which are NOT marked to be used as authority terms, but have no term to be merged into',
-            tags: %i[names]
-          }
-          register :org_duplicates, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgDuplicates,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_duplicates.csv'),
-            desc: 'Organization names which, once normalized, are duplicates',
-            tags: %i[names]
-          }
-          register :persons_duplicates, {
-            creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsDuplicates,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_duplicates.csv'),
-            desc: 'Person names which, once normalized, are duplicates',
-            tags: %i[names]
-          }
-        end
+        # Kiba::Tms.registry.namespace('nameclean0') do
+        #   register :prep, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::Prep,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'names_cleaned_up.csv'),
+        #     desc: 'First round of client name cleanup merged in; expands fingerprinted fields, removes rows marked skip, normalizes cleaned up forms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::Kept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'names_kept.csv'),
+        #     desc: 'Names which are marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :constituents_kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::ConstituentsKept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'constituent_names_kept.csv'),
+        #     desc: 'Names with constituent IDs which are marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :orgs_kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsKept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'org_names_kept.csv'),
+        #     desc: 'Organization names which are marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :persons_kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsKept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'person_names_kept.csv'),
+        #     desc: 'Person names which are marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :orgs_not_kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'org_names_not_kept.csv'),
+        #     desc: 'Organization names which are NOT marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :persons_not_kept, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKept,
+        #     path: File.join(Kiba::Tms.datadir, 'working', 'person_names_not_kept.csv'),
+        #     desc: 'Person names which are NOT marked to be used as authority terms',
+        #     tags: %i[names],
+        #     lookup_on: :norm
+        #   }
+        #   register :orgs_not_kept_missing_target, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgsNotKeptMissingTarget,
+        #     path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_not_kept_missing_target.csv'),
+        #     desc: 'Organization names which are NOT marked to be used as authority terms, but have no term to be merged into',
+        #     tags: %i[names]
+        #   }
+        #   register :persons_not_kept_missing_target, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsNotKeptMissingTarget,
+        #     path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_not_kept_missing_target.csv'),
+        #     desc: 'Person names which are NOT marked to be used as authority terms, but have no term to be merged into',
+        #     tags: %i[names]
+        #   }
+        #   register :org_duplicates, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::OrgDuplicates,
+        #     path: File.join(Kiba::Tms.datadir, 'reports', 'org_names_duplicates.csv'),
+        #     desc: 'Organization names which, once normalized, are duplicates',
+        #     tags: %i[names]
+        #   }
+        #   register :persons_duplicates, {
+        #     creator: Kiba::Tms::Jobs::Names::Cleanup0::PersonsDuplicates,
+        #     path: File.join(Kiba::Tms.datadir, 'reports', 'person_names_duplicates.csv'),
+        #     desc: 'Person names which, once normalized, are duplicates',
+        #     tags: %i[names]
+        #   }
+        # end
 
         Kiba::Tms.registry.namespace('name_compile') do
           register :raw, {
@@ -1574,13 +1574,13 @@ module Kiba
                 jobname = job.to_s
                   .delete_prefix('name_type_cleanup__')
                   .to_sym
-            register jobname, {
-              path: Tms::NameTypeCleanup.returned_files[idx],
-              desc: 'Completed nametype cleanup worksheet',
-              tags: %i[names cleanup],
-              supplied: true
-            }
-            end
+                register jobname, {
+                  path: Tms::NameTypeCleanup.returned_files[idx],
+                  desc: 'Completed nametype cleanup worksheet',
+                  tags: %i[names cleanup],
+                  supplied: true
+                }
+              end
             register :returned_compile, {
               creator: Kiba::Tms::Jobs::NameTypeCleanup::ReturnedCompile,
               path: File.join(
