@@ -10,7 +10,7 @@ module Kiba
           def initialize(into:, keycolumn:)
             @into = into
             @keycolumn = keycolumn
-            @config = into.con_role_treatment_mappings
+            @config = into.con_ref_role_to_field_mapping
             @fieldrules = into.fieldrules
             @fields = into.con_ref_target_base_fields
             check_for_fields_without_rules

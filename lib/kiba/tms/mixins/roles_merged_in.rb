@@ -38,7 +38,7 @@ module Kiba
         end
 
         def con_ref_target_base_fields
-          con_role_treatment_mappings.keys - %i[unmapped drop]
+          con_ref_role_to_field_mapping.keys - %i[unmapped drop]
         end
 
         def fieldrules
@@ -66,7 +66,7 @@ module Kiba
         end
 
         def check_unmapped_role_terms
-          meth = :con_role_treatment_mappings
+          meth = :con_ref_role_to_field_mapping
           unless respond_to?(meth)
             return Failure(Tms::Data::DeriverFailure.new(
               mod: "#{name}.#{__callee__}",
@@ -115,9 +115,9 @@ module Kiba
         private_class_method :set_checkable
 
         def self.set_treatment_mappings(mod)
-          unless mod.respond_to?(:con_role_treatment_mappings)
+          unless mod.respond_to?(:con_ref_role_to_field_mapping)
           mod.module_eval(
-            "setting :con_role_treatment_mappings, default: {}, reader: true"
+            "setting :con_ref_role_to_field_mapping, default: {}, reader: true"
           )
           end
         end

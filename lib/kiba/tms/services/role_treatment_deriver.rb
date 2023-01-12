@@ -26,7 +26,7 @@ module Kiba
           @colobj = col
           @settingobj = settingobj
           @failobj = failobj
-          @setting = :con_role_treatment_mappings
+          @setting = :con_ref_role_to_field_mapping
           @current_mapping = mod.send(setting)
           @known_roles = current_mapping.reject{ |key, _v| key == :unmapped }
             .values

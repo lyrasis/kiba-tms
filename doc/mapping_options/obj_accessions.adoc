@@ -405,7 +405,7 @@ Each client will have used different role values on their Acquisition Related co
 .Example per-client constituent role treatment mapping for ObjAccession
 [source,ruby]
 ----
-  Kiba::Tms::ObjAccession.config.con_role_treatment_mappings = {
+  Kiba::Tms::ObjAccession.config.con_ref_role_to_field_mapping = {
     :owner => ["Associated Source", "Attributed Source", "Donor", "Lender",
                "Source"],
     :acquisitionsource => ["Vendor"]

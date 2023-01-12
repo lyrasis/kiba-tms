@@ -48,8 +48,8 @@ module Kiba
           end
 
           def get_assoc_roles
-            if Kiba::Tms::Objects.con_role_treatment_mappings.key?(:assoc)
-              Kiba::Tms::Objects.con_role_treatment_mappings[:assoc]
+            if Kiba::Tms::Objects.con_ref_role_to_field_mapping.key?(:assoc)
+              Kiba::Tms::Objects.con_ref_role_to_field_mapping[:assoc]
             else
               []
             end
