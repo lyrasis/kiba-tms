@@ -1,0 +1,121 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= ConXrefs (and ConXrefDetails)
+
+The TMS ConXrefs and ConXrefDetails tables store references to constituent names in records. With each name reference, other data specific to the name/item relationship can be recorded.
+
+This page covers options and settings for how we merge this name data into CollectionSpace (CS) records
+
+toc::[]
+
+== Additional info that TMS can store for each use of a name in a record
+role:: painter, author, owner, etc.
+role type:: object-related, acquisition-related, ex-collections related, etc.
+displayorder:: relevant when multiple names are referenced in the same record
+constatement:: brief free text statement about the association between Constituent and related item (Object, Reference, Site, etc)
+remarks:: longer free text statement about the association between Constituent and related item (Object, Reference, Site, etc)
+displaydate:: Date or date range of association between constituent and related item (Object, Exhibition, etc); can be calculated from Beginning Date and Ending Date fields
+datebegin:: Earliest year of the association between Constituent and related item (Object, Reference, etc.)
+dateend:: Latest year of the association between Constituent and related item (Object, Reference, etc.)
+prefix:: Display prefix. Prepositional phrase displayed before associated constituent name in label copy displays and some reports ("Engraved by" or "Curated by," for example).
+suffix:: Display suffix. Text that follows the name of the associated constituent (e.g., "and his workshop", "posthumously," etc.)
+amount:: The monetary value of any financial arrangements related to to the association between constituent and related item (Object, Event, etc)
+department:: Links the association between constituent and related item to a given department
+address:: Allows a specific constituent address to be associated with a given association between constituent and item
+displaybio:: Allows a specific constituent bio text to be associated with a given association between constituent and item
+active:: Checkbox indicates attribution (or other association) is active, or currently thought to be correct.  Inactive attributions may be used to track historical information (such as artists to which a work was previously attributed).
+displayed:: Checkbox indicating whether an associated constituent should be displayed in the object label copy display
+
+=== Additional info fields that usually migrate into CS
+
+The statements below are general, and some aspects of this may be overridden or customized. See the per-target table handling for details on how these are handled in different target tables/record types.
+
+role:: This information is used to determine how the name will be mapped into the target CS record. The role value is mapped into CS where the CS data model supports recording it.
+displayorder:: Used to control the order of values mapped to CS fields
+constatement:: Combined with `remarks` value into a note, which is mapped to a CS field
+remarks:: Combined with `constatement` value into a note, which is mapped to a CS field
+
+=== Additional info fields that do not migrate into CS
+
+The data model/functionality differences between the two systems means that there is generally no place to map this data in CS. Additional issues beyond data model/functionaly mismatch contributing to not migrating this data are mentioned below. Any exceptions will be explained in the per-target table handling sections.
+
+In the TMS-to-CS migrations we have done, it is rare that these fields have been populated. When they have been populated, usually only a handful of values are present in the field. In these cases, these values often duplicate information recorded elsewhere, or are the product of incorrect/highly idiosyncratic data entry that cannot reasonably be handled via a programmatic migration process.
+
+Client is provided with a report of any values in these fields for use in post-migration data review/cleanup.
+
+displaydate, datebegin, dateend:: Sometimes there is no displaydate when a datebegin and/or dateend value is given, so we have to construct a displaydate. Sometimes a displaydate constructed from datebegin and/or dateend does match the displaydate present.
+prefix, suffix:: .
+amount:: Usually this information is redundant in the system, or really should have been recorded elsewhere
+department:: .
+address:: .
+displaybio:: .
+active:: Migration can be configured to not migrate inactive xrefs. If migrated, the active/inactive status of a name is usually lost in CS
+displayed:: .
+
+== Initial handling
+
+ConXrefDetails and ConXrefs data are merged together into a `ConRefs` table, so all the data about each reference is in one row.
+
+=== Selecting/mapping role types
+
+A role type value is recorded:
+
+* for each entry in ConXRefs table
+* for each entry in ConXrefDetails table
+* for each Role value recorded in Roles table
+
+That means, once we have compiled `ConRefs`, we have three role type values:
+
+* xref_role_type
+* detail_role_type
+* role_role_type
+
+*Usually* all three values match.
+
+If the values do not match, we provide a report to the client to clarify treatment (if a large number of names/refs are involved) or handle manually post-migration.
+
+Where there is role_type match (or clear instruction from client on how to handle mismatches), those xrefs are included in the migration.
+
+=== Splitting into target tables
+
+The `ConRefs` table is split into separate tables depending on what record type the name will be merged into.
+
+The `mappings` setting in the `Tms::RoleTypes` config controls this splitting. For each line:
+
+* the value on the left of "=>" is the TMS role type value
+* the value on the right of "=>" is the target TMS table into which names will be merged for further processing
+* the value further to the right (after "#") indicates the CS record type into which this data will eventually be mapped. Those having a (?) are types we haven't yet handled for a client migration
+
+== Per-target table handling
+
+Each target table has the following settings/configs which control how names get merged in. The examples below use the Objects table as the target.
+
+=== con_role_treatment_mappings
+
+This config setting is custom to your data set. Each role value (e.g. artist, sponsor) is mapped to a field in the target CS record type.
+
+In the example below, names with role = Artist will map to objectProductionPerson or objectProductionOrganization. Names with role = Sponsor will map to assocPerson or assocOrganization (i.e. in Associations section).
+
+Your Data Migration Specialist will make a best guess at this mapping based on your data, but you can request changes.
+
+*_What you cannot do_* is specify that some names with role = Subject should be mapped to one field, but other names with the same role should be mapped to another field.
+
+.Example setting value
+----
+{
+  :objectproduction=>["Artist", "Author", "Maker"],
+  :assoc=>["Associated Person", "Collector", "Contact", "Sponsor"],
+  :content=>["Subject"]
+}
+----
