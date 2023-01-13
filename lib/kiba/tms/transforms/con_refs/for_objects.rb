@@ -4,11 +4,16 @@ module Kiba
   module Tms
     module Transforms
       module ConRefs
-        # Combines remarks and constatement fields into note field
+        # Combines remarks and constatement fields into note field, and
+        #   generates a prefix for notes that are not mapped to fields directly
+        #   associated with an individual name
+        #
+        # NOTE that this is designed a little oddly so that it can be
+        #   subclassed by client-specific transforms easily
         class ForObjects
           def initialize
             @sources = %i[constatement remarks]
-            @target = :note
+            @targets = %i[note]
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: sources
             )
@@ -19,20 +24,27 @@ module Kiba
           end
 
           def process(row)
-            row[target] = nil
-            vals = getter.call(row).values
-            return row if vals.empty?
+            targets.each{ |target| row[target] = nil }
+            preprocess(row)
+            build_note(row)
+            postprocess(row)
 
-            prefix = note_prefix(row)
-            row[target] = [prefix, vals].flatten
-              .compact
-              .join(': ')
             row
           end
 
           private
 
-          attr_reader :sources, :target, :getter, :namegetter, :assoc_roles
+          attr_reader :sources, :targets, :getter, :namegetter, :assoc_roles
+
+          def build_note(row)
+            vals = getter.call(row).values
+            return row if vals.empty?
+
+            prefix = note_prefix(row)
+            row[:note] = [prefix, vals].flatten
+              .compact
+              .join(': ')
+          end
 
           def note_prefix(row)
             name = namegetter.call(row)
@@ -43,7 +55,7 @@ module Kiba
             if assoc_roles.any?(role)
               nil
             else
-              "#{name} (#{role})"
+              "RE: #{name} (#{role})"
             end
           end
 
@@ -53,6 +65,12 @@ module Kiba
             else
               []
             end
+          end
+
+          def postprocess(row)
+          end
+
+          def preprocess(row)
           end
         end
       end
