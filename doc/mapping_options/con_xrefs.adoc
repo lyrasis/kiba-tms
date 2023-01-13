@@ -174,11 +174,14 @@ Specified in: https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/objects
 |===
 |Notes associated with names mapped to\...|Map to\...
 
-|objectProductionPerson/Organization
-|objectProductionNote
+|assocPerson/Organization
+|assocPersonNote or assocOrganizationNote recorded with each name
 
 |contentPerson/Organization
 |contentNote
+
+|objectProductionPerson/Organization
+|objectProductionNote
 
 |ownerPerson/Organization
 |objectHistoryNote
