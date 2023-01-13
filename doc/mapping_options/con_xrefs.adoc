@@ -97,11 +97,19 @@ The `mappings` setting in the `Tms::RoleTypes` config controls this splitting. F
 * the value on the right of "=>" is the target TMS table into which names will be merged for further processing
 * the value further to the right (after "#") indicates the CS record type into which this data will eventually be mapped. Those having a (?) are types we haven't yet handled for a client migration
 
-== Per-target table handling
+== Per-target table handling: all target tables
 
 Each target table has the following settings/configs which control how names get merged in. The examples below use the Objects table as the target.
 
-=== con_role_treatment_mappings
+=== for_{targettable}_prepper
+
+This config setting defines a data transformer class that prepares data in the `con_refs_for__{target_table}` for merge into the target table.
+
+The default name merger, and most of the `for_{targettable}_merge` transforms assume there will be a single `:note` field to merge into the target table. Any default or custom prepper transforms for those target tables must combine create that `:note` field.
+
+A custom data transformer class can be created per client, if further data preparation is required.
+
+=== con_ref_role_to_field_mapping
 
 This config setting is custom to your data set. Each role value (e.g. artist, sponsor) is mapped to a field in the target CS record type.
 
@@ -119,3 +127,58 @@ Your Data Migration Specialist will make a best guess at this mapping based on y
   :content=>["Subject"]
 }
 ----
+
+=== con_ref_name_merge_rules
+
+This config setting is custom to each CS domain profile. It defines exactly how each person and organization name is merged into each field specified by `con_ref_role_to_field_mapping`. It also defines how the `:note` column from the prepared `con_refs_for__{target_table}` should be merged in, as this may be different per field. (e.g. notes about objectProductionPerson belong in a different field than notes about contentPerson)
+
+The rules for a given field can be overridden on client request.
+
+This setting is fairly technical to the internal data model of CS, but if you wish to view it, search for `con_ref_name_merge_rules` in the config file for the target table. All config files are found in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms[in the `kiba-tms/lib/kiba/tms` directory]. For example, https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/objects.rb[here is the config for Objects table].
+
+=== for_{targettable}_merge
+
+Some clients may require additional custom merge logic beyond that specified in `con_ref_name_merge_rules`.
+
+We can write a custom name merge transform and specify it via this setting.
+
+== Per-target table handling: Objects
+
+=== for_objects_prepper
+
+The default behavior is described here. If we've created a custom transform for you, it will be described in your project-specific documentation.
+
+Creates a single `:note` field to be merged into the field specified in `con_ref_name_merge_rules`. This may be different per target field:
+
+==== assocPerson/assocOrganization
+
+Each name in this field can have a role and note stored with the name. `:note` field is created by joining the values of `constatement` and `remarks` field, with ': ' as separator
+
+==== Target fields where notes are not stored one-to-one with names
+
+An example is objectProductionPerson, which can store an objectProductionPersonRole value with each name, but no note. By default, notes about production persons will be mapped into the single-valued objectProductionNote field. Since this field is separate from individual production-related names, we add a prefix to the note for a specific name so that you will be able to tell what name the note is about.
+
+The prefix is created with the following pattern: `RE: {name} ({role})`.
+
+`:note` field is created by joining `prefix`, `constatement`, and `remarks` field, with ': ' as separator
+
+=== con_ref_role_to_field_mapping
+
+This is specific to your data set, so your settings are shown in your project-specific documentation.
+
+=== con_ref_name_merge_rules
+
+Specified in: https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/objects.rb
+
+[WARNING]
+.Dropped data
+====
+The role values of names mapped to the following fields are lost in the migration by default:
+
+* contentPerson/Organization
+* ownerPerson/Organization
+====
+
+=== for_objects_merge
+
+By default, names and notes are merged in as per `con_ref_name_merge_rules`. If we've created a custom merge transform for you, it will be described in your project-specific documentation.
