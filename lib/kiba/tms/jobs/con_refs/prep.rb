@@ -21,19 +21,13 @@ module Kiba
           end
 
           def lookups
-            base = []
-
+            base = %i[
+                      constituents__persons
+                      constituents__orgs
+                     ]
             base << :tms__con_alt_names if Tms::ConAltNames.used?
             base << :prep__departments if Tms::Departments.used?
             base << :prep__roles if Tms::Roles.used?
-
-            if Tms::NameTypeCleanup.done
-              base << :persons__by_constituentid
-              base << :orgs__by_constituentid
-            else
-              base << :constituents__persons
-              base << :constituents__orgs
-            end
             base
           end
 
@@ -56,25 +50,14 @@ module Kiba
                   fields: (config.omitted_fields + [:active])
               end
 
-              if Tms::NameTypeCleanup.done
-                transform Merge::MultiRowLookup,
-                  lookup: persons__by_constituentid,
-                  keycolumn: :constituentid,
-                  fieldmap: {person: prefname}
-                transform Merge::MultiRowLookup,
-                  lookup: orgs__by_constituentid,
-                  keycolumn: :constituentid,
-                  fieldmap: {org: prefname}
-              else
-                transform Merge::MultiRowLookup,
-                  lookup: constituents__persons,
-                  keycolumn: :constituentid,
-                  fieldmap: {person: prefname}
-                transform Merge::MultiRowLookup,
-                  lookup: constituents__orgs,
-                  keycolumn: :constituentid,
-                  fieldmap: {org: prefname}
-              end
+              transform Merge::MultiRowLookup,
+                lookup: constituents__persons,
+                keycolumn: :constituentid,
+                fieldmap: {person: prefname}
+              transform Merge::MultiRowLookup,
+                lookup: constituents__orgs,
+                keycolumn: :constituentid,
+                fieldmap: {org: prefname}
 
               if Tms::ConAltNames.used?
                 transform Merge::MultiRowLookup,
