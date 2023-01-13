@@ -39,6 +39,7 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              prefname = Tms::Constituents.preferred_name_field
 
               if bind.receiver.send(:ntc_needed?)
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
@@ -56,7 +57,7 @@ module Kiba
                   lookup: constituents__prep_clean,
                   keycolumn: :mainconid,
                   fieldmap: {
-                    conname: Tms::Constituents.preferred_name_field,
+                    conname: prefname,
                     conauthtype: :contype,
                     mainnorm: :norm
                   }
@@ -70,7 +71,7 @@ module Kiba
                 lookup: constituents__by_norm,
                 keycolumn: :altnorm,
                 fieldmap: {
-                  altconname: Tms::Constituents.preferred_name_field,
+                  altconname: prefname,
                   altconauthtype: :contype,
                   altnameconid: :constituentid
                 }
