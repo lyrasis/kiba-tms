@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__con_alt_names,
+                source: :con_alt_names__prep_clean,
                 destination: :name_compile__from_can_main_org_alt_person_established
               },
               transformer: xforms,
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_can_main_org_alt_person_established
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Tms::Transforms::NameCompile::SelectCanMainOrgAltPersonEstablished
 
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.main_org_alt_person_established'

@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__con_alt_names,
+                source: :con_alt_names__prep_clean,
                 destination: :name_compile__from_can_no_altnametype
               },
               transformer: xforms,

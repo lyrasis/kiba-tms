@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__con_alt_names,
+                source: :con_alt_names__prep_clean,
                 destination: :name_compile__from_can_typematch_alt_established
               },
               transformer: xforms,
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_can_typematch_alt_established
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Tms::Transforms::NameCompile::SelectCanTypematchEstablished
 
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.typematch_alt_established'
@@ -46,7 +46,7 @@ module Kiba
                   row[:variant_qualifier] = rolebuilder.call(row)
                   row
                 end
-                
+
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil
               elsif treatment.to_s.end_with?('_note')
                 transform Tms::Transforms::NameCompile::AddRelatedAltNameNote, target: treatment

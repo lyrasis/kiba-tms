@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__con_alt_names,
+                source: :con_alt_names__prep_clean,
                 destination: :name_compile__from_can_main_person_alt_org_established
               },
               transformer: xforms,
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_can_main_person_alt_org_established
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Tms::Transforms::NameCompile::SelectCanMainPersonAltOrgEstablished
 
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.main_person_alt_org_established'
@@ -40,7 +40,7 @@ module Kiba
                   altconname: :variant_term,
                   conauthtype: :contype
                 }
-                
+
                 rolebuilder = Tms::Services::NameCompile::RoleBuilder.new
                 transform do |row, rolebuilder|
                   row[:variant_qualifier] = rolebuilder.call(row)

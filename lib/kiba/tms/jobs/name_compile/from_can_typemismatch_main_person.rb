@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__con_alt_names,
+                source: :con_alt_names__prep_clean,
                 destination: :name_compile__from_can_typemismatch_main_person
               },
               transformer: xforms,
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_can_typemismatch_main_person
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Tms::Transforms::NameCompile::SelectCanTypemismatchMainPerson
 
               transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.typemismatch_main_person'
