@@ -39,6 +39,8 @@ module Kiba
           default
         end
 
+      # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
+      #   needed
       setting :con_ref_name_merge_rules,
         default: {
           fcart: {

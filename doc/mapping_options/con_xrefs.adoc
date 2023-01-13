@@ -170,6 +170,20 @@ This is specific to your data set, so your settings are shown in your project-sp
 
 Specified in: https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/objects.rb
 
+[cols="1,1"]
+|===
+|Notes associated with names mapped to\...|Map to\...
+
+|objectProductionPerson/Organization
+|objectProductionNote
+
+|contentPerson/Organization
+|contentNote
+
+|ownerPerson/Organization
+|objectHistoryNote
+|===
+
 [WARNING]
 .Dropped data
 ====
