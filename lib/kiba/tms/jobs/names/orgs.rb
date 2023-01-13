@@ -30,10 +30,6 @@ module Kiba
             Kiba.job_segment do
               prefname = Tms::Constituents.preferred_name_field
 
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: prefname,
-                value: 'DROPPED FROM MIGRATION'
               transform FilterRows::FieldMatchRegexp,
                 action: :keep,
                 field: :contype,

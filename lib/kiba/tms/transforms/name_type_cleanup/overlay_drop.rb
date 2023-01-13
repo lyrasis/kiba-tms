@@ -23,7 +23,7 @@ module Kiba
           # @param source [Symbol] field containing corrected name
           def initialize(target:)
             @target = target
-            @val = 'DROPPED FROM MIGRATION'
+            @val = Tms.migration_status == :dev ? 'DROPPED FROM MIGRATION' : nil
           end
 
           def process(row)

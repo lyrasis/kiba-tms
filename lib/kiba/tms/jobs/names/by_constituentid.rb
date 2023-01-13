@@ -33,10 +33,6 @@ module Kiba
               default = Tms::Constituents.untyped_default
               default_target = default == 'Person' ? :person : :org
 
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: prefname,
-                value: 'DROPPED FROM MIGRATION'
               transform Append::NilFields, fields: %i[person org name]
               transform do |row|
                 contype = row[:contype]

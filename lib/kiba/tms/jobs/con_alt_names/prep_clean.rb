@@ -105,8 +105,10 @@ module Kiba
                 row
               end
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :altname
               end
-
             end
           end
         end

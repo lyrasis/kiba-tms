@@ -135,6 +135,15 @@ module Kiba
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
     setting :migrate_no_value_types, default: false, reader: true
+    # Controls selected behavior of migration. Generally :dev will retain some
+    #   data values that will be removed when this is set to :prod.
+    #
+    # - Names marked by client to be dropped from migration: When `dev`, these
+    #   will be retained, but converted to `DROPPED FROM MIGRATION` so that any
+    #   inadvertent effects of dropping the names may be caught. When `prod`,
+    #   the names just won't be merged into any data
+    # Expected values: :dev, :prod
+    setting :migration_status, default: :dev, reader: true
     # Used to keep track of multi-table-merge work. Organized by target table.
     setting :table_merge_status, default: {}, reader: true
     setting :tms_fields,

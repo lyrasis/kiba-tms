@@ -25,6 +25,7 @@ module Kiba
 
           # @private
           def process(row)
+            return nil if row[namefield].blank?
             return nil if row[namefield] == 'DROPPED FROM MIGRATION'
 
             row[:personname] = personbuilder.call(row)

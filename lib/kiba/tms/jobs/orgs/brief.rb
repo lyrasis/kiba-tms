@@ -26,10 +26,6 @@ module Kiba
                     row[:contype].start_with?('Org') &&
                     row[:relation_type] == '_main term'
                 end
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: :name,
-                value: 'DROPPED FROM MIGRATION'
               transform Delete::FieldsExcept, fields: :name
               transform Rename::Field,
                 from: :name,

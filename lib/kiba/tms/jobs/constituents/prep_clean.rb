@@ -62,6 +62,9 @@ module Kiba
                   in_field: :duplicate,
                   explicit_no: false
                 transform Delete::Fields, fields: %i[contype_norm]
+                transform FilterRows::FieldPopulated,
+                  action: :keep,
+                  field: prefname
               else
                 transform Copy::Field, from: :norm, to: :prefnormorig
                 transform Copy::Field, from: :nonprefnorm, to: :nonprefnormorig
