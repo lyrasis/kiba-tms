@@ -32,19 +32,26 @@ module Kiba
             base = %i[
                       name_compile__main_duplicates
                      ]
-            if Tms::NameCompile.deduplicate_categories.any?(:variant)
+            if lookup_eligible?(:variant)
               base << :name_compile__variant_duplicates
             end
-            if Tms::NameCompile.deduplicate_categories.any?(:related)
+            if lookup_eligible?(:related)
               base << :name_compile__related_duplicates
             end
-            if Tms::NameCompile.deduplicate_categories.any?(:note)
+            if lookup_eligible?(:note)
               base << :name_compile__note_duplicates
             end
             base
           end
 
+          def lookup_eligible?(type)
+            config.deduplicate_categories.any?(type) &&
+              Tms.job_output?("name_compile__#{type}_duplicates".to_sym)
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
               transform Merge::MultiRowLookup,
                 lookup: name_compile__main_duplicates,
@@ -54,7 +61,7 @@ module Kiba
                   name_duplicate: :duplicate
                 }
 
-              if Tms::NameCompile.deduplicate_categories.any?(:variant)
+              if bind.receiver.send(:lookup_eligible?, :variant)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__variant_duplicates,
                   keycolumn: :fingerprint,
@@ -64,7 +71,7 @@ module Kiba
                   }
               end
 
-              if Tms::NameCompile.deduplicate_categories.any?(:related)
+              if bind.receiver.send(:lookup_eligible?, :related)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__related_duplicates,
                   keycolumn: :fingerprint,
@@ -74,7 +81,7 @@ module Kiba
                   }
               end
 
-              if Tms::NameCompile.deduplicate_categories.any?(:note)
+              if bind.receiver.send(:lookup_eligible?, :note)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__note_duplicates,
                   keycolumn: :fingerprint,
