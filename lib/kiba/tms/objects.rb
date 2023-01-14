@@ -109,6 +109,12 @@ module Kiba
                     con_refs_o_objecthistorynote],
         reader: true
       setting :period_target, default: nil, reader: true
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :objects__number_lookup,
+          numberfield: :objectnumber
+        },
+        reader: true
       setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
       setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
       # TMS fields with associated field-specific transformers defined. Note

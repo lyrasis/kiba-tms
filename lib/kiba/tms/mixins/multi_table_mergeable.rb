@@ -89,6 +89,70 @@ module Kiba
           end
         end
 
+        # METHODS USED FOR AUTO-REGISTERING REPORTABLE-FOR-TABLE JOBS
+        #
+        # Reportable-for-table jobs merge human-readable record id numbers
+        #   into the regular mergeable for-table. These jobs are registered
+        #   only for target tables that have a :record_num_merge_config config
+        #   setting defined. Example:
+        #
+        #  setting :record_num_merge_config,
+        #    default: {
+        #      sourcejob: :objects__number_lookup,
+        #      numberfield: :objectnumber
+        #  }, reader: true
+
+        # @return [Hash] of reportable-for-tables, i.e. target tables whose
+        #   configs define the :record_num_merge_config setting. Hash key
+        #   is the target table config Constant, and value is the
+        #   :record_num_merge_config setting value
+        def reportable_for_tables
+          target_tables.map{ |t| Object.const_get("Tms::#{t}") }
+            .select{ |t| t.respond_to?(:record_num_merge_config) }
+            .map{ |t| [t, t.send(:record_num_merge_config)] }
+            .to_h
+        end
+
+        def register_reportable_for_table_jobs
+          return if reportable_for_tables.empty?
+
+          ns = build_reportable_registry_namespace(
+            source_ns: "#{filekey}_for",
+            ns: "#{filekey}_reportable_for",
+            config: reportable_for_tables
+          )
+          Tms.registry.import(ns)
+        end
+
+        def build_reportable_registry_namespace(source_ns:, ns:, config:)
+          bind = binding
+          Dry::Container::Namespace.new(ns) do
+            mod = bind.receiver
+            config.each do |const, cfg|
+              filekey = const.filekey
+              params = {
+                source: "#{source_ns}__#{filekey}".to_sym,
+                dest: "#{ns}__#{filekey}".to_sym,
+                config: cfg
+              }
+              register filekey, mod.send(:reportable_job_hash, **params)
+            end
+          end
+        end
+
+        def reportable_job_hash(source:, dest:, config:)
+          {
+            path: File.join(Tms.datadir, 'working', "#{dest}.csv"),
+            creator: {callee: Tms::Jobs::ReportableForTable,
+                      args: {
+                        source: source,
+                        dest: dest,
+                        config: config
+                      }
+                     }
+          }
+        end
+
         # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
         def register_per_table_jobs(field = split_on_column)
           key = filekey

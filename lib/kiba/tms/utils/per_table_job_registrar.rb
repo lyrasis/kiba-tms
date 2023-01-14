@@ -11,10 +11,13 @@ module Kiba
         def initialize
           @to_register = gather
         end
-        
+
         def call
           puts "Registering per-table jobs"
-          to_register.each{ |mod| mod.register_per_table_jobs }
+          to_register.each do |mod|
+            mod.register_per_table_jobs
+            mod.register_reportable_for_table_jobs
+          end
         end
 
         private
@@ -26,7 +29,7 @@ module Kiba
             config.respond_to?(:target_tables) &&
             config.respond_to?(:used?) &&
             config.used?
-          end            
+          end
         end
       end
     end
