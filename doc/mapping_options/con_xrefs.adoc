@@ -13,7 +13,7 @@ endif::[]
 
 = ConXrefs (and ConXrefDetails)
 
-The TMS ConXrefs and ConXrefDetails tables store references to constituent names in records. With each name reference, other data specific to the name/item relationship can be recorded.
+The TMS ConXrefs and ConXrefDetails tables store references to constituent names (persons and organizations) that need to be merged into other records. The id for the target TMS table, and the id of the target record in that table, are recorded for each ConXref. With each name reference, other data specific to the name/item relationship can also be recorded.
 
 This page covers options and settings for how we merge this name data into CollectionSpace (CS) records
 
@@ -91,7 +91,7 @@ Where there is role_type match (or clear instruction from client on how to handl
 
 The `ConRefs` table is split into separate tables depending on what record type the name will be merged into.
 
-The `mappings` setting in the `Tms::RoleTypes` config controls this splitting. For each line:
+The `mappings` setting in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/role_types.rb[the `Tms::RoleTypes` config] controls this splitting. For each line:
 
 * the value on the left of "=>" is the TMS role type value
 * the value on the right of "=>" is the target TMS table into which names will be merged for further processing
@@ -105,7 +105,7 @@ Each target table has the following settings/configs which control how names get
 
 This config setting defines a data transformer class that prepares data in the `con_refs_for__{target_table}` for merge into the target table.
 
-The default name merger, and most of the `for_{targettable}_merge` transforms assume there will be a single `:note` field to merge into the target table. Any default or custom prepper transforms for those target tables must combine create that `:note` field.
+The default name merger, and most of the `for_{targettable}_merge` transforms assume there will be a single `:note` field to merge into the target table. Any default or custom prepper transforms for those target tables must create that `:note` field from other fields in the ConRefs table.
 
 A custom data transformer class can be created per client, if further data preparation is required.
 

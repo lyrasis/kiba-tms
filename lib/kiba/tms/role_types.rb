@@ -27,7 +27,8 @@ module Kiba
         "Acquisition Related" => "ObjAccession", #CS Acquisition
         "Bibliography Related" => "ReferenceMaster", #CS Citation authority
         "Ex-Collections Related" => "Objects", #CS Object - owner, former owner,
-        #  donor, etc.
+        #  donor, etc., for whatever reason not recorded/associated directly
+        #  with an acquisition
         "Exhibitions Related" => "Exhibitions", #CS Exhibition
         "Incoming Loan Related" => "Loansin", #CS Loan in
         "Media Related" => "MediaRenditions", #CS Media handling
