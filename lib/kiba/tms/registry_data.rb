@@ -1659,28 +1659,15 @@ module Kiba
                  approved active isstaff is_private_collector code
                 ] }
           }
-          register :by_norm_prep, {
-            creator: Kiba::Tms::Jobs::Names::ByNormPrep,
+          register :by_altnameid, {
+            creator: Kiba::Tms::Jobs::Names::ByAltnameid,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'names_by_norm_prep.csv'
+              'names_by_altnameid.csv'
             ),
-            desc: 'Simplifies :name_compile__unique to only normalized '\
-              ':contype, :name, and :norm values, where :norm is the '\
-              'normalized ORIG value of the name',
             tags: %i[names],
-            lookup_on: :norm
-          }
-          register :by_norm, {
-            creator: Kiba::Tms::Jobs::Names::ByNorm,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_by_norm.csv'),
-            desc: 'With lookup on normalized version of original name value (i.e. '\
-              'from any table, not controlled by constituentid), gives '\
-              '`:person` and `:organization` column from which to merge '\
-              'authorized form of name',
-            tags: %i[names],
-            lookup_on: :norm
+            lookup_on: :altnameid
           }
           register :by_constituentid, {
             creator: Kiba::Tms::Jobs::Names::ByConstituentid,
@@ -1693,15 +1680,28 @@ module Kiba
             tags: %i[names],
             lookup_on: :constituentid
           }
-          register :by_altnameid, {
-            creator: Kiba::Tms::Jobs::Names::ByAltnameid,
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Names::ByNorm,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_by_norm.csv'),
+            desc: 'With lookup on normalized version of original name value (i.e. '\
+              'from any table, not controlled by constituentid), gives '\
+              '`:person` and `:organization` column from which to merge '\
+              'authorized form of name',
+            tags: %i[names],
+            lookup_on: :norm
+          }
+          register :by_norm_prep, {
+            creator: Kiba::Tms::Jobs::Names::ByNormPrep,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'names_by_altnameid.csv'
+              'names_by_norm_prep.csv'
             ),
+            desc: 'Simplifies :name_compile__unique to only normalized '\
+              ':contype, :name, and :norm values, where :norm is the '\
+              'normalized ORIG value of the name',
             tags: %i[names],
-            lookup_on: :altnameid
+            lookup_on: :norm
           }
           # register :orgs, {
           #   creator: Kiba::Tms::Jobs::Names::Orgs,
