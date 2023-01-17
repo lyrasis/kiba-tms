@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[names__map_by_norm]
+            base = %i[names__by_norm]
             if Tms::ObjAccession.loaned_object_treatment ==
                 :creditline_to_loanin
               base << :loan_obj_xrefs__creditlines
@@ -208,7 +208,7 @@ module Kiba
               end
 
               transform Merge::MultiRowLookup,
-                lookup: names__map_by_norm,
+                lookup: names__by_norm,
                 keycolumn: :person_norm,
                 fieldmap: {lenderpersonlocal: :person},
                 multikey: true,
@@ -217,7 +217,7 @@ module Kiba
                   rows.reject{ |row| row[:person].blank? }
                 end
               transform Merge::MultiRowLookup,
-                lookup: names__map_by_norm,
+                lookup: names__by_norm,
                 keycolumn: :contact_norm,
                 fieldmap: {lenderscontact: :person},
                 multikey: true,
@@ -227,7 +227,7 @@ module Kiba
                 end
               if config.status_targets.any?(:loanindividual)
                 transform Merge::MultiRowLookup,
-                  lookup: names__map_by_norm,
+                  lookup: names__by_norm,
                   keycolumn: :li_norm,
                   fieldmap: {loanindividual: :person},
                   multikey: true,
@@ -237,7 +237,7 @@ module Kiba
                   end
               end
               transform Merge::MultiRowLookup,
-                lookup: names__map_by_norm,
+                lookup: names__by_norm,
                 keycolumn: :org_norm,
                 fieldmap: {lenderorganizationlocal: :organization},
                 multikey: true,

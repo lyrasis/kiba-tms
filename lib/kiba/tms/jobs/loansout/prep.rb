@@ -14,7 +14,7 @@ module Kiba
               files: {
                 source: :loans__out,
                 destination: :loansout__prep,
-                lookup: :names__map_by_norm
+                lookup: :names__by_norm
               },
               transformer: xforms
             )
@@ -53,7 +53,7 @@ module Kiba
                     multival: true,
                     delim: Tms.delim
                   transform Merge::MultiRowLookup,
-                    lookup: names__map_by_norm,
+                    lookup: names__by_norm,
                     keycolumn: normfield,
                     fieldmap: {field => :person},
                     multikey: true,
@@ -210,13 +210,13 @@ module Kiba
               end
 
               transform Merge::MultiRowLookup,
-                lookup: names__map_by_norm,
+                lookup: names__by_norm,
                 keycolumn: :person_norm,
                 fieldmap: {borrowerpersonlocal: :person},
                 multikey: true,
                 delim: Tms.delim
               transform Merge::MultiRowLookup,
-                lookup: names__map_by_norm,
+                lookup: names__by_norm,
                 keycolumn: :org_norm,
                 fieldmap: {borrowerorganizationlocal: :organization},
                 multikey: true,

@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Names
-        module MapByNorm
+        module ByNorm
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :names__prep_map_by_norm,
-                destination: :names__map_by_norm,
+                destination: :names__by_norm,
                 lookup: :names__prep_map_by_norm
               },
               transformer: xforms

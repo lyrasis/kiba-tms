@@ -1672,9 +1672,9 @@ module Kiba
             tags: %i[names],
             lookup_on: :norm
           }
-          register :map_by_norm, {
-            creator: Kiba::Tms::Jobs::Names::MapByNorm,
-            path: File.join(Kiba::Tms.datadir, 'working', 'allnames_map_by_norm.csv'),
+          register :by_norm, {
+            creator: Kiba::Tms::Jobs::Names::ByNorm,
+            path: File.join(Kiba::Tms.datadir, 'working', 'names_by_norm.csv'),
             desc: 'With lookup on normalized version of original name value (i.e. '\
               'from any table, not controlled by constituentid), gives '\
               '`:person` and `:organization` column from which to merge '\

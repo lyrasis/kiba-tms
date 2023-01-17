@@ -6,7 +6,7 @@ module Kiba
       class MergeUncontrolledName
         def initialize(field:,
                        lookup: Kiba::Extend::Utils::Lookup.csv_to_hash(
-                         file: Tms.registry.resolve(:names__map_by_norm).path,
+                         file: Tms.registry.resolve(:names__by_norm).path,
                          keycolumn: :norm
                        ),
                        delim: nil)
