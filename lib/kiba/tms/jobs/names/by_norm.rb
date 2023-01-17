@@ -10,9 +10,9 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :names__prep_map_by_norm,
+                source: :names__by_norm_prep,
                 destination: :names__by_norm,
-                lookup: :names__prep_map_by_norm
+                lookup: :names__by_norm_prep
               },
               transformer: xforms
             )
@@ -24,7 +24,7 @@ module Kiba
                 fields: %i[norm]
               transform Deduplicate::Table, field: :norm
               transform Merge::MultiRowLookup,
-                lookup: names__prep_map_by_norm,
+                lookup: names__by_norm_prep,
                 keycolumn: :norm,
                 fieldmap: {person: :name},
                 conditions: ->(_r, rows) do
@@ -32,7 +32,7 @@ module Kiba
                   res.empty? ? res :  [res.first]
                 end
               transform Merge::MultiRowLookup,
-                lookup: names__prep_map_by_norm,
+                lookup: names__by_norm_prep,
                 keycolumn: :norm,
                 fieldmap: {organization: :name},
                 conditions: ->(_r, rows) do
@@ -40,7 +40,7 @@ module Kiba
                   res.empty? ? res :  [res.first]
                 end
               transform Merge::MultiRowLookup,
-                lookup: names__prep_map_by_norm,
+                lookup: names__by_norm_prep,
                 keycolumn: :norm,
                 fieldmap: {note: :name},
                 conditions: ->(_r, rows) do

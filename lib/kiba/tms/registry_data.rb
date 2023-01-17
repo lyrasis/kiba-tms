@@ -1659,12 +1659,12 @@ module Kiba
                  approved active isstaff is_private_collector code
                 ] }
           }
-          register :prep_map_by_norm, {
-            creator: Kiba::Tms::Jobs::Names::PrepMapByNorm,
+          register :by_norm_prep, {
+            creator: Kiba::Tms::Jobs::Names::ByNormPrep,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'allnames_prep_map_by_norm.csv'
+              'names_by_norm_prep.csv'
             ),
             desc: 'Simplifies :name_compile__unique to only normalized '\
               ':contype, :name, and :norm values, where :norm is the '\
