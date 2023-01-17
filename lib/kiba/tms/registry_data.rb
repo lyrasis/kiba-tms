@@ -1643,6 +1643,13 @@ module Kiba
 
         Kiba::Tms.registry.namespace('names') do
           register :by_altnameid, {
+            desc: 'For some bizarre reason, at least some TMS tables link to '\
+              'to a name via :constituentid, but the ":constituentid" value '\
+              'should actually be looked up as :altnameid and then mapped to '\
+              'correct constituent name. This was discovered while mapping '\
+              'valuation control information source names.\n\nThis table has '\
+              'the same structure as :by_constituentid, but the lookup is on '\
+              ':altnameid',
             creator: Kiba::Tms::Jobs::Names::ByAltnameid,
             path: File.join(
               Kiba::Tms.datadir,
@@ -1660,9 +1667,9 @@ module Kiba
               'names_by_constituentid.csv'
             ),
             desc: 'With lookup on :constituentid, gives :person and :org '\
-                'columns from which to merge authorized form of name. Also '\
-                'gives a :prefname and :nonprefname columns for use if type '\
-                'of name does not matter. Only name values are retained in '\
+              'columns from which to merge authorized form of name. Also '\
+              'gives :prefname and :nonprefname columns for use if type '\
+              'of name does not matter. Only name values are retained in '\
                 'this table, not name details.',
             tags: %i[names],
             lookup_on: :constituentid

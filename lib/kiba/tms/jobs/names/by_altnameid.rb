@@ -29,8 +29,10 @@ module Kiba
                   person: :person,
                   org: :org,
                   prefname: :prefname,
-                  nonprefname: :nonprefname
+                  nonprefname: :nonprefname,
+                  cleanedprefname: :cleanedprefname
                 }
+              transform Delete::Fields, fields: :constituentid
             end
           end
         end
