@@ -1659,7 +1659,11 @@ module Kiba
               'working',
               'names_by_constituentid.csv'
             ),
-            desc: Proc.new{ Kiba::Tms::Jobs::Names::ByConstituentid.desc },
+            desc: 'With lookup on :constituentid, gives :person and :org '\
+                'columns from which to merge authorized form of name. Also '\
+                'gives a :prefname and :nonprefname columns for use if type '\
+                'of name does not matter. Only name values are retained in '\
+                'this table, not name details.',
             tags: %i[names],
             lookup_on: :constituentid
           }

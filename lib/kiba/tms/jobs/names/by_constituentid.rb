@@ -7,15 +7,6 @@ module Kiba
         module ByConstituentid
           module_function
 
-          def desc
-              <<~DESC
-                With lookup on :constituentid gives :person and :org columns
-                from which to merge authorized form of name. Also gives a
-                :prefname and :nonprefname columns for use if type of name does
-                not matter. Only name values are retained in this table.
-              DESC
-          end
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -33,7 +24,8 @@ module Kiba
               default = Tms::Constituents.untyped_default
               default_target = default == 'Person' ? :person : :org
 
-              transform Append::NilFields, fields: %i[person org name]
+              transform Append::NilFields,
+                fields: %i[person org prefname nonprefname]
               transform do |row|
                 contype = row[:contype]
                 name = row[prefname]
