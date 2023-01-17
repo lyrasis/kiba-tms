@@ -35,7 +35,7 @@ module Kiba
                 target: :norm
               transform Deduplicate::Table,
                 field: :norm,
-                delete_field: true
+                delete_field: false
             end
           end
         end

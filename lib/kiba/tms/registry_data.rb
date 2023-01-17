@@ -2217,7 +2217,9 @@ module Kiba
             creator: Kiba::Tms::Jobs::Persons::Brief,
             path: File.join(Kiba::Tms.datadir, 'cspace', 'persons_brief.csv'),
             tags: %i[persons cspace],
-            desc: 'Only termdisplayname values, for bootstrap ingests'
+            desc: 'Only termdisplayname values, for bootstrap ingests, and '\
+              'looking up final controlled name values by normalized form',
+            lookup_on: :norm
           }
         end
 
