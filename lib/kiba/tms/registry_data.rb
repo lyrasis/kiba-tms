@@ -1703,95 +1703,95 @@ module Kiba
             tags: %i[names],
             lookup_on: :altnameid
           }
-          register :orgs, {
-            creator: Kiba::Tms::Jobs::Names::Orgs,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working',
-              'names_orgs.csv'
-            ),
-            tags: %i[names],
-            lookup_on: :constituentid
-          }
-          register :flagged_duplicates, {
-            creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_flagged_duplicates.csv'),
-            desc: 'Names extracted from constituents table and flagged as duplicates',
-            tags: %i[names con],
-            lookup_on: :norm
-          }
-          register :initial_compile, {
-            creator: Kiba::Tms::Jobs::Names::CompiledDataRaw,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_initial_compile.csv'),
-            desc: 'Names extracted from constituents table and other sources, with only subsequent duplicates flagged',
-            tags: %i[names con]
-          }
-          register :from_constituents, {
-            creator: Kiba::Tms::Jobs::Names::FromConstituents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents.csv'),
-            desc: 'Names extracted from constituents table',
-            tags: %i[names con]
-          }
-          register :from_constituents_orgs_from_persons, {
-            creator: Kiba::Tms::Jobs::Names::OrgsFromConstituentPersons,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_orgs_from_persons.csv'),
-            desc: 'Names extracted from institution field of Person constituents',
-            tags: %i[names con]
-          }
-          register :from_constituents_persons_from_orgs, {
-            creator: Kiba::Tms::Jobs::Names::PersonsFromConstituentOrgs,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_persons_from_orgs.csv'),
-            desc: 'Names extracted from Organization constituents when the name part values are populated',
-            tags: %i[names con]
-          }
-          register :from_loans, {
-            creator: Kiba::Tms::Jobs::Names::FromLoans,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loans.csv'),
-            desc: 'Names extracted from loans table',
-            tags: %i[names loans]
-          }
-          register :from_loc_approvers, {
-            creator: Kiba::Tms::Jobs::Names::FromLocApprovers,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_approvers.csv'),
-            desc: 'Names extracted from LocApprovers table',
-            tags: %i[names loc_approvers]
-          }
-          register :from_loc_handlers, {
-            creator: Kiba::Tms::Jobs::Names::FromLocHandlers,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_handlers.csv'),
-            desc: 'Names extracted from LocHandlers table',
-            tags: %i[names loc_handlers]
-          }
-          register :from_obj_accession, {
-            creator: Kiba::Tms::Jobs::Names::FromObjAccession,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),
-            desc: 'Names extracted from obj_accession table',
-            tags: %i[names obj_accession]
-          }
-          register :from_obj_incoming, {
-            creator: Kiba::Tms::Jobs::Names::FromObjIncoming,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_incoming.csv'),
-            desc: 'Names extracted from obj_incoming table',
-            tags: %i[names obj_incoming]
-          }
-          register :from_obj_locations, {
-            creator: Kiba::Tms::Jobs::Names::FromObjLocations,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
-            desc: 'Names extracted from obj_locations table',
-            tags: %i[names obj_locations]
-          }
-          register :from_reference_master, {
-            creator: Kiba::Tms::Jobs::Names::FromReferenceMaster,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_reference_master.csv'),
-            desc: 'Names extracted from reference_master table',
-            tags: %i[names reference_master]
-          }
-          register :from_assoc_parents_for_con, {
-            creator: Kiba::Tms::Jobs::Names::FromAssocParentsForCon,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_from_assoc_parents_for_con.csv'),
-            desc: 'Names extracted from AssocParents (for constituents) table',
-            tags: %i[names assoc_parents]
-          }
+          # register :orgs, {
+          #   creator: Kiba::Tms::Jobs::Names::Orgs,
+          #   path: File.join(
+          #     Kiba::Tms.datadir,
+          #     'working',
+          #     'names_orgs.csv'
+          #   ),
+          #   tags: %i[names],
+          #   lookup_on: :constituentid
+          # }
+          # register :flagged_duplicates, {
+          #   creator: Kiba::Tms::Jobs::Names::CompiledDataDuplicatesFlagged,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_flagged_duplicates.csv'),
+          #   desc: 'Names extracted from constituents table and flagged as duplicates',
+          #   tags: %i[names con],
+          #   lookup_on: :norm
+          # }
+          # register :initial_compile, {
+          #   creator: Kiba::Tms::Jobs::Names::CompiledDataRaw,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_initial_compile.csv'),
+          #   desc: 'Names extracted from constituents table and other sources, with only subsequent duplicates flagged',
+          #   tags: %i[names con]
+          # }
+          # register :from_constituents, {
+          #   creator: Kiba::Tms::Jobs::Names::FromConstituents,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents.csv'),
+          #   desc: 'Names extracted from constituents table',
+          #   tags: %i[names con]
+          # }
+          # register :from_constituents_orgs_from_persons, {
+          #   creator: Kiba::Tms::Jobs::Names::OrgsFromConstituentPersons,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_orgs_from_persons.csv'),
+          #   desc: 'Names extracted from institution field of Person constituents',
+          #   tags: %i[names con]
+          # }
+          # register :from_constituents_persons_from_orgs, {
+          #   creator: Kiba::Tms::Jobs::Names::PersonsFromConstituentOrgs,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_constituents_persons_from_orgs.csv'),
+          #   desc: 'Names extracted from Organization constituents when the name part values are populated',
+          #   tags: %i[names con]
+          # }
+          # register :from_loans, {
+          #   creator: Kiba::Tms::Jobs::Names::FromLoans,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loans.csv'),
+          #   desc: 'Names extracted from loans table',
+          #   tags: %i[names loans]
+          # }
+          # register :from_loc_approvers, {
+          #   creator: Kiba::Tms::Jobs::Names::FromLocApprovers,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_approvers.csv'),
+          #   desc: 'Names extracted from LocApprovers table',
+          #   tags: %i[names loc_approvers]
+          # }
+          # register :from_loc_handlers, {
+          #   creator: Kiba::Tms::Jobs::Names::FromLocHandlers,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_loc_handlers.csv'),
+          #   desc: 'Names extracted from LocHandlers table',
+          #   tags: %i[names loc_handlers]
+          # }
+          # register :from_obj_accession, {
+          #   creator: Kiba::Tms::Jobs::Names::FromObjAccession,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_accession.csv'),
+          #   desc: 'Names extracted from obj_accession table',
+          #   tags: %i[names obj_accession]
+          # }
+          # register :from_obj_incoming, {
+          #   creator: Kiba::Tms::Jobs::Names::FromObjIncoming,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_incoming.csv'),
+          #   desc: 'Names extracted from obj_incoming table',
+          #   tags: %i[names obj_incoming]
+          # }
+          # register :from_obj_locations, {
+          #   creator: Kiba::Tms::Jobs::Names::FromObjLocations,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_obj_locations.csv'),
+          #   desc: 'Names extracted from obj_locations table',
+          #   tags: %i[names obj_locations]
+          # }
+          # register :from_reference_master, {
+          #   creator: Kiba::Tms::Jobs::Names::FromReferenceMaster,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_reference_master.csv'),
+          #   desc: 'Names extracted from reference_master table',
+          #   tags: %i[names reference_master]
+          # }
+          # register :from_assoc_parents_for_con, {
+          #   creator: Kiba::Tms::Jobs::Names::FromAssocParentsForCon,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'names_from_assoc_parents_for_con.csv'),
+          #   desc: 'Names extracted from AssocParents (for constituents) table',
+          #   tags: %i[names assoc_parents]
+          # }
         end
 
         Kiba::Tms.registry.namespace('obj_accession') do
@@ -2142,13 +2142,14 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('orgs') do
-          register :by_constituentid, {
-            creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
-            path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
-            desc: 'Org authority values lookup by constituentid',
-            lookup_on: :fp_constituentid,
-            tags: %i[orgs]
-          }
+          # # Does not add anything to :constituents__orgs
+          # register :by_constituentid, {
+          #   creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
+          #   path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
+          #   desc: 'Org authority values lookup by constituentid',
+          #   lookup_on: :fp_constituentid,
+          #   tags: %i[orgs]
+          # }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Orgs::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_norm.csv'),
