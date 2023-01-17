@@ -2142,14 +2142,19 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('orgs') do
-          # # Does not add anything to :constituents__orgs
-          # register :by_constituentid, {
-          #   creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_constituent_id.csv'),
-          #   desc: 'Org authority values lookup by constituentid',
-          #   lookup_on: :fp_constituentid,
-          #   tags: %i[orgs]
-          # }
+          # Ensures the final termdisplayname form is associated with each
+          #   constituentid. Fields: constituentid, norm, name
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Orgs::ByConstituentId,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'orgs_by_constituent_id.csv'
+            ),
+            desc: 'Org authority values lookup by constituentid',
+            lookup_on: :constituentid,
+            tags: %i[orgs]
+          }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Orgs::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_norm.csv'),
@@ -2167,7 +2172,9 @@ module Kiba
             creator: Kiba::Tms::Jobs::Orgs::Brief,
             path: File.join(Kiba::Tms.datadir, 'cspace', 'orgs_brief.csv'),
             tags: %i[orgs cspace],
-            desc: 'Only termdisplayname values, for bootstrap ingests'
+            desc: 'Only termdisplayname values, for bootstrap ingests, and '\
+              'looking up final controlled name values by normalized form',
+            lookup_on: :norm
           }
         end
 
@@ -2192,14 +2199,19 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('persons') do
-          # # Adds nothing to :constituents__persons
-          # register :by_constituentid, {
-          #   creator: Kiba::Tms::Jobs::Persons::ByConstituentId,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'persons_by_constituent_id.csv'),
-          #   desc: 'Person authority values lookup by constituentid',
-          #   lookup_on: :fp_constituentid,
-          #   tags: %i[persons]
-          # }
+          # Ensures the final termdisplayname form is associated with each
+          #   constituentid. Fields: constituentid, norm, name
+          register :by_constituentid, {
+            creator: Kiba::Tms::Jobs::Persons::ByConstituentId,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'persons_by_constituent_id.csv'
+            ),
+            desc: 'Person authority values lookup by constituentid',
+            lookup_on: :constituentid,
+            tags: %i[persons]
+          }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Persons::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'persons_by_norm.csv'),

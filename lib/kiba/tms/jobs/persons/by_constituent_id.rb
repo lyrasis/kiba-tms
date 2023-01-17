@@ -11,7 +11,8 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__persons,
-                destination: :persons__by_constituentid
+                destination: :persons__by_constituentid,
+                lookup: :persons__brief
               },
               transformer: xforms
             )
@@ -19,6 +20,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Delete::FieldsExcept,
+                fields: %i[constituentid norm]
+              transform Merge::MultiRowLookup,
+                lookup: persons__brief,
+                keycolumn: :norm,
+                fieldmap: {name: :termdisplayname}
             end
           end
         end
