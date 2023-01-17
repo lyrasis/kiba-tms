@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__constituents,
+                source: :constituents__prep_clean,
                 destination: :constituents__with_name_data
               },
               transformer: xforms
