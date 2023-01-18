@@ -11,7 +11,8 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :name_compile__unique,
-                destination: :orgs__by_norm
+                destination: :orgs__by_norm,
+                lookup: :orgs__brief
               },
               transformer: xforms
             )
@@ -29,10 +30,20 @@ module Kiba
                     contype.start_with?('Organization') &&
                     reltype == '_main term'
                 end
-              transform Delete::FieldsExcept, fields: :name
+              transform Delete::FieldsExcept,
+                fields: %i[name prefnormorig]
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: :name,
-                target: :norm
+                target: :namenorm
+              transform Merge::MultiRowLookup,
+                lookup: orgs__brief,
+                keycolumn: :namenorm,
+                fieldmap: {name: :termdisplayname}
+              transform Delete::Fields, fields: :namenorm
+              transform Rename::Field, from: :prefnormorig, to: :norm
+              transform Deduplicate::FieldValues,
+                fields: %i[name],
+                sep: Tms.delim
             end
           end
         end

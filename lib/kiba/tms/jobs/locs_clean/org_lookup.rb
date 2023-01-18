@@ -25,7 +25,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: orgs__by_norm,
                 keycolumn: :norm,
-                fieldmap: { org: Tms::Constituents.preferred_name_field }
+                fieldmap: { org: :name }
               transform do |row|
                 org = row[:org]
                 if org.blank?

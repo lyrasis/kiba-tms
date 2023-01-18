@@ -2169,7 +2169,7 @@ module Kiba
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Orgs::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'orgs_by_norm.csv'),
-            desc: 'Org authority values lookup by normalized value',
+            desc: 'Org authority values (:name) lookup by normalized value',
             lookup_on: :norm,
             tags: %i[orgs]
           }
@@ -2226,7 +2226,7 @@ module Kiba
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Persons::ByNorm,
             path: File.join(Kiba::Tms.datadir, 'working', 'persons_by_norm.csv'),
-            desc: 'Person authority values lookup by normalized value',
+            desc: 'Person authority values (:name) lookup by normalized value',
             lookup_on: :norm,
             tags: %i[persons]
           }
