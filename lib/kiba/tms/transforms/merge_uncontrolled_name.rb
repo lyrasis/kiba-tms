@@ -26,8 +26,7 @@ module Kiba
           @normer = Kiba::Extend::Transforms::Cspace::NormalizeForID.new(
             source: field,
             target: normfield,
-            delim: delim,
-            multival: delim ? true : false
+            delim: delim
           )
           multikey = delim ? true : false
           @person_merger = Merge::MultiRowLookup.new(
