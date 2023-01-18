@@ -11,15 +11,19 @@ module Kiba
       setting :multi_source_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
         reader: true
-      # Used to auto generate transform jobs for these tables. List of config
-      #   modules for source tables. The config modules must implement a
-      #   :name_fields method, listing fields from which uncontrolled names are
-      #   to be extracted. The source is the :prep job associated with the
-      #   config module
+      # Used to auto generate transform jobs for these tables. Key is the config
+      #   module for the table, which must implement a :name_fields method.
+      #   Value is 'tms' or 'prep', which is the prefix of the job destination
+      #   key to be used as source
       setting :uncontrolled_name_source_tables,
-        default: %w[Loans LocApprovers LocHandlers ObjAccession ObjIncoming
-                    ObjLocations
-        ],
+        default: {
+          'Loans' => 'tms',
+          'LocApprovers' => 'prep',
+          'LocHandlers' => 'prep',
+          'ObjAccession' => 'tms',
+          'ObjIncoming' => 'tms',
+          'ObjLocations' => 'tms'
+        },
         reader: true,
         constructor: proc{ |value|
           value.select{ |name| Tms.const_get(name).used? }
@@ -147,8 +151,9 @@ module Kiba
       def register_uncontrolled_name_compile_jobs
         ns = build_registry_namespace(
           "name_compile_from",
-          uncontrolled_name_source_tables
+          uncontrolled_name_source_tables.keys
             .map{ |n| Tms.const_get(n) }
+            .select{ |mod| mod.used? }
         )
         Tms.registry.import(ns)
       end

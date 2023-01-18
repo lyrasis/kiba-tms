@@ -28,6 +28,7 @@ module Kiba
               # flag affected rows
               transform do |row|
                 srcs = Tms::NameCompile.uncontrolled_name_source_tables
+                  .keys
                 src = row[:termsource]
                 next row unless srcs.any?{ |s| src.match?(s) }
 

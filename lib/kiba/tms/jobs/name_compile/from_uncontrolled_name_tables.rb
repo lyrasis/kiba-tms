@@ -41,9 +41,10 @@ module Kiba
 
           def target_tables
             init = config.uncontrolled_name_source_tables
+              .keys
             return init unless ntc_done?
 
-            init.select{ |table| ntc_targets.any?(table) }
+            init.select{ |key| ntc_targets.any?(key) }
           end
 
           def ntc_needed?
