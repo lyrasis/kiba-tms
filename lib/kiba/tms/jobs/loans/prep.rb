@@ -51,12 +51,18 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              omittedfields = if config.omitting_fields?
+                                config.omitted_fields
+                              else
+                                []
+                              end
+              namefields = config.name_fields - omittedfields
 
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
-              if config.omitting_fields?
-                transform Delete::Fields, fields: config.omitted_fields
+              unless omittedfields.empty?
+                transform Delete::Fields, fields: omittedfields
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
@@ -159,6 +165,14 @@ module Kiba
                   delim: Tms.delim,
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
               end
+
+              namefields.each do |field|
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: field,
+                  target: "#{field}_norm".to_sym,
+                  delim: Tms.delim
+              end
+              transform Delete::Fields, fields: namefields
             end
           end
         end
