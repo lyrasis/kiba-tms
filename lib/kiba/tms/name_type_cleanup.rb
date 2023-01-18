@@ -83,9 +83,8 @@ module Kiba
       def register_uncontrolled_ntc_jobs
         ns = build_registry_namespace(
           "name_type_cleanup_for",
-          Tms::NameCompile.uncontrolled_name_source_tables.keys
+          Tms::NameCompile.uncontrolled_name_source_tables
             .map{ |n| Tms.const_get(n) }
-            .select{ |mod| mod.used? }
         )
         Tms.registry.import(ns)
       end
