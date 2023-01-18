@@ -23,7 +23,6 @@ module Kiba
           def lookups
             base = %i[
                       objects__numbers_cleaned
-                      names__by_norm
                      ]
             if Tms::AccessionMethods.used? &&
                 config.fields.any?(Tms::AccessionMethods.id_field)
@@ -126,8 +125,7 @@ module Kiba
 
               if config.fields.any?(:authorizer)
                 transform Tms::Transforms::MergeUncontrolledName,
-                  field: :authorizer,
-                  lookup: names__by_norm
+                  field: :authorizer
               end
 
               case config.authorizer_org_treatment
