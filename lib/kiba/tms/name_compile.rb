@@ -153,7 +153,6 @@ module Kiba
           "name_compile_from",
           uncontrolled_name_source_tables.keys
             .map{ |n| Tms.const_get(n) }
-            .select{ |mod| mod.used? }
         )
         Tms.registry.import(ns)
       end
