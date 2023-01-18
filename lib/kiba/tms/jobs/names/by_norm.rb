@@ -12,7 +12,11 @@ module Kiba
               files: {
                 source: :names__by_norm_prep,
                 destination: :names__by_norm,
-                lookup: :names__by_norm_prep
+                lookup: %i[
+                           names__by_norm_prep
+                           orgs__by_norm
+                           persons__by_norm
+                          ]
               },
               transformer: xforms
             )
@@ -24,21 +28,13 @@ module Kiba
                 fields: %i[norm]
               transform Deduplicate::Table, field: :norm
               transform Merge::MultiRowLookup,
-                lookup: names__by_norm_prep,
+                lookup: persons__by_norm,
                 keycolumn: :norm,
-                fieldmap: {person: :name},
-                conditions: ->(_r, rows) do
-                  res = rows.select{ |row| row[:contype] == 'Person' }
-                  res.empty? ? res :  [res.first]
-                end
+                fieldmap: {person: :name}
               transform Merge::MultiRowLookup,
-                lookup: names__by_norm_prep,
+                lookup: orgs__by_norm,
                 keycolumn: :norm,
-                fieldmap: {organization: :name},
-                conditions: ->(_r, rows) do
-                  res = rows.select{ |row| row[:contype] == 'Organization' }
-                  res.empty? ? res :  [res.first]
-                end
+                fieldmap: {organization: :name}
               transform Merge::MultiRowLookup,
                 lookup: names__by_norm_prep,
                 keycolumn: :norm,
