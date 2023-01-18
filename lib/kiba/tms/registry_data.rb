@@ -318,7 +318,7 @@ module Kiba
               'Constituent data into that, and re-preps using cleaned data'
           }
           register :by_constituent, {
-            creator: Kiba::Tms::Jobs::ConAltNames::Prep,
+            creator: Kiba::Tms::Jobs::ConAltNames::PrepClean,
             path: File.join(Kiba::Tms.datadir, 'prepped', 'con_alt_names.csv'),
             tags: %i[con prep],
             lookup_on: :constituentid,
