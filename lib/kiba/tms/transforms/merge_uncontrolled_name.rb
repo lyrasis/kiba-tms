@@ -5,9 +5,9 @@ module Kiba
     module Transforms
       class MergeUncontrolledName
         def initialize(field:,
-                       lookup: Kiba::Extend::Utils::Lookup.csv_to_hash(
-                         file: Tms.registry.resolve(:names__by_norm).path,
-                         keycolumn: :norm
+                       lookup: Tms.get_lookup(
+                         jobkey: :names__by_norm,
+                         column: :norm
                        ),
                        delim: nil)
           @field = field
