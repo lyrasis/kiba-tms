@@ -23,6 +23,7 @@ module Kiba
                 action: :keep,
                 field: :termsource,
                 value: 'Uncontrolled'
+              transform Delete::Fields, fields: :termsource
             end
           end
         end

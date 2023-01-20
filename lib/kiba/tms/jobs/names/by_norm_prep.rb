@@ -10,30 +10,39 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_compile__unique,
+                source: sources,
                 destination: :names__by_norm_prep
               },
               transformer: xforms
             )
           end
 
+          def sources
+            base = [:name_compile__main_terms_for_norm_lookup]
+            unless Tms::NameCompile.uncontrolled_name_source_tables.empty?
+              if Tms.job_output?(
+                :name_compile__persons_uncontrolled_for_norm_lookup
+              )
+                base << :name_compile__persons_uncontrolled_for_norm_lookup
+              end
+
+              if Tms.job_output?(
+                :name_compile__orgs_uncontrolled_for_norm_lookup
+              )
+                base << :name_compile__orgs_uncontrolled_for_norm_lookup
+              end
+
+              if Tms.job_output?(
+                :name_compile__notes_uncontrolled_for_norm_lookup
+              )
+                base << :name_compile__notes_uncontrolled_for_norm_lookup
+              end
+            end
+            base
+          end
+
           def xforms
             Kiba.job_segment do
-              transform FilterRows::WithLambda,
-                action: :keep,
-                lambda: ->(row) do
-                  rt = row[:relation_type]
-                  norm = row[:prefnormorig]
-                  ts = row[:termsource]
-                  sources = [
-                    'TMS Constituents.orgs',
-                    'TMS Constituents.persons',
-                    'Uncontrolled'
-                  ]
-                  rt && rt == '_main term' &&
-                    ts && sources.any?(ts) &&
-                    !norm.blank?
-                end
               transform Delete::FieldsExcept,
                 fields: %i[contype name prefnormorig]
               transform Rename::Field,

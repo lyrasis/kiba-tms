@@ -9,7 +9,6 @@ module Kiba
 
           def job
             return unless Tms::NameCompile.used?
-            return if target_tables.empty?
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
@@ -23,7 +22,8 @@ module Kiba
           end
 
           def sources
-            target_tables
+            config.uncontrolled_name_source_tables
+              .keys
               .map{ |key| Tms.const_get(key) }
               .map{ |mod| "name_compile_from__#{mod.filekey}".to_sym }
           end
@@ -39,20 +39,30 @@ module Kiba
             base
           end
 
-          def target_tables
-            init = config.uncontrolled_name_source_tables
-              .keys
-            return init unless ntc_done?
-
-            init.select{ |key| ntc_targets.any?(key) }
-          end
-
           def ntc_needed?
             return false unless ntc_done?
 
-            !target_tables.empty?
+            ntc_targets.any?('Uncontrolled')
           end
           extend Tms::Mixins::NameTypeCleanupable
+
+          def as_added_source
+            Kiba.job_segment do
+              prefname = Tms::Constituents.preferred_name_field
+
+              transform do |row|
+                next row if row.key?(:name)
+
+                pname = row[prefname]
+                row[:name] = pname
+                row.delete(prefname)
+                row
+              end
+
+              transform Deduplicate::Table,
+                field: :prefnormorig
+            end
+          end
 
           def xforms
             bind = binding
@@ -104,6 +114,54 @@ module Kiba
                   lookup: name_type_cleanup__for_uncontrolled_name_tables
 
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll
+
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: prefname,
+                  target: :corrnorm
+
+                dropped = Tms::NameTypeCleanup.dropped_name_indicator
+                transform Merge::MultiRowLookup,
+                  lookup: Tms.get_lookup(
+                    jobkey: :constituents__prep_clean,
+                    column: :norm
+                  ),
+                  keycolumn: :corrnorm,
+                  fieldmap: {conpref_contype: :contype},
+                  conditions: ->(row, mrows) do
+                    return [] unless row[:contype].blank?
+                    return [] if row[prefname].blank? ||
+                      row[prefname] == dropped
+
+                    [mrows.first]
+                  end
+                transform Merge::MultiRowLookup,
+                  lookup: Tms.get_lookup(
+                    jobkey: :constituents__prep_clean,
+                    column: :prefnormorig
+                  ),
+                  keycolumn: :corrnorm,
+                  fieldmap: {conorig_contype: :contype},
+                  conditions: ->(row, mrows) do
+                    return [] unless row[:contype].blank? &&
+                      row[:conpref_contype].blank?
+                    return [] if row[prefname].blank? ||
+                      row[prefname] == dropped
+
+                    [mrows.first]
+                  end
+                transform Delete::Fields, fields: :corrnorm
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[contype conpref_contype conorig_contype],
+                  target: :contype,
+                  sep: '',
+                  delete_sources: true
+                transform do |row|
+                  contype = row[:contype]
+                  next row unless contype.blank?
+
+                  row[:contype] = Tms::NameTypeCleanup.untyped_treatment
+                  row
+                end
               end
             end
           end

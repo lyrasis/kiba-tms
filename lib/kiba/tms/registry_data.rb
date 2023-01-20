@@ -1513,6 +1513,64 @@ module Kiba
             tags: %i[names],
             lookup_on: :constituentid
           }
+          register :orgs, {
+            creator: Kiba::Tms::Jobs::NameCompile::Orgs,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_orgs.csv'
+            ),
+            tags: %i[names]
+          }
+          register :persons, {
+            creator: Kiba::Tms::Jobs::NameCompile::Persons,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_persons.csv'
+            ),
+            tags: %i[names]
+          }
+          register :main_terms_for_norm_lookup, {
+            creator:
+              Kiba::Tms::Jobs::NameCompile::MainTermsForNormLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_main_terms_for_norm_lookup.csv'
+            ),
+            tags: %i[names]
+          }
+          register :notes_uncontrolled_for_norm_lookup, {
+            creator:
+            Kiba::Tms::Jobs::NameCompile::NotesUncontrolledForNormLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_notes_uncontrolled_for_norm_lookup.csv'
+            ),
+            tags: %i[names]
+          }
+          register :orgs_uncontrolled_for_norm_lookup, {
+            creator:
+            Kiba::Tms::Jobs::NameCompile::OrgsUncontrolledForNormLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_orgs_uncontrolled_for_norm_lookup.csv'
+            ),
+            tags: %i[names]
+          }
+          register :persons_uncontrolled_for_norm_lookup, {
+            creator:
+            Kiba::Tms::Jobs::NameCompile::PersonsUncontrolledForNormLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_persons_uncontrolled_for_norm_lookup.csv'
+            ),
+            tags: %i[names]
+          }
           register :variants_from_duplicate_constituents, {
             creator: Kiba::Tms::Jobs::NameCompile::VariantsFromDuplicateConstituents,
             path: File.join(Kiba::Tms.datadir, 'working', 'names_variants_from_duplicate_constituents.csv'),
