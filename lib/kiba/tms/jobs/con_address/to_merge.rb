@@ -34,12 +34,12 @@ module Kiba
               transform Delete::Fields,
                 fields: %i[kept keeping]
               transform Clean::RegexpFindReplaceFieldVals,
-                fields: Tms::Constituents.address_fields,
+                fields: config.address_fields,
                 find: '^n\/a$', replace: ''
 
               # SECTION remove rows with no address info
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: Tms::Constituents.address_fields,
+                sources: config.address_fields,
                 target: :concat,
                 sep: '',
                 delete_sources: false
@@ -61,10 +61,10 @@ module Kiba
                 billing: :defaultbilling,
                 mailing: :defaultmailing
               }.each do |type, srcfield|
-                treatment = "address_#{type}".to_sym
+                treatment = "#{type}_note".to_sym
                 mapping = "#{type}_mapping".to_sym
 
-                if Tms::Constituents.send(treatment)
+                if config.send(treatment)
                   transform Replace::FieldValueWithStaticMapping,
                     source: srcfield,
                     target: type,
@@ -73,11 +73,11 @@ module Kiba
                   transform Delete::Fields, fields: srcfield
                 end
               end
-              if Tms::Constituents.address_active
+              if config.active_note
                 transform Rename::Field, from: :active, to: :addressstatus
               end
 
-              if Tms::Constituents.address_dates
+              if config.address_dates
                 # todo if required - combine into one :address_dates field
               else
                 transform Delete::Fields, fields: %i[begindate enddate]
@@ -125,7 +125,7 @@ module Kiba
                 sep: '; ',
                 delete_sources: true
 
-              if Tms::Constituents.address_remarks_handling == :specific
+              if config.address_remarks_handling == :specific
                 transform Prepend::FieldToFieldValue,
                   target_field: :address_notes,
                   prepended_field: :shortname,

@@ -8,8 +8,14 @@ module Kiba
           def initialize
             @matches_field = :matches_constituent
             @target = :keeping
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: Tms::Constituents.address_fields)
-            @chks = Tms::Constituents.omit_inactive_address ? %i[no_match inactive data] : %i[no_match data]
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: Tms::ConAddress.address_fields
+            )
+            @chks = if Tms::ConAddress.omit_inactive_address
+                      %i[no_match inactive data]
+                    else
+                      %i[no_match data]
+                    end
           end
 
           # @private

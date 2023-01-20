@@ -52,35 +52,6 @@ module Kiba
       # used by Constituents::DeletePrefixesFromDisplayDate
       setting :displaydate_deletable_prefixes, default: [], reader: true
 
-      # inactive addresses are excluded from migration
-      setting :omit_inactive_address, default: false, reader: true
-      # ConAddress columns to include in address value
-      setting :address_fields,
-        default: %i[displayname1 displayname2 streetline1 streetline2 streetline3 city state zipcode],
-        reader: true
-      # ConAddress columns that will be combined into CS addressplace1, if present
-      setting :addressplace1_fields,
-        default: %i[displayname1 displayname2],
-        reader: true
-      # ConAddress columns that will be combined into CS addressplace2.
-      # If no values in addressplace1_fields, the first of these becomes addressplace1
-      setting :addressplace2_fields,
-        default: %i[streetline1 streetline2 streetline3],
-        reader: true
-      setting :addressplace1_delim, default: ' -- ', reader: true
-      setting :addressplace2_delim, default: ', ', reader: true
-      # The next four settings are whether to generate notes about address type/status, eg. "Is
-      # default mailing address". Default to no since CS doesn't have any note field associated with
-      # a given address
-      setting :address_shipping, default: false, reader: true
-      setting :address_billing, default: false, reader: true
-      setting :address_mailing, default: false, reader: true
-      setting :address_active, default: false, reader: true
-      setting :address_dates, default: false, reader: true
-      # What to do with address remarks:
-      #  - :plain - will go into authority record's note field
-      #  - :specific - will go into a note tagged with the specific address it applies to
-      setting :address_remarks_handling, default: :specific, reader: true
       # The following are useful if there are duplicate preferred names that have different date values that
       #   can disambiguate the names. Note that this refers to date fields in the Constituents table or
       #   merged into such during its prep. It does not control anything about processing ConDates

@@ -6,10 +6,8 @@ module Kiba
       module ConAddress
         module Multi
           module_function
-          
+
           def job
-            Tms.config.constituents.address_active = true
-            Tms.config.constituents.address_remarks_handling = :plain
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :con_address__to_merge,

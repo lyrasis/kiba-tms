@@ -17,6 +17,42 @@ module Kiba
           '1' => 'Active address'
         },
         reader: true
+      # Whether to migrate begin/end dates associated with addresses. If this
+      #   is set to true, further implementation work needs to be done
+      setting :address_dates, default: false, reader: true
+      # ConAddress columns to include in address value
+      setting :address_fields,
+        default: %i[displayname1 displayname2 streetline1 streetline2
+                    streetline3 city state zipcode],
+        reader: true
+      # ConAddress columns that will be combined into CS addressplace1, if
+      #   present
+      setting :addressplace1_fields,
+        default: %i[displayname1 displayname2],
+        reader: true
+      # ConAddress columns that will be combined into CS addressplace2.
+      #   If no values in addressplace1_fields, the first of these becomes
+      #   addressplace1
+      setting :addressplace2_fields,
+        default: %i[streetline1 streetline2 streetline3],
+        reader: true
+      setting :addressplace1_delim, default: ' -- ', reader: true
+      setting :addressplace2_delim, default: ', ', reader: true
+      # The next four settings are whether to generate notes about address
+      #   type/status, eg. "Is default mailing address". Default to no since CS
+      #   doesn't have any note field associated with a given address
+      setting :active_note, default: false, reader: true
+      setting :billing_note, default: false, reader: true
+      setting :mailing_note, default: false, reader: true
+      setting :shipping_note, default: false, reader: true
+
+      # What to do with address remarks:
+      #  - :plain - will go into authority record's note field
+      #  - :specific - will go into a note tagged with the specific address it
+      #  applies to
+      setting :address_remarks_handling, default: :specific, reader: true
+      # whether inactive addresses are excluded from migration
+      setting :omit_inactive_address, default: false, reader: true
       setting :shipping_mapping,
         default: {
           '0' => nil,
