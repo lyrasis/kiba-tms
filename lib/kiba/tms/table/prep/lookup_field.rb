@@ -25,6 +25,7 @@ module Kiba
           FIELDS = {
             accession_lot: :acquisitionlotid,
             accession_methods: :accessionmethodid,
+            address_types: Tms::AddressTypes.id_field,
             alt_nums: :lookupkey,
             classifications: :classificationid,
             classification_notations: :classificationnotationid,
