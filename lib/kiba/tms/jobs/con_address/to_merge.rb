@@ -7,40 +7,32 @@ module Kiba
         module ToMerge
           module_function
 
-          ACTIVE = {
-            '0' => 'Inactive address',
-            '1' => 'Active address'
-          }
-          SHIPPING = {
-            '0' => nil,
-            '1' => 'Is default shipping address'
-          }
-          BILLING = {
-            '0' => nil,
-            '1' => 'Is default billing address'
-          }
-          MAILING = {
-            '0' => nil,
-            '1' => 'Is default mailing address'
-          }
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__con_address,
                 destination: :con_address__to_merge,
-                lookup: %i[prep__countries names__by_constituentid]
+                lookup: %i[
+                           prep__countries
+                           names__by_constituentid
+                          ]
               },
               transformer: xforms
             )
           end
 
           def xforms
-            Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :keeping, value: 'y'
-              transform Delete::Fields, fields: %i[kept keeping conaddressid countryold lastsalestaxid
-                                                   addressformatid islocation]
+            bind = binding
 
+            Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :keeping,
+                value: 'y'
+              transform Delete::Fields,
+                fields: %i[kept keeping]
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: Tms::Constituents.address_fields,
                 find: '^n\/a$', replace: ''
@@ -51,7 +43,8 @@ module Kiba
                 target: :concat,
                 sep: '',
                 delete_sources: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :concat
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :concat
               transform Delete::Fields, fields: %i[concat]
               # END SECTION
 
@@ -62,32 +55,26 @@ module Kiba
               transform Delete::Fields, fields: :countryid
               transform Cspace::AddressCountry
 
+              {
+                active: :active,
+                shipping: :defaultshipping,
+                billing: :defaultbilling,
+                mailing: :defaultmailing
+              }.each do |type, srcfield|
+                treatment = "address_#{type}".to_sym
+                mapping = "#{type}_mapping".to_sym
+
+                if Tms::Constituents.send(treatment)
+                  transform Replace::FieldValueWithStaticMapping,
+                    source: srcfield,
+                    target: type,
+                    mapping: config.send(mapping)
+                else
+                  transform Delete::Fields, fields: srcfield
+                end
+              end
               if Tms::Constituents.address_active
-                transform Replace::FieldValueWithStaticMapping, source: :active, target: :addressstatus,
-                  mapping: ACTIVE
-              else
-                transform Delete::Fields, fields: :active
-              end
-
-              if Tms::Constituents.address_shipping
-              transform Replace::FieldValueWithStaticMapping, source: :defaultshipping, target: :shipping,
-                mapping: SHIPPING
-              else
-                transform Delete::Fields, fields: :defaultshipping
-              end
-
-              if Tms::Constituents.address_billing
-              transform Replace::FieldValueWithStaticMapping, source: :defaultbilling, target: :billing,
-                mapping: BILLING
-              else
-                transform Delete::Fields, fields: :defaultbilling
-              end
-
-              if Tms::Constituents.address_mailing
-              transform Replace::FieldValueWithStaticMapping, source: :defaultmailing, target: :mailing,
-                mapping: MAILING
-              else
-                transform Delete::Fields, fields: :defaultmailing
+                transform Rename::Field, from: :active, to: :addressstatus
               end
 
               if Tms::Constituents.address_dates
@@ -146,8 +133,6 @@ module Kiba
               end
 
               transform Prepend::ToFieldValue, field: :address_notes, value: 'Address note:'
-
-              transform Delete::EmptyFields, consider_blank: {addresstypeid: '0'}
             end
           end
         end
