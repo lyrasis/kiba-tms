@@ -23,7 +23,9 @@ module Kiba
       #   everything on base data. If yes, we merge in/overlay cleanup on the
       #   affected base data tables
       setting :done, default: false, reader: true
-
+      setting :dropped_name_indicator,
+        default: 'DROPPED FROM MIGRATION',
+        reader: true
       setting :untyped_treatment,
         default: 'Person',
         reader: true

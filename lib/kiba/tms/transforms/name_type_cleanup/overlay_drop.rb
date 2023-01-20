@@ -23,7 +23,11 @@ module Kiba
           # @param source [Symbol] field containing corrected name
           def initialize(target:)
             @target = target
-            @val = Tms.migration_status == :dev ? 'DROPPED FROM MIGRATION' : nil
+            @val = if Tms.migration_status == :dev
+                     Tms::NameTypeCleanup.dropped_name_indicator
+                   else
+                     nil
+                   end
           end
 
           def process(row)
