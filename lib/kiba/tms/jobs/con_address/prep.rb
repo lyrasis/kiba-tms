@@ -30,6 +30,7 @@ module Kiba
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
+
               transform Merge::MultiRowLookup,
                 lookup: names__by_constituentid,
                 keycolumn: :constituentid,

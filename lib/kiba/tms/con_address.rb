@@ -17,9 +17,6 @@ module Kiba
           '1' => 'Active address'
         },
         reader: true
-      # Whether to migrate begin/end dates associated with addresses. If this
-      #   is set to true, further implementation work needs to be done
-      setting :address_dates, default: false, reader: true
       # ConAddress columns to include in address value
       setting :address_fields,
         default: %i[displayname1 displayname2 streetline1 streetline2
@@ -27,6 +24,20 @@ module Kiba
         reader: true
       # ConAddress columns that will be combined into CS addressplace1, if
       #   present
+      setting :note_fields,
+        default: %i[remarks],
+        reader: true,
+        constructor: ->(value){
+          value << :addresstype if Tms::AddressTypes.used?
+          value << :addressdates if dates_note
+          %w[active billing mailing shipping].each do |type|
+            value << type.to_sym if send("#{type}_note".to_sym)
+          end
+          value
+        }
+      setting :note_prefix,
+        default: 'Address note: ',
+        reader: true
       setting :addressplace1_fields,
         default: %i[displayname1 displayname2],
         reader: true
@@ -45,6 +56,9 @@ module Kiba
       setting :billing_note, default: false, reader: true
       setting :mailing_note, default: false, reader: true
       setting :shipping_note, default: false, reader: true
+      # Whether to migrate begin/end dates associated with addresses. If this
+      #   is set to true, further implementation work needs to be done
+      setting :dates_note, default: false, reader: true
 
       # What to do with address remarks:
       #  - :plain - will go into authority record's note field

@@ -12,13 +12,21 @@ module Kiba
               files: {
                 source: :prep__con_address,
                 destination: :con_address__to_merge,
-                lookup: %i[
-                           prep__countries
-                           names__by_constituentid
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = [:names__by_constituentid]
+            if Tms::Countries.used
+              base << :prep__countries
+            end
+            if Tms::AddressTypes.used
+              base << :prep__address_types
+            end
+            base
           end
 
           def xforms
@@ -32,28 +40,33 @@ module Kiba
                 field: :keeping,
                 value: 'y'
               transform Delete::Fields,
-                fields: %i[kept keeping]
+                fields: :keeping
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: config.address_fields,
                 find: '^n\/a$', replace: ''
 
-              # SECTION remove rows with no address info
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: config.address_fields,
-                target: :concat,
-                sep: '',
-                delete_sources: false
-              transform FilterRows::FieldPopulated, action: :keep,
-                field: :concat
-              transform Delete::Fields, fields: %i[concat]
-              # END SECTION
+              contentfields = config.address_fields
+                .reject{ |field| field.to_s.start_with?('display') }
+              transform FilterRows::AnyFieldsPopulated,
+                action: :keep,
+                fields: contentfields
 
-              transform Merge::MultiRowLookup,
-                lookup: prep__countries,
-                keycolumn: :countryid,
-                fieldmap: {addresscountry: :country}
+              if Tms::Countries.used
+                transform Merge::MultiRowLookup,
+                  lookup: prep__countries,
+                  keycolumn: :countryid,
+                  fieldmap: {addresscountry: :country}
+                transform Cspace::AddressCountry
+              end
               transform Delete::Fields, fields: :countryid
-              transform Cspace::AddressCountry
+
+              if Tms::AddressTypes.used
+                transform Merge::MultiRowLookup,
+                  lookup: prep__address_types,
+                  keycolumn: :addresstypeid,
+                  fieldmap: {addresstype: :addresstype}
+              end
+              transform Delete::Fields, fields: :addresstypeid
 
               {
                 active: :active,
@@ -72,9 +85,6 @@ module Kiba
                 else
                   transform Delete::Fields, fields: srcfield
                 end
-              end
-              if config.active_note
-                transform Rename::Field, from: :active, to: :addressstatus
               end
 
               if config.address_dates
@@ -120,7 +130,7 @@ module Kiba
               transform Tms::Transforms::ConAddress::ReshapeAddressData
 
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[remarks address_dates addressstatus shipping billing mailing],
+                sources: config.note_fields,
                 target: :address_notes,
                 sep: '; ',
                 delete_sources: true
@@ -132,7 +142,9 @@ module Kiba
                   sep: ': '
               end
 
-              transform Prepend::ToFieldValue, field: :address_notes, value: 'Address note:'
+              transform Prepend::ToFieldValue,
+                field: :address_notes,
+                value: config.note_prefix
             end
           end
         end

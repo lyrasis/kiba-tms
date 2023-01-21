@@ -26,7 +26,7 @@ module Kiba
                 fieldmap: {
                   person: :person,
                   org: :org,
-                  termdisplayname: Tms::Constituents.preferred_name_field,
+                  termdisplayname: :cleanedprefname,
                   addresscount: :addresscount
                 }
 
@@ -39,7 +39,8 @@ module Kiba
                 row
               end
 
-              transform Delete::Fields, fields: %i[person org constituentid displayaddress shortname]
+              transform Delete::Fields,
+                fields: %i[person org constituentid displayaddress shortname]
             end
           end
         end
