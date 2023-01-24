@@ -20,7 +20,6 @@ module Kiba
 
           def lookups
             # org_contacts__to_merge
-            # con_alt_names__to_merge_org
             base = %i[
                      ]
             if Tms::ConAddress.used?
@@ -46,8 +45,6 @@ module Kiba
 
               # transform Tms::Transforms::Org::PrefName
               # transform Tms::Transforms::Org::VariantName
-              # transform Tms::Transforms::Org::AltName,
-              #   lookup: con_alt_names__to_merge_org
               # transform Tms::Transforms::Names::CompilePrefVarAlt,
               #   authority_type: :org
 

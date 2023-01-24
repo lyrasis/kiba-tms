@@ -349,33 +349,6 @@ module Kiba
               'constituents table. If preferred name field = alphasort, move '\
               'org names from displayname to alphasort.'
           }
-          # register :categorized_post_cleanup, {
-          #   creator: Kiba::Tms::Jobs::ConAltNames::CategorizedPostCleanup,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_categorized_post_cleanup.csv'),
-          #   desc: 'Categorizes prepped data into handling categories using cleanup data',
-          #   tags: %i[con con_alt_names],
-          #   lookup_on: :constituentid
-          # }
-          # register :to_merge_org, {
-          #   creator: Kiba::Tms::Jobs::ConAltNames::ToMergeIntoOrg,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_to_merge_into_org.csv'),
-          #   desc: 'ConAltNames data to merge into Org Constituents',
-          #   tags: %i[con con_alt_names],
-          #   lookup_on: :org
-          # }
-          # register :to_merge_person, {
-          #   creator: Kiba::Tms::Jobs::ConAltNames::ToMergeIntoPerson,
-          #   path: File.join(Kiba::Tms.datadir, 'working', 'con_alt_names_to_merge_into_person.csv'),
-          #   desc: 'ConAltNames data to merge into Person Constituents',
-          #   tags: %i[con con_alt_names],
-          #   lookup_on: :person
-          # }
-          # register :dropping, {
-          #   creator: Kiba::Tms::Jobs::ConAltNames::Dropping,
-          #   path: File.join(Kiba::Tms.datadir, 'reports', 'con_alt_names_dropping.csv'),
-          #   desc: 'ConAltNames data being removed from migration',
-          #   tags: %i[con con_alt_names reports not_migrating]
-          # }
         end
 
         Kiba::Tms.registry.namespace('con_dates') do

@@ -12,15 +12,18 @@ module Kiba
               files: {
                 source: :name_compile__persons,
                 destination: :persons__cspace,
-                lookup: %i[
-                           con_address__for_persons
-                           con_alt_names__to_merge_person
-                           con_email__for_persons
-                           con_phones__for_persons
-                          ]
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = []
+            base << con_address__for_persons if Tms::ConAddress.used
+            base << con_email__for_persons if Tms::ConEMail.used
+            base << con_phones__for_persons if Tms::ConPhones.used
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -37,8 +40,6 @@ module Kiba
                 replace: ''
               transform Tms::Transforms::Person::PrefName
               transform Tms::Transforms::Person::VariantName
-              transform Tms::Transforms::Person::AltName,
-                lookup: con_alt_names__to_merge_person
               transform Tms::Transforms::Names::CompilePrefVarAlt,
                 authority_type: :person
 
