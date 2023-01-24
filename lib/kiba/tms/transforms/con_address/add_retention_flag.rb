@@ -21,12 +21,11 @@ module Kiba
           # @private
           def process(row)
             row[target] = 'y'
-#            binding.pry if row[:active] = '0'
             run_chks(chks, row)
             row.delete(matches_field)
             row
           end
-          
+
           private
 
           attr_reader :matches_field, :target, :getter, :chks

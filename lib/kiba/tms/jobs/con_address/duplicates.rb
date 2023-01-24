@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module ConAddress
-        module ForPersons
+        module Duplicates
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :con_address__to_merge,
-                destination: :con_address__for_persons
+                source: :con_address__shaped,
+                destination: :con_address__duplicates
               },
               transformer: xforms
             )
@@ -19,9 +19,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated,
+              transform FilterRows::FieldEqualTo,
                 action: :keep,
-                field: :person
+                field: :duplicate,
+                value: "y"
+              transform Delete::Fields,
+                fields: :duplicate
             end
           end
         end

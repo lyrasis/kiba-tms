@@ -261,6 +261,13 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('con_address') do
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::ConAddress::Shaped,
+            path: File.join(Kiba::Tms.datadir, 'working', 'con_address_shaped.csv'),
+            desc: 'Removes rows with no address data, merges in coded values, '\
+              'shapes for CS, flags duplicate address data rows',
+            tags: %i[con con_address]
+          }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_address_to_merge.csv'),
@@ -282,8 +289,24 @@ module Kiba
           }
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConAddress::Dropping,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'con_address_dropping.csv'),
-            tags: %i[con con_address not_migrating reports]
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_address_dropping.csv'),
+            desc: 'Addresses dropped from migration because (1) they are for '\
+              'constituents that are not migrating; (2) they are marked '\
+              'inactive and the migration is set to omit inactive addresses; '\
+              'or there was no address data in the row',
+            tags: %i[con con_address postmigcleanup]
+          }
+          register :duplicates, {
+            creator: Kiba::Tms::Jobs::ConAddress::Duplicates,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_address_duplicates.csv'),
+            desc: 'Addresses dropped from migration because, once data was '\
+              'processed/shaped, the address duplicated another address for '\
+              'the same constituent. Remarks/notes for the address were NOT '\
+              'included in deduplication process, so this report is given in '\
+              'any important info was dropped from those fields.',
+            tags: %i[con con_address postmigcleanup]
           }
           register :add_counts, {
             creator: Kiba::Tms::Jobs::ConAddress::AddCounts,

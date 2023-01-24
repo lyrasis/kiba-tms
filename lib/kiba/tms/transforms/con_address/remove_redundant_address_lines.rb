@@ -4,8 +4,9 @@ module Kiba
   module Tms
     module Transforms
       module ConAddress
+        # Removes address displayname values that duplicate the constituent
+        #   name the address will be merged into
         class RemoveRedundantAddressLines
-
           def initialize(lookup:)
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
