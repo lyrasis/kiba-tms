@@ -14,7 +14,7 @@ module Kiba
       setting :type_field, default: :emailtype, reader: true
       setting :used_in,
         default: [
-          "ConEmail.#{id_field}"
+          "ConEMail.#{id_field}"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

@@ -12,10 +12,16 @@ module Kiba
               files: {
                 source: :tms__con_email,
                 destination: :prep__con_email,
-                lookup: %i[prep__email_types nameclean__by_constituentid]
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = [:names__by_constituentid]
+            base << :prep__email_types if Tms::EMailTypes.used
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -31,14 +37,16 @@ module Kiba
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
-              # merge in email type
-              transform Merge::MultiRowLookup,
-                lookup: prep__email_types,
-                keycolumn: :emailtypeid,
-                fieldmap: { emailtype: :emailtype }
+              if Tms::EMailTypes.used
+                transform Merge::MultiRowLookup,
+                  lookup: prep__email_types,
+                  keycolumn: :emailtypeid,
+                  fieldmap: { emailtype: :emailtype }
+              end
+              transform Delete::Fields, fields: :emailtypeid
 
               transform Merge::MultiRowLookup,
-                lookup: nameclean__by_constituentid,
+                lookup: names__by_constituentid,
                 keycolumn: :constituentid,
                 fieldmap: {
                   matches_constituent: :constituentid,
@@ -60,8 +68,10 @@ module Kiba
                 end
                 row
               end
-              transform Tms::Transforms::Constituents::PrefixMergeTableDescription, fields: %i[email web]
-              transform Delete::Fields, fields: %i[conemailid emailtypeid constituentid]
+              transform Tms::Transforms::Constituents::PrefixMergeTableDescription,
+                fields: %i[email web]
+              transform Delete::Fields,
+                fields: %i[conemailid emailtypeid]
             end
           end
         end

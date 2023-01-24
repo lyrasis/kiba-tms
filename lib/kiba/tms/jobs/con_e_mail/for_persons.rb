@@ -19,10 +19,15 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :keeping, value: 'y'
-              transform FilterRows::FieldPopulated, action: :keep, field: :person
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :keeping,
+                value: 'y'
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :person
             end
-            
+
           end
         end
       end

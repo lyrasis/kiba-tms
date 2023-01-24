@@ -396,8 +396,11 @@ module Kiba
         Kiba::Tms.registry.namespace('con_email') do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'con_email_dropping.csv'),
-            tags: %i[con conemail prep not_migrating reports]
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_email_dropping.csv'),
+            tags: %i[con conemail prep postmigcleanup],
+            desc: 'Rows from TMS ConEMail table that are omitted from the '\
+              'migration because the associated constituent is not migrating'
           }
           register :for_persons, {
             creator: Kiba::Tms::Jobs::ConEMail::ForPersons,
