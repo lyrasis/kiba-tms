@@ -7,12 +7,10 @@ module Kiba
         module Cspace
           module_function
 
-          ITERATION = Tms::Names.cleanup_iteration
-
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: "nameclean#{ITERATION}__persons_kept".to_sym,
+                source: :name_compile__persons,
                 destination: :persons__cspace,
                 lookup: %i[
                            con_address__for_persons
