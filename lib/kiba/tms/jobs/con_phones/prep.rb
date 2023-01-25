@@ -33,6 +33,7 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::DeleteTmsFields
+
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
@@ -48,19 +49,20 @@ module Kiba
 
               transform config.description_cleaner if config.description_cleaner
 
-              transform Tms::Transforms::Constituents::Merger,
+              transform Merge::MultiRowLookup,
                 lookup: names__by_constituentid,
                 keycolumn: :constituentid,
-               targets: {
+                fieldmap: {
+                  matches_constituent: :constituentid,
                   person: :person,
                   org: :org,
                   prefname: :prefname
                 }
-             transform Tms::Transforms::Constituents::AddRetentionFlag,
-               field: :prefname
-             transform Delete::Fields, fields: :prefname
+              transform Tms::Transforms::Constituents::AddRetentionFlag,
+                field: :prefname
+              transform Delete::Fields, fields: :prefname
 
-             transform Tms::Transforms::ConPhones::SeparatePhoneAndFax
+              transform Tms::Transforms::ConPhones::SeparatePhoneAndFax
               transform Tms::Transforms::Constituents::PrefixMergeTableDescription,
                 fields: %i[phone fax]
               transform Delete::Fields, fields: :conphoneid
