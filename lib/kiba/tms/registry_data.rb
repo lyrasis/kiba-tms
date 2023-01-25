@@ -1530,6 +1530,36 @@ module Kiba
             ),
             tags: %i[names]
           }
+          register :bio_note, {
+            creator: Kiba::Tms::Jobs::NameCompile::BioNote,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_bio_notes.csv'
+            ),
+            tags: %i[names],
+            lookup_on: :namemergenorm
+          }
+          register :contact_person, {
+            creator: Kiba::Tms::Jobs::NameCompile::ContactPerson,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_contact_persons.csv'
+            ),
+            tags: %i[names],
+            lookup_on: :namemergenorm
+          }
+          register :variant_term, {
+            creator: Kiba::Tms::Jobs::NameCompile::VariantTerm,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_variant_terms.csv'
+            ),
+            tags: %i[names],
+            lookup_on: :namemergenorm
+          }
           register :main_terms_for_norm_lookup, {
             creator:
               Kiba::Tms::Jobs::NameCompile::MainTermsForNormLookup,

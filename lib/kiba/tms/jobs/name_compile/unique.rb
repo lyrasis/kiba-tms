@@ -41,6 +41,9 @@ module Kiba
                            related_duplicate_all note_duplicate_all
                            combined duplicate varname
                           ]
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: :name,
+                target: :namemergenorm
             end
           end
         end
