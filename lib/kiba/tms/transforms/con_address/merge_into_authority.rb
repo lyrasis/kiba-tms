@@ -25,7 +25,7 @@ module Kiba
               Merge::MultiRowLookup.new(
                 lookup: lookup,
                 keycolumn: :constituentid,
-                delim: '%CR%%CR%',
+                delim: '%CR%',
                 fieldmap: {
                   address_namenote: :address_notes
                 },

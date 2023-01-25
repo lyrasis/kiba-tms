@@ -115,8 +115,8 @@ module Kiba
               transform Delete::EmptyFields, usenull: true
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
-                find: '%CR%%CR%',
-                replace: "\n\n"
+                find: '%CR%',
+                replace: "\n"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
                 find: '%QUOT%',
