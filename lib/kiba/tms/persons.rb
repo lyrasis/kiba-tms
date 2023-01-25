@@ -2,7 +2,7 @@
 
 module Kiba
   module Tms
-    module Person
+    module Persons
       extend Dry::Configurable
       module_function
 
@@ -11,6 +11,9 @@ module Kiba
 
       setting :bionote_sources,
         default: [],
+        reader: true
+      setting :group_sources,
+        default: [:culturegroup],
         reader: true
       setting :namenote_sources,
         default: [],
