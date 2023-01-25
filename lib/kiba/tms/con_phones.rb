@@ -9,6 +9,10 @@ module Kiba
       module_function
 
       extend Tms::Mixins::Tableable
+
+      setting :description_cleaner,
+        default: nil,
+        reader: true
     end
   end
 end

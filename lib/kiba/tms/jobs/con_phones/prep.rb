@@ -23,12 +23,20 @@ module Kiba
           def lookups
             base = %i[names__by_constituentid]
             base << :prep__phone_types if Tms::PhoneTypes.used?
-            base
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::DeleteTmsFields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
+              end
+              transform Tms.data_cleaner if Tms.data_cleaner
 
               if Tms::PhoneTypes.used?
                 transform Merge::MultiRowLookup,
@@ -36,6 +44,9 @@ module Kiba
                   keycolumn: :phonetypeid,
                   fieldmap: { phonetype: :phonetype }
               end
+              transform Delete::Fields, fields: :phonetypeid
+
+              transform config.description_cleaner if config.description_cleaner
 
               transform Tms::Transforms::Constituents::Merger,
                 lookup: names__by_constituentid,
@@ -47,30 +58,12 @@ module Kiba
                 }
              transform Tms::Transforms::Constituents::AddRetentionFlag,
                field: :prefname
+             transform Delete::Fields, fields: :prefname
 
-              transform do |row|
-                desc = row[:description]
-                next row if desc.blank?
-
-                if desc =~ /^phone$/i
-                  row[:description] = nil
-                elsif desc =~ /^business|business phone|phone - organization|work$/i
-                  row[:description] = nil
-                  row[:phonetype] = 'business'
-                elsif desc =~ /^cell|phone - cell|phone cell$/i
-                  row[:description] = nil
-                  row[:phonetype] = 'mobile'
-                elsif desc =~ /^home|home phone|phone - home$/i
-                  row[:description] = nil
-                  row[:phonetype] = 'home'
-                end
-                row
-              end
-
-              transform Tms::Transforms::ConPhones::SeparatePhoneAndFax
+             transform Tms::Transforms::ConPhones::SeparatePhoneAndFax
               transform Tms::Transforms::Constituents::PrefixMergeTableDescription,
                 fields: %i[phone fax]
-              transform Delete::Fields, fields: %i[conphoneid phonetypeid]
+              transform Delete::Fields, fields: :conphoneid
             end
           end
         end
