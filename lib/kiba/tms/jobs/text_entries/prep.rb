@@ -22,8 +22,9 @@ module Kiba
 
           def lookups
             base = %i[names__by_constituentid]
-            base << :prep__text_types if Tms::TextTypes.used?
-            base
+            base << :prep__text_types if Tms::TextTypes.used
+            base << :prep__text_statuses if Tms::TextStatuses.used
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -58,13 +59,22 @@ module Kiba
                 textentryid: :sort
               }
               transform Tms::Transforms::TmsTableNames
-              if Tms::TextTypes.used?
+
+              if Tms::TextTypes.used
                 transform Merge::MultiRowLookup,
                   lookup: prep__text_types,
                   keycolumn: :texttypeid,
                   fieldmap: { texttype: :texttype }
               end
               transform Delete::Fields, fields: :texttypeid
+
+              if Tms::TextStatuses.used
+                transform Merge::MultiRowLookup,
+                  lookup: prep__text_statuses,
+                  keycolumn: :textstatusid,
+                  fieldmap: { textstatus: :textstatus }
+              end
+              transform Delete::Fields, fields: :textstatusid
 
               transform Tms::Transforms::Constituents::Merger,
                 lookup: names__by_constituentid,
@@ -73,10 +83,6 @@ module Kiba
                   org_author: :org,
                   person_author: :person
                 }
-
-              if Tms.data_cleaner
-                transform Tms.data_cleaner
-              end
             end
           end
         end
