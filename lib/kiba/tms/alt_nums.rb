@@ -31,6 +31,18 @@ module Kiba
         default: {},
         reader: true
 
+      # pass in client-specific transform classes to prepare text_entry rows for
+      #   merging
+      setting :for_constituents_prepper, default: nil, reader: true
+      setting :for_objects_prepper, default: nil, reader: true
+      setting :for_reference_master_prepper, default: nil, reader: true
+
+      # pass in client-specific transform classes to merge text_entry rows into
+      #   target tables
+      setting :for_constituents_merge, default: nil, reader: true
+      setting :for_objects_merge, default: nil, reader: true
+      setting :for_reference_master_merge, default: nil, reader: true
+
       def cleaned_files_for(tablename)
         return [] unless target_table_type_cleanup_done.key?(tablename)
 

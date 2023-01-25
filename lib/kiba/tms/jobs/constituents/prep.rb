@@ -134,6 +134,12 @@ module Kiba
                 transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
               end
 
+              if Tms::AltNums.for?(config.table_name) &&
+                  Tms::AltNums.for_constituents_merge
+                transform Tms::AltNums.for_constituents_merge
+              end
+
+
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: config.preferred_name_field,
                 target: :norm
