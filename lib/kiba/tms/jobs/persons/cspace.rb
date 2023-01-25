@@ -40,6 +40,8 @@ module Kiba
             bind = binding
 
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Delete::Fields,
                 fields: %i[sort contype relation_type variant_term
                            variant_qualifier related_term related_role
@@ -100,12 +102,20 @@ module Kiba
                 lookup: con_phones__to_merge
               end
 
-              # transform CombineValues::FromFieldsWithDelimiter,
-              #   sources: %i[remarks text_entry address_namenote
-              #               email_web_namenote phone_fax_namenote],
-              #   target: :namenote,
-              #   sep: '%CR%%CR%',
-              #   delete_sources: true
+              unless config.bionote_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.bionote_sources,
+                  target: :bionote,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
+              unless config.namenote_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.namenote_sources,
+                  target: :namenote,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
 
               transform Delete::Fields, fields: :termsource
 
