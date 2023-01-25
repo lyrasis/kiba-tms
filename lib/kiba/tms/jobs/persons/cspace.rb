@@ -101,8 +101,10 @@ module Kiba
                   lookup: con_email__to_merge
               end
               if Tms::ConPhones.used
-              transform Tms::Transforms::ConPhones::MergeIntoAuthority,
-                lookup: con_phones__to_merge
+                transform Tms::Transforms::ConPhones::MergeIntoAuthority,
+                  lookup: con_phones__to_merge
+              end
+
               if Tms::TextEntries.for?('Constituents') &&
                   Tms::TextEntries.for_constituents_merge
                 transform Tms::TextEntries.for_constituents_merge,
