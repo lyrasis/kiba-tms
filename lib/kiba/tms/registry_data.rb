@@ -419,12 +419,12 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports', 'con_phones_dropping.csv'),
             tags: %i[con conphones prep not_migrating reports]
           }
-          register :for_persons, {
-            creator: Kiba::Tms::Jobs::ConPhones::ForPersons,
+          register :to_merge, {
+            creator: Kiba::Tms::Jobs::ConPhones::ToMerge,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
-              'con_phones_for_persons.csv'
+              'con_phones_to_merge.csv'
             ),
             tags: %i[con conphones],
             lookup_on: :constituentid

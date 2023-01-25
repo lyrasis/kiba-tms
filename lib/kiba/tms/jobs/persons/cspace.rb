@@ -22,7 +22,7 @@ module Kiba
             base = []
             base << :con_address__to_merge if Tms::ConAddress.used
             base << :con_email__to_merge if Tms::ConEMail.used
-            base << :con_phones__for_persons if Tms::ConPhones.used
+            base << :con_phones__to_merge if Tms::ConPhones.used
             base << :name_compile__variant_term
             base << :name_compile__bio_note
             base.select{ |job| Tms.job_output?(job) }
@@ -97,7 +97,7 @@ module Kiba
               end
               if Tms::ConPhones.used
               transform Tms::Transforms::ConPhones::MergeIntoAuthority,
-                lookup: con_phones__for_persons
+                lookup: con_phones__to_merge
               end
 
               # transform CombineValues::FromFieldsWithDelimiter,
