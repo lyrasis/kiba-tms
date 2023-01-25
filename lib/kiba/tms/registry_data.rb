@@ -283,12 +283,6 @@ module Kiba
             tags: %i[con con_address],
             lookup_on: :constituentid
           }
-          register :for_persons, {
-            creator: Kiba::Tms::Jobs::ConAddress::ForPersons,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_address_for_persons.csv'),
-            tags: %i[con con_address],
-            lookup_on: :person
-          }
           register :for_orgs, {
             creator: Kiba::Tms::Jobs::ConAddress::ForOrgs,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_address_for_orgs.csv'),
