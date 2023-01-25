@@ -34,6 +34,7 @@ module Kiba
             con_address: :conaddressid,
             con_alt_names: :altnameid,
             con_dates: :constituentid,
+            con_display_bios: :constituentid,
             con_geo_codes: :congeocodeid,
             con_geography: :constituentid,
             con_types: :constituenttypeid,
