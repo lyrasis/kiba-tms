@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module ConEMail
-        module ForPersons
+        module ToMerge
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__con_email,
-                destination: :con_email__for_persons
+                destination: :con_email__to_merge
               },
               transformer: xforms
             )
@@ -23,9 +23,7 @@ module Kiba
                 action: :keep,
                 field: :keeping,
                 value: 'y'
-              transform FilterRows::FieldPopulated,
-                action: :keep,
-                field: :person
+              transform Delete::Fields, fields: :keeping
             end
 
           end

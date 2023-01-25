@@ -21,7 +21,7 @@ module Kiba
           def lookups
             base = []
             base << :con_address__to_merge if Tms::ConAddress.used
-            base << :con_email__for_persons if Tms::ConEMail.used
+            base << :con_email__to_merge if Tms::ConEMail.used
             base << :con_phones__for_persons if Tms::ConPhones.used
             base << :name_compile__variant_term
             base << :name_compile__bio_note
@@ -93,7 +93,7 @@ module Kiba
               end
               if Tms::ConEMail.used
                 transform Tms::Transforms::ConEmail::MergeIntoAuthority,
-                  lookup: con_email__for_persons
+                  lookup: con_email__to_merge
               end
               if Tms::ConPhones.used
               transform Tms::Transforms::ConPhones::MergeIntoAuthority,

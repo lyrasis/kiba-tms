@@ -404,17 +404,12 @@ module Kiba
             desc: 'Rows from TMS ConEMail table that are omitted from the '\
               'migration because the associated constituent is not migrating'
           }
-          register :for_persons, {
-            creator: Kiba::Tms::Jobs::ConEMail::ForPersons,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_email_for_persons.csv'),
+          register :to_merge, {
+            creator: Kiba::Tms::Jobs::ConEMail::ToMerge,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'con_email_to_merge.csv'),
             tags: %i[con conemail],
-            lookup_on: :person
-          }
-          register :for_orgs, {
-            creator: Kiba::Tms::Jobs::ConEMail::ForOrgs,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_email_for_orgs.csv'),
-            tags: %i[con conemail],
-            lookup_on: :org
+            lookup_on: :constituentid
           }
         end
 

@@ -8,7 +8,7 @@ module Kiba
           def initialize(lookup:)
             @emailmerger = Merge::MultiRowLookup.new(
               lookup: lookup,
-              keycolumn: :norm,
+              keycolumn: :constituentid,
               delim: Tms.delim,
               null_placeholder: '%NULLVALUE%',
               fieldmap: {
@@ -18,7 +18,7 @@ module Kiba
             )
             @webmerger = Merge::MultiRowLookup.new(
               lookup: lookup,
-              keycolumn: :norm,
+              keycolumn: :constituentid,
               delim: Tms.delim,
               null_placeholder: '%NULLVALUE%',
               fieldmap: {
@@ -28,7 +28,7 @@ module Kiba
             )
             @notemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
-              keycolumn: :norm,
+              keycolumn: :constituentid,
               delim: '%CR%%CR%',
               fieldmap: {
                 email_web_namenote: :description
@@ -42,7 +42,7 @@ module Kiba
             webmerger.process(row)
             notemerger.process(row)
           end
-          
+
           private
 
           attr_reader :emailmerger, :webmerger, :notemerger
