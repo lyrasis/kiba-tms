@@ -94,6 +94,7 @@ module Kiba
             term_types: :termtypeid,
             terms: :termid,
             text_entries: :recordid,
+            text_statuses: Tms::TextStatuses.id_field,
             text_types: :texttypeid,
             thes_xref_types: :thesxreftypeid,
             title_types: :titletypeid,
