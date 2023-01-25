@@ -25,6 +25,9 @@ module Kiba
             base << :con_phones__to_merge if Tms::ConPhones.used
             base << :name_compile__variant_term
             base << :name_compile__bio_note
+            if Tms::TextEntries.for?('Constituents')
+              base << :text_entries_for__constituents
+            end
             base.select{ |job| Tms.job_output?(job) }
           end
 
@@ -100,6 +103,10 @@ module Kiba
               if Tms::ConPhones.used
               transform Tms::Transforms::ConPhones::MergeIntoAuthority,
                 lookup: con_phones__to_merge
+              if Tms::TextEntries.for?('Constituents') &&
+                  Tms::TextEntries.for_constituents_merge
+                transform Tms::TextEntries.for_constituents_merge,
+                  lookup: text_entries_for__constituents
               end
 
               unless config.bionote_sources.empty?
