@@ -268,6 +268,14 @@ module Kiba
               'shapes for CS, flags duplicate address data rows',
             tags: %i[con con_address]
           }
+          register :countries_unmapped_before_clean, {
+            creator: Kiba::Tms::Jobs::ConAddress::CountriesUnmappedBeforeClean,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_address_countries_clean_review.csv'),
+            desc: 'Addresses with country values that cannot be exactly or '\
+              'cleanly mapped to CS countries vocabulary.',
+            tags: %i[con con_address postmigcleanup]
+          }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
             path: File.join(Kiba::Tms.datadir, 'working', 'con_address_to_merge.csv'),

@@ -52,11 +52,34 @@ module Kiba
                 fields: contentfields
 
               if Tms::Countries.used
+                # See config.country_remappings for why we map in orig value
                 transform Merge::MultiRowLookup,
                   lookup: prep__countries,
                   keycolumn: :countryid,
-                  fieldmap: {addresscountry: :country}
-                transform Cspace::AddressCountry
+                  fieldmap: {
+                    init_addresscountry: :country,
+                    origcountry: :orig_country
+                  }
+                transform Append::NilFields,
+                  fields: %i[remappedcountry]
+                unless config.country_remappings.empty?
+                  transform do |row|
+                    orig = row[:origcountry]
+                    next row if orig.blank?
+                    next row unless row[:init_addresscountry].blank?
+
+                    row[:remappedcountry] = config.country_remappings[orig]
+                    row
+                  end
+                end
+                transform Kiba::Extend::Transforms::Cspace::AddressCountry,
+                  source: :remappedcountry,
+                  target: :remappedcountrycode
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[init_addresscountry remappedcountrycode],
+                  target: :addresscountry,
+                  sep: '',
+                  delete_sources: false
               end
               transform Delete::Fields, fields: :countryid
 

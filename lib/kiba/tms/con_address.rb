@@ -22,6 +22,18 @@ module Kiba
         default: %i[displayname1 displayname2 streetline1 streetline2
                     streetline3 city state zipcode],
         reader: true
+      # Client-specific country remappings.
+      # We want to be able to generate a report of country values that don't
+      #   have a clean/exact mapping to CS country values, so initial country
+      #   merge into con_address__shaped merges in both the CS-mapped country
+      #   code and original country value.
+      # If the :countries_unmapped_before_clean report has any rows, the
+      #   :origcountry values in those rows can be remapped here. The remapping
+      #   should be to a textual country name that is properly handled by the
+      #   kiba-extend Cspace::AddressCountry transform
+      setting :country_remappings,
+        default: {},
+        reader: true
       # ConAddress columns that will be combined into CS addressplace1, if
       #   present
       setting :note_fields,

@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module ConAddress
-        module ToMerge
+        module CountriesUnmappedBeforeClean
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :con_address__shaped,
-                destination: :con_address__to_merge
+                destination: :con_address__countries_unmapped_before_clean
               },
               transformer: xforms
             )
@@ -19,13 +19,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo,
+              transform FilterRows::WithLambda,
                 action: :keep,
-                field: :duplicate,
-                value: "n"
-              transform Delete::Fields,
-                fields: %i[duplicate init_addresscountry origcountry
-                           remappedcountry remappedcountrycode]
+                lambda: ->(row) do
+                  !row[:origcountry].blank? &&
+                    row[:init_addresscountry].blank?
+                end
             end
           end
         end
