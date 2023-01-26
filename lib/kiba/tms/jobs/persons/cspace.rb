@@ -87,11 +87,6 @@ module Kiba
                 targets: term_targets,
                 delim: Tms.delim
 
-              # transform Rename::Field, from: :biography, to: :bionote
-              # transform Rename::Field,
-              #   from: :culturegroup,
-              #   to: Tms::Constituents.culturegroup_target
-
               if Tms::ConAddress.used
                 transform Tms::Transforms::ConAddress::MergeIntoAuthority,
                   lookup: con_address__to_merge
