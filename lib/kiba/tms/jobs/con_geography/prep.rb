@@ -44,6 +44,10 @@ module Kiba
                   fieldmap: {geocode: :congeocode}
               end
               transform Delete::Fields, fields: :geocodeid
+
+              if config.cleaner
+                transform config.cleaner
+              end
             end
           end
         end

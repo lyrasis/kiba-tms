@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
-
 module Kiba
   module Tms
     module ConGeography
@@ -11,7 +9,14 @@ module Kiba
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true
+      setting :non_content_fields,
+        default: %i[congeographyid constituentid geocodeid geocode],
+        reader: true
       extend Tms::Mixins::Tableable
+
+      setting :cleaner,
+        default: nil,
+        reader: true
     end
   end
 end
