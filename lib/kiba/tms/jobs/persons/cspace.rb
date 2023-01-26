@@ -113,6 +113,9 @@ module Kiba
                   lookup: text_entries_for__constituents
               end
 
+              transform Delete::Fields,
+                fields: %i[constituentid namemergenorm]
+
               unless config.bionote_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.bionote_sources,
