@@ -12,10 +12,10 @@ module Kiba
       setting :migrate_non_displayed, default: true, reader: true
       # Clean/reshape table data prior to merge
       setting :cleaner,
-        default: nil,
+        default: Tms::Transforms::ConDisplayBios::Cleaner,
         reader: true
       setting :merger,
-        default: nil,
+        default: Tms::Transforms::ConDisplayBios::Merger,
         reader: true
     end
   end

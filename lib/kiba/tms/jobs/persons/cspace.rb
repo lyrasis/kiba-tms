@@ -104,7 +104,9 @@ module Kiba
                 transform Tms::Transforms::ConPhones::MergeIntoAuthority,
                   lookup: con_phones__to_merge
               end
-
+              if Tms::ConDisplayBios.used
+                transform Tms::ConDisplayBios.merger
+              end
               if Tms::TextEntries.for?('Constituents') &&
                   Tms::TextEntries.for_constituents_merge
                 transform Tms::TextEntries.for_constituents_merge,
