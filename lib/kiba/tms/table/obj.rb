@@ -8,7 +8,6 @@ module Kiba
       class Obj
         attr_reader :tablename, :filename, :filekey, :included, :type
 
-
         def initialize(tablename)
           @tablename = tablename
           if tablename.is_a?(Symbol)
