@@ -107,6 +107,9 @@ module Kiba
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
               end
+              if Tms::ConGeography.used
+                transform Tms::ConGeography.person_merger
+              end
 
               transform Delete::Fields,
                 fields: %i[constituentid namemergenorm]
