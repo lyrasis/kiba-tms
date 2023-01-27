@@ -15,7 +15,7 @@ endif::[]
 
 This algorithm uses name details to make a "best guess" at whether a name is a Person or an Organization.
 
-The client is asked to review and correct this information.
+The client is asked to review and correct this information as part of name type cleanup.
 
 Person field(s):: `lastname`, `firstname`
 Org field(s):: `institution`
