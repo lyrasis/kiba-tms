@@ -86,7 +86,8 @@ module Kiba
               transform Collapse::FieldsToRepeatableFieldGroup,
                 sources: %i[pref var],
                 targets: term_targets,
-                delim: Tms.delim
+                delim: Tms.delim,
+                enforce_evenness: false
 
               if Tms::ConAddress.used
                 transform Tms::Transforms::ConAddress::MergeIntoAuthority,
