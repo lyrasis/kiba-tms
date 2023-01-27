@@ -7,7 +7,7 @@ module Kiba
         class AddDefaultContype
           def initialize(target: :contype)
             @target = target
-            @default = Tms::Constituents.untyped_default
+            @default = Tms::Names.untyped_default
           end
 
           # @private

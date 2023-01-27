@@ -29,8 +29,6 @@ module Kiba
       setting :var_name_field, default: :alphasort, reader: true
       setting :include_flipped_as_variant, default: true, reader: true
 
-      setting :untyped_default, default: 'Person', reader: true
-
       # fields to retain in :constituents__by_* jobs
       setting :lookup_job_fields,
         default: %i[constituentid norm contype combined],
