@@ -113,7 +113,7 @@ module Kiba
               end
 
               transform Delete::Fields,
-                fields: %i[constituentid namemergenorm]
+                fields: %i[constituentid]
 
               unless config.bionote_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,

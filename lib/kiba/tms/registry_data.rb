@@ -2294,6 +2294,13 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('persons') do
+          register :flagged, {
+            creator: Kiba::Tms::Jobs::Persons::Flagged,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'persons_flagged.csv'),
+            tags: %i[persons],
+            desc: 'Flags duplicates (on normalized final name value).'
+          }
           # Ensures the final termdisplayname form is associated with each
           #   constituentid. Fields: constituentid, norm, name
           register :by_constituentid, {
