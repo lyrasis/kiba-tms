@@ -19,6 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Tms::Transforms::Names::RemoveDropped
+
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: ->(row) do
