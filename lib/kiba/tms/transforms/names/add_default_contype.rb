@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Transforms
-      module Constituents
+      module Names
         class AddDefaultContype
           def initialize(target: :contype)
             @target = target

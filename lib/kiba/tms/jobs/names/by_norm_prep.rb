@@ -50,7 +50,7 @@ module Kiba
                 to: :norm
               transform Tms::Transforms::Constituents::NormalizeContype,
                 target: :contype
-              transform Tms::Transforms::Constituents::AddDefaultContype
+              transform Tms::Transforms::Names::AddDefaultContype
             end
           end
         end
