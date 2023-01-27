@@ -2306,6 +2306,11 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'reports',
                             'persons_duplicates_not_migrating.csv'),
             tags: %i[persons],
+            dest_special_opts: {
+              initial_headers: %i[
+                                  drop_from_mig termdisplayname namemergenorm
+                                 ]
+            },
             desc: 'Report of all duplicate persons. The :drop_from_mig '\
               'column indicates which one was kept (y) and which ones '\
               'were not migrated. Client may opt to disambiguate names '\
