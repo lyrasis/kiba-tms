@@ -20,24 +20,27 @@ This algorithm makes a "best guess" at whether a name is a Person or an Organiza
 * whether the preferred name appears to be an organization (`OrgNameChecker`); and
 * whether certain name details fields are populated. 
 
-Name details field(s) indicating person-ness:: `lastname`, `firstname`
-Name details field(s) indicating organization-ness:: `institution`
-
 Authority category may be left blank in certain situations detailed below.
 
-The client is asked to review and correct derived authority categories as part of name type cleanup. If any authority category values are left blank at the time of processing data for ingest, those names will be treated as https://github.com/search?q=repo%3Alyrasis%2Fkiba-tms%20%22setting%20%3Auntyped_default%22&type=code[the type set in the `:untyped_default` setting].
+The client is asked to review and correct derived authority categories as part of name type cleanup. If any authority category values are left blank at the time of processing data for ingest, those names will be treated as the type set in the `:untyped_default` setting in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/names.rb[the Names config].
 
 == Details
 
-The OrgNameChecker checks whether a preferred name matches any of https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/services/names/org_name_checker.rb[the specified patterns that indicate "organization-ness"]. It returns true if a name matches any organization patterns, and false if not.
+`OrgNameChecker` checks whether a preferred name matches any of https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/services/names/org_name_checker.rb[the specified patterns that indicate "organization-ness"]. (Search for "def patterns" in that linked page.) The patterns are interpreted as regular expressions. `OrgNameChecker` returns `true` if a name matches any organization patterns, and `false` if not.
 
-* If person field(s) are not populated AND org field(s) are not populated
+
+Once we have the `OrgNameChecker` determination, we apply the following algorithm:
+
+Person fields:: `lastname`, `firstname`
+Organization fields:: `institution`
+
+* If person field(s) are empty AND org field(s) are empty
 ** Derived type = Organization if OrgNameChecker returns true
 ** No derived type if OrgNameChecker returns false
 * If both person and org field(s) are populated
 ** Derived type = Organization if OrgNameChecker returns true
 ** No derived type if OrgNameChecker returns false
-* If person field(s) are populated and org field(s) are not
+* If person field(s) are populated and org field(s) are empty
 ** Derived type = Person
-* If org field(s) are populated and person field(s) are not
+* If org field(s) are populated and person field(s) are empty
 ** Derived type = Organization
