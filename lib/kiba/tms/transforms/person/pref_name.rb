@@ -20,6 +20,9 @@ module Kiba
               birth_foundation_date: :birthdategroup,
               death_dissolution_date: :deathdategroup
             }
+            if set_term_source
+              fieldmap[:termsource] = :pref_termsource
+            end
             constantmap = {
               pref_termflag: Tms.nullvalue,
               pref_termsourcenote: Tms.nullvalue
@@ -37,11 +40,7 @@ module Kiba
             ]
           end
 
-          # @private
           def process(row)
-            if set_term_source
-              row[:pref_termsource] = term_source(row)
-            end
             xforms.each{ |xform| xform.process(row) }
             row
           end
@@ -49,13 +48,6 @@ module Kiba
           private
 
           attr_reader :set_term_source, :xforms
-
-          def term_source(row)
-            src = row[:termsource]
-            return 'Migration cleanup processing' if src.blank?
-
-            src
-          end
         end
       end
     end

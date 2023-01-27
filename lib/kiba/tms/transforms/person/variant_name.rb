@@ -26,7 +26,7 @@ module Kiba
               var_termsourcenote: Tms.nullvalue
             }
             if Tms::Names.set_term_pref_for_lang
-              constantmap[:pref_termprefforlang] = 'false'
+              constantmap[:var_termprefforlang] = 'false'
             end
             @xforms = [
               Merge::MultiRowLookup.new(
@@ -44,7 +44,6 @@ module Kiba
               ]
           end
 
-          # @private
           def process(row)
             xforms.each{ |xform| xform.process(row) }
             row

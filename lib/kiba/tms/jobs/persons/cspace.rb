@@ -49,7 +49,7 @@ module Kiba
                 fields: %i[sort contype relation_type variant_term
                            variant_qualifier related_term related_role
                            note_text prefnormorig nonprefnormorig
-                           termsource altnorm alttype mainnorm]
+                           altnorm alttype mainnorm]
 
               transform Tms::Transforms::Person::PrefName
               if bind.receiver.send(:merge_variants?)
@@ -135,8 +135,6 @@ module Kiba
                   sep: '%CR%',
                   delete_sources: true
               end
-
-              transform Delete::Fields, fields: :termsource
 
               transform Delete::DelimiterOnlyFieldValues,
                 delim: Tms.delim,
