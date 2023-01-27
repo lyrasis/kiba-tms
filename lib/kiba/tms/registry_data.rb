@@ -2301,6 +2301,24 @@ module Kiba
             tags: %i[persons],
             desc: 'Flags duplicates (on normalized final name value).'
           }
+          register :duplicates_not_migrated, {
+            creator: Kiba::Tms::Jobs::Persons::DuplicatesNotMigrated,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'persons_duplicates_not_migrating.csv'),
+            tags: %i[persons],
+            desc: 'Report of all duplicate persons. The :drop_from_mig '\
+              'column indicates which one was kept (y) and which ones '\
+              'were not migrated. Client may opt to disambiguate names '\
+              'in TMS, fix inadvertently merged names in name type '\
+              'cleanup worksheet, or use this report to do post-migration '\
+              "cleanup.\n\nNote that if there were 2 constituents (ids "\
+              '23 and 57) with name "John Doe", the migrated name "John '\
+              'Doe" will be assigned to populate all references to ids '\
+              '23 and 57 in migrated objects and other records. If '\
+              'different constituent ids with the same name string have '\
+              'been used in many records, disambiguating the names '\
+              'post-migration may take a lot of work'
+          }
           # Ensures the final termdisplayname form is associated with each
           #   constituentid. Fields: constituentid, norm, name
           register :by_constituentid, {
