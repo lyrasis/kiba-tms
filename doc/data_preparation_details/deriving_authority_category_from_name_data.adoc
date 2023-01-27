@@ -13,12 +13,13 @@ endif::[]
 
 = Deriving authority category from name data
 
-This algorithm uses name details to make a "best guess" at whether a name is a Person or an Organization.
+This algorithm makes a "best guess" at whether a name is a Person or an Organization, based on whether name details fields are populated. 
 
-The client is asked to review and correct this information as part of name type cleanup.
+Name details field(s) indicating person-ness:: `lastname`, `firstname`
+Name details field(s) indicating organization-ness:: `institution`
 
-Person field(s):: `lastname`, `firstname`
-Org field(s):: `institution`
+The client is asked to review and correct derived authority categories as part of name type cleanup.
+
 
 The OrgNameChecker checks whether a preferred name matches any of https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/services/names/org_name_checker.rb[the specified patterns that indicate "organization-ness"]. It returns true if a name matches any organization patterns, and false if not.
 
