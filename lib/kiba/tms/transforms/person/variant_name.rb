@@ -41,7 +41,7 @@ module Kiba
                 delim: Tms.delim,
                 null_placeholder: Tms.nullvalue
               )
-              ]
+            ]
           end
 
           def process(row)
