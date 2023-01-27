@@ -83,6 +83,7 @@ module Kiba
 
     setting :table_lookup,
       default: {
+        '0'=>'NO TABLE WITH THIS ID BUT IT IS SOMETIMES USED',
         '23'=>'Constituents',
         '47'=>'Exhibitions',
         '49'=>'ExhObjXrefs',
