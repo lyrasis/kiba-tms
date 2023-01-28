@@ -23,14 +23,20 @@ toc::[]
 
 == General (across constituent-related tables)
 
+These are set in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the Constituents config].
+
 === Preferred name field for persons
 
 See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[Choosing preferred form of name for Person authorities].
 
+Setting name:: `:preferred_name_field`
 Default option:: `:displayname` (direct form)
+
+There is also a `:var_name_field` (i.e. non-preferred name field) setting. This is set to `:alphasort` if `:displayname` is the preferred name form. The values are swapped if inverted form of name is preferred.
 
 === Include non-preferred name form as variant name?
 
+Setting name:: `:include_flipped_as_variant`
 Default option:: `false` (we do not create a variant name in the authority for the non-preferred name form)
 Alternate option(s):: `true` (we create a variant name in the authority for the non-preferred name form)
 
@@ -46,39 +52,62 @@ In your staging instance, enter some person names with only your preferred name 
 
 
 == Constituents table
-=== `approved` field handling
 
-This is a Boolean (yes/no) field in TMS
+These are set in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/constituents.rb[the Constituents config].
 
-Default option:: `:nomigrate` -- it is unclear if the functionality of this field in TMS maps to anything supported in CS. This field is dropped
+=== `:map_approved`
 
-.Alternate option(s)
-`:termstatus`:: If `approved` = 1/yes/true for a name, the term status value *_in the first/primary term field group of the CS authority record_* is set to "accepted". If `approved` = 0/no/false for a name, no term status value is provided in the CS authority.
+`approved` is a Boolean (yes/no) field in TMS. This setting controls whether this field is mapped into CS in the migration.
 
-=== `active` field handling
-
-Default option:: `:nomigrate` -- There is no CS functionality supporting active vs. inactive authorities.
+Default option:: `false` -- it is unclear if the functionality of this field in TMS maps to anything supported in CS. This field is dropped
 
 .Alternate option(s)
-`:group`:: If `active` = 1/yes/true for a name, we add a Group value of "active constituents" to the CS authority record. If `active` = 0/no/false for a name, we add a Group value of "inactive constituents" to the CS authority record.
-`:drop`:: Only migrate names where `active` = 1/yes/true. NOTE: this can cause data loss if inactive constituent names are used in objects, accessions, and other places in the database.
+`true`:: Field value will be mapped into CS. Exact mapping/handling will need to be implemented.
 
-=== `isstaff` field handling
+Suggested implementation would be:
 
-Default option:: `:nomigrate` -- There is no CS functionality supporting staff vs. nonstaff authorities.
+If `approved` = 1/yes/true for a name, the term status value *_in the first/primary term field group of the CS authority record_* is set to "accepted". If `approved` = 0/no/false for a name, no term status value is provided in the CS authority.
 
-.Alternate option(s)
-`:termtype`:: If `isstaff` = 1/yes/true for a name migrating as a Person authority, we add a Term type value of "Employee" to the CS authority record. If `isstaff` = 1/yes/true for a name migrating as an Organization authority, we do nothing. If `isstaff` = 0/no/false for a name, we do nothing.
-`:group`:: If `isstaff` = 1/yes/true for a name, we add a Group value of "staff" to the CS authority record. If `isstaff` = 0/no/false for a name, we do nothing.
+=== `:map_active`
 
-=== `isprivate` field handling
+`active` is a Boolean (yes/no) field in TMS. This setting controls whether this field is mapped into CS in the migration.
 
-The TMS data dictionary indicates this field is used to indicate whether a constituent is a private collector.
-
-Default option:: `:nomigrate` -- There is no CS functionality supporting authorities representing private collectors vs other names.
+Default option:: `false` -- There is no real CS functionality supporting active vs. inactive authorities. This data is dropped.
 
 .Alternate option(s)
-`:group`:: If `isprivate` = 1/yes/true for a name, we add a Group value of "private collectors" to the CS authority record. If `isprivate` = 0/no/false for a name, we do nothing.
+`true`:: Field value will be mapped into CS. Exact mapping/handling will need to be implemented.
+
+Some alternate implementations for this field could include:
+
+* If `active` = 1/yes/true for a name, we add a Group value of "active constituents" to the CS authority record. If `active` = 0/no/false for a name, we add a Group value of "inactive constituents" to the CS authority record.
+* Only migrate names where `active` = 1/yes/true. NOTE: this can cause data loss if inactive constituent names are used in objects, accessions, and other places in the database.
+
+=== `:map_isstaff`
+
+`isstaff` is a Boolean (yes/no) field in TMS. This setting controls whether this field is mapped into CS in the migration.
+
+Default option:: `false` -- There is no CS functionality supporting staff vs. nonstaff authorities, so this data is dropped.
+
+.Alternate option(s)
+`true`:: Field value will be mapped into CS. Exact mapping/handling will need to be implemented.
+
+Some alternate implementations for this field could include:
+
+* If `isstaff` = 1/yes/true for a name migrating as a Person authority, we add a Term type value of "Employee" to the CS authority record. If `isstaff` = 1/yes/true for a name migrating as an Organization authority, we do nothing. If `isstaff` = 0/no/false for a name, we do nothing.
+* If `isstaff` = 1/yes/true for a name, we add a Group value of "staff" to the CS authority record. If `isstaff` = 0/no/false for a name, we do nothing.
+
+=== `:map_isprivate`
+
+`isstaff` is a Boolean (yes/no) field in TMS. The TMS data dictionary indicates this field is used to indicate whether a constituent is a private collector. This setting controls whether this field is mapped into CS in the migration.
+
+Default option:: `false` -- There is no CS functionality supporting authorities representing private collectors vs other names.
+
+.Alternate option(s)
+`true`:: Field value will be mapped into CS. Exact mapping/handling will need to be implemented.
+
+Some alternate implementations for this field could include:
+
+* If `isprivate` = 1/yes/true for a name, we add a Group value of "private collectors" to the CS authority record. If `isprivate` = 0/no/false for a name, we do nothing.
 
 === Append date data to names?
 If there is date data for a name, this can be appended to the actual name value.
