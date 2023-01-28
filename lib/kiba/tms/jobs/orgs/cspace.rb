@@ -92,7 +92,6 @@ module Kiba
               #   begindateiso: :foundingdategroup,
               #   enddateiso: :dissolutiondategroup,
               #   nationality: :foundingplace,
-              #   culturegroup: Tms::Constituents.culturegroup_target
               # }
 
               # if Tms::ConAddress.used?

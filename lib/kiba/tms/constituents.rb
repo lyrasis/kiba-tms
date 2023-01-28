@@ -41,8 +41,6 @@ module Kiba
       setting :map_active, default: false, reader: true
       setting :map_isstaff, default: false, reader: true
       setting :map_isprivate, default: false, reader: true
-      # what cs field to map :culturegroup into
-      setting :culturegroup_target, default: :group, reader: true
       setting :displaydate_cleaners,
         default: [
         ],
