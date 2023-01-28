@@ -15,9 +15,13 @@ endif::[]
 
 This page covers options for handling data from the TMS Constituents table and its related tables, including: ConAddress, ConAltNames, ConDates, ConEMail, ConPhones, ConTypes
 
+See also:
+
+* xref:names.adoc[General name options]
+
 toc::[]
 
-== General (across tables)
+== General (across constituent-related tables)
 
 === Preferred name field for persons
 
@@ -40,14 +44,6 @@ In your staging instance, enter some person names with only your preferred name 
 * search
 ====
 
-=== Uncategorized authority default
-
-This is mainly relevant if you are skipping the name review/cleanup process. If you are going through that process, you are probably assigning appropriate category (Person or Organization) to each name.
-
-If any are left uncategorized, or if you are skipping that process altogether, we have to what authority to create those names in for the migration.
-
-Default option:: Person
-Alternate option(s):: Organization
 
 == Constituents table
 === `approved` field handling
@@ -65,7 +61,7 @@ Default option:: `:nomigrate` -- There is no CS functionality supporting active 
 
 .Alternate option(s)
 `:group`:: If `active` = 1/yes/true for a name, we add a Group value of "active constituents" to the CS authority record. If `active` = 0/no/false for a name, we add a Group value of "inactive constituents" to the CS authority record.
-`:drop`:: Only migrate names where `active` = 1/yes/true. NOTE: this can cause data loss if inactive constituent names are used in objects, accessions, and other places in the database. 
+`:drop`:: Only migrate names where `active` = 1/yes/true. NOTE: this can cause data loss if inactive constituent names are used in objects, accessions, and other places in the database.
 
 === `isstaff` field handling
 
