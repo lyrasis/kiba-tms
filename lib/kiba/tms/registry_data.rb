@@ -515,7 +515,7 @@ module Kiba
             tags: %i[con],
             lookup_on: :constituentid,
             desc: <<~TXT
-              SOURCE: Prepped constituents table.
+              SOURCE: prep__constituents
               Moves orig :norm to :prefnormorig
               Moves orig :nonprefnorm to :nonprefnormorig
               Merges in constituent name type cleanup if cleanup is done
@@ -530,7 +530,10 @@ module Kiba
               'working',
               'constituents_by_norm.csv'
             ),
-            desc: 'Cleaned constituent name lookup by norm (cleaned) prefname',
+            desc: 'Cleaned constituent name lookup by norm (cleaned) prefname'\
+              "\nNOTE: This job's output is for use in name_compile "\
+              'processing only. Do not use to lookup final, authorized name '\
+              'formsname. Use :names__by_norm for that lookup.',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -542,7 +545,10 @@ module Kiba
               'constituents_by_norm_orig.csv'
             ),
             desc: 'Cleaned constituent name lookup by uncleaned norm '\
-              'prefname',
+              'prefname'\
+              "\nNOTE: This job's output is for use in name_compile "\
+              'processing only. Do not use to lookup final, authorized name '\
+              'formsname. Use :names__by_norm for that lookup.',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -554,7 +560,10 @@ module Kiba
               'constituents_by_nonpref_norm.csv'
             ),
             desc: 'Cleaned constituent name lookup by norm form of '\
-              'nonpreferred name field',
+              'nonpreferred name field'\
+              "\nNOTE: This job's output is for use in name_compile "\
+              'processing only. Do not use to lookup final, authorized name '\
+              'formsname. Use :names__by_norm for that lookup.',
             tags: %i[con],
             lookup_on: :norm
           }
@@ -566,7 +575,10 @@ module Kiba
               'constituents_by_all_norms.csv'
             ),
             desc: 'Combined table for lookup of cleaned constituent '\
-              'name by cleaned norm, orig norm, or nonpref norm',
+              'name by cleaned norm, orig norm, or nonpref norm.'\
+              "\nNOTE: This job's output is for use in name_compile "\
+              'processing only. Do not use to lookup final, authorized name '\
+              'formsname. Use :names__by_norm for that lookup.',
             tags: %i[con],
             lookup_on: :norm
           }

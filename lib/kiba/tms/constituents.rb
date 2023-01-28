@@ -21,15 +21,21 @@ module Kiba
       extend Tms::Mixins::Tableable
 
 
-      # transform run at the beginning of prep__constituents to force client-specific changes
+      # transform run at the beginning of prep__constituents to force
+      #   client-specific changes to TMS source data
       setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
       setting :preferred_name_field, default: :displayname, reader: true
-      # field to use as alt form
+      # Field to use as variant form of name (if :include_flipped_as_variant
+      #   is true
       setting :var_name_field, default: :alphasort, reader: true
+      # Whether to retain value in :var_name_field as a variant name in CS
+      #   person/org record
       setting :include_flipped_as_variant, default: false, reader: true
 
-      # fields to retain in :constituents__by_* jobs
+      # Fields to retain in :constituents__by_* jobs. These jobs are for use in
+      #   name compilation process. The resulting tables should not be used as
+      #   sources for lookup of final, authorized forms of names
       setting :lookup_job_fields,
         default: %i[constituentid norm contype combined],
         reader: true,
