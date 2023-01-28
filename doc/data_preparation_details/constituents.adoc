@@ -46,7 +46,8 @@ For constituent names with a constituenttype coded in TMS, we use https://github
 
 For constituent names without a constituenttype coded in TMS, we attempt to xref:deriving_authority_category_from_name_data.adoc[derive the appropriate category].
 
-The processing keeps separate categories mapped from explicit TMS constituenttype (Person, Organization), and derived guesses (Person?, Organization?). For ease of further processing, a normalized authority type is also created for each name (person, organization).
+Derived authority category is recorded in a separate field from authority categories mapped from TMS `constituenttype`.
+For ease of further processing, a normalized authority type (:contype) field is also created for each name.
 
 === Remove redundant non-preferred names
 
