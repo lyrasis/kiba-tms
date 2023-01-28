@@ -27,15 +27,17 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
   end
 
   context 'when append to types = none' do
-    before{ Kiba::Tms::Constituents.config.date_append.to_types = [:none] }
+    before{ Kiba::Tms::Constituents.config.date_append.to_type = :none }
+    after{ Tms::Constituents.reset_config }
 
     it 'passes rows through unaltered' do
       expect(result).to eq(input)
     end
   end
-  
+
   context 'when append to types = all' do
-    before{ Kiba::Tms::Constituents.config.date_append.to_types = [:all] }
+    before{ Kiba::Tms::Constituents.config.date_append.to_type = :all }
+    after{ Tms::Constituents.reset_config }
 
     let(:expected) do
       [
@@ -51,14 +53,15 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
         nil
       ]
     end
-    
+
     it 'transforms as expected' do
       expect(result.map{ |row| row[:displayname]}).to eq(expected)
     end
   end
 
   context 'when append to types = Individual' do
-    before{ Kiba::Tms::Constituents.config.date_append.to_types = ['Individual'] }
+    before{ Kiba::Tms::Constituents.config.date_append.to_type = :person }
+    after{ Tms::Constituents.reset_config }
 
     let(:expected) do
       [
@@ -74,7 +77,7 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
         nil
       ]
     end
-    
+
     it 'transforms as expected' do
       expect(result.map{ |row| row[:displayname]}).to eq(expected)
     end
