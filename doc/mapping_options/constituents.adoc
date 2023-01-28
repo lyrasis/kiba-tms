@@ -91,14 +91,6 @@ Default option:: `:duplicates` - during processing, we check for duplicate name 
 `:person`:: date values, when present, will be appended to all person names
 `:organization`:: date values, when present, will be appended to all organization names
 
-=== `culturegroup` target field
-
-Where to map the TMS `culturegroup` field.
-
-Default option:: `:group` -- The TMS culturegroup value will become a Group value in the Person or Organization record
-
-.Alternate option(s)
-(TBD)
 
 == ConAddress table
 
