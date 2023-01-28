@@ -47,35 +47,50 @@ module Kiba
       setting :map_active, default: false, reader: true
       setting :map_isstaff, default: false, reader: true
       setting :map_isprivate, default: false, reader: true
-      setting :displaydate_cleaners,
-        default: [
-        ],
-        reader: true
-      # used by Constituents::DeletePrefixesFromDisplayDate
-      setting :displaydate_deletable_prefixes, default: [], reader: true
 
-      # The following are useful if there are duplicate preferred names that have different date values that
-      #   can disambiguate the names. Note that this refers to date fields in the Constituents table or
-      #   merged into such during its prep. It does not control anything about processing ConDates
+      # The following are useful if there are duplicate preferred names that
+      #   have different date values that can disambiguate the names. Note that
+      #   this refers to date fields in the Constituents table or merged into
+      #   such during its prep. It does not control anything about processing
+      #   the ConDates table. These settings are used by the
+      #   Constituents::AppendDatesToNames transform.
       setting :date_append, reader: true do
         # constituenttype values to add dates to. Should be one of:
         #
         # - :none - no dates will be added to constituent preferred names
         # - :all - will add available dates to all constituent preferred names
-        # - :duplicate - will add available dates to any Person/Org constituent preferred names that
-        #   are duplicates when normalized
-        # - :person - will add available dates to all Person constituent preferred names
-        # - :org  - will add available dates to all Organization constituent preferred names
+        # - :duplicate - will add available dates to any Person/Org constituent
+        #   preferred names that are duplicates when normalized
+        # - :person - will add available dates to all Person constituent
+        #   preferred names
+        # - :org  - will add available dates to all Organization constituent
+        #   preferred names
         setting :to_type, default: :duplicate, reader: true
-        # String that will separate the two dates. Will be appended to start date if there is no end date.
-        #   Will be prepended to end date if there is no start date.
+        # String that will separate the two dates. Will be appended to start
+        #   date if there is no end date. Will be prepended to end date if there
+        #   is no start date.
         setting :date_sep, default: ' - ', reader: true
-        # String that will be inserted between name and prepared date value. Any punctuation that should open
-        #   the wrapping of the date value should be included here.
+        # String that will be inserted between name and prepared date value. Any
+        #   punctuation that should open the wrapping of the date value should
+        #   be included here.
         setting :name_date_sep, default: ', (', reader: true
-        # String that will be appended to the end of result, closing the date value
+        # String that will be appended to the end of result, closing the date
+        #   value
         setting :date_suffix, default: ')', reader: true
       end
+
+      # ## :constituents__clean_dates options
+      #
+      # List of client-specific custom transforms that should be applied to
+      #   :displaydate field by :constituents__clean_dates
+      setting :displaydate_cleaners,
+        default: [
+        ],
+        reader: true
+      # Patterns that will be deleted from beginning of :displaydate values.
+      #   Each is converted into a regular expression for find/replace
+      setting :displaydate_deletable_prefixes, default: [], reader: true
+
 
       # config for processing ConAltNames table
       setting :altnames, reader: true do
