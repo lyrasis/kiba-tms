@@ -27,7 +27,7 @@ module Kiba
       setting :preferred_name_field, default: :displayname, reader: true
       # field to use as alt form
       setting :var_name_field, default: :alphasort, reader: true
-      setting :include_flipped_as_variant, default: true, reader: true
+      setting :include_flipped_as_variant, default: false, reader: true
 
       # fields to retain in :constituents__by_* jobs
       setting :lookup_job_fields,
