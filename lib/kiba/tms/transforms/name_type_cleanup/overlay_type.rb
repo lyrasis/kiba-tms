@@ -34,6 +34,8 @@ module Kiba
             return row unless eligible?(row)
 
             case corrtype
+            when 'd'
+              val = 'DROP'
             when 'p'
               val = 'Person'
             when 'o'
