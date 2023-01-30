@@ -92,14 +92,6 @@ module Kiba
       setting :displaydate_deletable_prefixes, default: [], reader: true
 
 
-      # config for processing ConAltNames table
-      setting :altnames, reader: true do
-        # alt names to treat as anonymous - used by ConAltNames::QualifyAnonymous transform
-        setting :consider_anonymous, default: ['anonymous'], reader: true
-        # whether to run ConAltNames::QualifyAnonymous transform
-        setting :qualify_anonymous, default: true, reader: true
-      end
-
       # config for processing ConDates table
       setting :dates, reader: true do
         # whether there is constituent date data to be merged into Constituents

@@ -4,9 +4,11 @@ module Kiba
   module Tms
     module Transforms
       module ConAltNames
+        # Qualifies alt name values that are considered anonymous by adding the
+        #   main name as a parenthetical to the alt name
         class QualifyAnonymous
           def initialize
-            @anon = Tms::Constituents.altnames.consider_anonymous.map(&:downcase)
+            @anon = Tms::ConAltNames.consider_anonymous.map(&:downcase)
             @pref = Tms::Constituents.preferred_name_field
             @mainname = :conname
           end
@@ -27,8 +29,7 @@ module Kiba
             @altname = row[pref]
             return false if altname.blank?
 
-            lower = altname.downcase
-            anon.any?(lower)
+            anon.any?(altname.downcase)
           end
 
           def qualify(row)

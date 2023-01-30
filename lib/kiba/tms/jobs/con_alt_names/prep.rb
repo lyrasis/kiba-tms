@@ -55,7 +55,7 @@ module Kiba
               end
               transform Delete::Fields, fields: :chkid
 
-              if Tms::Constituents.altnames.qualify_anonymous
+              if Tms::ConAltNames.qualify_anonymous
                 transform Tms::Transforms::ConAltNames::QualifyAnonymous
               end
 
