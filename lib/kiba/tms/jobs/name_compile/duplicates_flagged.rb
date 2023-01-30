@@ -92,7 +92,7 @@ module Kiba
               end
 
               transform Cspace::NormalizeForID, source: :name, target: :norm
-              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Tms::Transforms::Names::NormalizeContype
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm relation_type],

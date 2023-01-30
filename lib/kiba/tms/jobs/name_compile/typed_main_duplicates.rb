@@ -26,7 +26,7 @@ module Kiba
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :contype
-              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Tms::Transforms::Names::NormalizeContype
               transform Delete::FieldsExcept,
                 fields: %i[fingerprint contype_norm norm termsource]
               transform CombineValues::FromFieldsWithDelimiter,

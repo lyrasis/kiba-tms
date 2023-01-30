@@ -64,7 +64,7 @@ module Kiba
                 sep: '',
                 delete_sources: false
               transform Copy::Field, from: :contype, to: :contype_norm
-              transform Tms::Transforms::Constituents::NormalizeContype
+              transform Tms::Transforms::Names::NormalizeContype
 
               # remove institution value if it is the same as what is in
               #   preferred name field

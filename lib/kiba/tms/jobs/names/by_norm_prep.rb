@@ -48,7 +48,7 @@ module Kiba
               transform Rename::Field,
                 from: :prefnormorig,
                 to: :norm
-              transform Tms::Transforms::Constituents::NormalizeContype,
+              transform Tms::Transforms::Names::NormalizeContype,
                 target: :contype
               transform Tms::Transforms::Names::AddDefaultContype
             end

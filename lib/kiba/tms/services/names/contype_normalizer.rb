@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Services
-      module Constituents
+      module Names
         class ContypeNormalizer
           def initialize
             @pattern = Regexp.new('\?| \(derived\)')
@@ -11,7 +11,7 @@ module Kiba
 
           def call(value)
             return value if value.blank?
-            
+
             value.sub(pattern, '')
           end
 

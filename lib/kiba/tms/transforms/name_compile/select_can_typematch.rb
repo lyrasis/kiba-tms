@@ -6,19 +6,19 @@ module Kiba
       module NameCompile
         class SelectCanTypematch
           def initialize
-            @normalizer = Tms::Services::Constituents::ContypeNormalizer.new
+            @normalizer = Tms::Services::Names::ContypeNormalizer.new
           end
-          
+
           def process(row)
             return unless eligible?(row)
-            
+
             row
           end
-          
+
           private
 
           attr_reader :normalizer
-          
+
           def eligible?(row)
             type_match?(row) && unestablished_alt_name?(row)
           end

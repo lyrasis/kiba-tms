@@ -78,7 +78,7 @@ module Kiba
               transform Delete::Fields, fields: %i[connorm]
 
               transform Tms::Transforms::Constituents::DeriveType, mode: :alt
-              transform Tms::Transforms::Constituents::NormalizeContype,
+              transform Tms::Transforms::Names::NormalizeContype,
                 source: :altauthtype,
                 target: :alttype
 

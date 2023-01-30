@@ -51,7 +51,7 @@ module Kiba
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: prefname,
                   target: :norm
-                transform Tms::Transforms::Constituents::NormalizeContype
+                transform Tms::Transforms::Names::NormalizeContype
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
                   target: :combined,

@@ -3,13 +3,12 @@
 module Kiba
   module Tms
     module Transforms
-      module Constituents
-        # for use on tables to merge with constituents on constituentid
+      module Names
         class NormalizeContype
           def initialize(source: :contype, target: :contype_norm)
             @source = source
             @target = target
-            @normalizer = Tms::Services::Constituents::ContypeNormalizer.new
+            @normalizer = Tms::Services::Names::ContypeNormalizer.new
           end
 
           # @private
