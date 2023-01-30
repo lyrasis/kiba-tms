@@ -1656,13 +1656,29 @@ module Kiba
           }
 
           if Tms::NameTypeCleanup.done
-            register :worksheet_prev_version, {
+            Tms::NameTypeCleanup.provided_worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('name_type_cleanup__')
+                  .to_sym
+                register jobname, {
+                  path: Tms::NameTypeCleanup.provided_worksheets[idx],
+                  desc: 'NameType cleanup worksheet provided to client',
+                  tags: %i[names cleanup],
+                  supplied: true
+                }
+              end
+            register :previous_worksheet_compile, {
+              creator:
+                Kiba::Tms::Jobs::NameTypeCleanup::PreviousWorksheetCompile,
               path: File.join(
                 Kiba::Tms.datadir,
-                'to_client',
-                'name_type_cleanup_worksheet_prev.csv'
+                'working',
+                'name_type_cleanup_previous_worksheet_compile.csv'
               ),
-              supplied: true,
+              tags: %i[names cleanup],
+              desc: 'Joins completed supplied worksheets and deduplicates on '\
+                ':constituentid',
               lookup_on: :constituentid
             }
             Tms::NameTypeCleanup.returned_file_jobs

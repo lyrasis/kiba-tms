@@ -8,10 +8,6 @@ module Kiba
           module_function
 
           def job
-            if File.exist?(config.worksheet_path) && config.done
-              `cp #{config.worksheet_path} #{config.prev_worksheet_path}`
-            end
-
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :name_type_cleanup__from_base_data,
@@ -29,8 +25,9 @@ module Kiba
               if config.prev_worksheet_exist?
                 base << :name_type_cleanup__worksheet_prev_version
               end
+              base << :name_type_cleanup__previous_worksheet_compile
             end
-            base
+            base.select{ |jobkey| Tms.job_output?(jobkey) }
           end
 
           def merge_map(fields)
@@ -51,9 +48,9 @@ module Kiba
 
               transform Copy::Field, from: :name, to: :origname
 
-              if config.prev_worksheet_exist?
+              if config.done
                 transform Merge::MultiRowLookup,
-                  lookup: name_type_cleanup__worksheet_prev_version,
+                  lookup: name_type_cleanup__previous_worksheet_compile,
                   keycolumn: :constituentid,
                   fieldmap: {
                     origname: :origname

@@ -32,6 +32,15 @@ module Kiba
       # Client-specific transform to clean returned worksheet before any further
       #   processing is done
       setting :returned_cleaner, default: nil, reader: true
+      # List provided worksheets, most recent first. Assumes they are in the
+      #   client project directory/to_client subdir
+      setting :provided_worksheets,
+        default: [],
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'to_client', filename)
+            end
+        }
       # List returned worksheets, most recent first. Assumes they are in the
       #   client project directory/supplied subdir
       setting :returned_files,
@@ -58,66 +67,17 @@ module Kiba
         base
       end
 
+      def provided_worksheet_jobs
+        provided_worksheets.map.with_index do |filename, idx|
+          "name_type_cleanup__worksheet_provided_#{idx}".to_sym
+        end
+      end
+
       def returned_file_jobs
         returned_files.map.with_index do |filename, idx|
           "name_type_cleanup__worksheet_completed_#{idx}".to_sym
         end
       end
-
-      # worksheet version stuff
-      def prev_worksheet_exist?
-        File.exist?(prev_worksheet_path)
-      end
-
-      def prev_worksheet_path
-        base = worksheet_path.delete_suffix('.csv')
-        "#{base}_prev.csv"
-      end
-
-      def worksheet_path
-        Tms.registry
-          .resolve(:name_type_cleanup__worksheet)
-          .path
-          .to_s
-      end
-
-
-      # def register_uncontrolled_ntc_jobs
-      #   ns = build_registry_namespace(
-      #     "name_type_cleanup_for",
-      #     Tms::NameCompile.uncontrolled_name_source_tables.keys
-      #       .map{ |n| Tms.const_get(n) }
-      #       .select{ |mod| mod.used? }
-      #   )
-      #   Tms.registry.import(ns)
-      # end
-
-      # def build_registry_namespace(ns_name, tables)
-      #   bind = binding
-      #   Dry::Container::Namespace.new(ns_name) do
-      #     compilemod = bind.receiver
-      #     tables.each do |tablemod|
-      #       params = [compilemod, ns_name, tablemod]
-      #       register tablemod.filekey, compilemod.send(:target_job_hash, *params)
-      #     end
-      #   end
-      # end
-
-      # def target_job_hash(compilemod, ns_name, tablemod)
-      #   {
-      #     path: File.join(Tms.datadir,
-      #                     'working',
-      #                     "#{ns_name}_#{tablemod.filekey}.csv"
-      #                    ),
-      #     creator: {callee: Tms::Jobs::NameTypeCleanup::ForUncontrolledNameTable,
-      #               args: {
-      #                 mod: tablemod
-      #               }
-      #              },
-      #     tags: %i[nametypecleanup nametypecleanupfor],
-      #     lookup_on: :constituentid
-      #   }
-      # end
     end
   end
 end
