@@ -22,10 +22,9 @@ module Kiba
             base = []
             if config.done
               base << :name_type_cleanup__returned_compile
-              if config.prev_worksheet_exist?
-                base << :name_type_cleanup__worksheet_prev_version
-              end
               base << :name_type_cleanup__previous_worksheet_compile
+              base << :name_type_cleanup__corrected_name_lookup
+              base << :name_type_cleanup__corrected_value_lookup
             end
             base.select{ |jobkey| Tms.job_output?(jobkey) }
           end
@@ -65,10 +64,6 @@ module Kiba
                 delete_sources: false
 
               transform Rename::Field, from: :contype, to: :authoritytype
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '%QUOT%',
-                replace: '"'
 
               if config.done
                 mergefields = bind.receiver
@@ -80,19 +75,79 @@ module Kiba
                   keycolumn: :cleanupid,
                   fieldmap: mergefields
 
+                transform Tms::Transforms::Names::NormalizeContype,
+                  source: :authoritytype,
+                  target: :contype
+                transform Tms::Transforms::Names::AddDefaultContype
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[contype name],
+                  target: :corrfingerprint,
+                  sep: ' ',
+                  delete_sources: false
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__corrected_name_lookup,
+                  keycolumn: :corrfingerprint,
+                  fieldmap: {alreadycorrected: :corrfingerprint}
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__corrected_value_lookup,
+                  keycolumn: :corrfingerprint,
+                  fieldmap: {
+                    corrnameval: :correctname
+                  },
+                  delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__corrected_value_lookup,
+                  keycolumn: :corrfingerprint,
+                  fieldmap: {
+                    corrtypeval: :correctcontype
+                  },
+                  delim: Tms.delim
+
+                transform do |row|
+                  corrname = row[:correctname]
+                  corrtype = row[:correctauthoritytype]
+                  if corrname && corrname['|']
+                    row[:correctname] = nil
+                  end
+                  if corrtype && corrtype['|']
+                    row[:correctauthoritytype] = nil
+                  end
+                  row
+                end
+
                 transform do |row|
                   row[:to_review] = nil
-                  done = row[:doneid]
-                  next row unless done.blank?
+                  next row unless row[:alreadycorrected].blank?
+                  next row unless row[:doneid].blank?
 
                   row[:to_review] = 'y'
                   row
                 end
-                transform Delete::Fields, fields: :doneid
+
+                transform do |row|
+                  next row unless row[:to_review] == 'y'
+
+                  corrname = row[:corrnameval]
+                  corrtype = row[:corrtypeval]
+                  next row if corrname.blank? && corrtype.blank?
+
+                  row[:correctname] = corrname unless corrname.blank?
+                  row[:correctauthoritytype] = corrtype unless corrtype.blank?
+                  row[:to_review] = nil
+                  row
+                end
+
+                transform Delete::Fields,
+                  fields: %i[alreadycorrected doneid corrnameval corrtypeval]
               else
                 transform Append::NilFields,
                   fields: %i[correctauthoritytype correctname]
               end
+
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: :all,
+                find: '%QUOT%',
+                replace: '"'
             end
           end
         end

@@ -1717,6 +1717,37 @@ module Kiba
                 'overlaying cleaned up data and generating phase 2 name '\
                 'cleanup worksheet'
             }
+            register :corrected_name_lookup, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedNameLookup,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_type_cleanup_corrected_name_lookup.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'Creates a table of known correct name/contype '\
+                'combinations, in field :corrfingerprint. Used to avoid '\
+                'marking already-corrected names `for review` in new '\
+                'iterations of name type cleanup worksheet, because value is '\
+                'now coming from a different constituentid',
+              lookup_on: :corrfingerprint
+            }
+            register :corrected_value_lookup, {
+              creator: Kiba::Tms::Jobs::NameTypeCleanup::CorrectedValueLookup,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_type_cleanup_corrected_value_lookup.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'Creates a table of known corrected name/contype '\
+                'combinations, in field :corrfingerprint. Used to avoid '\
+                'marking already-corrected names `for review` in new '\
+                'iterations of name type cleanup worksheet, because value is '\
+                'now coming from a different place unaffected by an already-'\
+                'made correction',
+              lookup_on: :corrfingerprint
+            }
           end
           register :for_con_alt_names, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConAltNames,
