@@ -21,12 +21,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Tms::Transforms::Names::AddDefaultContype
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: ->(row) do
-                  contype = row[:contype]
-                  contype &&
-                    contype.start_with?('Person')
+                  row[:contype] &&
+                    row[:contype].start_with?('Person')
                 end
 
               transform Rename::Field,
