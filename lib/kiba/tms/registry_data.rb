@@ -1646,24 +1646,24 @@ module Kiba
           }
           # For use with :convert_returned_to_uncontrolled. Manually tweak if
           #   needed
-          register :worksheet_returned, {
-            path: File.join(
-              Kiba::Tms.datadir,
-              'supplied',
-              'name_type_cleanup_20221212.csv'
-            ),
-            supplied: true
-          }
-          # Manually tweak this one if you need to use it.
-          register :convert_returned_to_uncontrolled, {
-            creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'supplied',
-              'name_type_cleanup_20221212_CONVERTED.csv'
-            ),
-            tags: %i[names cleanup]
-          }
+          # register :worksheet_returned, {
+          #   path: File.join(
+          #     Kiba::Tms.datadir,
+          #     'supplied',
+          #     'name_type_cleanup_20221212.csv'
+          #   ),
+          #   supplied: true
+          # }
+          # # Manually tweak this one if you need to use it.
+          # register :convert_returned_to_uncontrolled, {
+          #   creator: Kiba::Tms::Jobs::NameTypeCleanup::ConvertReturnedToUncontrolled,
+          #   path: File.join(
+          #     Kiba::Tms.datadir,
+          #     'supplied',
+          #     'name_type_cleanup_20221212_CONVERTED.csv'
+          #   ),
+          #   tags: %i[names cleanup]
+          # }
 
           if Tms::NameTypeCleanup.done
             Tms::NameTypeCleanup.provided_worksheet_jobs
