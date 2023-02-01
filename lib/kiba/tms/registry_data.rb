@@ -1599,6 +1599,16 @@ module Kiba
             ),
             tags: %i[names]
           }
+          register :person_from_con_org_name_parts_for_norm_lookup, {
+            creator:
+            Kiba::Tms::Jobs::NameCompile::PersonFromConOrgNamePartsForNormLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'names_compiled_persons_from_con_org_name_parts_for_norm_lookup.csv'
+            ),
+            tags: %i[names]
+          }
           register :persons_uncontrolled_for_norm_lookup, {
             creator:
             Kiba::Tms::Jobs::NameCompile::PersonsUncontrolledForNormLookup,
