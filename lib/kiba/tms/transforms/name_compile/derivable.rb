@@ -18,7 +18,8 @@ module Kiba
 
           def derive_main_person(row, personnamefield, mode = :main)
             row[:contype] = 'Person (derived)'
-            row[Tms::Constituents.preferred_name_field] = row[personnamefield]
+            personname = row[personnamefield]
+            row[Tms::Constituents.preferred_name_field] = personname
             row[:relation_type] = '_main term'
             del = [Tms::NameCompile.person_nil, Tms::NameCompile.derived_nil]
             del << Tms::NameCompile.alt_nil if mode == :alt
