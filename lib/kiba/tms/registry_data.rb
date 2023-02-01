@@ -2517,6 +2517,11 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'vc_from_accessionlot.csv'),
             tags: %i[valuation acquisitions]
           }
+          register :from_obj_insurance, {
+            creator: Kiba::Tms::Jobs::ValuationControl::FromObjInsurance,
+            path: File.join(Kiba::Tms.datadir, 'working', 'vc_from_obj_insurance.csv'),
+            tags: %i[valuation obj_insurance]
+          }
           register :nhrs, {
             creator: Kiba::Tms::Jobs::ValuationControl::Nhrs,
             path: File.join(Kiba::Tms.datadir, 'working', 'nhr_vc.csv'),
