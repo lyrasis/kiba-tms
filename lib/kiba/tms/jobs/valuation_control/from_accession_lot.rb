@@ -27,6 +27,8 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Delete::Fields, fields: :acquisitionlotid
+
+              warn("Need to implement the rest of ValuationControl::FromAccessionLot")
             end
           end
         end
