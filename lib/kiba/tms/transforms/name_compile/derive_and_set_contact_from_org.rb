@@ -11,7 +11,6 @@ module Kiba
           # @param person_name_from [:nameparts, Symbol]
           def initialize(mode:, person_name_from:)
             @mode = mode
-            @person_name_from = person_name_from
             @namefield = Tms::Constituents.preferred_name_field
             @personbuilder = Tms::Services::Constituents::PersonFromNameParts.new
             @contactadder = Tms::Transforms::NameCompile::AddRelatedTermAndRole.new(
