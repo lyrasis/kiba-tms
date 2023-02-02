@@ -2120,6 +2120,15 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('obj_locations') do
+          register :migrating, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Migrating,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_migrating.csv'),
+            tags: %i[obj_locations],
+            desc: "Removes rows where :objlocationid = -1\nRemoves rows where "\
+              ":locationid = -1\nIf migration is configured to drop inactive "\
+              "rows, drops rows where :inactive = 1"
+          }
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
             path: File.join(Kiba::Tms.datadir, 'working',
