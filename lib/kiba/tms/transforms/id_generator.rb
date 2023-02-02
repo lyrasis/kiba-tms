@@ -58,7 +58,7 @@ module Kiba
 
         def generate_ids(rows)
           if rows.length == 1 && omit_suffix_if_single
-            rows.map{ |row| row[id_target] = row[id_source]; row }
+            rows.map{ |row| row[id_target] = "#{prefix}#{row[id_source]}"; row }
           else
             generate_multirow_ids(rows)
           end
