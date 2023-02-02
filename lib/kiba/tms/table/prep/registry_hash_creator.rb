@@ -21,6 +21,7 @@ module Kiba
             basic_hash
               .merge(creator)
               .merge(merge_data(Tms::Table::Prep::LookupField, table.filekey, :lookup_on))
+              .merge(merge_data(Tms::Table::Prep::Desc, table.filekey, :desc))
               .merge(merge_data(Tms::Table::Prep::DestinationOptions, table.filekey, :dest_special_opts))
               .merge(merge_data(Tms::Table::Prep::Tags, table.filekey, :tags))
           end
@@ -41,7 +42,7 @@ module Kiba
 
             { key => result }
           end
-          
+
           def filepath
             File.join(Tms.datadir, 'prepped', "#{table.filekey}.csv")
           end
