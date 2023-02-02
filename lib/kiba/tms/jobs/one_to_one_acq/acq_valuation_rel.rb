@@ -48,6 +48,7 @@ module Kiba
                   from: :objectnumber,
                   to: :item1_id
               else
+                transform Delete::Fields, fields: :objectnumber
                 transform Merge::MultiRowLookup,
                   lookup: one_to_one_acq__acq_num_lookup,
                   keycolumn: :combined,

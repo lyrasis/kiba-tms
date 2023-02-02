@@ -22,9 +22,10 @@ module Kiba
                valuation_control__nhr_acq_accession_lot
                valuation_control__nhr_obj_accession_lot
                acq_num_acq__acq_valuation_rel
+               linked_set_acq__acq_valuation_rel
                lot_num_acq__acq_valuation_rel
-               valuation_control__nhr_obj_insurance
                one_to_one_acq__acq_valuation_rel
+               valuation_control__nhr_obj_insurance
               ].select{ |job| Tms.job_output?(job) }
           end
 
