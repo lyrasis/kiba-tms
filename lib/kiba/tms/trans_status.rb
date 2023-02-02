@@ -19,10 +19,13 @@ module Kiba
       setting :used_in,
         default: [
           "ObjLocations.#{id_field}",
-          "ShipCrateHiers.#{id_field}"
+#          "ShipCrateHiers.#{id_field}"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable
+      def default_mapping_treatment
+        :self
+      end
     end
   end
 end
