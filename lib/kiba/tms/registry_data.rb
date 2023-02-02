@@ -2129,6 +2129,14 @@ module Kiba
               ":locationid = -1\nIf migration is configured to drop inactive "\
               "rows, drops rows where :inactive = 1"
           }
+          register :unique, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Unique,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_unique.csv'),
+            tags: %i[obj_locations],
+            desc: "Deduplicates on :fingerprint. Removes :objlocationid "\
+              "and :objectnumber values"
+          }
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
             path: File.join(Kiba::Tms.datadir, 'working',
