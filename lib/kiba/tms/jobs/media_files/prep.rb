@@ -87,6 +87,15 @@ module Kiba
                 on_field: :filename,
                 in_field: :duplicate_filename,
                 explicit_no: false
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[path filename],
+                target: :fullpath,
+                sep: '/',
+                delete_sources: false
+              transform Deduplicate::FlagAll,
+                on_field: :fullpath,
+                in_field: :duplicate_fullpath,
+                explicit_no: false
 
               if mod.send(:merges_renditions?)
                 rendfm = config.rendition_merge_fields.map{ |f|
