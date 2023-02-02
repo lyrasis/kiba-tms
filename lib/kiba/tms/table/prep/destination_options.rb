@@ -62,7 +62,7 @@ module Kiba
               },
               obj_locations: {
                 initial_headers:
-                %i[objlocationid objectnumber locationid fulllocid]
+                %i[objlocationid objectnumber locationid]
               },
               terms: {
                 initial_headers: %i[termid prefterm termtype term thesaurus_name

@@ -15,8 +15,12 @@ module Kiba
       setting :empty_fields,
         default: {
           dateout: [nil, '', '9999-12-31 00:00:00.000'],
+          loclevel: [nil, '', '0'],
           tempticklerdate: [nil, '', '1900-01-01 00:00:00.000']
         },
+        reader: true
+      setting :non_content_fields,
+        default: %i[objlocationid componentid],
         reader: true
       extend Tms::Mixins::Tableable
 
