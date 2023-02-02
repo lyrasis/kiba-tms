@@ -63,11 +63,13 @@ module Kiba
 
       setting :source_treatment,
         default: {
+          # options: no other options currently implemented
           name_compile__from_con_org_with_inst: :variant,
           # options: :contact_person, :variant
           name_compile__from_con_org_with_name_parts: :contact_person,
+          # options: no other options currently implemented
           name_compile__from_con_org_with_single_name_part_no_position: :variant,
-          # options: :related_contact_person, :variant
+          # options: :contact_person, :variant
           name_compile__from_con_person_with_inst: :contact_person,
           # options: :bio_note, :qualifier, :name_note
           name_compile__from_con_person_with_position_no_inst: :bio_note,
