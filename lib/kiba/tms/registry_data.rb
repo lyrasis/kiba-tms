@@ -114,6 +114,15 @@ module Kiba
             ),
             tags: %i[acquisitions objects nhr]
           }
+          register :acq_valuation_rel, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::AcqValuationRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'acq_num_acq_valuation_rel.csv'
+            ),
+            tags: %i[acquisitions valuation nhr]
+          }
         end
 
         Kiba::Tms.registry.namespace('acquisitions') do
@@ -762,6 +771,15 @@ module Kiba
             ),
             tags: %i[acquisitions objects nhr]
           }
+          register :acq_valuation_rel, {
+            creator: Kiba::Tms::Jobs::LinkedSetAcq::AcqValuationRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'linked_set_valuation_nhr.csv'
+            ),
+            tags: %i[acquisitions valuation nhr]
+          }
           register :object_statuses, {
             creator: Kiba::Tms::Jobs::LinkedSetAcq::ObjectStatuses,
             path: File.join(
@@ -1102,6 +1120,15 @@ module Kiba
               'lot_num_acq_obj_rel.csv'
             ),
             tags: %i[acquisitions objects nhr]
+          }
+          register :acq_valuation_rel, {
+            creator: Kiba::Tms::Jobs::LotNumAcq::AcqValuationRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'lot_num_acq_valuation_rel.csv'
+            ),
+            tags: %i[acquisitions valuation nhr]
           }
         end
 
@@ -2303,6 +2330,15 @@ module Kiba
             ),
             tags: %i[acquisitions objects nhr]
           }
+          register :acq_valuation_rel, {
+            creator: Kiba::Tms::Jobs::OneToOneAcq::AcqValuationRel,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'one_to_one_valuation_nhr.csv'
+            ),
+            tags: %i[acquisitions valuation nhr]
+          }
         end
 
         Kiba::Tms.registry.namespace('orgs') do
@@ -2512,6 +2548,16 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('valuation_control') do
+          register :all, {
+            creator: Kiba::Tms::Jobs::ValuationControl::All,
+            path: File.join(Kiba::Tms.datadir, 'working', 'vc_all.csv'),
+            tags: %i[valuation]
+          }
+          register :all_clean, {
+            creator: Kiba::Tms::Jobs::ValuationControl::AllClean,
+            path: File.join(Kiba::Tms.datadir, 'working', 'vc_all_clean.csv'),
+            tags: %i[valuation]
+          }
           register :from_accession_lot, {
             creator: Kiba::Tms::Jobs::ValuationControl::FromAccessionLot,
             path: File.join(Kiba::Tms.datadir, 'working', 'vc_from_accessionlot.csv'),
@@ -2535,6 +2581,12 @@ module Kiba
           register :nhr_obj_accession_lot, {
             creator: Kiba::Tms::Jobs::ValuationControl::NhrObjAccessionLot,
             path: File.join(Kiba::Tms.datadir, 'working', 'nhr_obj_vc_from_accessionlot.csv'),
+            tags: %i[valuation objects nhr]
+          }
+          register :nhr_obj_insurance, {
+            creator: Kiba::Tms::Jobs::ValuationControl::NhrObjInsurance,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhr_obj_vc_from_objinsurance.csv'),
             tags: %i[valuation objects nhr]
           }
         end

@@ -17,24 +17,28 @@ module Kiba
             )
           end
 
+          def sources
+            %i[
+               valuation_control__nhr_acq_accession_lot
+               valuation_control__nhr_obj_accession_lot
+               acq_num_acq__acq_valuation_rel
+               lot_num_acq__acq_valuation_rel
+               valuation_control__nhr_obj_insurance
+               one_to_one_acq__acq_valuation_rel
+              ].select{ |job| Tms.job_output?(job) }
+          end
+
           def xforms
             Kiba.job_segment do
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[item1_id item2_id],
+                target: :combined,
+                sep: ' ',
+                delete_sources: false
+              transform Deduplicate::Table,
+                field: :combined,
+                delete_field: true
             end
-          end
-
-          def accession_lot?
-            true if Tms::AccessionLot.used? &&
-              Tms::AccessionLot.has_valuations &&
-              Tms::ObjAccession.processing_approaches.any?(:linkedlot)
-          end
-
-          def sources
-            base = []
-            if accession_lot?
-              base << :valuation_control__nhr_acq_accession_lot
-              base << :valuation_control__nhr_obj_accession_lot
-            end
-            base
           end
         end
       end

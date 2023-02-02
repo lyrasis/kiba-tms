@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return unless config.used?
+            return unless Tms::ObjInsurance.used
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
@@ -30,11 +30,9 @@ module Kiba
                 systemvaluetype: :valuetype
               }
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[objectnumber valuedate],
-                target: :idbase,
-                sep: '.',
-                delete_sources: false
+              transform Copy::Field,
+                from: :objectnumber,
+                to: :idbase
             end
           end
         end
