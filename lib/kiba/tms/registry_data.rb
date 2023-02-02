@@ -1165,7 +1165,8 @@ module Kiba
             desc: 'Merges MediaXrefs target tables into MediaFiles::Prep',
             tags: %i[mediafiles reports],
             dest_special_opts: {
-              initial_headers: %i[targettable]
+              initial_headers: %i[targettable fullpath_duplicate
+                                  filename_duplicate path filename]
             }
           }
           register :unmigratable_report, {
