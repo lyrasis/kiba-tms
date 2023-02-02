@@ -18,7 +18,8 @@ module Kiba
           true
         end
 
-        # Override in extending module if different behavior is desired
+        # Override in extending module (after extension) if different behavior
+        #   is desired
         # Options: :todo, :self, :downcase
         def default_mapping_treatment
           :todo

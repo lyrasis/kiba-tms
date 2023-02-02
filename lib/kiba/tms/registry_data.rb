@@ -2122,9 +2122,11 @@ module Kiba
         Kiba::Tms.registry.namespace('obj_locations') do
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_location_names_merged.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_location_names_merged.csv'),
             tags: %i[obj_locations],
-            desc: 'Merges location names (using fulllocid) into location, prevloc, nextloc, and scheduled loc fields',
+            desc: 'Merges location names (using fulllocid) into location, '\
+              'prevloc, nextloc, and scheduled loc fields',
             lookup_on: :objectnumber
           }
           register :mappable_temptext, {
