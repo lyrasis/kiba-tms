@@ -5,10 +5,10 @@ module Kiba
     module Transforms
       module ObjLocations
         class AddFingerprint
-          def initialize(delete_sources: false)
+          def initialize(sources:, target: :fingerprint, delete_sources: false)
             @xform = CombineValues::FromFieldsWithDelimiter.new(
-              sources: Tms::ObjLocations.content_fields,
-              target: :fingerprint,
+              sources: sources,
+              target: target,
               sep: ' ',
               prepend_source_field_name: true,
               delete_sources: delete_sources
