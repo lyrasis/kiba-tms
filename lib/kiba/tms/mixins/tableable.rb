@@ -50,7 +50,7 @@ module Kiba
         # non-omitting, non-fields that are not ids or other non-primary content
         #   bearing fields
         def content_fields
-          fields - non_content_fields
+          fields - non_content_fields - omitted_fields
         end
 
         def delete_omitted_fields(hash)
