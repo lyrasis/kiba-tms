@@ -7,7 +7,10 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[conaddressid lastsalestaxid addressformatid islocation],
+        default: %i[lastsalestaxid addressformatid islocation],
+        reader: true
+      setting :non_content_fields,
+        default: [:conaddressid],
         reader: true
       extend Tms::Mixins::Tableable
 
