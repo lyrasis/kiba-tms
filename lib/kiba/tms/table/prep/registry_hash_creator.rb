@@ -21,9 +21,9 @@ module Kiba
             basic_hash
               .merge(creator)
               .merge(merge_data(Tms::Table::Prep::LookupField, table.filekey, :lookup_on))
-              .merge(merge_data(Tms::Table::Prep::Desc, table.filekey, :desc))
               .merge(merge_data(Tms::Table::Prep::DestinationOptions, table.filekey, :dest_special_opts))
               .merge(merge_data(Tms::Table::Prep::Tags, table.filekey, :tags))
+              .merge(get_desc(creator[:creator]))
           end
 
           private
@@ -34,6 +34,13 @@ module Kiba
             {
               path: filepath
             }
+          end
+
+          def get_desc(creator)
+            jobmod = creator.receiver
+            return {} unless jobmod.respond_to?(:desc)
+
+            {desc: jobmod.send(:desc)}
           end
 
           def merge_data(klass, arg, key)
