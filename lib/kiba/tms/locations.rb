@@ -24,7 +24,8 @@ module Kiba
       #   (organizations used as locations are handled a bit separately
       setting :authorities, default: %i[local offsite], reader: true
       setting :brief_address_mappings, default: {}, reader: true
-      setting :cleanup_done, default: false, reader: true
+      setting :cleanup_done, default: false, reader: true,
+        constructor: proc{ !returned_files.empty? }
       # Whether client wants the migration to include construction of a location
       #   hierarchy
       setting :hierarchy, default: true, reader: true
@@ -43,6 +44,24 @@ module Kiba
       setting :post_compile_xform,
         default: nil,
         reader: true
+      # Filenames of location review/cleanup worksheets provided to the client.
+      #   Most recent first. Assumes files are in the `to_client` subdirectory
+      #   of the migration base directory
+      setting :provided_worksheets,
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'to_client', filename)
+            end
+        }
+      # List returned worksheets, most recent first. Assumes they are in the
+      #   client project directory/supplied subdir
+      setting :returned_files,
+        default: [],
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'supplied', filename)
+            end
+        }
       setting :multi_source_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
         reader: true
@@ -52,6 +71,18 @@ module Kiba
           {'0'=>'Local', '1'=>'Offsite'}
         else
           {'0'=>'Local', '1'=>'Local'}
+        end
+      end
+
+      def provided_worksheet_jobs
+        provided_worksheets.map.with_index do |filename, idx|
+          "locs__worksheet_provided_#{idx}".to_sym
+        end
+      end
+
+      def returned_file_jobs
+        returned_files.map.with_index do |filename, idx|
+          "locs__worksheet_completed_#{idx}".to_sym
         end
       end
 

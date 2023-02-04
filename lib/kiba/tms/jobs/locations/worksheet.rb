@@ -8,10 +8,6 @@ module Kiba
           module_function
 
           def job
-            if File.exist?(dest_path) && config.cleanup_done
-              `cp #{dest_path} #{prev_version_path}`
-            end
-
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :locs__compiled,
@@ -24,42 +20,26 @@ module Kiba
 
           def lookups
             base = []
-            if prev_version_exist?
-              base << :locations__worksheet_prev_version
-            end
             if config.cleanup_done
+              base << :locs__previous_worksheet_compile
               base << :locations__worksheet_completed
             end
-            base
-          end
-
-          def prev_version_exist?
-            File.exist?(prev_version_path) && config.cleanup_done
-          end
-
-          def dest_path
-            Tms.registry
-              .resolve(:locs__worksheet)
-              .path
-          end
-
-          def prev_version_path
-            Tms.registry
-              .resolve(:locs__worksheet_prev_version)
-              .path
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
+              job = bind.receiver
+              config = job.send(:config)
+              lookups = job.send(:lookups)
 
               transform Copy::Field, from: :location_name, to: :origlocname
 
-              if bind.receiver.send(:prev_version_exist?)
+              if lookups.any?(:locs__previous_worksheet_compile)
                 transform Merge::MultiRowLookup,
-                  lookup: locations__worksheet_prev_version,
+                  lookup: locs__previous_worksheet_compile,
                   keycolumn: :fulllocid,
                   fieldmap: {
                     origlocname: :origlocname

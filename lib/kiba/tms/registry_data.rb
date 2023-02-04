@@ -937,6 +937,22 @@ module Kiba
                 ] },
             lookup_on: :fulllocid
           }
+          register :compiled_clean, {
+            creator: Kiba::Tms::Jobs::Locations::CompiledClean,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'locs_compiled_clean.csv'),
+            desc: 'Locations from different sources, compiled, with cleanup '\
+              'applied',
+            tags: %i[locations],
+            dest_special_opts: {
+              initial_headers:
+              %i[
+                 usage_ct location_name parent_location
+                 storage_location_authority address
+                 term_source fulllocid
+                ] },
+            lookup_on: :fulllocid
+          }
           register :worksheet, {
             creator: Kiba::Tms::Jobs::Locations::Worksheet,
             path: File.join(
@@ -950,27 +966,75 @@ module Kiba
               initial_headers: proc{ Tms::Locations.worksheet_columns }
             }
           }
-          register :worksheet_prev_version, {
-            creator: Kiba::Tms::Jobs::Locations::Worksheet,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'to_client',
-              'location_cleanup_worksheet.csv'
-            ),
-            desc: 'Locations for client review',
-            tags: %i[locations]
-          }
           if Tms::Locations.cleanup_done
-            register :worksheet_prev_version, {
+            Tms::Locations.provided_worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('locs__')
+                  .to_sym
+                register jobname, {
+                  path: Tms::Locations.provided_worksheets[idx],
+                  desc: 'Locations cleanup/review worksheet provided to client',
+                  tags: %i[locations cleanup],
+                  supplied: true
+                }
+              end
+            register :previous_worksheet_compile, {
+              creator: Tms::Jobs::Locations::PreviousWorksheetCompile,
               path: File.join(
                 Kiba::Tms.datadir,
-                'to_client',
-                'location_cleanup_worksheet_prev.csv'
+                'working',
+                'locs_previous_worksheet_compile.csv'
               ),
-              supplied: true,
+              tags: %i[locations cleanup],
+              desc: 'Joins completed supplied worksheets and deduplicates on '\
+                ':fulllocid',
               lookup_on: :fulllocid
             }
-
+            Tms::Locations.returned_file_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('locs__')
+                  .to_sym
+                register jobname, {
+                  path: Tms::Locations.returned_files[idx],
+                  desc: 'Completed locations review/cleanup worksheet',
+                  tags: %i[locations cleanup],
+                  supplied: true
+                }
+              end
+            register :returned_compile, {
+              creator: Tms::Jobs::Locations::ReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'locs_returned_compile.csv'
+              ),
+              tags: %i[locations cleanup],
+              desc: 'Joins completed cleanup worksheets and deduplicates on '\
+                ':fulllocid'
+            }
+            register :cleanup_changes, {
+              creator: Tms::Jobs::Locations::CleanupChanges,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'locs_cleanup_changes.csv'
+              ),
+              tags: %i[locations cleanup],
+              desc: 'Rows with changes to merge into existing base location data',
+              lookup_on: :fulllocid
+            }
+            register :cleanup_added_locs, {
+              creator: Tms::Jobs::Locations::CleanupAddedLocs,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'locs_cleanup_added_locs.csv'
+              ),
+              tags: %i[locations cleanup],
+              desc: 'Rows where client added new locations in cleanup data'
+            }
           end
         end
 
@@ -2125,17 +2189,75 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working',
                             'obj_locations_migrating.csv'),
             tags: %i[obj_locations],
-            desc: "Removes rows where :objlocationid = -1\nRemoves rows where "\
-              ":locationid = -1\nIf migration is configured to drop inactive "\
-              "rows, drops rows where :inactive = 1"
+            desc: "- Removes rows where :objlocationid = -1\n"\
+              "- Removes rows where :locationid = -1\n"\
+              "- If migration is configured to drop inactive "\
+              "rows, drops rows where :inactive = 1"\
+              "- Adds fullfingerprint",
+            dest_special_opts: {
+              initial_headers:
+              %i[objectnumber objlocationid is_temp transdate
+                 location_purpose transport_type transport_status
+                 location prevobjlocid nextobjlocid] }
           }
           register :unique, {
             creator: Kiba::Tms::Jobs::ObjLocations::Unique,
             path: File.join(Kiba::Tms.datadir, 'working',
                             'obj_locations_unique.csv'),
             tags: %i[obj_locations],
-            desc: "Deduplicates on :fingerprint. Removes :objlocationid "\
-              "and :objectnumber values"
+            desc: "- Deduplicates on :fullfingerprint\n"\
+              "- Merges in related objectnumbers",
+            dest_special_opts: {
+              initial_headers:
+              %i[objectnumber objlocationid is_temp transdate
+                 location_purpose transport_type transport_status
+                 location prevobjlocid nextobjlocid] }
+          }
+          register :inactive_review, {
+            creator: Kiba::Tms::Jobs::ObjLocations::InactiveReview,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_locations_inactive_review.csv'),
+            tags: %i[obj_locations reports],
+            dest_special_opts: {
+              initial_headers:
+              %i[objectnumber transdate location currentlocationnote is_temp
+                 inactive location_purpose transport_type transport_status
+                 objlocationid prevobjlocid nextobjlocid
+                  prev_location next_location]
+            }
+          }
+          register :dropping, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Dropping,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_locations_dropping_from_migration.csv'),
+            tags: %i[obj_locations reports],
+            desc: "ObjLocation rows that will be omitted from the migration. "\
+              "The reason for omission is stated in the :dropreason column. "\
+              "LMIs in CS that are not attached to any Object record(s) do "\
+              "not serve any purpose. LMIs in CS require a location value, "\
+              "so if there is not an associated location, we cannot create "\
+              "and LMI in the migration",
+                        dest_special_opts: {
+              initial_headers:
+              %i[objlocationid dropreason objectnumber transdate location]
+            }
+
+          }
+          register :dropping_no_location, {
+            creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoLocation,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_dropping_no_location.csv'),
+            tags: %i[obj_locations],
+            desc: "ObjLocation rows having no linked Storage Location value. "\
+              "Adds :dropreason column"
+          }
+          register :dropping_no_object, {
+            creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoObject,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_dropping_no_object.csv'),
+            tags: %i[obj_locations],
+            desc: "ObjLocation rows having no linked Object value. "\
+              "Adds :dropreason column"
           }
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
@@ -2208,18 +2330,6 @@ module Kiba
             tags: %i[obj_locations],
             desc: 'Deletes everything else. Used to get counts of location usages',
             lookup_on: :fulllocid
-          }
-          register :not_matching_components, {
-            creator: Kiba::Tms::Jobs::ObjLocations::NotMatchingComponents,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'obj_locations_not_matching_obj_components.csv'),
-            tags: %i[obj_locations obj_components reports]
-          }
-          register :flag_not_matching_locations, {
-            creator: Kiba::Tms::Jobs::ObjLocations::FlagNotMatchingLocations,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_locations_flag_not_matching_locations.csv'),
-            tags: %i[obj_locations],
-            dest_special_opts: {
-              initial_headers: %i[no_loc_data action] },
           }
           register :prev_next_sched_loc_merge, {
             creator: Kiba::Tms::Jobs::ObjLocations::PrevNextSchedLocMerge,

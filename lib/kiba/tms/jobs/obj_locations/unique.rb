@@ -21,9 +21,22 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::Fields,
-                fields: %i[objlocationid objectnumber]
-              transform Deduplicate::Table, field: :fingerprint
+              transform Delete::Fields, fields: :objectnumber
+              transform Deduplicate::Table, field: :fullfingerprint
+
+              lookup = Tms.get_lookup(
+                jobkey: :obj_locations__migrating,
+                column: :fullfingerprint
+              )
+              transform Merge::MultiRowLookup,
+                lookup: lookup,
+                keycolumn: :fullfingerprint,
+                fieldmap: {objectnumber: :objectnumber},
+                delim: Tms.delim
+              transform Count::MatchingRowsInLookup,
+                lookup: lookup,
+                keycolumn: :fullfingerprint,
+                targetfield: :objct
             end
           end
         end

@@ -7,6 +7,23 @@ module Kiba
         module Prep
           module_function
 
+          def desc
+            "- Deletes omitted fields\n"\
+              "- Deletes empty-equivalent field values from :loclevel, "\
+              ":dateout, :tempticklerdate, :approver, :handler, "\
+              ":requestedby\n"\
+              "- Removes timestamps from :transdate, :dateout\n"\
+              "- Runs client-specific initial data cleaner if configured\n"\
+              "- Rename location detail fields to hierarchical level names\n"\
+              "- Merge in client-mapped temptext mappings\n"\
+              "- Add :fulllocid for :location value\n"\
+              "- ADDS ROW FINGERPRINT for collapsing rows with identical data "\
+              "into one LMI procedure\n"\
+              "- Merges in human readable :objectnumber, :location_purpose "\
+              ":transport_status, :transport_type values\n"\
+              "- Converts numeric :tempflag field value to y/nil in :is_temp\n"
+          end
+
           def job
             return unless config.used?
 
@@ -25,13 +42,19 @@ module Kiba
             base << :prep__loc_purposes if Tms::LocPurposes.used?
             base << :prep__trans_status if Tms::TransStatus.used?
             base << :prep__trans_codes if Tms::TransCodes.used?
-            base
+            if config.temptext_mapping_done
+              base << :obj_locations__temptext_mapped_for_merge
+            end
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
             bind = binding
+
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
+              job = bind.receiver
+              config = job.send(:config)
+              lookups = job.send(:lookups)
 
               # Clear/clean data that should not be included as fingerprint
               #   values
@@ -56,6 +79,8 @@ module Kiba
                   match: '^1900'
               end
 
+              transform Tms::Transforms::DeleteTimestamps,
+                fields: %i[transdate dateout]
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[approver handler requestedby],
                 find: Tms.no_value_type_pattern,
@@ -63,18 +88,46 @@ module Kiba
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
-              # Add the fingerprint
-              transform Tms::Transforms::ObjLocations::AddFingerprint
+              unless config.hier_lvl_lookup.empty?
+                # renames fulllocid_fields to their hierarchical positions
+                transform Rename::Fields,
+                  fieldmap: config.hier_lvl_lookup
+              end
+
+              if config.temptext_mapping_done
+                transform Tms::Transforms::ObjLocations::AddTemptextid,
+                  target: :lookupid
+                if lookups.any?(:obj_locations__temptext_mapped_for_merge)
+                  transform Merge::MultiRowLookup,
+                    lookup: obj_locations__temptext_mapped_for_merge,
+                    keycolumn: :lookupid,
+                    fieldmap: {
+                      ttmapping: :mapping,
+                      ttcorrect: :corrected_value
+                    }
+                end
+                transform Tms::Transforms::ObjLocations::TemptextMappings
+                if config.temptext_mapping_post_xform
+                  transform config.temptext_mapping_post_xform
+                end
+              end
+
+              transform Tms::Transforms::ObjLocations::AddFulllocid
+
+              transform Tms::Transforms::ObjLocations::AddFingerprint,
+                sources: config.fingerprint_fields
 
               # Merge in data for table readability
-              transform Merge::MultiRowLookup,
-                lookup: obj_components__with_object_numbers_by_compid,
-                keycolumn: :componentid,
-                fieldmap: {
-                  objectnumber: :componentnumber,
-                },
-                delim: Tms.delim
-              if Tms::LocPurposes.used?
+              if lookups.any?(:obj_components__with_object_numbers_by_compid)
+                transform Merge::MultiRowLookup,
+                  lookup: obj_components__with_object_numbers_by_compid,
+                  keycolumn: :componentid,
+                  fieldmap: {
+                    objectnumber: :componentnumber,
+                  },
+                  delim: Tms.delim
+              end
+              if lookups.any?(:prep__loc_purposes)
                 transform Merge::MultiRowLookup,
                   lookup: prep__loc_purposes,
                   keycolumn: :locpurposeid,
@@ -83,7 +136,7 @@ module Kiba
                   },
                   delim: Tms.delim
               end
-              if Tms::TransStatus.used?
+              if lookups.any?(:prep__trans_status)
                 transform Merge::MultiRowLookup,
                   lookup: prep__trans_status,
                   keycolumn: :transstatusid,
@@ -92,7 +145,7 @@ module Kiba
                   },
                   delim: Tms.delim
               end
-              if Tms::TransCodes.used?
+              if lookups.any?(:prep__trans_codes)
                 transform Merge::MultiRowLookup,
                   lookup: prep__trans_codes,
                   keycolumn: :transcodeid,
@@ -106,8 +159,11 @@ module Kiba
 
               transform Replace::FieldValueWithStaticMapping,
                 source: :tempflag,
-                target: :is_temp?,
+                target: :is_temp,
                 mapping: Tms.boolean_yn_mapping
+              transform Delete::FieldValueMatchingRegexp,
+                fields: %i[is_temp],
+                match: '^n$'
             end
           end
         end

@@ -7,19 +7,32 @@ module Kiba
         module LocationNamesMerged
           module_function
 
-          def job            
+          def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__obj_locations,
                 destination: :obj_locations__location_names_merged,
-                lookup: %i[locs__compiled prep__obj_locations]
+                lookup: lookups
               },
               transformer: xforms
             )
           end
 
+          def lookups
+            base = %i[
+                      prep__obj_locations
+                      locs__compiled_clean
+                    ]
+            base.select{ |job| Tms.job_output?(job) }
+          end
+
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              job = bind.receiver
+              lookups = job.send(:lookups)
+
               transform Merge::MultiRowLookup,
                 lookup: prep__obj_locations,
                 keycolumn: :prevobjlocid,
@@ -41,37 +54,39 @@ module Kiba
                   schedlocid: :fulllocid,
                 },
                 delim: Tms.delim
-              transform Delete::Fields, fields: %i[prevobjlocid nextobjlocid schedobjlocid]
-              
-              transform Merge::MultiRowLookup,
-                lookup: locs__compiled,
-                keycolumn: :fulllocid,
-                fieldmap: {
-                  location: :location_name,
-                },
-                delim: Tms.delim
-              transform Merge::MultiRowLookup,
-                lookup: locs__compiled,
-                keycolumn: :prevlocid,
-                fieldmap: {
-                  prev_location: :location_name,
-                },
-                delim: Tms.delim
-              transform Merge::MultiRowLookup,
-                lookup: locs__compiled,
-                keycolumn: :nextlocid,
-                fieldmap: {
-                  next_location: :location_name,
-                },
-                delim: Tms.delim
-              transform Merge::MultiRowLookup,
-                lookup: locs__compiled,
-                keycolumn: :schedlocid,
-                fieldmap: {
-                  sched_location: :location_name,
-                },
-                delim: Tms.delim
-              transform Delete::Fields, fields: %i[locationid fulllocid prevlocid nextlocid schedlocid]
+
+              if lookups.any?(:locs__compiled_clean)
+                transform Merge::MultiRowLookup,
+                  lookup: locs__compiled_clean,
+                  keycolumn: :fulllocid,
+                  fieldmap: {
+                    location: :location_name,
+                  },
+                  delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: locs__compiled_clean,
+                  keycolumn: :prevlocid,
+                  fieldmap: {
+                    prev_location: :location_name,
+                  },
+                  delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: locs__compiled_clean,
+                  keycolumn: :nextlocid,
+                  fieldmap: {
+                    next_location: :location_name,
+                  },
+                  delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: locs__compiled_clean,
+                  keycolumn: :schedlocid,
+                  fieldmap: {
+                    sched_location: :location_name,
+                  },
+                  delim: Tms.delim
+              end
+              transform Delete::Fields,
+                fields: %i[locationid fulllocid prevlocid nextlocid schedlocid]
             end
           end
         end

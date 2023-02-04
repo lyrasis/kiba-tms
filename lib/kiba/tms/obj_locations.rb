@@ -30,9 +30,41 @@ module Kiba
       extend Tms::Mixins::UncontrolledNameCompileable
 
       # Settings related to creating LMIs and relating them to objects
+      # Whether to drop rows marked inactive from the migration. The default
+      #   is true because:
+      # - TMS does not allow editing of this location data once it is entered
+      # - Marking location data as inactive seems to be the way to indicate it
+      #   was entered erroneously or accidentally
+      # - There is no need to migrate bad data/mistakes to a new system
       setting :drop_inactive,
-        default: false,
+        default: true,
         reader: true
+      # Initial/brief fingerprint fields. This fingerprint is merged in during
+      #   Prep job. Later, in the Unique job, a full fingerprint is added
+      setting :fingerprint_fields,
+        default: [],
+        reader: true,
+        constructor: proc{ |value|
+          value << content_fields
+          value.flatten!
+          unless hier_lvl_lookup.empty?
+            hier_lvl_lookup.each do |drop, add|
+              value.delete(drop)
+              value << add
+            end
+          end
+          value.delete(:inactive) if drop_inactive
+          value - %i[prevobjlocid nextobjlocid schedobjlocid]
+        }
+      # Fields included in full fingerprint value, which includes the initial
+      #   fingerprint values for prev, next, and sched locs
+      setting :full_fingerprint_fields,
+        default: [],
+        reader: true,
+        constructor: proc{ |value|
+          value = [:fingerprint]
+          value + %i[prevfp nextfp schedfp]
+        }
       setting :inactive_note_string,
         default: 'INACTIVE OBJECT LOCATION PROCEDURE',
         reader: true

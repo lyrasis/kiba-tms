@@ -14,7 +14,7 @@ module Kiba
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
-                source: :prep__obj_locations,
+                source: :obj_locations__unique_prep,
                 destination: :locs__from_obj_locs,
                 lookup: :prep__locations
               },

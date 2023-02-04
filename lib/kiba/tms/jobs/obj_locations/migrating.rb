@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__obj_locations,
+                source: :obj_locations__location_names_merged,
                 destination: :obj_locations__migrating
               },
               transformer: xforms
@@ -21,24 +21,35 @@ module Kiba
 
           def xforms
             bind = binding
+            lookup = Tms.get_lookup(
+              jobkey: :obj_locations__location_names_merged,
+              column: :objlocationid
+            )
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: :objlocationid,
-                value: '-1'
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: :locationid,
-                value: '-1'
+              transform FilterRows::AllFieldsPopulated,
+                action: :keep,
+                fields: %i[objectnumber location]
+
               if config.drop_inactive
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :inactive,
                   value: '1'
+                transform Delete::Fields, fields: :inactive
               end
+
+              %i[prev next sched].each do |prefix|
+                transform Merge::MultiRowLookup,
+                  lookup: lookup,
+                  keycolumn: "#{prefix}objlocid".to_sym,
+                  fieldmap: {"#{prefix}fp".to_sym=>:fingerprint}
+              end
+              transform Tms::Transforms::ObjLocations::AddFingerprint,
+                sources: config.full_fingerprint_fields,
+                target: :fullfingerprint
             end
           end
         end
