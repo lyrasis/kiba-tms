@@ -15,7 +15,7 @@ module Kiba
                 lookup: :constituents__for_compile
               },
               transformer: xforms,
-              helper: Kiba::Tms::NameCompile::multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 
@@ -23,7 +23,7 @@ module Kiba
             Kiba.job_segment do
               transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate, using: {}, explicit_no: false
               transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
-              
+
               transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.variants_from_duplicates'
               transform Merge::MultiRowLookup,
                 lookup: constituents__for_compile,
@@ -32,7 +32,7 @@ module Kiba
                 conditions: ->(origrow, mergerows) do
                   namefield = Tms::Constituents.preferred_name_field
                   thisname = origrow[namefield].downcase
-                  mergerows.reject{ |mrow| thisname == mrow[namefield].downcase } 
+                  mergerows.reject{ |mrow| thisname == mrow[namefield].downcase }
                 end
 
               transform FilterRows::FieldPopulated, action: :keep, field: :mainname

@@ -14,7 +14,7 @@ module Kiba
                 destination: :name_compile__from_con_person_plain
               },
               transformer: xforms,
-              helper: Kiba::Tms::NameCompile::multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 

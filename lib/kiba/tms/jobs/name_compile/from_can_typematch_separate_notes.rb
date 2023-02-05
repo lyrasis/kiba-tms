@@ -14,7 +14,7 @@ module Kiba
                 destination: :name_compile__from_can_typematch_separate_notes
               },
               transformer: xforms,
-              helper: Kiba::Tms::NameCompile::multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 
@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_can_typematch_separate
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Copy::Field, from: :altname, to: :altconname
               transform Tms::Transforms::NameCompile::AddRelatedAltNameNote, target: treatment
             end

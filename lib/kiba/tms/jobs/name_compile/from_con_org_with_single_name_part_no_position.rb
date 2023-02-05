@@ -14,7 +14,7 @@ module Kiba
                 destination: :name_compile__from_con_org_with_single_name_part_no_position
               },
               transformer: xforms,
-              helper: Kiba::Tms::NameCompile::multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 
@@ -30,7 +30,7 @@ module Kiba
                 transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_single_name_detail'
 
                 transform Merge::ConstantValue, target: :relation_type, value: 'variant term'
-                
+
                 transform Rename::Field, from: :lastname, to: :variant_term
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil
               end

@@ -14,7 +14,7 @@ module Kiba
                 destination: :name_compile__from_con_person_with_position_no_inst
               },
               transformer: xforms,
-              helper: Kiba::Tms::NameCompile::multi_source_normalizer
+              helper: Kiba::Tms::NameCompile.multi_source_normalizer
             )
           end
 
@@ -22,9 +22,9 @@ module Kiba
             Kiba.job_segment do
               job = :name_compile__from_con_person_with_position_no_inst
               treatment = Tms::NameCompile.source_treatment[job]
-              
+
               transform Tms::Transforms::NameCompile::SelectConPersonWithPositionNoInst
-              
+
               transform Append::ToFieldValue, field: :constituentid, value: '.position'
               transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.person_with_position_no_institution'
               transform Rename::Fields, fieldmap: {
