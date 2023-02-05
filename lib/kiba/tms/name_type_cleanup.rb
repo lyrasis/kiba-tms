@@ -22,7 +22,8 @@ module Kiba
       # Indicates whether any cleanup has been returned. If not, we run
       #   everything on base data. If yes, we merge in/overlay cleanup on the
       #   affected base data tables
-      setting :done, default: false, reader: true
+      setting :done, default: false, reader: true,
+        constructor: proc{ !returned_files.empty? }
       setting :dropped_name_indicator,
         default: 'DROPPED FROM MIGRATION',
         reader: true
