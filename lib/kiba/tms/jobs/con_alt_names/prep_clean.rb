@@ -44,9 +44,11 @@ module Kiba
               if bind.receiver.send(:ntc_needed?)
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   lookup: name_type_cleanup__for_con_alt_names,
-                  keycolumn: :altnameid
+                  keycolumn: :altnameid,
+                  target: :altname
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  typetarget: :altauthtype
+                  typetarget: :altauthtype,
+                  nametarget: :altname
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: :altname,
                   target: :altnorm
