@@ -39,6 +39,7 @@ module Kiba
               base << :text_entries_for__obj_components
             end
             base.flatten
+              .select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
