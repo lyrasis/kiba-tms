@@ -25,6 +25,13 @@ module Kiba
 
               transform config.returned_cleaner if config.returned_cleaner
 
+              transform do |row|
+                next row if row.key?(:to_review)
+
+                row[:to_review] = nil
+                row
+              end
+
               # this can be taken out if we ever do a TMS migration where this
               #   process isn't changing any more during the migration!
               transform do |row|
@@ -32,6 +39,15 @@ module Kiba
 
                 row[:cleanupid] = "#{row[:constituentid]}_#{row[:name]}"
                 row
+              end
+              %i[school sortname orig_norm nonprefnorm prefnormorig
+                 nonprefnormorig namemergenorm origname].each do |field|
+                transform do |row|
+                  next row if row.key?(field)
+
+                  row[field] = nil
+                  row
+                end
               end
 
               transform Deduplicate::Table,
