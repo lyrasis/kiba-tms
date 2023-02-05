@@ -7,6 +7,16 @@ module Kiba
         module Prep
           module_function
 
+          def desc
+            "- Remove omitted fields and -1 id row\n"\
+              "- Apply client-specific initial data cleaner, if any\n"\
+              "- If table includes actual components in addition to "\
+              "rows representing additional Objects row details...\n"\
+              "-- Merge in :componenttype and :objcompstatus values\n"\
+              "- Merge in any TextEntries\n"\
+              "- Convert :inactive field to :active (flip logic)\n"
+          end
+
           def job
             return unless config.used?
 
