@@ -26,6 +26,7 @@ module Kiba
             con_alt_names: :altnameid,
             constituents: :constituentid,
             departments: :departmentid,
+            exhibitions: :exhibitionid,
             loans: :loanid,
             loc_purposes: :locpurposeid,
             locations: :locationid,
