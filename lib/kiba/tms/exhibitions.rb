@@ -8,6 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :delete_fields,
+        default: %i[exhmnemonic],
+        reader: true
       extend Tms::Mixins::Tableable
     end
   end
