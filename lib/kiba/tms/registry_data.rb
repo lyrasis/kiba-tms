@@ -2219,7 +2219,8 @@ module Kiba
             desc: "- Deduplicates on :fullfingerprint\n"\
               "- Merge in related objectnumbers\n"\
               "- Merge in :homelocationname\n"\
-              "- Add :year field (for use building movementrefnums)\n",
+              "- Add :year field (for use building movementrefnums)\n"\
+              "- Merge names",
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate

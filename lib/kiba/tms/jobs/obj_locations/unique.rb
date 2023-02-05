@@ -14,14 +14,21 @@ module Kiba
               files: {
                 source: :obj_locations__migrating,
                 destination: :obj_locations__unique,
-                lookup: :locs__compiled_clean
+                lookup: %i[
+                           locs__compiled_clean
+                           names__by_norm
+                          ]
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Delete::Fields, fields: :objectnumber
               transform Deduplicate::Table, field: :fullfingerprint
 
@@ -38,6 +45,7 @@ module Kiba
                 lookup: lookup,
                 keycolumn: :fullfingerprint,
                 targetfield: :objct
+
               transform Append::ToFieldValue,
                 field: :homelocationid,
                 value: '|nil'
@@ -49,6 +57,7 @@ module Kiba
                   homelocationauth: :storage_location_authority
                 }
               transform Delete::Fields, fields: :homelocationid
+
               transform do |row|
                 row[:year] = nil
                 transdate = row[:transdate]
@@ -61,6 +70,22 @@ module Kiba
                 locsrc: :location,
                 authsrc: :locauth,
                 target: 'currentlocation'
+
+              config.name_fields.each do |field|
+                normfield = "#{field}norm".to_sym
+                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                  source: field,
+                  target: normfield
+                %i[person organization note].each do |type|
+                  transform Merge::MultiRowLookup,
+                    lookup: names__by_norm,
+                    keycolumn: normfield,
+                    fieldmap: {"#{field}_#{type}".to_sym=>type},
+                    delim: Tms.delim
+                end
+                transform Delete::Fields,
+                  fields: [field, normfield]
+              end
             end
           end
         end
