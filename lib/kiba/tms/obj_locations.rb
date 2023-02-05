@@ -29,6 +29,9 @@ module Kiba
         reader: true
       extend Tms::Mixins::UncontrolledNameCompileable
 
+      # Array of transform classes to do project-specific removal of otherwise
+      #   migrating rows
+      setting :custom_droppers, default: [], reader: true
       # Settings related to creating LMIs and relating them to objects
       # Whether to drop rows marked inactive from the migration. The default
       #   is true because:

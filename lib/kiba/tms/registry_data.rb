@@ -2211,6 +2211,14 @@ module Kiba
                  location prevobjlocid nextobjlocid] },
             lookup_on: :objlocationid
           }
+          register :migrating_custom, {
+            creator: Kiba::Tms::Jobs::ObjLocations::MigratingCustom,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_migrating_custom.csv'),
+            tags: %i[obj_locations],
+            desc: "- Removes project-specific omission rows",
+            lookup_on: :objlocationid
+          }
           register :unique, {
             creator: Kiba::Tms::Jobs::ObjLocations::Unique,
             path: File.join(Kiba::Tms.datadir, 'working',
@@ -2240,6 +2248,12 @@ module Kiba
                             'obj_locations_lmi.csv'),
             tags: %i[obj_locations],
             desc: "Compile inventory, location, and movement LMIs"
+          }
+          register :nhr_lmi_obj, {
+            creator: Kiba::Tms::Jobs::ObjLocations::NhrLmiObj,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhr_lmi_obj.csv'),
+            tags: %i[movement objects nhr]
           }
           register :location, {
             creator: Kiba::Tms::Jobs::ObjLocations::Location,

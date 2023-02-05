@@ -58,6 +58,14 @@ module Kiba
               unless config.drop_inactive
                 transform Tms::Transforms::ObjLocations::HandleInactive
               end
+
+              transform Count::MatchingRowsInLookup,
+                lookup: Tms.get_lookup(
+                  jobkey: :tms__obj_components,
+                  column: :currentobjlocid
+                ),
+                keycolumn: :objlocationid,
+                targetfield: :currentct
             end
           end
         end

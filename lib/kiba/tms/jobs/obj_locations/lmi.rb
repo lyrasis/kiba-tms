@@ -33,6 +33,23 @@ module Kiba
 
               transform Append::NilFields,
                 fields: config.lmi_field_normalizer.get_fields
+
+              transform Delete::FieldsExcept,
+                fields: %i[movementreferencenumber objectnumber
+                           transport_type transport_status
+                           currentlocationlocationlocal
+                           currentlocationlocationoffsite
+                           currentlocationorganizationlocal
+                           currentlocationnote
+                           normallocationlocationlocal
+                           normallocationlocationoffsite
+                           normallocationorganizationlocal
+                           locationdate removaldate plannedremovaldate
+                           reasonformove
+                           movementcontact movementnote
+                           inventorydate inventorycontact inventorynote
+                           ]
+
             end
           end
         end

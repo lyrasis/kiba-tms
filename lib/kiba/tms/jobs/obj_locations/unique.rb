@@ -12,11 +12,12 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_locations__migrating,
+                source: :obj_locations__migrating_custom,
                 destination: :obj_locations__unique,
                 lookup: %i[
                            locs__compiled_clean
                            names__by_norm
+                           obj_components__current_loc_lookup
                           ]
               },
               transformer: xforms
@@ -86,6 +87,12 @@ module Kiba
                 transform Delete::Fields,
                   fields: [field, normfield]
               end
+
+              transform Merge::MultiRowLookup,
+                lookup: obj_components__current_loc_lookup,
+                keycolumn: :fullfingerprint,
+                fieldmap: {fp: :fullfingerprint},
+                constantmap: {current: 'y'}
             end
           end
         end
