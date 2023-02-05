@@ -33,7 +33,10 @@ module Kiba
           def lookups
             base = []
             if config.actual_components
-              base << %i[prep__obj_comp_types prep__obj_comp_statuses]
+              base << %i[
+                         prep__obj_comp_types
+                         prep__obj_comp_statuses
+                        ]
             end
             if Tms::TextEntries.for?('ObjComponents')
               base << :text_entries_for__obj_components
@@ -51,7 +54,10 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-              transform FilterRows::FieldEqualTo, action: :reject, field: :componentid, value: '-1'
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
+                field: :componentid,
+                value: '-1'
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
@@ -72,7 +78,8 @@ module Kiba
                   delim: Tms.delim
 
               end
-              transform Delete::Fields, fields: %i[componenttype objcompstatusid]
+              transform Delete::Fields,
+                fields: %i[componenttype objcompstatusid]
 
               if Tms::TextEntries.for?('ObjComponents')
                 merger = config.text_entries_merge_xform.new(
