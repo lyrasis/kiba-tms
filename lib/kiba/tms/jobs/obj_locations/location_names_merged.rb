@@ -61,6 +61,7 @@ module Kiba
                   keycolumn: :fulllocid,
                   fieldmap: {
                     location: :location_name,
+                    locauth: :storage_location_authority
                   },
                   delim: Tms.delim
                 transform Merge::MultiRowLookup,

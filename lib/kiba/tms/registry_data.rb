@@ -2170,6 +2170,16 @@ module Kiba
             tags: %i[obj_components objects],
             desc: 'Converts rows from :actual_components to object records'
           }
+          register :current_loc_lookup, {
+            creator: Kiba::Tms::Jobs::ObjComponents::CurrentLocLookup,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_components_current_loc_lookup.csv'),
+            tags: %i[obj_components obj_locations],
+            desc: 'Lookup via :fullfingerprint. Only field: :fullfingerprint. '\
+              'Use to identify which clumped ObjLocations rows are for '\
+              'current locations',
+            lookup_on: :fullfingerprint
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_incoming') do
@@ -2198,7 +2208,8 @@ module Kiba
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
                  location_purpose transport_type transport_status
-                 location prevobjlocid nextobjlocid] }
+                 location prevobjlocid nextobjlocid] },
+            lookup_on: :objlocationid
           }
           register :unique, {
             creator: Kiba::Tms::Jobs::ObjLocations::Unique,
@@ -2206,12 +2217,42 @@ module Kiba
                             'obj_locations_unique.csv'),
             tags: %i[obj_locations],
             desc: "- Deduplicates on :fullfingerprint\n"\
-              "- Merges in related objectnumbers",
+              "- Merge in related objectnumbers\n"\
+              "- Merge in :homelocationname\n"\
+              "- Add :year field (for use building movementrefnums)\n",
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
                  location_purpose transport_type transport_status
-                 location prevobjlocid nextobjlocid] }
+                 location homelocationname prevobjlocid nextobjlocid] }
+          }
+          register :inventory, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Inventory,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_inventory.csv'),
+            tags: %i[obj_locations],
+            desc: "Filter to only rows treated as Inventory LMI"
+          }
+          register :lmi, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Lmi,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_lmi.csv'),
+            tags: %i[obj_locations],
+            desc: "Compile inventory, location, and movement LMIs"
+          }
+          register :location, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Location,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_location.csv'),
+            tags: %i[obj_locations],
+            desc: "Filter to only rows treated as Location LMI"
+          }
+          register :movement, {
+            creator: Kiba::Tms::Jobs::ObjLocations::Movement,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_locations_movement.csv'),
+            tags: %i[obj_locations],
+            desc: "Filter to only rows treated as Movement LMI"
           }
           register :inactive_review, {
             creator: Kiba::Tms::Jobs::ObjLocations::InactiveReview,

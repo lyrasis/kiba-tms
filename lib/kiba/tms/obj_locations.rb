@@ -54,6 +54,7 @@ module Kiba
             end
           end
           value.delete(:inactive) if drop_inactive
+          value << :homelocationid
           value - %i[prevobjlocid nextobjlocid schedobjlocid]
         }
       # Fields included in full fingerprint value, which includes the initial
@@ -71,6 +72,20 @@ module Kiba
       setting :inactive_treatment,
         default: :inventorynote,
         reader: true
+      # client-specific transform to select only rows that should be treated as
+      #   inventory LMIs
+      setting :inventory_selector, default: nil, reader: true
+      # client-specific transform to select only rows that should be treated as
+      #   location-only LMIs
+      setting :location_selector, default: nil, reader: true
+      # Even out fields when compiling LMIs from inventory, location, and
+      #   movement split jobs
+      setting :lmi_field_normalizer,
+        default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
+        reader: true
+      # client-specific transform to select only rows that should be treated as
+      #   movement LMIs
+      setting :movement_selector, default: nil, reader: true
       setting :temptext_note_targets,
         default: [],
         reader: true

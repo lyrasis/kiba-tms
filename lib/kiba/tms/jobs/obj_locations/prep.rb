@@ -19,7 +19,8 @@ module Kiba
               "- Add :fulllocid for :location value\n"\
               "- ADDS ROW FINGERPRINT for collapsing rows with identical data "\
               "into one LMI procedure\n"\
-              "- Merges in human readable :objectnumber, :location_purpose "\
+              "- Merge in :homelocation from ObjComponents"\
+              "- Merge in human readable :objectnumber, :location_purpose "\
               ":transport_status, :transport_type values\n"\
               "- Converts numeric :tempflag field value to y/nil in :is_temp\n"
           end
@@ -38,7 +39,9 @@ module Kiba
           end
 
           def lookups
-            base = [:obj_components__with_object_numbers_by_compid]
+            base = %i[
+                      obj_components__with_object_numbers_by_compid
+                     ]
             base << :prep__loc_purposes if Tms::LocPurposes.used?
             base << :prep__trans_status if Tms::TransStatus.used?
             base << :prep__trans_codes if Tms::TransCodes.used?
@@ -114,19 +117,21 @@ module Kiba
 
               transform Tms::Transforms::ObjLocations::AddFulllocid
 
-              transform Tms::Transforms::ObjLocations::AddFingerprint,
-                sources: config.fingerprint_fields
-
-              # Merge in data for table readability
               if lookups.any?(:obj_components__with_object_numbers_by_compid)
                 transform Merge::MultiRowLookup,
                   lookup: obj_components__with_object_numbers_by_compid,
                   keycolumn: :componentid,
                   fieldmap: {
                     objectnumber: :componentnumber,
+                    homelocationid: :homelocationid
                   },
                   delim: Tms.delim
               end
+
+              transform Tms::Transforms::ObjLocations::AddFingerprint,
+                sources: config.fingerprint_fields
+
+              # Merge in data for table readability
               if lookups.any?(:prep__loc_purposes)
                 transform Merge::MultiRowLookup,
                   lookup: prep__loc_purposes,

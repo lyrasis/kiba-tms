@@ -50,6 +50,11 @@ module Kiba
               transform Tms::Transforms::ObjLocations::AddFingerprint,
                 sources: config.full_fingerprint_fields,
                 target: :fullfingerprint
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[currentlocationnote loc5],
+                target: :currentlocationnote,
+                sep: '',
+                delete_sources: true
             end
           end
         end
