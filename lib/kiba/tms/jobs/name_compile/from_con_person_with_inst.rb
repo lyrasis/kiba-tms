@@ -11,7 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :constituents__for_compile,
-                destination: :name_compile__from_con_person_with_inst,
+                destination: jobkey,
                 lookup: lookups
               },
               transformer: xforms,
@@ -19,11 +19,14 @@ module Kiba
             )
           end
 
+          def jobkey
+            :name_compile__from_con_person_with_inst
+          end
+
           def ntc_needed?
             return false unless ntc_done?
 
-            ntc_targets.any?('Constituents.person_with_institution') &&
-              treatment == :contact_person
+            ntc_targets.any?(termsource) && treatment == :contact_person
           end
           extend Tms::Mixins::NameTypeCleanupable
 
@@ -35,9 +38,12 @@ module Kiba
             base
           end
 
+          def termsource
+            'Constituents.person_with_institution'
+          end
+
           def treatment
-              job = :name_compile__from_con_person_with_inst
-              config.source_treatment[job]
+            config.source_treatment[jobkey]
           end
 
           def xforms

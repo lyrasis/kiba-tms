@@ -22,15 +22,17 @@ module Kiba
 
           def lookups
             base = []
-            base << :prep__con_address if Tms::ConAddress.used?
-            base
+            base << :prep__con_address if Tms::ConAddress.used
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
+              job = bind.receiver
+              config = job.send(:config)
+              lookups = job.send(:lookups)
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
@@ -42,7 +44,7 @@ module Kiba
                 transform config.initial_data_cleaner
               end
 
-              if Tms::ConAddress.used?
+              if Tms::ConAddress.used
                 # merge in address
                 transform Merge::MultiRowLookup,
                   lookup: prep__con_address,
