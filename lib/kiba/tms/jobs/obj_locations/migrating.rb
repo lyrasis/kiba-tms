@@ -55,6 +55,9 @@ module Kiba
                 target: :currentlocationnote,
                 sep: '',
                 delete_sources: true
+              unless config.drop_inactive
+                transform Tms::Transforms::ObjLocations::HandleInactive
+              end
             end
           end
         end
