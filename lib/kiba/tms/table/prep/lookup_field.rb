@@ -51,6 +51,7 @@ module Kiba
             dimensions: :dimitemelemxrefid,
             disposition_methods: :dispmethodid,
             email_types: :emailtypeid,
+            exhibition_statuses: Tms::ExhibitionStatuses.id_field,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
