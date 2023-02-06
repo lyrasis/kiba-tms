@@ -176,7 +176,7 @@ module Kiba
                   delete_sources: true
               end
 
-              transform Tms::Transforms::Loansin::InsuranceIndemnityNote
+              transform Tms::Transforms::InsuranceIndemnityNote
 
               conditionsfields = Tms::Loansout.conditions_source_fields
               unless conditionsfields.empty?
