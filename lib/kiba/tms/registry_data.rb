@@ -730,7 +730,18 @@ module Kiba
               'through with no changes',
             tags: %i[exhibitions objects]
           }
+          register :nhr_obj_exh, {
+            creator: Kiba::Tms::Jobs::ExhObjXrefs::NhrObjExh,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_obj_exh.csv'
+            ),
+            desc: 'Creates NHRs between objects and exhibitions',
+            tags: %i[exhibitions objects nhr]
+          }
         end
+
         Kiba::Tms.registry.namespace('linked_lot_acq') do
           register :obj_rows, {
             creator: Kiba::Tms::Jobs::LinkedLotAcq::ObjRows,
