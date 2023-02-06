@@ -97,12 +97,23 @@ module Kiba
                   keycolumn: :exhibitionid,
                   fieldmap: {
                     venue_xref_org: :venueorg,
-                    venure_xref_open_date: :beginisodate,
-                    venure_xref_close_date: :endisodate
+                    venue_xref_open_date: :beginisodate,
+                    venue_xref_close_date: :endisodate
                   },
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
                   null_placeholder: Tms.nullvalue,
                   delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: prep__exh_venues_xrefs,
+                  keycolumn: :exhibitionid,
+                  fieldmap: {insindnote: :insindnote},
+                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                  null_placeholder: Tms.nullvalue,
+                  delim: '%CR%%CR%'
+                transform Delete::EmptyFieldValues,
+                  fields: :insindnote,
+                  delim: '%CR%%CR%',
+                  usenull: true
               end
 
               if Tms::ConRefs.for?('Exhibitions')
@@ -112,6 +123,16 @@ module Kiba
                     keycolumn: :exhibitionid
                 end
               end
+
+              transform Merge::ConstantValue,
+                target: :pre, value: 'EXH'
+              transform Tms::Transforms::IdGenerator,
+                id_source: :pre,
+                id_target: :exhibitionnumber,
+                sort_on: :exhibitionid,
+                sort_type: :i,
+                separator: '',
+                padding: 4
             end
           end
         end

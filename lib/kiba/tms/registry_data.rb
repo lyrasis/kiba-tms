@@ -707,6 +707,19 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('exhibitions') do
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::Exhibitions::Shaped,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'exhibitions_shaped.csv'
+            ),
+            desc: 'Reshape prepped exhibition data',
+            tags: %i[exhibitions]
+          }
+        end
+
         Kiba::Tms.registry.namespace('linked_lot_acq') do
           register :obj_rows, {
             creator: Kiba::Tms::Jobs::LinkedLotAcq::ObjRows,
