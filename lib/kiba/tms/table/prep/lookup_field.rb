@@ -53,6 +53,7 @@ module Kiba
             email_types: :emailtypeid,
             exhibition_obj_statuses: Tms::ExhibitionObjStatuses.id_field,
             exhibition_statuses: Tms::ExhibitionStatuses.id_field,
+            exhibitions: :exhibitionid,
             exh_venues_xrefs: :exhibitionid,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,

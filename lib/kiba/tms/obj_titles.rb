@@ -8,7 +8,7 @@ module Kiba
       extend Dry::Configurable
       module_function
 
-      setting :delete_fields, default: %i[titleid displayed isexhtitle], reader: true
+      setting :delete_fields, default: %i[displayed isexhtitle], reader: true
       extend Tms::Mixins::Tableable
 
       setting :migrate_inactive, default: false, reader: true
