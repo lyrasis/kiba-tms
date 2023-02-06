@@ -62,6 +62,7 @@ module Kiba
             loan_obj_xrefs: :loanid,
             loan_purposes: :loanpurposeid,
             loan_statuses: :loanstatusid,
+            loans: :loanid,
             loc_approvers: :approverid,
             loc_handlers: :handlerid,
             loc_purposes: :locpurposeid,

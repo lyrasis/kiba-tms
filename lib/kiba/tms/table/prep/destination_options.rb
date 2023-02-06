@@ -48,6 +48,11 @@ module Kiba
               #   initial_headers:
               #   %i[tablename recordid role roletype person org displayorder]
               # },
+              exh_ven_obj_xrefs: {
+                initial_headers:
+                %i[exhibitionnumber venue objectnumber loannumber insindemresp
+                   approved displayed]
+              },
               loan_obj_xrefs: {
                 initial_headers:
                 %i[loannumber objectnumber loanobjectstatus loanobjstatus_old]
