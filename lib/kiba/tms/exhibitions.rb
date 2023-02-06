@@ -25,6 +25,9 @@ module Kiba
           }
         },
         reader: true
+      # Whether to use data from ExhObjXrefs to populate the Exhibited
+      #   Object Information object checklist in the Exhibition record
+      setting :migrate_exh_obj_info, default: false, reader: true
     end
   end
 end

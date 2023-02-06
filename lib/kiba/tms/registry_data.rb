@@ -718,8 +718,19 @@ module Kiba
             desc: 'Reshape prepped exhibition data',
             tags: %i[exhibitions]
           }
+          register :merge_exh_obj_info, {
+            creator: Kiba::Tms::Jobs::Exhibitions::MergeExhObjInfo,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'exhibitions_obj_info_merged.csv'
+            ),
+            desc: 'Adds Exhibited Object Information section data, if '\
+              'migration is configured to do so, otherwise passes the table '\
+              'through with no changes',
+            tags: %i[exhibitions objects]
+          }
         end
-
         Kiba::Tms.registry.namespace('linked_lot_acq') do
           register :obj_rows, {
             creator: Kiba::Tms::Jobs::LinkedLotAcq::ObjRows,
