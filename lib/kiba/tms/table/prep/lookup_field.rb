@@ -52,6 +52,7 @@ module Kiba
             disposition_methods: :dispmethodid,
             email_types: :emailtypeid,
             exhibition_statuses: Tms::ExhibitionStatuses.id_field,
+            exh_venues_xrefs: :exhibitionid,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
