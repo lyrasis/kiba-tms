@@ -2165,6 +2165,19 @@ module Kiba
           # }
         end
 
+        Kiba::Tms.registry.namespace('nhrs') do
+          register :all, {
+            creator: Kiba::Tms::Jobs::Nhrs::All,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_all.csv'
+            ),
+            tags: %i[nhr],
+            desc: 'Compiles NHRs of all types'
+          }
+        end
+
         Kiba::Tms.registry.namespace('obj_accession') do
           register :in_migration, {
             creator: Kiba::Tms::Jobs::ObjAccession::InMigration,
