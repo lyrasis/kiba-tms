@@ -7,7 +7,7 @@ module Kiba
       class DeleteTimestamps
 
         def initialize(fields:)
-          @fields = fields
+          @fields = [fields].flatten
           @pattern = Regexp.new(' \d{2}:.*$')
         end
 
