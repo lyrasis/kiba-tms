@@ -4,8 +4,8 @@ module Kiba
   module Tms
     module Transforms
       class DeleteTmsFields
-        def initialize
-          @fields = Tms.tms_fields
+        def initialize(except: [])
+          @fields = Tms.tms_fields - [except].flatten
         end
 
         def process(row)
