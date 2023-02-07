@@ -740,6 +740,20 @@ module Kiba
             desc: 'Compiles all nhrs between exhibitions and loans, objects',
             tags: %i[exhibitions nhr]
           }
+          register :con_xref_review, {
+            creator: Kiba::Tms::Jobs::Exhibitions::ConXrefReview,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'exhibitions_con_xref_review.csv'
+            ),
+            desc: 'Prepares :con_refs_for__exhibitions rows having unmapped '\
+              'role values for client review',
+            tags: %i[exhibitions con reports],
+            dest_special_opts: {
+              initial_headers: %i[exhibitionnumber role person org]
+            }
+          }
         end
 
         Kiba::Tms.registry.namespace('exh_loan_xrefs') do
