@@ -7,6 +7,16 @@ module Kiba
         module Prep
           module_function
 
+          def desc
+            "- Delete TMS fields except :entereddate\n"\
+              "- Standard deletion and initial cleaner\n"\
+              "- Merge object numbers\n"\
+              "- Merge recipient person/org\n"\
+              "- Merge disposition methods\n"\
+              "- Delete zero values from price/value fields\n"\
+              "- Generate :exitnumber\n"
+          end
+
           def job
             return unless config.used?
 
