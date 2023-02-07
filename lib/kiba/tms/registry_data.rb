@@ -941,6 +941,12 @@ module Kiba
             tags: %i[loans loansout],
             lookup_on: :loanid
           }
+          register :nhrs, {
+            creator: Kiba::Tms::Jobs::Loans::Nhrs,
+            path: File.join(Kiba::Tms.datadir, 'working', 'loans_nhrs.csv'),
+            desc: 'Compiles loan/obj NHRs for loans in and out',
+            tags: %i[loans loansout loansin objects nhr]
+          }
           register :unexpected_type, {
             creator: Kiba::Tms::Jobs::Loans::UnexpectedType,
             path: File.join(Kiba::Tms.datadir, 'reports', 'loans_unexpected_type.csv'),
