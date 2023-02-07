@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ValuationControl
-        module NhrObjInsurance
+        module NhrObj
           module_function
 
           def job
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :valuation_control__from_obj_insurance,
-                destination: :valuation_control__nhr_obj_insurance
+                destination: :valuation_control__nhr_obj
               },
               transformer: xforms
             )
