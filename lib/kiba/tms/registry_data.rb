@@ -730,6 +730,39 @@ module Kiba
               'through with no changes',
             tags: %i[exhibitions objects]
           }
+        Kiba::Tms.registry.namespace('exh_loan_xrefs') do
+          register :nhr_exh_loan, {
+            creator: Kiba::Tms::Jobs::ExhLoanXrefs::NhrExhLoan,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_exh_loan.csv'
+            ),
+            desc: 'Creates NHRs between exhibitions and loans in',
+            tags: %i[exhibitions loansin nhr]
+          }
+          register :nhr_exh_loanin, {
+            creator: Kiba::Tms::Jobs::ExhLoanXrefs::NhrExhLoanin,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_exh_loanin.csv'
+            ),
+            desc: 'Creates NHRs between exhibitions and loans in',
+            tags: %i[exhibitions loansin nhr]
+          }
+          register :nhr_exh_loanout, {
+            creator: Kiba::Tms::Jobs::ExhLoanXrefs::NhrExhLoanout,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_exh_loanout.csv'
+            ),
+            desc: 'Creates NHRs between exhibitions and loans out',
+            tags: %i[exhibitions loansout nhr]
+          }
+        end
+
           register :nhr_obj_exh, {
             creator: Kiba::Tms::Jobs::ExhObjXrefs::NhrObjExh,
             path: File.join(
