@@ -20,12 +20,17 @@ module Kiba
           def sources
             %i[
                exh_loan_xrefs__nhr_exh_loan
+               exh_obj_loan_obj_xrefs__nhr_exh_loan
                exh_obj_xrefs__nhr_obj_exh
               ].select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
             Kiba.job_segment do
+              transform CombineValues::FullRecord, target: :index
+              transform Deduplicate::Table,
+                field: :index,
+                delete_field: true
             end
           end
         end

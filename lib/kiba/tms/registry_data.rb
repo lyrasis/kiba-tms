@@ -775,6 +775,20 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('exh_obj_loan_obj_xrefs') do
+          register :nhr_exh_loan, {
+            creator: Kiba::Tms::Jobs::ExhObjLoanObjXrefs::NhrExhLoan,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_exh_loan_through_obj.csv'
+            ),
+            desc: 'Creates NHRs between exhibitions and loans, through '\
+              'objects',
+            tags: %i[exhibitions loans nhr]
+          }
+        end
+
         Kiba::Tms.registry.namespace('exh_obj_xrefs') do
           register :nhr_obj_exh, {
             creator: Kiba::Tms::Jobs::ExhObjXrefs::NhrObjExh,

@@ -54,6 +54,7 @@ module Kiba
             exhibition_obj_statuses: Tms::ExhibitionObjStatuses.id_field,
             exhibition_statuses: Tms::ExhibitionStatuses.id_field,
             exhibitions: :exhibitionid,
+            exh_obj_xrefs: :exhobjxrefid,
             exh_venues_xrefs: :exhibitionid,
             flag_labels: :flagid,
             indemnity_responsibilities: :responsibilityid,
