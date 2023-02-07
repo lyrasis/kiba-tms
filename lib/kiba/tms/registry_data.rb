@@ -2310,6 +2310,18 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_deaccession') do
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::ObjDeaccession::Shaped,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_deaccession_shaped.csv'),
+            tags: %i[obj_deaccession],
+            desc: 'Renames fields and reshapes data into CS Object Exit',
+            dest_special_opts: {
+              initial_headers: %i[exitnumber disposalmethod] }
+          }
+        end
+
         Kiba::Tms.registry.namespace('obj_incoming') do
           register :for_initial_review, {
             creator: Kiba::Tms::Jobs::ObjIncoming::ForInitialReview,
