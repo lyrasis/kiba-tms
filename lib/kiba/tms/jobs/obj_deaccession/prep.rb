@@ -37,7 +37,8 @@ module Kiba
               config = job.send(:config)
               lookups = job.send(:lookups)
 
-              transform Tms::Transforms::DeleteTmsFields
+              transform Tms::Transforms::DeleteTmsFields,
+                except: :entereddate
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
@@ -69,6 +70,10 @@ module Kiba
                   fieldmap: {disposalmethod: :dispositionmethod}
               end
               transform Delete::Fields, fields: :dispositionmethod
+
+              transform Delete::FieldValueMatchingRegexp,
+                fields: %i[estimatehigh estimatelow netsaleamount],
+                match: '^0$'
             end
           end
         end
