@@ -73,7 +73,7 @@ module Kiba
 
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[estimatehigh estimatelow netsaleamount],
-                match: '^0$'
+                match: '^\.0000$'
             end
           end
         end
