@@ -41,6 +41,12 @@ module Kiba
               transform Prepend::ToFieldValue,
                 field: :reportisodate, value: 'Sale reported: '
 
+              # YES, "displosal"
+              # Someone made, then copy/pasted a typo when these fields were
+              #   originally added to CS. No one caught it at the time, and once
+              #   the fields can be used in the wild, it's an application-
+              #   breaking change to fix the names, so DISPLOSAL
+
               transform Rename::Fields, fieldmap: {
                 entereddate: :exitdategroup,
                 remarks: :exitnote,
