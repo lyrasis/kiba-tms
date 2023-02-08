@@ -20,7 +20,7 @@ module Kiba
               )
             end
             @lookup = Tms.get_lookup(
-              jobkey: "con_refs_for__#{into.filekey}".to_sym,
+              jobkey: "con_refs_for__#{lookup_job_name}".to_sym,
               column: :recordid
             )
             @xforms = build_xforms
@@ -100,6 +100,18 @@ module Kiba
             warn(
               "Add rules for fields to #{into} config: #{missing.join(', ')}"
             )
+          end
+
+          def lookup_job_name
+            default = into.filekey
+            case default
+            when :loans__out
+              :loansout
+            when :loans__in
+              :loansin
+            else
+              default
+            end
           end
         end
       end
