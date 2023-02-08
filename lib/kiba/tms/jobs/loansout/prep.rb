@@ -39,41 +39,25 @@ module Kiba
                 loanrenewalisodate: :loanrenewalapplicationdate,
                 loanstatus: :tmsloanstatus
               })
-              transform Rename::Fields, fieldmap: rename_fieldmap unless rename_fieldmap.empty?
-
-              name_lookups = Tms::Loansout.subtract_omitted_fields(
-                %i[requestedby approvedby contact]
-              )
-              unless name_lookups.empty?
-                name_lookups.each do |field|
-                  normfield = "#{field}_norm".to_sym
-                  transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                    source: field,
-                    target: normfield,
-                    delim: Tms.delim
-                  transform Merge::MultiRowLookup,
-                    lookup: names__by_norm,
-                    keycolumn: normfield,
-                    fieldmap: {field => :person},
-                    multikey: true,
-                    delim: Tms.delim
-                  transform Delete::Fields, fields: normfield
-                end
+              unless rename_fieldmap.empty?
+                transform Rename::Fields, fieldmap: rename_fieldmap
               end
 
-              req_map = Tms::Loansout.delete_omitted_fields({
-                requestdate: :req_loanstatusdate,
-                requestedby: :req_loanindividual
-              })
-              unless req_map.empty?
-                req_nils = Tms::Loansout.status_nil_append_fields(req_map)
-                transform Append::NilFields, fields: req_nils unless req_nils.empty?
-                transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: req_map.merge(Tms::Loansout.status_nil_merge_fields(req_map)),
-                  constant_target: :req_loanstatus,
-                  constant_value: 'Requested'
-              end
+              # First :approved by value gets treated as authorizer. Any
+              #   additional names get recorded in loan status group
+              transform Tms::Transforms::ExtractFirstValueToNewField,
+                source: :approvedby,
+                newfield: :borrowersauthorizer
+              transform Copy::Field,
+                from: :approveddate,
+                to: :borrowersauthorizationdate
+              transform do |row|
+                approver = row[:approvedby]
+                next row unless approver.blank?
 
+                row[:approveddate] = nil
+                row
+              end
               app_map = Tms::Loansout.delete_omitted_fields({
                 approveddate: :app_loanstatusdate,
                 approvedby: :app_loanindividual
@@ -85,6 +69,23 @@ module Kiba
                   fieldmap: app_map.merge(Tms::Loansout.status_nil_merge_fields(app_map)),
                   constant_target: :app_loanstatus,
                   constant_value: 'Approved'
+              end
+
+              req_map = Tms::Loansout.delete_omitted_fields({
+                requestdate: :req_loanstatusdate,
+                requestedby: :req_loanindividual
+              })
+              unless req_map.empty?
+                req_nils = Tms::Loansout.status_nil_append_fields(req_map)
+                unless req_nils.empty?
+                  transform Append::NilFields, fields: req_nils
+                end
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: req_map.merge(
+                    Tms::Loansout.status_nil_merge_fields(req_map)
+                  ),
+                  constant_target: :req_loanstatus,
+                  constant_value: 'Requested'
               end
 
               agsent_map = Tms::Loansout.delete_omitted_fields({
@@ -186,44 +187,15 @@ module Kiba
                   delete_sources: true
               end
 
-              transform Tms::Transforms::Loansout::SeparateContacts
               transform Rename::Field, from: :contact, to: :borrowerscontact
 
-              rolefields = %i[personrole orgrole]
-              rolefields.each do |field|
-                transform Warn::UnlessFieldValueMatches,
-                  field: field,
-                  match: 'borrower',
-                  delim: Tms.delim,
-                  casesensitive: false
+              if Tms::ConRefs.for?('Loansout')
+                if config.con_ref_name_merge_rules
+                  transform Tms::Transforms::ConRefs::Merger,
+                    into: config,
+                    keycolumn: :loanid
+                end
               end
-              transform Delete::Fields, fields: rolefields
-
-              namefields = %i[person org]
-              namefields.each do |field|
-                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                  source: field,
-                  target: "#{field}_norm".to_sym,
-                  delim: Tms.delim
-              end
-
-              transform Merge::MultiRowLookup,
-                lookup: names__by_norm,
-                keycolumn: :person_norm,
-                fieldmap: {borrowerpersonlocal: :person},
-                multikey: true,
-                delim: Tms.delim
-              transform Merge::MultiRowLookup,
-                lookup: names__by_norm,
-                keycolumn: :org_norm,
-                fieldmap: {borrowerorganizationlocal: :organization},
-                multikey: true,
-                delim: Tms.delim
-
-              delfields = namefields + namefields.map do |field|
-                "#{field}_norm".to_sym
-              end
-              transform Delete::Fields, fields: delfields
 
               transform Tms::Transforms::Loansin::CombineLoanStatus
             end
