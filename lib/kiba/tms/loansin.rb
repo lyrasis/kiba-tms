@@ -11,6 +11,23 @@ module Kiba
       setting :source_job_key, default: :loans__in, reader: true
       extend Tms::Mixins::Tableable
 
+      # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
+      #   needed
+      setting :con_ref_name_merge_rules,
+        default: {
+          fcart: {
+            con_contact: {
+              suffixes: %w[person organization],
+              merge_role: false
+            },
+            lender: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
+            }
+          }
+        },
+        reader: true
+
       # @return [:conditions, :note] target field for merged text entries data
       setting :text_entries_treatment,
         default: :conditions,
