@@ -11,10 +11,6 @@ module Kiba
       setting :source_job_key, default: :loans__out, reader: true
       extend Tms::Mixins::Tableable
 
-      # @return [:conditions, :note] target field for merged text entries data
-      setting :text_entries_treatment,
-        default: :conditions,
-        reader: true
       # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
       #   needed
       setting :con_ref_name_merge_rules,
@@ -114,6 +110,10 @@ module Kiba
           end
           value
         }
+      # @return [:conditions, :note] target field for merged text entries data
+      setting :text_entries_treatment,
+        default: :conditions,
+        reader: true
 
       def display_dates?
         true unless ( %i[dispbegisodate dispendisodate] - omitted_fields ).empty?
