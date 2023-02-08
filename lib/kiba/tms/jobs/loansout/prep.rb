@@ -50,7 +50,6 @@ module Kiba
                   transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                     source: field,
                     target: normfield,
-                    multival: true,
                     delim: Tms.delim
                   transform Merge::MultiRowLookup,
                     lookup: names__by_norm,
@@ -205,7 +204,6 @@ module Kiba
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: field,
                   target: "#{field}_norm".to_sym,
-                  multival: true,
                   delim: Tms.delim
               end
 
