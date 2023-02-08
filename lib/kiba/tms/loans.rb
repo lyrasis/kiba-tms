@@ -10,7 +10,10 @@ module Kiba
 
       setting :delete_fields,
         default: %i[sortnumber mnemonic isforeignlender hasspecialrequirements],
-        reader: true
+        reader: true,
+        constructor: proc{ |value|
+          value << :primaryconxrefid if con_link_field == :primaryconxrefid
+        }
       extend Tms::Mixins::Tableable
 
       setting :name_fields,
