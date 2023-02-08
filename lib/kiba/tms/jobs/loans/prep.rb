@@ -7,6 +7,25 @@ module Kiba
         module Prep
           module_function
 
+          def desc
+            "- Deletes TMS fields\n"\
+              "- Delete 0 values from money fields\n"\
+              "- Delete config empty and deleted fields\n"\
+              "- Merge in loan purposes\n"\
+              "- Merge in loan statuses\n"\
+              "- Merge in indemnity responsibilities\n"\
+              "- Merge in insurance responsibilities\n"\
+              "- Merge in departments\n"\
+              "- Merge in TextEntries data\n"\
+              "- Add :loantype with `loan in` or `loan out` value\n"\
+              "- If configured to do so:\n"\
+              "-- Merge LoanObjXref conditions field data\n"\
+              "- For each name field (:approvedby, :contact, "\
+              ":reqquestedby):\n"\
+              "-- Normalize name value\n"\
+              "-- Merge in authorized person/org name value"
+          end
+
           def job
             return unless config.used?
 
@@ -21,7 +40,7 @@ module Kiba
           end
 
           def lookups
-            base = []
+            base = [:names__by_norm]
             base << :prep__departments if Tms::Departments.used?
             base << :prep__loan_purposes if Tms::LoanPurposes.used?
             base << :prep__loan_statuses if Tms::LoanStatuses.used?
@@ -30,12 +49,6 @@ module Kiba
             end
             if Tms::InsuranceResponsibilities.used?
               base << :prep__insurance_responsibilities
-            end
-            if Tms::Loans.con_link_field == :primaryconxrefid &&
-                Tms::ConRefs.for?('Loans')
-              base << :con_refs_for__loans
-            else
-              warn('Implement other Tms::Loans.con_link_field')
             end
             if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
               base << :prep__loan_obj_xrefs
@@ -51,18 +64,13 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              omittedfields = if config.omitting_fields?
-                                config.omitted_fields
-                              else
-                                []
-                              end
-              namefields = config.name_fields - omittedfields
+              namefields = config.name_fields - config.omitted_fields
 
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: %i[loanfee conservationfee cratefee]
-              unless omittedfields.empty?
-                transform Delete::Fields, fields: omittedfields
+              if config.omitting_fields?
+                transform Delete::Fields, fields: config.omitted_fields
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
@@ -83,7 +91,8 @@ module Kiba
               end
               transform Delete::Fields, fields: :loanstatusid
 
-              indfields = %i[indemnityfromlender indemnityfrompreviousvenue indemnityatvenue indemnityreturn]
+              indfields = %i[indemnityfromlender indemnityfrompreviousvenue
+                             indemnityatvenue indemnityreturn]
               if Tms::IndemnityResponsibilities.used?
                 indfields.each do |field|
                   next if config.omitted_fields.any?(field)
@@ -97,7 +106,8 @@ module Kiba
                 transform Delete::Fields, fields: indfields
               end
 
-              insfields = %i[insurancefromlender insurancefrompreviousvenue insuranceatvenue insurancereturn]
+              insfields = %i[insurancefromlender insurancefrompreviousvenue
+                             insuranceatvenue insurancereturn]
               if Tms::InsuranceResponsibilities.used
                 insfields.each do |field|
                   next if config.omitted_fields.any?(field)
@@ -111,11 +121,6 @@ module Kiba
                 transform Delete::Fields, fields: insfields
               end
 
-              transform Replace::FieldValueWithStaticMapping,
-                source: :loanin,
-                target: :loantype,
-                mapping: {'1'=>'loan in', '0'=>'loan out'}
-
               if Tms::Departments.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__departments,
@@ -124,25 +129,19 @@ module Kiba
               end
               transform Delete::Fields, fields: :departmentid
 
-              if Tms::Loans.con_link_field == :primaryconxrefid && Tms::ConRefs.for?('Loans')
+              if Tms::TextEntries.for?('Loans')
                 transform Merge::MultiRowLookup,
-                  lookup: con_refs_for__loans,
+                  lookup: text_entries_for__loans,
                   keycolumn: :loanid,
-                  fieldmap: {person: :person, personrole: :role},
+                  fieldmap: {text_entry: :text_entry},
                   delim: Tms.delim,
-                  null_placeholder: Tms.nullvalue,
-                  conditions: ->(_orig, mrows){ mrows.reject{ |row| row[:person].blank? } },
-                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
-                transform Merge::MultiRowLookup,
-                  lookup: con_refs_for__loans,
-                  keycolumn: :loanid,
-                  fieldmap: {org: :org, orgrole: :role},
-                  delim: Tms.delim,
-                  null_placeholder: Tms.nullvalue,
-                  conditions: ->(_orig, mrows){ mrows.reject{ |row| row[:org].blank? } },
-                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
               end
-              transform Delete::Fields, fields: :primaryconxrefid
+
+              transform Replace::FieldValueWithStaticMapping,
+                source: :loanin,
+                target: :loantype,
+                mapping: {'1'=>'loan in', '0'=>'loan out'}
 
               if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
                 if Tms::LoanObjXrefs.conditions_record == :loan
@@ -157,22 +156,25 @@ module Kiba
                 end
               end
 
-              if Tms::TextEntries.for?('Loans')
-                transform Merge::MultiRowLookup,
-                  lookup: text_entries_for__loans,
-                  keycolumn: :loanid,
-                  fieldmap: {text_entry: :text_entry},
-                  delim: Tms.delim,
-                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
-              end
-
               namefields.each do |field|
+                normfield = "#{field}_norm".to_sym
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: field,
-                  target: "#{field}_norm".to_sym,
+                  target: normfield
+                transform Merge::MultiRowLookup,
+                  lookup: names__by_norm,
+                  keycolumn: normfield,
+                  fieldmap: {field => :person},
+                  multikey: true,
                   delim: Tms.delim
+                transform Merge::MultiRowLookup,
+                  lookup: names__by_norm,
+                  keycolumn: normfield,
+                  fieldmap: {"#{field}_org".to_sym => :org},
+                  multikey: true,
+                  delim: Tms.delim
+                transform Delete::Fields, fields: normfield
               end
-              transform Delete::Fields, fields: namefields
             end
           end
         end
