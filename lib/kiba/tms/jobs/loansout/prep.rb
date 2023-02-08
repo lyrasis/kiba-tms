@@ -39,20 +39,18 @@ module Kiba
                 loanrenewalisodate: :loanrenewalapplicationdate,
                 loanstatus: :tmsloanstatus
               })
-              unless rename_fieldmap.empty?
-                transform Rename::Fields, fieldmap: rename_fieldmap
-              end
+              transform Rename::Fields, fieldmap: rename_fieldmap
 
               # First :approved by value gets treated as authorizer. Any
               #   additional names get recorded in loan status group
               transform Tms::Transforms::ExtractFirstValueToNewField,
-                source: :approvedby,
+                source: :approvedby_person,
                 newfield: :borrowersauthorizer
               transform Copy::Field,
                 from: :approveddate,
                 to: :borrowersauthorizationdate
               transform do |row|
-                approver = row[:approvedby]
+                approver = row[:approvedby_person]
                 next row unless approver.blank?
 
                 row[:approveddate] = nil
@@ -60,20 +58,24 @@ module Kiba
               end
               app_map = Tms::Loansout.delete_omitted_fields({
                 approveddate: :app_loanstatusdate,
-                approvedby: :app_loanindividual
+                approvedby_person: :app_loanindividual
               })
               unless app_map.empty?
                 app_nils = Tms::Loansout.status_nil_append_fields(app_map)
-                transform Append::NilFields, fields: app_nils unless app_nils.empty?
+                unless app_nils.empty?
+                  transform Append::NilFields, fields: app_nils
+                end
                 transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: app_map.merge(Tms::Loansout.status_nil_merge_fields(app_map)),
+                  fieldmap: app_map.merge(
+                    Tms::Loansout.status_nil_merge_fields(app_map)
+                  ),
                   constant_target: :app_loanstatus,
                   constant_value: 'Approved'
               end
 
               req_map = Tms::Loansout.delete_omitted_fields({
                 requestdate: :req_loanstatusdate,
-                requestedby: :req_loanindividual
+                requestedby_person: :req_loanindividual
               })
               unless req_map.empty?
                 req_nils = Tms::Loansout.status_nil_append_fields(req_map)
@@ -93,9 +95,13 @@ module Kiba
               })
               unless agsent_map.empty?
                 agsent_nils = Tms::Loansout.status_nil_append_fields(agsent_map)
-                transform Append::NilFields, fields: agsent_nils unless agsent_nils.empty?
+                unless agsent_nils.empty?
+                  transform Append::NilFields, fields: agsent_nils
+                end
                 transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: agsent_map.merge(Tms::Loansout.status_nil_merge_fields(agsent_map)),
+                  fieldmap: agsent_map.merge(
+                    Tms::Loansout.status_nil_merge_fields(agsent_map)
+                  ),
                   constant_target: :agsent_loanstatus,
                   constant_value: 'Agreement sent',
                   replace_empty: false
@@ -106,9 +112,13 @@ module Kiba
               })
               unless agrec_map.empty?
                 agrec_nils = Tms::Loansout.status_nil_append_fields(agrec_map)
-                transform Append::NilFields, fields: agrec_nils unless agrec_nils.empty?
+                unless agrec_nils.empty?
+                  transform Append::NilFields, fields: agrec_nils
+                end
                 transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: agrec_map.merge(Tms::Loansout.status_nil_merge_fields(agrec_map)),
+                  fieldmap: agrec_map.merge(
+                    Tms::Loansout.status_nil_merge_fields(agrec_map)
+                  ),
                   constant_target: :agrec_loanstatus,
                   constant_value: 'Agreement received',
                   replace_empty: false
@@ -118,10 +128,16 @@ module Kiba
                 origloanend_map = {
                   origloanenddate: :origloanend_loanstatusdate
                 }
-                origloanend_nils = Tms::Loansout.status_nil_append_fields(origloanend_map)
-                transform Append::NilFields, fields: origloanend_nils unless origloanend_nils.empty?
+                origloanend_nils = Tms::Loansout.status_nil_append_fields(
+                  origloanend_map
+                )
+                unless origloanend_nils.empty?
+                  transform Append::NilFields, fields: origloanend_nils
+                end
                 transform Reshape::FieldsToFieldGroupWithConstant,
-                  fieldmap: origloanend_map.merge(Tms::Loansout.status_nil_merge_fields(origloanend_map)),
+                  fieldmap: origloanend_map.merge(
+                    Tms::Loansout.status_nil_merge_fields(origloanend_map)
+                  ),
                   constant_target: :origloanend_loanstatus,
                   constant_value: 'Original loan end',
                   replace_empty: false
@@ -135,10 +151,16 @@ module Kiba
                   dispbeg_map = {
                     dispbegisodate: :dispbeg_loanstatusdate
                   }
-                  dispbeg_nils = Tms::Loansout.status_nil_append_fields(dispbeg_map)
-                  transform Append::NilFields, fields: dispbeg_nils unless dispbeg_nils.empty?
+                  dispbeg_nils = Tms::Loansout.status_nil_append_fields(
+                    dispbeg_map
+                  )
+                  unless dispbeg_nils.empty?
+                    transform Append::NilFields, fields: dispbeg_nils
+                  end
                   transform Reshape::FieldsToFieldGroupWithConstant,
-                    fieldmap: dispbeg_map.merge(Tms::Loansout.status_nil_merge_fields(dispbeg_map)),
+                    fieldmap: dispbeg_map.merge(
+                      Tms::Loansout.status_nil_merge_fields(dispbeg_map)
+                    ),
                     constant_target: :dispbeg_loanstatus,
                     constant_value: Tms::Loansout.display_date_begin_status,
                     replace_empty: false
@@ -146,15 +168,22 @@ module Kiba
                   dispend_map = {
                     dispendisodate: :dispend_loanstatusdate
                   }
-                  dispend_nils = Tms::Loansout.status_nil_append_fields(dispend_map)
-                  transform Append::NilFields, fields: dispend_nils unless dispend_nils.empty?
+                  dispend_nils = Tms::Loansout.status_nil_append_fields(
+                    dispend_map
+                  )
+                  unless dispend_nils.empty?
+                    transform Append::NilFields, fields: dispend_nils
+                  end
                   transform Reshape::FieldsToFieldGroupWithConstant,
-                    fieldmap: dispend_map.merge(Tms::Loansout.status_nil_merge_fields(dispend_map)),
+                    fieldmap: dispend_map.merge(
+                      Tms::Loansout.status_nil_merge_fields(dispend_map)
+                    ),
                     constant_target: :dispend_loanstatus,
                     constant_value: Tms::Loansout.display_date_end_status,
                     replace_empty: false
                 else
-                  warn("Unknown Tms::Loansout.display_date_treatment: #{dd_treatment}")
+                  warn("Unknown Tms::Loansout.display_date_treatment: "\
+                       "#{dd_treatment}")
                 end
               end
 
@@ -187,7 +216,11 @@ module Kiba
                   delete_sources: true
               end
 
-              transform Rename::Field, from: :contact, to: :borrowerscontact
+              # First :approved by value gets treated as authorizer. Any
+              #   additional names get recorded in loan status group
+              transform Tms::Transforms::ExtractFirstValueToNewField,
+                source: :contact_person,
+                newfield: :borrowerscontact
 
               if Tms::ConRefs.for?('Loansout')
                 if config.con_ref_name_merge_rules

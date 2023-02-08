@@ -157,23 +157,7 @@ module Kiba
               end
 
               namefields.each do |field|
-                normfield = "#{field}_norm".to_sym
-                transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                  source: field,
-                  target: normfield
-                transform Merge::MultiRowLookup,
-                  lookup: names__by_norm,
-                  keycolumn: normfield,
-                  fieldmap: {field => :person},
-                  multikey: true,
-                  delim: Tms.delim
-                transform Merge::MultiRowLookup,
-                  lookup: names__by_norm,
-                  keycolumn: normfield,
-                  fieldmap: {"#{field}_org".to_sym => :org},
-                  multikey: true,
-                  delim: Tms.delim
-                transform Delete::Fields, fields: normfield
+                transform Tms::Transforms::MergeUncontrolledName, field: field
               end
             end
           end
