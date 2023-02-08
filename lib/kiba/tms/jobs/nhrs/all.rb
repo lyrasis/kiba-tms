@@ -22,6 +22,7 @@ module Kiba
                acquisitions__obj_rels
                exhibitions__nhrs
                loans__nhrs
+               obj_deaccession__obj_rel
                obj_locations__nhr_lmi_obj
                valuation_control__nhrs
               ].select{ |job| Tms.job_output?(job) }
