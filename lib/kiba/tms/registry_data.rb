@@ -2320,6 +2320,12 @@ module Kiba
             dest_special_opts: {
               initial_headers: %i[exitnumber disposalmethod] }
           }
+          register :obj_rel, {
+            creator: Kiba::Tms::Jobs::ObjDeaccession::ObjRel,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_deaccession_obj_rel.csv'),
+            tags: %i[obj_deaccession objects nhr],
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_incoming') do
