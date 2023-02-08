@@ -142,6 +142,62 @@ Some clients may require additional custom merge logic beyond that specified in 
 
 We can write a custom name merge transform and specify it via this setting.
 
+== Per-target table handling: Loans In
+
+=== for_loansin_prepper
+
+The default behavior is described here. If we've created a custom transform for you, it will be described in your project-specific documentation.
+
+No special data prep.
+
+=== con_ref_role_to_field_mapping
+
+The most common role for loans out is `Lender` (or equivalent term), which will be mapped to CS borrower fields.
+
+If your data set contains other roles, settings for those are shown in your project-specific documentation.
+
+
+=== con_ref_name_merge_rules
+
+Specified in: https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/loansin.rb
+
+=== for_loansin_merge
+
+By default, names are merged in as per `con_ref_name_merge_rules`.
+
+If we've created a custom merge transform for you, it will be described in your project-specific documentation.
+
+== Per-target table handling: Loans Out
+
+=== for_loansout_prepper
+
+The default behavior is described here. If we've created a custom transform for you, it will be described in your project-specific documentation.
+
+No special data prep.
+
+=== con_ref_role_to_field_mapping
+
+The most common role for loans out is `Borrower` (or equivalent term), which will be mapped to CS borrower fields.
+
+If your data set contains other roles, settings for those are shown in your project-specific documentation.
+
+
+=== con_ref_name_merge_rules
+
+Specified in: https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/loansout.rb
+
+=== for_loansout_merge
+
+By default, names are merged in as per `con_ref_name_merge_rules`.
+
+[INFORMATION]
+====
+There can only be one Borrower in a CS Loan Out record. If more than one name is merged in as Borrower, the first (according to TMS displayorder value) will populate the Borrower name field, and others will be merged into a note.
+====
+
+If we've created a custom merge transform for you, it will be described in your project-specific documentation.
+
+
 == Per-target table handling: Objects
 
 === for_objects_prepper
