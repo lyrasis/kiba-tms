@@ -28,6 +28,28 @@ module Kiba
         },
         reader: true
       # @return [:status, :note, :conditions] target field
+      # @return [Array<Symbol>] fields to concatenated into target conditions
+      #   field
+      setting :conditions_source_fields,
+        default: %i[loanconditions insind],
+        reader: true,
+        constructor: Proc.new{ |value|
+          if display_date_treatment == :conditions
+            value << :display_dates_note
+          end
+          if remarks_treatment == :conditions
+            value << :remarks
+          end
+          if Tms::TextEntries.for?('Loans') &&
+              text_entries_treatment == :conditions
+            value = value << :text_entry
+          end
+          if Tms::LoanObjXrefs.conditions_record == :loan &&
+              Tms::LoanObjXrefs.conditions_field == :conditions
+            value << :obj_loanconditions
+          end
+          value
+        }
       setting :display_date_treatment, default: :status, reader: true
       # @return [String] used as status value of begin dates if
       #   treatment == :status
@@ -38,7 +60,26 @@ module Kiba
       # @return [String] prepended to display date value for concatenation into
       #   note field
       setting :display_date_note_label, default: 'Displayed: ', reader: true
-
+      # @return [Array<Symbol>] fields to concatenated into target note field
+      setting :note_source_fields,
+        default: %i[description],
+        reader: true,
+        constructor: Proc.new{ |value|
+          if display_date_treatment == :note
+            value << :display_dates_note
+          end
+          if remarks_treatment == :note
+            value << :remarks
+          end
+          if Tms::TextEntries.for?('Loans') && text_entries_treatment == :note
+            value << :text_entry
+          end
+          if Tms::LoanObjXrefs.conditions_record == :loan &&
+              Tms::LoanObjXrefs.conditions_field == :note
+            value << :obj_loanconditions
+          end
+          value
+        }
       # @return [:statusnote, :note, :conditions] target field for remarks data
       setting :remarks_treatment, default: :statusnote, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform to split
@@ -70,50 +111,6 @@ module Kiba
         constructor: Proc.new{ |value|
           if remarks_treatment == :statusnote
             value << :loanstatusnote
-          end
-          value
-        }
-
-      # @return [Array<Symbol>] fields to concatenated into target note field
-      setting :note_source_fields,
-        default: %i[description],
-        reader: true,
-        constructor: Proc.new{ |value|
-          if display_date_treatment == :note
-            value << :display_dates_note
-          end
-          if remarks_treatment == :note
-            value << :remarks
-          end
-          if Tms::TextEntries.for?('Loans') && text_entries_treatment == :note
-            value << :text_entry
-          end
-          if Tms::LoanObjXrefs.conditions_record == :loan &&
-              Tms::LoanObjXrefs.conditions_field == :note
-            value << :obj_loanconditions
-          end
-          value
-        }
-
-      # @return [Array<Symbol>] fields to concatenated into target conditions
-      #   field
-      setting :conditions_source_fields,
-        default: %i[loanconditions insind],
-        reader: true,
-        constructor: Proc.new{ |value|
-          if display_date_treatment == :conditions
-            value << :display_dates_note
-          end
-          if remarks_treatment == :conditions
-            value << :remarks
-          end
-          if Tms::TextEntries.for?('Loans') &&
-              text_entries_treatment == :conditions
-            value = value << :text_entry
-          end
-          if Tms::LoanObjXrefs.conditions_record == :loan &&
-              Tms::LoanObjXrefs.conditions_field == :conditions
-            value << :obj_loanconditions
           end
           value
         }
