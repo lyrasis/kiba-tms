@@ -15,7 +15,18 @@ module Kiba
       setting :text_entries_treatment,
         default: :conditions,
         reader: true
-
+      # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
+      #   needed
+      setting :con_ref_name_merge_rules,
+        default: {
+          fcart: {
+            borrower: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
+            }
+          }
+        },
+        reader: true
       # @return [:status, :note, :conditions] target field
       setting :display_date_treatment, default: :status, reader: true
       # @return [String] used as status value of begin dates if
