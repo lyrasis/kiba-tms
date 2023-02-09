@@ -96,6 +96,7 @@ module Kiba
             roles: :roleid,
             shipping_methods: :shippingmethodid,
             status_flags: :recordid,
+            survey_attr_types: :attributetypeid,
             survey_types: :surveytypeid,
             term_master_thes: :termmasterid,
             term_master_geo: :termmastergeoid,
