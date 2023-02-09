@@ -980,6 +980,22 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working', 'loansin__cspace.csv'),
             tags: %i[loans loansin]
           }
+          register :lender_contact_structure_review, {
+            creator: Kiba::Tms::Jobs::Loansin::LenderContactStructureReview,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'loansin_lender_contact_structure_review.csv'),
+            tags: %i[loans loansin postmigcleanup],
+            desc: "Contact names may be stored in the :contact field in TMS "\
+              "and/or merged in from ConXrefs tables. Lender names are merged "\
+              "in from ConXrefs tables. There is no explicit relationship "\
+              "expressing which contact name goes with which lender name. "\
+              "Further, even if there were, details of how this data must "\
+              "be structured for ingest into CS (multiple possible lender "\
+              "names from two different authorities, that need to be lined "\
+              "up with contact names from one authority) make it vulnerable "\
+              "to getting messed up if there is more than one name value for "\
+              "lender and contact."
+          }
           register :rel_obj, {
             creator: Kiba::Tms::Jobs::Loansin::RelObj,
             path: File.join(Kiba::Tms.datadir, 'working', 'loansin__rel_obj.csv'),
