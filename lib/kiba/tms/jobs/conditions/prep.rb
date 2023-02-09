@@ -57,6 +57,8 @@ module Kiba
 
               transform Tms::Transforms::TmsTableNames
 
+              # We handle this here with conditional logic so that prepped
+              #   table will be as human-readable as possible
               if lookups.any?(:objects__number_lookup)
                 transform Merge::MultiRowLookup,
                   lookup: objects__number_lookup,
