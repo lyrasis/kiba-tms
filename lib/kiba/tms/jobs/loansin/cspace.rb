@@ -20,6 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Delete::Fields, fields: :loanid
+              transform Delete::EmptyFields
             end
           end
         end
