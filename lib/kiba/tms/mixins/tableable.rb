@@ -148,6 +148,7 @@ module Kiba
             str = "setting :source_job_key, default: :#{key}, reader: true"
             mod.module_eval(str)
           else
+            return unless mod.used?
             warn("#{mod} needs :source_job_key defined before extending Tableable")
           end
         end
