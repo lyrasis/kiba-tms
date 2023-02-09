@@ -8,6 +8,9 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :delete_fields,
+        default: %i[modifiedloginid],
+        reader: true
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
     end
