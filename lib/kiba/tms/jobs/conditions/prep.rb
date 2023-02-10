@@ -18,6 +18,7 @@ module Kiba
               "- Merge in object numbers for Objects rows\n"\
               "- Merge in survey type\n"\
               "- Merge in overall conditions\n"\
+              "- Merge TextEntries if they exist\n"
           end
 
           def job
@@ -125,6 +126,10 @@ module Kiba
                   fieldmap: {overallcondition: :overallcondition}
               end
               transform Delete::Fields, fields: :overallconditionid
+
+              if Tms::TextEntries.for?('Conditions')
+                transform Tms::TextEntries.for_conditions_merge
+              end
             end
           end
         end
