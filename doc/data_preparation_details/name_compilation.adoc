@@ -24,7 +24,7 @@ If client has no data in a table, it is excluded.
 
 Tables involving complex data preparation link to their own details pages.
 
-The names are compiled in this order. When deduplication is done later, the first value is kept. This ensures names from the Constituent table are kept, which is important since linkages/references to Constituent values are made from many other tables. 
+The names are compiled in this order. When deduplication is done later, the first value is kept. This ensures names from the Constituent table are kept, which is important since linkages/references to Constituent values are made from many other tables.
 
 * xref:constituents.adoc[Constituents table]
 * xref:con_alt_names.adoc[ConAltNames table]
@@ -239,6 +239,6 @@ altnameid (from ConAltNames table) . constituentid (from Constituents table, i.e
 
 See documentation on term sources for details on how rows are derived.
 
-==== Table name + . + name string (ex: Loans.Jon T. Wilson)
+==== Normalized name string (ex: jontwilson)
 
-Table (having name fields not linked to constituent ids) from which name was extracted, and the original name value.
+Normalized form of name extracted from an uncontrolled name field in a non-Constituents table.
