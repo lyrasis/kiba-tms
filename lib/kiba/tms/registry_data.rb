@@ -859,6 +859,17 @@ module Kiba
             desc: 'Creates NHRs between objects and exhibitions',
             tags: %i[exhibitions objects nhr]
           }
+          register :text_entries_review, {
+            creator: Kiba::Tms::Jobs::ExhObjXrefs::TextEntriesReview,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'exh_obj_xrefs_with_text_entries.csv'
+            ),
+            desc: 'Relationships between Exhibitions and Objects that '\
+              'have TextEntries merged in',
+            tags: %i[exhibitions objects textentries reports]
+          }
         end
 
         Kiba::Tms.registry.namespace('linked_lot_acq') do
