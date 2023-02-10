@@ -18,7 +18,9 @@ module Kiba
 
       # pass in client-specific transform classes to prepare text_entry rows for
       #   merging
-      setting :for_conditions_prepper, default: nil, reader: true
+      setting :for_conditions_prepper,
+        default: Tms::Transforms::TextEntries::ForConditions,
+        reader: true
       setting :for_constituents_prepper, default: nil, reader: true
       setting :for_exhibitions_prepper, default: nil, reader: true
       setting :for_exh_obj_xrefs_prepper, default: nil, reader: true
@@ -38,7 +40,9 @@ module Kiba
 
       # pass in client-specific transform classes to merge text_entry rows into
       #   target tables
-      setting :for_conditions_merge, default: nil, reader: true
+      setting :for_conditions_merge,
+        default: Tms::Transforms::TextEntries::MergeConditions,
+        reader: true
       setting :for_constituents_merge, default: nil, reader: true
       setting :for_exhibitions_merge, default: nil, reader: true
       setting :for_exh_obj_xrefs_merge, default: nil, reader: true
