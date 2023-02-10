@@ -45,7 +45,9 @@ module Kiba
         reader: true
       setting :for_constituents_merge, default: nil, reader: true
       setting :for_exhibitions_merge, default: nil, reader: true
-      setting :for_exh_obj_xrefs_merge, default: nil, reader: true
+      setting :for_exh_obj_xrefs_merge,
+                default: Tms::Transforms::TextEntries::MergeExhObjXrefs,
+        reader: true
       setting :for_loan_obj_xrefs_merge, default: nil, reader: true
       setting :for_loans_merge, default: nil, reader: true
       setting :for_objects_merge, default: nil, reader: true

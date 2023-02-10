@@ -46,10 +46,10 @@ module Kiba
               transform Tms.data_cleaner if Tms.data_cleaner
 
               if lookups.any?(:objects__number_lookup)
-              transform Merge::MultiRowLookup,
-                lookup: objects__number_lookup,
-                keycolumn: :objectid,
-                fieldmap: {objectnumber: :objectnumber}
+                transform Merge::MultiRowLookup,
+                  lookup: objects__number_lookup,
+                  keycolumn: :objectid,
+                  fieldmap: {objectnumber: :objectnumber}
               end
 
               if lookups.any?(:prep__exhibitions)
@@ -65,7 +65,7 @@ module Kiba
                 lookup = Tms.get_lookup(
                   jobkey: :prep__obj_titles,
                   column: :titleid
-                  )
+                )
                 transform Merge::MultiRowLookup,
                   lookup: lookup,
                   keycolumn: :objtitleid,
@@ -74,6 +74,10 @@ module Kiba
                   conditions: ->(_row, rows) do
                     [rows.first]
                   end
+              end
+
+              if Tms::TextEntries.for?('ExhObjXrefs')
+                transform Tms::TextEntries.for_exh_obj_xrefs_merge
               end
             end
           end
