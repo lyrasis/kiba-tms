@@ -2878,15 +2878,6 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace('status_flags') do
-          register :new_tables, {
-            creator: Kiba::Tms::Jobs::StatusFlags::NewTables,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'status_flags_new_tables.csv'),
-            desc: 'Status flags for merge into tables we do not have set up yet. Non-zero count means work to do!',
-            tags: %i[status_flags todochk]
-          }
-        end
-
         Kiba::Tms.registry.namespace('terms') do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
