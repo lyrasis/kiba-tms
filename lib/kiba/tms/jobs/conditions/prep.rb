@@ -114,7 +114,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__survey_types,
                   keycolumn: :surveytypeid,
-                  fieldmap: {surveytype: :surveytype}
+                  fieldmap: {survey_type: :surveytype}
               end
               transform Delete::Fields, fields: :surveytypeid
 

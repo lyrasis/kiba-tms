@@ -50,7 +50,7 @@ module Kiba
         constructor: proc{ |value| delete_omitted_fields(value) }
       setting :rename_fieldmap,
         default: {
-          surveytype: :conditioncheckreason,
+          survey_type: :conditioncheckreason,
           surveyisodate: :conditioncheckassessmentdate,
           examiner_person: :conditioncheckerpersonlocal,
           examiner_org: :conditioncheckerorganizationlocal,
