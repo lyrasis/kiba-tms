@@ -10,11 +10,14 @@ module Kiba
           def desc
             "- Deletes TMS fields\n"\
               "- Delete config empty and deleted fields\n"\
+              "- Merge in number of related CondLineItem rows\n"\
+              "- Delete rows with no content_field values and "\
+              "no CondLineItem rows"\
               "- Merge in examiner names from Constituents\n"\
               "- Merge in TMS table names\n"\
               "- Merge in object numbers for Objects rows\n"\
               "- Merge in survey type\n"\
-              "- Merge in overall conditions\n"
+              "- Merge in overall conditions\n"\
           end
 
           def job
@@ -35,8 +38,9 @@ module Kiba
                       objects__number_lookup
                       names__by_constituentid
                      ]
-            base << :prep__survey_types if Tms::SurveyTypes.used
-            base << :prep__overall_conditions if Tms::OverallConditions.used
+            base << :prep__survey_types if Tms::SurveyTypes.used?
+            base << :prep__overall_conditions if Tms::OverallConditions.used?
+            base << :tms__cond_line_items if Tms::CondLineItems.used?
             base.select{ |job| Tms.job_output?(job) }
           end
 
@@ -55,6 +59,30 @@ module Kiba
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
+              if lookups.any?(:tms__cond_line_items)
+                transform Count::MatchingRowsInLookup,
+                  lookup: tms__cond_line_items,
+                  keycolumn: :conditionid,
+                  targetfield: :condlineitem_ct,
+                  result_type: :int
+              else
+                transform Merge::ConstantValue,
+                  target: :condlineitem_ct,
+                  value: 0
+              end
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: config.content_fields,
+                target: :index,
+                sep: ' ',
+                delete_sources: false
+              transform FilterRows::WithLambda,
+                action: :reject,
+                lambda: ->(row){
+                  ( row[:index].blank? || row[:index].match?(/^[ 0]+$/) ) &&
+                    row[:condlineitem_ct] == 0
+                }
+              transform Delete::Fields, fields: :index
+
               transform Tms::Transforms::TmsTableNames
 
               # We handle this here with conditional logic so that prepped
@@ -68,6 +96,8 @@ module Kiba
                     row[:tablename] == 'Objects' ? rows : []
                   }
               end
+              # If any other target tables exist, add their conditional number
+              #   lookups before deleting :id
               transform Delete::Fields, fields: :id
 
               if lookups.any?(:names__by_constituentid)

@@ -9,6 +9,10 @@ module Kiba
       module_function
 
       extend Tms::Mixins::Tableable
+
+      # :attributetype values from which Conservation records should
+      #   also be produced (e.g. "repair")
+      setting :conservation_attribute_types, default: [], reader: true
     end
   end
 end

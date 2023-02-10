@@ -269,6 +269,51 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('conditions') do
+          # NOTE: The handling here seems a bit over-convoluted, but the way TMS
+          #   has Conditions table set up as a multi-table mergeable table
+          #   implies that there may ever be Conditions associated with
+          #   ObjComponent rows or other tables. The extra complexity here will
+          #   make it simpler to handle that if/when it ever comes up in client
+          #   data.
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::Conditions::Shaped,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conditions_shaped.csv'),
+            desc: 'Reshapes to CS data model as closely as possible without '\
+              'introducing source-record-type specifics',
+            tags: %i[conditions]
+          }
+          register :objects, {
+            creator: Kiba::Tms::Jobs::Conditions::Objects,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conditions_objects.csv'),
+            desc: 'Renames :objectnumber to :recordnumber',
+            tags: %i[conditions objects]
+          }
+          register :nhr_objects, {
+            creator: Kiba::Tms::Jobs::Conditions::NhrObjects,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhr_conditions_objects.csv'),
+            desc: 'Creates Object<->Conditioncheck NHRs',
+            tags: %i[conditions objects nhr]
+          }
+          register :nhrs, {
+            creator: Kiba::Tms::Jobs::Conditions::Nhrs,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhr_conditions_nhrs.csv'),
+            desc: 'All Conditioncheck NHRs',
+            tags: %i[conditions objects nhr]
+          }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::Conditions::Cspace,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conditions_for_cspace.csv'),
+            desc: 'Adds :conditioncheckrefnumber based on :recordnumber',
+            tags: %i[conditions objects]
+          }
+        end
+
         Kiba::Tms.registry.namespace('con_address') do
           register :shaped, {
             creator: Kiba::Tms::Jobs::ConAddress::Shaped,
