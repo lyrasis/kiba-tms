@@ -27,7 +27,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              #compile-only job
+              transform CombineValues::FullRecord, target: :index
+              transform Deduplicate::Table,
+                field: :index,
+                delete_field: true
             end
           end
         end
