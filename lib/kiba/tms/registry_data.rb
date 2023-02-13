@@ -985,6 +985,16 @@ module Kiba
             tags: %i[loans],
             lookup_on: :loanid
           }
+          register :post_mig_cleanup, {
+            creator: Kiba::Tms::Jobs::LoanObjXrefs::PostMigCleanup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'loan_obj_relations_post_mig_cleanup.csv'
+            ),
+            tags: %i[loans objects postmigcleanup],
+            desc: 'Outputs data to be dealt with in post-migration cleanup'
+          }
         end
 
         Kiba::Tms.registry.namespace('loans') do
