@@ -17,6 +17,10 @@ module Kiba
             )
           end
 
+          def publishto_true_value
+            Tms.using_public_browser ? 'CollectionSpace Public Browser' : 'None'
+          end
+
           def xforms
             bind = binding
 
@@ -79,7 +83,7 @@ module Kiba
 
               {
                 exhtravelling: {'0'=>nil, '1'=>'traveling'},
-                publishto: {'0'=>'None', '1'=>'CollectionSpace Public Browser'},
+                publishto: {'0'=>'None', '1'=>job.send(:publishto_true_value)},
                 isinhouse: {'0'=>nil, '1'=>'in-house'},
                 isvirtual: {'0'=>nil, '1'=>'virtual'}
               }.each do |field, mapping|
