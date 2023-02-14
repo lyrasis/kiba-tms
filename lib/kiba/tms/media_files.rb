@@ -13,9 +13,16 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      # Fields to combine into :description field
+      setting :description_sources,
+        default: %i[ms_description ms_publiccaption ms_mediaview],
+        reader: true
+      # Fields from MediaMaster to merge into MediaFiles
       setting :master_merge_fields,
         default: [],
         reader: true
+      # Project-specific transform to create :mediafileuri value
+      setting :mediafileuri_generator, default: nil, reader: true
       setting :migrate_fileless,
         default: false,
         reader: true
@@ -29,6 +36,10 @@ module Kiba
       setting :migrate_unreferenced,
         default: false,
         reader: true
+      # Project-specific transforms to be run at the beginning of
+      #   MediaFiles::Shaped job
+      setting :post_merge_transforms, default: [], reader: true
+      # Fields from MediaRenditions to merge into MediaFiles
       setting :rendition_merge_fields,
         default: [],
         reader: true

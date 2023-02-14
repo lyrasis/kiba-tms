@@ -310,7 +310,8 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, 'working',
                             'conditions_for_cspace.csv'),
             desc: 'Adds :conditioncheckrefnumber based on :recordnumber',
-            tags: %i[conditions objects]
+            tags: %i[conditions objects],
+            lookup_on: :conditionid
           }
         end
 
@@ -1394,6 +1395,37 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('media_files') do
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Shaped,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_shaped.csv'
+            ),
+            desc: 'Media files data reshaped for CS; Adds CS ID',
+            tags: %i[mediafiles media]
+          }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Cspace,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_cspace.csv'
+            ),
+            desc: "Creates :mediafileuri; Removes non-CS fields",
+            tags: %i[mediafiles media]
+          }
+          register :id_lookup, {
+            creator: Kiba::Tms::Jobs::MediaFiles::IdLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_id_lookup.csv'
+            ),
+            desc: "Get :identificationnumber via :fileid",
+            tags: %i[mediafiles],
+            lookup_on: :mediamasterid
+          }
           register :file_names, {
             creator: Kiba::Tms::Jobs::MediaFiles::FileNames,
             path: File.join(
@@ -1464,9 +1496,101 @@ module Kiba
             desc: 'MediaXrefs::TargetReport rows where :targettable is empty',
             tags: %i[mediafiles]
           }
+          register :nhr_report, {
+            creator: Kiba::Tms::Jobs::MediaFiles::NhrReport,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_files_relationships.csv'
+            ),
+            desc: 'Summary of nonhierarchical relationships between Media and '\
+              'other record types',
+            tags: %i[mediafiles]
+          }
         end
 
         Kiba::Tms.registry.namespace('media_xrefs') do
+          register :nhrs, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::Nhrs,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media.csv'
+            ),
+            desc: 'All Media NHRs',
+            tags: %i[media nhr],
+            lookup_on: :item2_id
+          }
+          register :accession_lot, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::AccessionLot,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_accession_lot.csv'
+            ),
+            desc: 'Media <-> Acquisition NHRs through AccessionLot',
+            tags: %i[media acquisitions nhr]
+          }
+          register :cond_line_items, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::CondLineItems,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_cond_line_items.csv'
+            ),
+            desc: 'Media <-> ConditionCheck NHRs through CondLineItems',
+            tags: %i[media acquisitions nhr]
+          }
+          register :exhibitions, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::Exhibitions,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_exhibitions.csv'
+            ),
+            desc: 'Media <-> Exhibition NHRs',
+            tags: %i[media exhibitions nhr]
+          }
+          register :loansin, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::Loansin,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_loansin.csv'
+            ),
+            desc: 'Media <-> Loans In NHRs',
+            tags: %i[media loansin nhr]
+          }
+          register :loansout, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::Loansout,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_loansout.csv'
+            ),
+            desc: 'Media <-> Loans Out NHRs',
+            tags: %i[media loansout nhr]
+          }
+          register :objects, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::Objects,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_objects.csv'
+            ),
+            desc: 'Media <-> Object NHRs',
+            tags: %i[media objects nhr]
+          }
+          register :obj_insurance, {
+            creator: Kiba::Tms::Jobs::MediaXrefs::ObjInsurance,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'nhr_media_obj_insurance.csv'
+            ),
+            desc: 'Media <-> Valuation Control NHRs',
+            tags: %i[media obj_insurance valuation_control nhr]
+          }
           register :for_target_report, {
             creator: Kiba::Tms::Jobs::MediaXrefs::ForTargetReport,
             path: File.join(
@@ -2955,7 +3079,8 @@ module Kiba
           register :all, {
             creator: Kiba::Tms::Jobs::ValuationControl::All,
             path: File.join(Kiba::Tms.datadir, 'working', 'vc_all.csv'),
-            tags: %i[valuation]
+            tags: %i[valuation],
+            lookup_on: :objinsuranceid
           }
           register :all_clean, {
             creator: Kiba::Tms::Jobs::ValuationControl::AllClean,

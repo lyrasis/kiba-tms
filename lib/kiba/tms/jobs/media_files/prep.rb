@@ -119,6 +119,7 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[pathid]
+              transform Delete::EmptyFields
             end
           end
         end
