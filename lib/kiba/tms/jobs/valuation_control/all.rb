@@ -27,11 +27,17 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Tms::Transforms::IdGenerator,
                 prefix: 'VC',
                 id_source: :idbase,
                 id_target: :valuationcontrolrefnumber
+              transform Append::NilFields,
+                fields: config.multi_source_normalizer.get_fields
             end
           end
         end
