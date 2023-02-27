@@ -8,6 +8,7 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :source_job_key, default: :prep__dd_languages, reader: true
       extend Tms::Mixins::Tableable
 
       setting :id_field, default: :languageid, reader: true

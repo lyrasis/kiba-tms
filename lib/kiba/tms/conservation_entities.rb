@@ -8,6 +8,12 @@ module Kiba
       extend Dry::Configurable
       module_function
 
+      setting :checkable,
+        default: {
+          populated_configured: ->{ check_populated_configured }
+        },
+        reader: true
+
       setting :delete_fields,
         default: %i[identifier sortidentifier displayidentifier],
         reader: true
@@ -35,13 +41,12 @@ module Kiba
       #   automatically by TMS (false)
       setting :populated,
         default: nil,
-        reader: true,
-        constructor: proc{ set_populated }
+        reader: true
 
-     def set_populated
-        return false if (fields - base_fields).empty?
+      def check_populated_configured
+        return unless populated.nil?
 
-        true
+        "#{self.name}: Configure :populated setting"
       end
     end
   end

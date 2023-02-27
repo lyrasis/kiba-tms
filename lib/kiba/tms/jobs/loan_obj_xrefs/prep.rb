@@ -108,6 +108,12 @@ module Kiba
               else
                 warn("Unknown value for Tms::LoanObjXrefs.conditions_label")
               end
+
+              if Tms::TextEntries.for?('LoanObjXrefs')
+                xform = Tms::TextEntries.for_loan_obj_xrefs_merge
+                transform xform if xform
+              end
+              transform Delete::EmptyFields
             end
           end
         end

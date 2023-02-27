@@ -14,10 +14,14 @@ module Kiba
         # @param xforms [Array] of transform classes
         def for_table_xforms(table:, field: :tablename, xforms: [])
           Kiba.job_segment do
-            transform FilterRows::FieldEqualTo, action: :keep, field: field, value: table
+            transform FilterRows::FieldEqualTo,
+              action: :keep,
+              field: field,
+              value: table
             unless xforms.empty?
               xforms.each{ |xform| transform xform }
             end
+            transform Delete::EmptyFields
           end
         end
 

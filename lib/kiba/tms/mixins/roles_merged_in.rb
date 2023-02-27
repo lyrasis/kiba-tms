@@ -75,7 +75,7 @@ module Kiba
             ))
           end
           unmapped = send(meth)[:unmapped]
-          return nil if umapped.blank?
+          return nil if unmapped.blank?
 
           Success(Tms::Data::ConfigSetting.new(
             mod:"#{name}.#{__callee__}",

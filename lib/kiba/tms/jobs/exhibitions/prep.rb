@@ -124,6 +124,11 @@ module Kiba
                 end
               end
 
+              if Tms::TextEntries.for?('Exhibitions')
+                xform = Tms::TextEntries.for_exhibitions_merge
+                transform xform if xform
+              end
+
               transform Merge::ConstantValue,
                 target: :pre, value: 'EXH'
               transform Tms::Transforms::IdGenerator,

@@ -13,15 +13,17 @@ module Kiba
           @config_path = "#{Tms.datadir}/initial_config.txt"
           @err_path = "#{Tms.datadir}/initial_config_errs.txt"
         end
-        
+
         def call
-          config = to_configure.map{ |const| Tms::Services::InitialConfigDeriver.call(const) }
+          config = to_configure.map{ |const|
+            Tms::Services::InitialConfigDeriver.call(mod: const)
+          }
             .flatten
             .compact
             .group_by(&:success?)
           configs = config[true]
           errs = config[false]
-          
+
           write_config(configs.map(&:value!)) if configs
           write_errs(errs.map(&:failure)) if errs
         end

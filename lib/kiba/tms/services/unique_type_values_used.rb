@@ -35,8 +35,9 @@ module Kiba
               failobj.new(mod: mod)
             )
           end
+
           unless used_in
-          return Failure(
+            return Failure(
               failobj.new(mod: mod, sym: :not_used_in)
             )
           end

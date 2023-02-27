@@ -21,7 +21,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              if Tms::ExhObjXrefs.migrate_exh_obj_info
+              if Tms::Exhibitions.migrate_exh_obj_info
                 warn("#{job.send(:name)}: Implement merge of object details")
               else
                 # do nothing

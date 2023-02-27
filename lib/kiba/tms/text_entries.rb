@@ -22,9 +22,13 @@ module Kiba
         default: Tms::Transforms::TextEntries::ForConditions,
         reader: true
       setting :for_constituents_prepper, default: nil, reader: true
-      setting :for_exhibitions_prepper, default: nil, reader: true
+      setting :for_exhibitions_prepper,
+        default: Tms::Transforms::TextEntries::ToNote,
+        reader: true
       setting :for_exh_obj_xrefs_prepper, default: nil, reader: true
-      setting :for_loan_obj_xrefs_prepper, default: nil, reader: true
+      setting :for_loan_obj_xrefs_prepper,
+        default: Tms::Transforms::TextEntries::ToNote,
+        reader: true
       setting :for_loans_prepper, default: nil, reader: true
       setting :for_objects_prepper, default: nil, reader: true
       setting :for_obj_accession_prepper, default: nil, reader: true
@@ -44,11 +48,15 @@ module Kiba
         default: Tms::Transforms::TextEntries::MergeConditions,
         reader: true
       setting :for_constituents_merge, default: nil, reader: true
-      setting :for_exhibitions_merge, default: nil, reader: true
-      setting :for_exh_obj_xrefs_merge,
-                default: Tms::Transforms::TextEntries::MergeExhObjXrefs,
+      setting :for_exhibitions_merge,
+        default: Tms::Transforms::TextEntries::MergeExhibitions,
         reader: true
-      setting :for_loan_obj_xrefs_merge, default: nil, reader: true
+      setting :for_exh_obj_xrefs_merge,
+        default: Tms::Transforms::TextEntries::MergeExhObjXrefs,
+        reader: true
+      setting :for_loan_obj_xrefs_merge,
+        default: Tms::Transforms::TextEntries::MergeLoanObjXrefs,
+        reader: true
       setting :for_loans_merge, default: nil, reader: true
       setting :for_objects_merge, default: nil, reader: true
       setting :for_obj_accession_merge, default: nil, reader: true

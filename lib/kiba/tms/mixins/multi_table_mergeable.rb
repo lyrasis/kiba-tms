@@ -101,7 +101,6 @@ module Kiba
         #      sourcejob: :objects__number_lookup,
         #      numberfield: :objectnumber
         #  }, reader: true
-
         # @return [Hash] of reportable-for-tables, i.e. target tables whose
         #   configs define the :record_num_merge_config setting. Hash key
         #   is the target table config Constant, and value is the

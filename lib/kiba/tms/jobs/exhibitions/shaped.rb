@@ -59,13 +59,8 @@ module Kiba
                   row
                 end
               end
-              transform Delete::EmptyFields
 
               transform Rename::Fields, fieldmap: {
-                planningnotes: :planningnote,
-                curnotes: :curatorialnote,
-                remarks: :generalnote,
-                insindnote: :boilerplatetext,
                 venue_xref_org: :venueorganizationlocal,
                 venue_xref_open_date: :venueopeningdate,
                 venue_xref_close_date: :venueclosingdate,
@@ -81,6 +76,15 @@ module Kiba
                 sep: Tms.delim,
                 delete_sources: true
 
+              %i[boilerplatetext curatorialnote generalnote
+                 planningnote].each do |field|
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.send("#{field}_sources".to_sym),
+                  target: field,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
+
               {
                 exhtravelling: {'0'=>nil, '1'=>'traveling'},
                 publishto: {'0'=>'None', '1'=>job.send(:publishto_true_value)},
@@ -94,10 +98,10 @@ module Kiba
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[isinhouse exhtravelling isvirtual],
-                target: :exhibitiontype,
+                target: :type,
                 sep: ' + ',
                 delete_sources: true
-
+              transform Delete::EmptyFields
             end
           end
         end

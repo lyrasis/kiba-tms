@@ -14,6 +14,9 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      setting :boilerplatetext_sources,
+        default: %i[],
+        reader: true
       setting :con_ref_name_merge_rules,
         default: {
           fcart: {
@@ -25,9 +28,18 @@ module Kiba
           }
         },
         reader: true
+      setting :curatorialnote_sources,
+        default: %i[curnotes text_entry],
+        reader: true
+      setting :generalnote_sources,
+        default: %i[remarks],
+        reader: true
       # Whether to use data from ExhObjXrefs to populate the Exhibited
       #   Object Information object checklist in the Exhibition record
       setting :migrate_exh_obj_info, default: false, reader: true
+      setting :planningnote_sources,
+        default: %i[planningnotes insindnote],
+        reader: true
     end
   end
 end
