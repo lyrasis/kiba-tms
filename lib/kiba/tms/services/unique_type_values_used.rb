@@ -32,7 +32,7 @@ module Kiba
         def call
           unless mod.used?
             return Failure(
-              failobj.new(mod: mod)
+              failobj.new(mod: mod, sym: :mod_not_used)
             )
           end
 
