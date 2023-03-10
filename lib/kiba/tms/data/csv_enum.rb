@@ -20,7 +20,7 @@ module Kiba
           @mod = mod
           if mod.is_a?(Module)
             @job_key = mod.source_job_key
-            @path = mod.table_path
+            @path = get_mod_table_path
           elsif mod.is_a?(Symbol)
             @job_key = mod
             @path = Tms::Table::Obj.new(mod).filename
@@ -48,6 +48,14 @@ module Kiba
         private
 
         attr_reader :mod, :path, :job_key
+
+        def get_mod_table_path
+          if mod.source_job_key_overridden
+            Tms::Table::Obj.new(job_key).filename
+          else
+            mod.table_path
+          end
+        end
       end
     end
   end

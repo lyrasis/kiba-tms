@@ -141,11 +141,14 @@ module Kiba
         end
 
         def self.check_source_job_key(mod)
-          return if mod.respond_to?(:source_job_key)
-
-          if mod.supplied?
+          if mod.respond_to?(:source_job_key)
+            str = "setting :source_job_key_overridden, default: true, reader: true"
+            mod.module_eval(str)
+          elsif mod.supplied?
             key = "tms__#{mod.filekey}"
             str = "setting :source_job_key, default: :#{key}, reader: true"
+            mod.module_eval(str)
+            str = "setting :source_job_key_overridden, default: false, reader: true"
             mod.module_eval(str)
           else
             return unless mod.used?
