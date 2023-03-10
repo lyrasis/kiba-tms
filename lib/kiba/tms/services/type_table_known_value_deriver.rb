@@ -25,7 +25,9 @@ module Kiba
           @value_getter = Tms::Services::UniqueTypeValuesUsed.new(mod: mod)
           @id_field = mod.id_field
           @type_field = mod.type_field
-          @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(field: type_field)
+          @no_val_xform = Tms::Transforms::DeleteNoValueTypes.new(
+            field: type_field
+          )
           @default_mapping = mod.mappings.empty? ? false : true
           @setting_name = "#{mod}.config.mappings"
         end
