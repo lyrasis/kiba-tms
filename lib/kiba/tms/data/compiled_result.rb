@@ -26,11 +26,10 @@ module Kiba
 
         def output_to(path)
           File.open(path, 'w') do |file|
-          successes.each{ |success| file.puts(success.to_s) }
-          return if failures.empty?
+            successes.each{ |success| file.puts(success.to_s) }
+            return if failures.empty?
 
-          puts "\n\nFAILURES"
-
+            puts "\n\nFAILURES"
             failures.each{ |err| file.puts(err.formatted) }
           end
         end
