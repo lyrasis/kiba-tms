@@ -4,6 +4,8 @@ module Kiba
   module Tms
     module Data
       class CompiledResult
+        attr_reader :successes, :failures
+
         def initialize(successes: [], failures: [])
           @successes = successes.map(&:value!).sort
           @failures = failures.sort_by{ |f| f.failure.mod }
@@ -31,11 +33,6 @@ module Kiba
 
           end
         end
-
-        private
-
-        attr_reader :successes, :failures
-
       end
     end
   end
