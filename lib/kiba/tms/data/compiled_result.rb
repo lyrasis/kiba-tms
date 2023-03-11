@@ -17,9 +17,9 @@ module Kiba
           return if failures.empty?
 
           puts "\n\nFAILURES"
-          failures.each do |f|
-            puts f.failure.formatted
-            puts f.trace
+          failures.each do |err|
+            puts err.failure.formatted
+            puts err.trace
             puts ''
           end
         end
@@ -30,8 +30,8 @@ module Kiba
           return if failures.empty?
 
           puts "\n\nFAILURES"
-          failures.each{ |f| file.puts(f.formatted) }
 
+            failures.each{ |err| file.puts(err.formatted) }
           end
         end
       end
