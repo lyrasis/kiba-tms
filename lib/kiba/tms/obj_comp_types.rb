@@ -15,7 +15,6 @@ module Kiba
       setting :type_field, default: :objcomptype, reader: true
       setting :used_in,
         default: [
-          "ObjCompSummary.#{id_field}",
           "ObjComponents.componenttype",
         ],
         reader: true
