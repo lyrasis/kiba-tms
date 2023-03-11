@@ -25,7 +25,7 @@ module Kiba
           def call
             return nil unless mod.used?
 
-            table = yield table_getter.new(mod: mod)
+            table = yield table_getter.call(mod: mod)
             vals = yield accumulate_values(table)
             comps = yield select_components(vals)
 
