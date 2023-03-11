@@ -5,7 +5,7 @@ module Kiba
     module Data
       class DeriverFailure
 
-        attr_reader :mod
+        attr_reader :mod, :name, :err, :sym
 
         # @param mod [Module]
         # @param name [String, NilValue]
@@ -26,8 +26,6 @@ module Kiba
         end
 
         private
-
-        attr_reader :name, :err, :sym
 
         def msg
           [sym, err].compact
