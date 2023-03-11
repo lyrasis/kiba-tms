@@ -8,7 +8,8 @@ module Kiba
 
         def initialize(successes: [], failures: [])
           @successes = successes.map(&:value!).sort
-          @failures = failures.sort_by{ |f| f.failure.mod }
+          @failures = failures.reject{ |err| err.failure.sym == :not_used }
+            .sort_by{ |err| err.failure.mod }
         end
 
         def output
