@@ -9,7 +9,7 @@ module Kiba
         def initialize(successes: [], failures: [])
           @successes = successes.sort_by{ |success| success.value! }
           @failures = failures.reject{ |err| err.failure.sym == :not_used }
-            .sort_by{ |err| err.failure.mod }
+            .sort_by{ |err| err.failure.mod.to_s }
         end
 
         def output
@@ -29,8 +29,8 @@ module Kiba
             successes.each{ |success| file.puts(success.value!.to_s) }
             return if failures.empty?
 
-            puts "\n\nFAILURES"
-            failures.each{ |err| file.puts(err.formatted) }
+            file.puts("\n\nFAILURES")
+            failures.each{ |err| file.puts(err.failure.formatted) }
           end
         end
       end
