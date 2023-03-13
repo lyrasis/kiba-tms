@@ -20,13 +20,13 @@ module Kiba
                        settingobj: Tms::Data::ConfigSetting,
                        failobj: Tms::Data::DeriverFailure
                       )
+          @setting = :con_ref_role_to_field_mapping
           @mod = mod
-          return unless eligible?
+          @failobj = failobj
+          return unless eligible?.success?
 
           @colobj = col
           @settingobj = settingobj
-          @failobj = failobj
-          @setting = :con_ref_role_to_field_mapping
           @current_mapping = mod.send(setting)
           @known_roles = current_mapping.reject{ |key, _v| key == :unmapped }
             .values
@@ -56,7 +56,7 @@ module Kiba
           meth = :gets_roles_merged_in?
 
           unless mod.respond_to?(meth)
-            Failure(
+            return Failure(
               failobj.new(mod: mod,
                                 name: setting,
                                 sym: :missing_eligibility_setting
@@ -75,16 +75,6 @@ module Kiba
           end
         end
 
-        def get_column(role_mod)
-          result = colobj.new(mod: role_mod, field: :role)
-        rescue StandardError => err
-          Failure(
-            failobj.new(mod: mod, name: setting, err: err)
-          )
-        else
-          Success(result)
-        end
-
         def get_role_mod
           result = Tms.const_get("ConRefsFor#{mod.table_name}")
         rescue StandardError => err
@@ -95,8 +85,19 @@ module Kiba
           Success(result)
         end
 
+        def get_column(role_mod)
+          result = colobj.new(mod: role_mod, field: :role)
+        rescue StandardError => err
+          Failure(
+            failobj.new(mod: mod, name: setting, err: err)
+          )
+        else
+          Success(result)
+        end
+
         def mapping_hash
           current_mapping.merge({unmapped: new_roles})
+            .transform_values{ |value| value.sort }
         end
       end
     end
