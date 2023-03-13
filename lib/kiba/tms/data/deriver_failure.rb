@@ -16,16 +16,28 @@ module Kiba
           @name = name
           @sym = sym
           @err = err.message if err
+          @trace = err.backtrace.first(3) if err
         end
 
         def formatted
           context = [mod, name].compact
             .join('.')
-          [context, msg].reject(&:blank?)
+          with_msg = [context, msg].reject(&:blank?)
             .join(': ')
+          [with_msg, backtrace].reject(&:blank?)
+            .join("\n")
         end
 
         private
+
+        attr_reader :trace
+
+        def backtrace
+          return nil unless trace
+
+          trace.map{ |line| "   #{line}" }
+            .join("\n")
+        end
 
         def msg
           [sym, err].compact
