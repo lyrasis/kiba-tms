@@ -25,7 +25,7 @@ module Kiba
           @table_getter = table_getter
           @col_obj = col_obj
           @failobj = failobj
-          @used_in = mod.used_in
+          @used_in = actually_used_in(mod.used_in)
           @matcher = Regexp.new(Tms.no_value_type_pattern, Regexp::IGNORECASE)
         end
 
@@ -53,6 +53,13 @@ module Kiba
         private
 
         attr_reader :mod, :col_obj, :failobj, :used_in, :table_getter, :matcher
+
+        def actually_used_in(arr)
+          arr.map{ |tabfld| tabfld.split('.') }
+            .to_h
+            .select{ |mod, _fld| Tms::Table::Obj.new(mod).used? }
+            .map{ |mod, fld| "#{mod}.#{fld}" }
+        end
 
         def clean_vals(vals)
           return Success(vals) if Tms.migrate_no_value_types
