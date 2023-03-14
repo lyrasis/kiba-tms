@@ -88,6 +88,7 @@ module Kiba
             objects: :objectnumber,
             object_statuses: :objectstatusid,
             overall_conditions: :overallconditionid,
+            package_folders: :folderid,
             phone_types: :phonetypeid,
             ref_formats: :formatid,
             registration_sets: :registrationsetid,

@@ -28,6 +28,7 @@ module Kiba
             constituents: :constituentid,
             departments: :departmentid,
             exhibitions: :exhibitionid,
+            folder_types: Tms::FolderTypes.id_field,
             loans: :loanid,
             loc_purposes: :locpurposeid,
             locations: :locationid,
@@ -36,6 +37,7 @@ module Kiba
             obj_components: :componentid,
             obj_insurance: :objinsuranceid,
             objects: :objectid,
+            package_folder_xrefs: :packageid,
             reference_master: :referenceid,
             registration_sets: :lotid,
             thesaurus_bases: :thesaurusbaseid
