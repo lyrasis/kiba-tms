@@ -6,7 +6,7 @@ module Kiba
       class ConfigSetting
         include Comparable
 
-        attr_reader :mod, :name, :value
+        attr_reader :mod, :name, :value, :status
 
         # @param mod [Module]
         # @param name [String]
@@ -16,6 +16,21 @@ module Kiba
           @name = name
           @value = value
           @setter = "#{mod}.config.#{name} ="
+          @getter = -> { mod.send(name.to_sym) }
+          @status = nil
+        end
+
+        def diff
+          existing = getter.call
+          if value == existing
+            @status = :unchanged
+          else
+            if name == :empty_fields
+              diff_empty_fields
+            else
+              @status = :changed
+            end
+          end
         end
 
         def to_s
@@ -48,7 +63,14 @@ module Kiba
 
         private
 
-        attr_reader :setter
+        attr_reader :setter, :getter
+
+        def diff_empty_fields
+          prev_empty = getter.call.keys
+          now_empty = value.keys
+          now_populated = prev_empty - now_empty
+          @status = now_populated.empty? ? :unchanged : :changed
+        end
 
         def array_elements
           value.inspect

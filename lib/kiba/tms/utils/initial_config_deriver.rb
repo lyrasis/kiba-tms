@@ -10,7 +10,6 @@ module Kiba
 
         def initialize
           @to_configure = gather_configurable
-          @config_path = "#{Tms.datadir}/initial_config.txt"
         end
 
         def call
@@ -24,12 +23,12 @@ module Kiba
           Tms::Data::CompiledResult.new(
             successes: all_successes,
             failures: all_errors
-          ).output_to(config_path)
+          )
         end
 
         private
 
-        attr_reader :to_configure, :config_path, :configs
+        attr_reader :to_configure, :configs
 
         def gather_configurable
           constants = Kiba::Tms.constants.select do |constant|

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-
 module Kiba
   module Tms
     module Services
@@ -117,7 +115,6 @@ module Kiba
           warn("#{setting_name} auto-config should return Dry::Monads::Result")
           config << Success("#{setting_name} = #{result.inspect}")
         end
-
       end
     end
   end
