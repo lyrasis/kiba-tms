@@ -21,7 +21,9 @@ module Kiba
       setting :for_conditions_prepper,
         default: Tms::Transforms::TextEntries::ForConditions,
         reader: true
-      setting :for_constituents_prepper, default: nil, reader: true
+      setting :for_constituents_prepper,
+        default: Tms::Transforms::TextEntries::ForConstituents,
+        reader: true
       setting :for_exhibitions_prepper,
         default: Tms::Transforms::TextEntries::ToNote,
         reader: true
@@ -47,7 +49,9 @@ module Kiba
       setting :for_conditions_merge,
         default: Tms::Transforms::TextEntries::MergeConditions,
         reader: true
-      setting :for_constituents_merge, default: nil, reader: true
+      setting :for_constituents_merge,
+        default: Tms::Transforms::TextEntries::MergeConstituents,
+        reader: true
       setting :for_exhibitions_merge,
         default: Tms::Transforms::TextEntries::MergeExhibitions,
         reader: true
