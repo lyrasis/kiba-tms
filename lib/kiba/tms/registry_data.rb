@@ -549,17 +549,6 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('constituents') do
-          register :text_entries_merged, {
-            creator: Kiba::Tms::Jobs::Constituents::TextEntriesMerged,
-            path: File.join(
-              Kiba::Tms.datadir,
-              'working', 'constituents_text_entries_merged.csv'
-            ),
-            desc: 'Prepped constituents with text entries merged in. This '\
-              'cannot be handled in prep because prep of the TextEntries '\
-              'table requires looking up names in prep__constituents',
-            tags: %i[con textentries]
-          }
           register :prep_clean, {
             creator: Kiba::Tms::Jobs::Constituents::PrepClean,
             path: File.join(
@@ -708,12 +697,6 @@ module Kiba
               'con_alt_names table) does not match value of preferred name '\
               'field in constituents table',
             tags: %i[con reports]
-          }
-          register :alt_names_merged, {
-            creator: Kiba::Tms::Jobs::Constituents::AltNamesMerged,
-            path: File.join(Kiba::Tms.datadir, 'working', 'constituents_alt_names_merged.csv'),
-            desc: 'Constituents with non-default form of name merged in',
-            tags: %i[con]
           }
           register :with_type, {
             creator: Kiba::Tms::Jobs::Constituents::WithType,
@@ -3055,15 +3038,6 @@ module Kiba
             tags: %i[termdata terms reference]
           }
         end
-
-        # Kiba::Tms.registry.namespace('text_entries') do
-        #   register :for_reference_master, {
-        #     creator: Kiba::Tms::Jobs::TextEntries::ForReferenceMaster,
-        #     path: File.join(Kiba::Tms.datadir, 'working', 'text_entries_for_reference_master.csv'),
-        #     tags: %i[textentries reference_master],
-        #     lookup_on: :tablerowid
-        #   }
-        # end
 
         Kiba::Tms.registry.namespace('thes_xrefs') do
           register :term_ids_used, {
