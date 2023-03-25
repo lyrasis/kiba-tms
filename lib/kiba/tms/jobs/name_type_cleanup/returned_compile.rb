@@ -53,6 +53,7 @@ module Kiba
               transform Deduplicate::Table,
                 field: :cleanupid,
                 delete_field: false
+              transform Clean::EnsureConsistentFields
             end
           end
         end

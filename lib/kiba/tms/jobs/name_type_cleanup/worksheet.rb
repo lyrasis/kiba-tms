@@ -29,14 +29,31 @@ module Kiba
             base.select{ |jobkey| Tms.job_output?(jobkey) }
           end
 
-          def merge_map(fields)
-            base = ( fields - nomerge_fields ).map{ |field| [field, field] }
-              .to_h
+          def returned_fields
+            return [] unless config.done
+
+            key = :name_type_cleanup__returned_compile
+            path = Tms.registry.resolve(key).path
+            Kiba::Extend::Command::Run.job(key) unless File.exist?(path)
+            CSV.open(path, headers: true)
+              .shift
+              .headers
+              .map(&:to_sym)
+          end
+
+          def mergeable_fields
+            @mergeable_fields ||= returned_fields - nomerge_fields
+          end
+
+          def merge_map
+            base = mergeable_fields.map{ |field|
+              ["m_#{field}".to_sym, field]
+            }.to_h
             base.merge({doneid: :constituentid})
           end
 
           def nomerge_fields
-            %i[name authoritytype constituentid cleanupid]
+            %i[name authoritytype constituentid cleanupid to_review]
           end
 
           def xforms
@@ -54,7 +71,8 @@ module Kiba
                   fieldmap: {
                     origname: :origname
                   },
-                  conditions: ->(_r, rows){ [rows.first] }
+                  conditions: ->(_r, rows){ [rows.first] },
+                  constantmap: {to_review: 'n'}
               end
 
               transform CombineValues::FromFieldsWithDelimiter,
@@ -66,14 +84,27 @@ module Kiba
               transform Rename::Field, from: :contype, to: :authoritytype
 
               if config.done
-                mergefields = bind.receiver
-                  .send(:merge_map,
-                        name_type_cleanup__returned_compile.first[1][0]
-                          .keys)
+                mergefields = bind.receiver.send(:merge_map)
+
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__returned_compile,
                   keycolumn: :cleanupid,
                   fieldmap: mergefields
+
+                transform do |row|
+                  mergefields.each do |merged, base|
+                    next if merged == :doneid
+
+                    if row.key?(base)
+                      mval = row[merged]
+                      row[base] = mval unless mval.blank?
+                    else
+                      row[base] = row[merged]
+                    end
+                    row.delete(merged)
+                  end
+                  row
+                end
 
                 transform Tms::Transforms::Names::NormalizeContype,
                   source: :authoritytype,
@@ -116,7 +147,6 @@ module Kiba
                 end
 
                 transform do |row|
-                  row[:to_review] = nil
                   next row unless row[:alreadycorrected].blank?
                   next row unless row[:doneid].blank?
 
@@ -133,9 +163,12 @@ module Kiba
 
                   row[:correctname] = corrname unless corrname.blank?
                   row[:correctauthoritytype] = corrtype unless corrtype.blank?
-                  row[:to_review] = nil
+                  row[:to_review] = 'n'
                   row
                 end
+                transform Delete::FieldValueMatchingRegexp,
+                  fields: :to_review,
+                  match: '^n$'
 
                 transform Delete::Fields,
                   fields: %i[alreadycorrected doneid corrnameval corrtypeval]
