@@ -75,7 +75,7 @@ module Kiba
         end
 
         def set_mod(mod)
-          if mod.is_a?(Module)
+          if mod.is_a?(Module) || mod.is_a?(Symbol)
             result = mod
           else
             result = Tms.const_get(mod)
@@ -84,6 +84,8 @@ module Kiba
           @status = Failure(err)
           nil
         else
+          return result if result.is_a?(Symbol)
+
           @status = Failure(:table_not_used) unless result.used?
           result
         end

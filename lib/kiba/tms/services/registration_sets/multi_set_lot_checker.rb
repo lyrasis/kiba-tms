@@ -17,7 +17,7 @@ module Kiba
 
           attr_reader :mod
 
-          def initialize(mod: Tms::RegistrationSets,
+          def initialize(mod: :prep__registration_sets,
                          col: Tms::Data::Column
                         )
             @mod = mod

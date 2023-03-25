@@ -29,6 +29,17 @@ module Kiba
             base
           end
 
+          def obj_ct_lookup
+            key = :tms__obj_accession
+            reg = Tms.registry.resolve(key)
+            path = reg.path
+            Kiba::Extend::Command::Run.job(key) unless File.exist?(path)
+            Kiba::Extend::Utils::Lookup.csv_to_hash(
+              file: path,
+              keycolumn: :registrationsetid
+            )
+          end
+
           def xforms
             bind = binding
 
@@ -56,9 +67,17 @@ module Kiba
                              Tms::ObjectStatuses.type_field}
               end
 
+              transform Count::MatchingRowsInLookup,
+                lookup: bind.receiver.send(:obj_ct_lookup),
+                keycolumn: :registrationsetid,
+                targetfield: :objcount
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
+                field: :objcount,
+                value: '0'
 
               transform Delete::Fields,
-                fields: %i[accessionmethodid objectstatusid lotid]
+                fields: %i[accessionmethodid objectstatusid]
 
               if Tms::ConRefs.for?('RegistrationSets')
                 transform Tms::Transforms::ConRefs::Merger,
