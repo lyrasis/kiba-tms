@@ -34,18 +34,9 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::DeleteTmsFields
-              transform FilterRows::FieldEqualTo,
-                action: :reject,
-                field: :objectid,
-                value: '-1'
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[purpose remarks textentry],
-                target: :combined,
-                sep: ' ',
-                delete_sources: false
-              transform FilterRows::FieldPopulated,
+              transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
-                field: :combined
+                fields: %i[purpose remarks textentry]
               transform Delete::Fields, fields: :combined
 
               if config.omitting_fields?
