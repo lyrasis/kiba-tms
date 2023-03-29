@@ -10,7 +10,8 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :historynote_sources,
-        default: [],
+        default: %i[biography remarks text_entry datenote
+                    address_namenote email_web_namenote phone_fax_namenote],
         reader: true
       setting :group_sources,
         default: [:culturegroup],

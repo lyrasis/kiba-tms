@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :locs__compiled,
+                source: :locs__compiled_clean,
                 destination: :locs__worksheet,
                 lookup: lookups
               },
@@ -22,7 +22,7 @@ module Kiba
             base = []
             if config.cleanup_done
               base << :locs__previous_worksheet_compile
-              base << :locations__worksheet_completed
+              base << :locs__returned_compile
             end
             base.select{ |job| Tms.job_output?(job) }
           end
@@ -43,12 +43,13 @@ module Kiba
                   keycolumn: :fulllocid,
                   fieldmap: {
                     origlocname: :origlocname
-                  }
+                  },
+                  constantmap: {to_review: 'n'}
               end
 
               if config.cleanup_done
                 transform Merge::MultiRowLookup,
-                  lookup: locations__worksheet_completed,
+                  lookup: locs__returned_compile,
                   keycolumn: :fulllocid,
                   fieldmap: {
                     correct_location_name: :correct_location_name,
@@ -58,7 +59,6 @@ module Kiba
                   }
 
                 transform do |row|
-                  row[:to_review] = nil
                   done = row[:doneid]
                   next row unless done.blank?
 
@@ -71,7 +71,6 @@ module Kiba
                   fields: %i[correct_location_name correct_authority
                              correct_address]
               end
-
             end
           end
         end

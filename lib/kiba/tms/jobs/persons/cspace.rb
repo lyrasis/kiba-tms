@@ -139,12 +139,11 @@ module Kiba
               end
 
               transform Delete::DelimiterOnlyFieldValues,
-                delim: Tms.delim,
                 treat_as_null: Tms.nullvalue
               transform Delete::EmptyFields, usenull: true
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
-                find: '%CR%',
+                find: '(?:%CR%)+',
                 replace: "\n"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,

@@ -57,12 +57,16 @@ module Kiba
                            variant_qualifier related_term related_role
                            note_text prefnormorig nonprefnormorig
                            altnorm alttype mainnorm]
+              transform Deduplicate::Table,
+                field: :namemergenorm,
+                delete_field: false
 
               transform Tms::Transforms::Org::PrefName
               if bind.receiver.send(:merge_variants?)
                 transform Tms::Transforms::Org::VariantName,
                   lookup: name_compile__variant_term
               end
+
               if bind.receiver.send(:merge_name_bio_notes?)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__bio_note,
@@ -74,59 +78,83 @@ module Kiba
                   fieldmap: {rel_name_bio_note: :note_text},
                   delim: '%CR%'
               end
-              if bind.receiver.send(:merge_name_contact_persons?)
+
+              term_targets = %i[termdisplayname termflag termsourcenote]
+              if Tms::Names.set_term_source
+                term_targets << :termsource
+              else
+                transform Delete::Fields, fields: :termsource
               end
-              # transform Tms::Transforms::Names::CompilePrefVarAlt,
-              #   authority_type: :org
+              if Tms::Names.set_term_pref_for_lang
+                term_targets << :termprefforlang
+              end
+              transform Collapse::FieldsToRepeatableFieldGroup,
+                sources: %i[pref var],
+                targets: term_targets,
+                delim: Tms.delim,
+                enforce_evenness: false
 
-              # transform Merge::MultiRowLookup,
-              #   lookup: org_contacts__to_merge,
-              #   keycolumn: :norm,
-              #   fieldmap: {
-              #     contactname: :merge_contact,
-              #     contactrole: :contact_role
-              #   },
-              #   null_placeholder: '%NULLVALUE%'
+              if Tms::ConAddress.used?
+                transform Tms::Transforms::ConAddress::MergeIntoAuthority,
+                  lookup: con_address__to_merge
+              end
+              if Tms::ConEMail.used?
+                transform Tms::Transforms::ConEmail::MergeIntoAuthority,
+                  lookup: con_email__to_merge
+              end
+              if Tms::ConPhones.used?
+                transform Tms::Transforms::ConPhones::MergeIntoAuthority,
+                  lookup: con_phones__to_merge
+              end
+              if Tms::ConDisplayBios.used?
+                transform Tms::ConDisplayBios.merger
+              end
+              if Tms::TextEntries.for?('Constituents') &&
+                  Tms::TextEntries.for_constituents_merge
+                transform Tms::TextEntries.for_constituents_merge,
+                  lookup: text_entries_for__constituents
+              end
+              if Tms::ConGeography.used?
+                transform Tms::ConGeography.person_merger
+              end
 
-              # transform Rename::Fields, fieldmap: {
-              #   begindateiso: :foundingdategroup,
-              #   enddateiso: :dissolutiondategroup,
-              #   nationality: :foundingplace,
-              # }
 
-              # if Tms::ConAddress.used?
-              #   transform Tms::Transforms::ConAddress::MergeIntoAuthority,
-              #     lookup: con_address__for_orgs
-              # end
-              # if Tms::ConEMail.used?
-              #   transform Tms::Transforms::ConEmail::MergeIntoAuthority,
-              #     lookup: con_email__for_orgs
-              # end
-              # if Tms::ConPhones.used?
-              #   transform Tms::Transforms::ConPhones::MergeIntoAuthority,
-              #     lookup: con_phones__for_orgs
-              # end
+              if bind.receiver.send(:merge_name_contact_persons?)
+                transform Tms::Transforms::Org::ContactName,
+                  lookup: name_compile__contact_person
+              end
 
-              # transform CombineValues::FromFieldsWithDelimiter,
-              #   sources: %i[biography remarks text_entry address_namenote
-              #               email_web_namenote phone_fax_namenote],
-              #   target: :historynote,
-              #   sep: '%CR%%CR%',
-              #   delete_sources: true
+              transform Rename::Fields, fieldmap: {
+                birth_foundation_date: :foundingdategroup,
+                death_dissolution_date: :dissolutiondategroup,
+                nationality: :foundingplace,
+              }
 
-              # transform Delete::Fields, fields: :termsource
+              transform Delete::Fields,
+                fields: %i[constituentid]
 
-              # transform Clean::DelimiterOnlyFields,
-              #   delim: Tms.delim, use_nullvalue: true
-              # transform Delete::EmptyFields, usenull: true
-              # transform Clean::RegexpFindReplaceFieldVals,
-              #   fields: :all,
-              #   find: '%CR%%CR%',
-              #   replace: "\n\n"
-              # transform Clean::RegexpFindReplaceFieldVals,
-              #   fields: :all,
-              #   find: '%QUOT%',
-              #   replace: '"'
+              unless config.historynote_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.historynote_sources,
+                  target: :historynote,
+                  sep: '%CR%',
+                  delete_sources: true
+              end
+              unless config.group_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.group_sources,
+                  target: :group,
+                  sep: Tms.delim,
+                  delete_sources: true
+              end
+
+              transform Delete::Fields,
+                fields: [Tms::NameCompile.org_nil, :namemergenorm].flatten
+
+              transform Delete::DelimiterOnlyFieldValues,
+                treat_as_null: Tms.nullvalue
+              transform Delete::EmptyFields, usenull: true
+              transform Tms.final_data_cleaner if Tms.final_data_cleaner
             end
           end
         end

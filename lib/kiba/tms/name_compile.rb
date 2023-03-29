@@ -124,7 +124,6 @@ module Kiba
         default: %i[conname altname altconname conauthtype altauthtype typematch altnametype altnameconid
                     altconauthtype treatment],
         reader: true
-
       # Used by Services::NameCompile::RelatedNameNoteText
       # Controls values added at beginning/end of parenthethical relator in notes added to names
       #   derived as main names from entries in altname table
@@ -139,9 +138,114 @@ module Kiba
       setting :deduplicate_categories,
         default: %i[variant related note],
         reader: true
-      # Whether to compile :stmtresponsibility field from ReferenceMaster in names list
-      # You probably only want to set this to true if ConXrefDetails target tables do not include
-      #   ReferenceMaster
+
+      # Indicates whether any cleanup has been returned. If not, we run
+      #   everything on base data. If yes, we merge in/overlay cleanup on the
+      #   affected base data tables
+      setting :done, default: false, reader: true,
+        constructor: proc{ !returned_files.empty? }
+      # List worksheets provided to client, most recent first. Assumes they are
+      #   in the client project directory/to_client subdir
+      setting :provided_worksheets,
+        default: [],
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'to_client', filename)
+            end
+        }
+      # List returned worksheets, most recent first. Assumes they are in the
+      #   client project directory/supplied subdir
+      setting :returned_files,
+        default: [],
+        reader: true,
+        constructor: proc{ |value| value.map do |filename|
+              File.join(Kiba::Tms.datadir, 'supplied', filename)
+            end
+        }
+      def provided_worksheet_jobs
+        provided_worksheets.map.with_index do |filename, idx|
+          "name_compile__worksheet_provided_#{idx}".to_sym
+        end
+      end
+
+      def returned_file_jobs
+        returned_files.map.with_index do |filename, idx|
+          "name_compile__worksheet_completed_#{idx}".to_sym
+        end
+      end
+
+      # The section of settings below are used to create the name compile
+      #   worksheet and process any changes after it is returned by the client
+
+      def initial_headers
+        base = %i[sort authority name relation_type
+                  variant_term variant_qualifier
+                  related_term related_role
+                  note_text] +
+          Tms::NameCompile.person_name_detail_fields +
+          Tms::NameCompile.main_org_editable
+        base.unshift(:to_review) if done
+        base
+      end
+
+      # String value used to populate fields in name compiled worksheet that
+      #   can't be edited/included in migration for a given relation_type
+      setting :na_in_migration_value,
+        default: '~NA~',
+        reader: true
+      setting :person_name_detail_fields,
+        default: %i[salutation nametitle firstname middlename lastname suffix],
+        reader: true
+      setting :not_editable_internal,
+        default: %i[sort contype name relation_type constituentid prefnormorig
+                    nonprefnormorig termsource altnorm alttype mainnorm
+                    namemergenorm],
+        reader: true
+      setting :main_person_editable,
+        reader: true,
+        constructor: ->(value){ main_org_editable + person_name_detail_fields }
+      setting :main_org_editable,
+        default: %i[birth_foundation_date death_dissolution_date datenote
+                    biography code nationality remarks culturegroup],
+        reader: true
+      setting :main_person_not_editable,
+        default: %i[variant_term variant_qualifier related_term related_role
+                    note_text],
+        reader: true
+      setting :main_org_not_editable,
+        reader: true,
+        constructor: ->(value){ person_name_detail_fields +
+            main_person_not_editable }
+      setting :note_editable,
+        default: :note_text,
+        reader: true
+      setting :note_not_editable,
+        default: %i[variant_term variant_qualifier related_term related_role],
+        reader: true,
+        constructor: ->(value){ value + main_person_editable  }
+      setting :contact_editable,
+        default: %i[related_term related_role],
+        reader: true
+      setting :contact_not_editable,
+        default: %i[variant_term variant_qualifier note_text],
+        reader: true,
+        constructor: ->(value){ value + main_person_editable  }
+      setting :variant_person_editable,
+        reader: true,
+        constructor: ->(value){ variant_org_editable + person_name_detail_fields }
+      setting :variant_org_editable,
+        default: %i[variant_term variant_qualifier],
+        reader: true
+      setting :variant_person_not_editable,
+        default: %i[related_term related_role note_text
+                    birth_foundation_date death_dissolution_date datenote
+                    biography code nationality remarks culturegroup],
+        reader: true
+      setting :variant_org_not_editable,
+        reader: true,
+        constructor: ->(value){ person_name_detail_fields +
+            variant_person_not_editable }
+
       setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
       # fields to delete from name compilation report
       setting :delete_fields, default: [], reader: true

@@ -1193,7 +1193,8 @@ module Kiba
               ),
               tags: %i[locations cleanup],
               desc: 'Joins completed cleanup worksheets and deduplicates on '\
-                ':fulllocid'
+                ':fulllocid',
+              lookup_on: :fulllocid
             }
             register :cleanup_changes, {
               creator: Tms::Jobs::Locations::CleanupChanges,
@@ -1688,8 +1689,8 @@ module Kiba
               'working',
               'names_compiled_raw.csv'
             ),
-            desc: 'Initial compiled terms - adds fingerprint field for main '\
-              'name deduplication merge',
+            desc: "Initial compiled terms from all sources\n"\
+              "- Adds fingerprint field for main name deduplication merge",
             tags: %i[names],
             dest_special_opts: {
               initial_headers:
@@ -1707,22 +1708,134 @@ module Kiba
             creator: Kiba::Tms::Jobs::NameCompile::Worksheet,
             path: File.join(
               Kiba::Tms.datadir,
-              'reports',
+              'to_client',
               'names_worksheet.csv'
             ),
-            desc: Proc.new{ Kiba::Tms::Jobs::NameCompile::Worksheet.desc },
+            desc: "Compiles unique name compile split by relation type",
             tags: %i[names],
             dest_special_opts: {
-              initial_headers:
-              %i[
-                 authority name relation_type variant_term variant_qualifier
-                 related_term related_role
-                 note_text birth_foundation_date death_dissolution_date datenote
-                 salutation nametitle firstname middlename lastname suffix
-                 biography code nationality school remarks culturegroup
-                 constituentid termsource fp sort
-                ] }
+              initial_headers: Tms::NameCompile.initial_headers
+            }
           }
+          {main: '_main term',
+           note: 'bio_note',
+           contact: 'contact_person',
+           variant: 'variant term'}.each do |reltype, typevalue|
+            register "unique_split_#{reltype}".to_sym, {
+              creator: {
+                callee: Kiba::Tms::Jobs::NameCompile::UniqueByReltype,
+                args: {reltype: reltype, value: typevalue}
+              },
+              path: File.join(Kiba::Tms.datadir, 'working',
+                              "name_compile_uniq_split_#{reltype}.csv"),
+              desc: "Rows from :name_compile__unique with `relation_type` "\
+                "value: #{typevalue}. Derives two fingerprint fields, one "\
+                "of editable field values, and one of non-editable field "\
+                "values. Fills in non-editable fields with "\
+                "#{Tms::NameCompile.na_in_migration_value}"
+            }
+          end
+          if Tms::NameCompile.done
+            Tms::NameCompile.provided_worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('name_compile__')
+                  .to_sym
+                register jobname, {
+                  path: Tms::NameCompile.provided_worksheets[idx],
+                  desc: 'NameCompile cleanup worksheet provided to client',
+                  tags: %i[names cleanup worksheetprovided],
+                  supplied: true
+                }
+              end
+            register :previous_worksheet_compile, {
+              creator:
+              Kiba::Tms::Jobs::NameCompile::PreviousWorksheetCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_compile_previous_worksheet_compile.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: "- Joins completed supplied worksheets\n"\
+                "- Deduplicates on :authority + :name + "\
+                ":constituentid + :relation_type + :termsource",
+              lookup_on: :cleanupid
+            }
+            Tms::NameCompile.returned_file_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix('name_compile__')
+                  .to_sym
+                register jobname, {
+                  path: Tms::NameCompile.returned_files[idx],
+                  desc: 'Completed name cleanup worksheet',
+                  tags: %i[names cleanup],
+                  supplied: true
+                }
+              end
+            register :returned_compile, {
+              creator: Kiba::Tms::Jobs::NameCompile::ReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_compile_returned_compile.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: "- Joins completed cleanup worksheets\n"\
+                "- If :cleanupid does not exist:\n"\
+                "-- Set :termsource to `clientcleanup`\n"\
+                "-- Set :constituentid to value of populated "\
+                ":variant_term, :related_term, or :note_text "\
+                "value\n"\
+                "-- Populate :cleanupid\n"\
+                "-- Populate :sort\n"\
+                "- Deduplicate on :cleanupid"\
+                "- Removes #{Tms::NameCompile.na_in_migration_value} values\n"\
+                "- Converts :authority field back to :contype",
+              lookup_on: :cleanupid
+            }
+            {main: '_main term',
+             note: 'bio_note',
+             contact: 'contact_person',
+             variant: 'variant term'}.each do |reltype, typevalue|
+              register "returned_split_#{reltype}".to_sym, {
+                creator: {
+                  callee: Kiba::Tms::Jobs::NameCompile::ReturnedByReltype,
+                  args: {reltype: reltype, value: typevalue}
+                },
+                path: File.join(Kiba::Tms.datadir, 'working',
+                                "name_compile_returned_split_#{reltype}.csv"),
+                desc: "Rows from returned worksheet with `relation_type` "\
+                  "value: #{typevalue}.\n"\
+                  "- Reverts any edited non-editable field to original value\n"\
+                  "- Adds :discarded_edit warning field (containing edited "\
+                  "values replaced with original values"
+              }
+            end
+            register :returned_checked, {
+              creator: Kiba::Tms::Jobs::NameCompile::ReturnedChecked,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_compile_returned_checked.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'Recompiles returned rows after checking split files '\
+                'and reverting non-editable values. :discarded_edit column is '\
+                'present for reporting'
+            }
+            register :returned_to_merge, {
+              creator: Kiba::Tms::Jobs::NameCompile::ReturnedToMerge,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'name_compile_returned_to_merge.csv'
+              ),
+              tags: %i[names cleanup],
+              desc: 'Removes fingerprint field'
+            }
+          end
           register :main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::MainDuplicates,
             path: File.join(
@@ -2038,7 +2151,9 @@ module Kiba
               'name_type_cleanup_worksheet.csv'
             ),
             tags: %i[names cleanup],
-            dest_special_opts: {initial_headers: Tms::NameTypeCleanup.initial_headers}
+            dest_special_opts: {
+              initial_headers: Tms::NameTypeCleanup.initial_headers
+            }
           }
           # For use with :convert_returned_to_uncontrolled. Manually tweak if
           #   needed

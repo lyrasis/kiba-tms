@@ -65,9 +65,10 @@ module Kiba
                   target: :relation_type,
                   value: 'variant term'
                 transform Rename::Field, from: :institution, to: :variant_term
+                transform Delete::Fields, fields: Tms::NameCompile.variant_nil
+              else
+                transform Delete::Fields, fields: Tms::NameCompile.org_nil
               end
-
-              transform Delete::Fields, fields: Tms::NameCompile.org_nil
             end
           end
         end

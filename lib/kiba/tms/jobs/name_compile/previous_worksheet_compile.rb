@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module NameTypeCleanup
+      module NameCompile
         module PreviousWorksheetCompile
           module_function
 
@@ -14,7 +14,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: config.provided_worksheet_jobs,
-                destination: :name_type_cleanup__previous_worksheet_compile
+                destination: :name_compile__previous_worksheet_compile
               },
               transformer: xforms
             )
@@ -22,6 +22,20 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              idcreator = CombineValues::FromFieldsWithDelimiter.new(
+                sources: %i[authority name constituentid relation_type
+                            termsource],
+                target: :cleanupid,
+                sep: ' ',
+                delete_sources: false
+              )
+              transform do |row|
+                id = row[:cleanupid]
+                next row unless id.blank?
+
+                idcreator.process(row)
+                row
+              end
               transform Deduplicate::Table,
                 field: :cleanupid,
                 delete_field: false

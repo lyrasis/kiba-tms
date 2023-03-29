@@ -46,8 +46,12 @@ module Kiba
 
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   lookup: name_type_cleanup__for_constituents
+
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   typetarget: :constituenttype
+                transform Copy::Field,
+                  from: :constituenttype,
+                  to: :contype
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: prefname,
                   target: :norm
