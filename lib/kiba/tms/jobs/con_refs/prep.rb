@@ -22,8 +22,8 @@ module Kiba
 
           def lookups
             base = %i[
-                      constituents__persons
-                      constituents__orgs
+                      persons__by_constituentid
+                      orgs__by_constituentid
                      ]
             base << :tms__con_alt_names if Tms::ConAltNames.used?
             base << :prep__departments if Tms::Departments.used?
@@ -51,13 +51,13 @@ module Kiba
               end
 
               transform Merge::MultiRowLookup,
-                lookup: constituents__persons,
+                lookup: persons__by_constituentid,
                 keycolumn: :constituentid,
-                fieldmap: {person: prefname}
+                fieldmap: {person: :name}
               transform Merge::MultiRowLookup,
-                lookup: constituents__orgs,
+                lookup: orgs__by_constituentid,
                 keycolumn: :constituentid,
-                fieldmap: {org: prefname}
+                fieldmap: {org: :name}
 
               if Tms::ConAltNames.used?
                 transform Merge::MultiRowLookup,
