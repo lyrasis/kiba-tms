@@ -736,6 +736,30 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('dates_translated') do
+          if Tms::DatesTranslated.used?
+            Tms::DatesTranslated.lookup_sources
+              .each_with_index do |src, idx|
+                name = "source_orig_#{idx}"
+                register name.to_sym, {
+                  path: src,
+                  supplied: true
+                }
+            end
+            register :lookup, {
+              creator: Kiba::Tms::Jobs::DatesTranslated::Lookup,
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                'dates_translated_lookup.csv'
+              ),
+              desc: 'Compiles all lookup sources into single lookup file',
+              tags: %i[dates],
+              lookup_on: :orig
+            }
+          end
+        end
+
         Kiba::Tms.registry.namespace('exhibitions') do
           register :shaped, {
             creator: Kiba::Tms::Jobs::Exhibitions::Shaped,
