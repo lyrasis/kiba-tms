@@ -51,6 +51,9 @@ module Kiba
                            variant_qualifier related_term related_role
                            note_text prefnormorig nonprefnormorig
                            altnorm alttype mainnorm]
+              transform Deduplicate::Table,
+                field: :namemergenorm,
+                delete_field: false
 
               transform Tms::Transforms::Person::PrefName
               if bind.receiver.send(:merge_variants?)
@@ -79,6 +82,8 @@ module Kiba
                                 termsourcenote]
               if Tms::Names.set_term_source
                 term_targets << :termsource
+              else
+                transform Delete::Fields, fields: :termsource
               end
               if Tms::Names.set_term_pref_for_lang
                 term_targets << :termprefforlang
@@ -114,7 +119,7 @@ module Kiba
               end
 
               transform Delete::Fields,
-                fields: %i[constituentid]
+                fields: %i[constituentid namemergenorm]
 
               unless config.bionote_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
@@ -141,14 +146,6 @@ module Kiba
               transform Delete::DelimiterOnlyFieldValues,
                 treat_as_null: Tms.nullvalue
               transform Delete::EmptyFields, usenull: true
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '(?:%CR%)+',
-                replace: "\n"
-              transform Clean::RegexpFindReplaceFieldVals,
-                fields: :all,
-                find: '%QUOT%',
-                replace: '"'
             end
           end
         end

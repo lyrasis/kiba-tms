@@ -10,13 +10,14 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :bionote_sources,
-        default: [],
+        default: %i[biography rel_name_bio_note],
         reader: true
       setting :group_sources,
         default: [:culturegroup],
         reader: true
       setting :namenote_sources,
-        default: [],
+        default: %i[remarks address_namenote email_web_namenote
+                   phone_fax_namenote text_entry],
         reader: true
     end
   end
