@@ -11,6 +11,7 @@ module Kiba
                     sortnumber textsearchid accountability injurisdiction
                     searchobjectnumber sortsearchnumber
                     usernumber1 usernumber2 usernumber3 usernumber4
+                    istemplate isvirtual
                    ],
         reader: true,
         constructor: ->(value){ value + date_fields }
