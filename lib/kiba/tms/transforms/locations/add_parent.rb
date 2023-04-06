@@ -13,7 +13,7 @@ module Kiba
           def process(row)
             row[target] = nil
 
-            locname = row.fetch(:location_name, nil)
+            locname = row[:location_name]
             return row if locname.blank?
 
             segments = locname.split(delim)

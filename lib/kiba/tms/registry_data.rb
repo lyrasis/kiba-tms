@@ -1072,6 +1072,21 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('locs') do
+          Kiba::Tms::Locations.authorities.each do |type|
+            register "#{type}_cspace".to_sym, {
+              creator: {
+                callee: Tms::Jobs::Locations::Cspace,
+                args: {type: type}
+              },
+              path: File.join(
+                Kiba::Tms.datadir,
+                'working',
+                "locs_cspace_#{type}.csv"
+              ),
+              desc: "Locations in #{type} vocabulary, prepped for ingest",
+              tags: %i[locations]
+            }
+          end
           register :from_locations, {
             creator: Kiba::Tms::Jobs::Locations::FromLocations,
             path: File.join(
@@ -1104,6 +1119,27 @@ module Kiba
               'levels added, round 0',
             tags: %i[locations]
           }
+          register :compiled_hierarchy, {
+            creator: Kiba::Tms::Jobs::Locations::CompiledHierarchy,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_compiled_hierarchy.csv'
+            ),
+            desc: 'Locations from different sources, compiled, hierarchy '\
+              'levels added',
+            tags: %i[locations]
+          }
+          register :hierarchy, {
+            creator: Kiba::Tms::Jobs::Locations::Hierarchy,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'locs_hierarchy.csv'
+            ),
+            desc: 'Compiled hierarchy converted into term hierarchy for ingest',
+            tags: %i[locations]
+          }
           register :compiled, {
             creator: Kiba::Tms::Jobs::Locations::Compiled,
             path: File.join(Kiba::Tms.datadir, 'working', 'locs_compiled.csv'),
@@ -1128,7 +1164,7 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 usage_ct location_name parent_location
+                 usage_ct location_name
                  storage_location_authority address
                  term_source fulllocid
                 ] },
