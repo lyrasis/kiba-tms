@@ -35,9 +35,11 @@ module Kiba
               transform Merge::ConstantValue,
                 target: :worktype,
                 value: 'Collection'
-              transform Merge::ConstantValue,
-                target: :termsource,
-                value: 'TMS ObjContext.period'
+              if Tms::Names.set_term_source
+                transform Merge::ConstantValue,
+                  target: :termsource,
+                  value: 'TMS ObjContext.period'
+              end
             end
           end
         end
