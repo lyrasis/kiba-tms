@@ -145,6 +145,9 @@ module Kiba
           sourcebecomes: :annotationnote
         ),
         reader: true
+      setting :curatorapproved_xform,
+        default: Tms::Transforms::Objects::Curatorapproved.new,
+        reader: true
       setting :curatorialremarks_xform,
         default: Kiba::Extend::Transforms::Rename::Field.new(
           from: :curatorialremarks,
@@ -168,6 +171,13 @@ module Kiba
         ),
         reader: true
       setting :medium_xform, default: nil, reader: true
+      setting :onview_xform, default: nil, reader: true
+      setting :paperfileref_xform, default: nil, reader: true
+      setting :publicaccess_xform,
+        default: Tms::Transforms::Objects::Publicaccess.new,
+        reader: true
+      setting :pubreferences_xform, default: nil, reader: true
+      setting :relatedworks_xform, default: nil, reader: true
       setting :signed_xform,
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :signed,
