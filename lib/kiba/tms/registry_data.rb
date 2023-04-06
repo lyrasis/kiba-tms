@@ -2650,6 +2650,17 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('obj_context') do
+          register :periods, {
+            creator: Kiba::Tms::Jobs::ObjContext::Periods,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_context_periods.csv'),
+            tags: %i[obj_context dates objects],
+            desc: 'Only populated :period values, looked up by objectid',
+            lookup_on: :objectid
+          }
+        end
+
         Kiba::Tms.registry.namespace('obj_deaccession') do
           register :shaped, {
             creator: Kiba::Tms::Jobs::ObjDeaccession::Shaped,
