@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
-
 module Kiba
   module Tms
     module Objects
@@ -30,7 +28,9 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :annotation_source_fields, default: %i[creditline], reader: true
-      setting :annotation_target_fields, default: %i[annotationtype annotationnote], reader: true
+      setting :annotation_target_fields,
+        default: %i[annotationtype annotationnote],
+        reader: true
       setting :comment_fields,
         reader: true,
         default: %i[comment],
@@ -78,12 +78,11 @@ module Kiba
       setting :contentnote_sources,
         default: %i[con_refs_p_contentnote con_refs_o_contentnote],
         reader: true
-      # default mapping will be skipped, fields will be left as-is in objects__prep job for handling
-      #  in client project
+      # Default mapping will be skipped, fields will be left as-is in
+      #   :objects__prep job for handling in client project
       setting :custom_map_fields, default: [], reader: true
       # will be merged into `Rename::Fields` fieldmap
       setting :custom_rename_fieldmap, default: {}, reader: true
-      # necessary if :department_target = :dept_namedcollection. Should be a String value if populated
       # Custom transform used in :objects__dates. Must be a transform
       #   class without arguments
       setting :date_field_cleaner, default: nil, reader: true
@@ -92,6 +91,8 @@ module Kiba
         default: %i[dated datebegin dateend beginisodate endisodate],
         reader: true,
         constructor: ->(value){ value - empty_fields.keys }
+      # Necessary if :department_target = :dept_namedcollection. Should be a
+      #   String value if populated
       setting :department_coll_prefix, default: nil, reader: true
       # If setting to :dept_namedcollection, see also the following configs:
       #   department_coll_prefix, named_coll_fields
@@ -124,8 +125,12 @@ module Kiba
           numberfield: :objectnumber
         },
         reader: true
-      setting :text_inscription_source_fields, default: %i[signed inscribed markings], reader: true
-      setting :text_inscription_target_fields, default: %i[inscriptioncontenttype inscriptioncontent], reader: true
+      setting :text_inscription_source_fields,
+        default: %i[signed inscribed markings],
+        reader: true
+      setting :text_inscription_target_fields,
+        default: %i[inscriptioncontenttype inscriptioncontent],
+        reader: true
       # TMS fields with associated field-specific transformers defined. Note
       #   these transforms are defined in settings below with the name pattern
       #   `fieldname_xform`
@@ -134,8 +139,9 @@ module Kiba
       ############
       # Transforms
       ############
-      # Configure transformers to transform data in individual source fields or sets of source fields. If nil,
-      #   default processing in prep__objects is used unless field is otherwise omitted from processing
+      # Configure transformers to transform data in individual source fields or
+      #   sets of source fields. If nil, default processing in prep__objects is
+      #   used unless field is otherwise omitted from processing
       setting :classifications_xform, default: nil, reader: true
       setting :creditline_xform,
         default: Tms::Transforms::DeriveFieldPair.new(

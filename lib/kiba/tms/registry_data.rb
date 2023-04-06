@@ -2116,7 +2116,7 @@ module Kiba
           }
           register :main_terms_for_norm_lookup, {
             creator:
-              Kiba::Tms::Jobs::NameCompile::MainTermsForNormLookup,
+            Kiba::Tms::Jobs::NameCompile::MainTermsForNormLookup,
             path: File.join(
               Kiba::Tms.datadir,
               'working',
@@ -2227,7 +2227,7 @@ module Kiba
               end
             register :previous_worksheet_compile, {
               creator:
-                Kiba::Tms::Jobs::NameTypeCleanup::PreviousWorksheetCompile,
+              Kiba::Tms::Jobs::NameTypeCleanup::PreviousWorksheetCompile,
               path: File.join(
                 Kiba::Tms.datadir,
                 'working',
@@ -2370,7 +2370,7 @@ module Kiba
               'columns from which to merge authorized form of name. Also '\
               'gives :prefname and :nonprefname columns for use if type '\
               'of name does not matter. Only name values are retained in '\
-                'this table, not name details.',
+              'this table, not name details.',
             tags: %i[names],
             lookup_on: :constituentid
           }
@@ -2776,7 +2776,7 @@ module Kiba
               %i[objectnumber transdate location currentlocationnote is_temp
                  inactive location_purpose transport_type transport_status
                  objlocationid prevobjlocid nextobjlocid
-                  prev_location next_location]
+                 prev_location next_location]
             }
           }
           register :dropping, {
@@ -2790,7 +2790,7 @@ module Kiba
               "not serve any purpose. LMIs in CS require a location value, "\
               "so if there is not an associated location, we cannot create "\
               "and LMI in the migration",
-                        dest_special_opts: {
+            dest_special_opts: {
               initial_headers:
               %i[objlocationid dropreason objectnumber transdate location]
             }
