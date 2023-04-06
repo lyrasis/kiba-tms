@@ -9,7 +9,7 @@ module Kiba
       module_function
 
       setting :delete_fields,
-        default: %i[mnemonic inputid numrandomobjs defaultformid maintableid],
+        default: %i[mnemonic inputid numrandomobjs defaultformid],
         reader: true
       extend Tms::Mixins::Tableable
 
