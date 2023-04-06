@@ -2909,6 +2909,19 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('objects') do
+          register :dates, {
+            creator: Kiba::Tms::Jobs::Objects::Dates,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'objects_dates.csv'
+            ),
+            lookup_on: :objectid,
+            tags: %i[objects],
+            desc: "Handle processing of date fields from TMS Objects "\
+              "table, as well as ObjDates table if used. The date "\
+              "fields are removed from Objects by prep"
+          }
           register :numbers_cleaned, {
             creator: Kiba::Tms::Jobs::Objects::NumbersCleaned,
             path: File.join(

@@ -14,7 +14,8 @@ module Kiba
                     searchobjectnumber sortsearchnumber
                     usernumber1 usernumber2 usernumber3 usernumber4
                    ],
-        reader: true
+        reader: true,
+        constructor: ->(value){ value + date_fields }
       setting :empty_fields, default: {
         loanclassid: '0',
         objectlevelid: '0',
@@ -83,6 +84,14 @@ module Kiba
       # will be merged into `Rename::Fields` fieldmap
       setting :custom_rename_fieldmap, default: {}, reader: true
       # necessary if :department_target = :dept_namedcollection. Should be a String value if populated
+      # Custom transform used in :objects__dates. Must be a transform
+      #   class without arguments
+      setting :date_field_cleaner, default: nil, reader: true
+      # Removed in :prep__objects, handled separately in :objects__dates
+      setting :date_fields,
+        default: %i[dated datebegin dateend beginisodate endisodate],
+        reader: true,
+        constructor: ->(value){ value - empty_fields.keys }
       setting :department_coll_prefix, default: nil, reader: true
       # If setting to :dept_namedcollection, see also the following configs:
       #   department_coll_prefix, named_coll_fields
