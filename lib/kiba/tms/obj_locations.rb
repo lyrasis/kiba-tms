@@ -29,6 +29,12 @@ module Kiba
         reader: true
       extend Tms::Mixins::UncontrolledNameCompileable
 
+      # Since :inventorycontact and :movementcontact are single value fields
+      #   in CS, which name should be set in these fields? First value (left
+      #   to right) that is populated will be used.
+      setting :contact_person_preference,
+        default: %i[handler_person approver_person requestedby_person],
+        reader: true
       # Array of transform classes to do project-specific removal of otherwise
       #   migrating rows
       setting :custom_droppers, default: [], reader: true
@@ -89,6 +95,13 @@ module Kiba
       # client-specific transform to select only rows that should be treated as
       #   movement LMIs
       setting :movement_selector, default: nil, reader: true
+            # Whether or not to create inventorynote and/or movementnote field
+      #   values with labels appended to names in these fields. NOTE: the
+      #   FIRST PERSON name from these fields is set as inventorycontact or
+      #   movmementcontact, depending on how the row is treated. If there is
+      #   only one name recorded, or the same name recorded for all rows, or
+      #   the client does not care about retaining the roles, set to false
+      setting :note_from_role_names, default: true, reader: true
       setting :temptext_note_targets,
         default: [],
         reader: true
