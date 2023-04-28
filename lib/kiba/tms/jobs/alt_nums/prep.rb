@@ -23,7 +23,7 @@ module Kiba
           def lookups
             base = []
             if config.target_tables.any?('Constituents')
-              base << :tms__constituents
+              base << :constituents__prep_clean
             end
             if config.target_tables.any?('Objects')
               base << :objects__numbers_cleaned
@@ -70,9 +70,12 @@ module Kiba
 
               if config.target_tables.any?('Constituents')
                 transform Merge::MultiRowLookup,
-                  lookup: tms__constituents,
+                  lookup: constituents__prep_clean,
                   keycolumn: :recordid,
-                  fieldmap: {constituent: Tms::Constituents.preferred_name_field},
+                  fieldmap: {
+                    constituent: Tms::Constituents.preferred_name_field,
+                    authority_type: :contype
+                  },
                   conditions: ->(origrow, mergerows) do
                     return [] unless origrow[:tablename] == 'Constituents'
 
@@ -118,6 +121,7 @@ module Kiba
                 target: :lookupkey,
                 sep: ' ',
                 delete_sources: false
+              transform Clean::EnsureConsistentFields
             end
           end
         end
