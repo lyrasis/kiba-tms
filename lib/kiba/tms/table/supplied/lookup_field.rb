@@ -37,6 +37,7 @@ module Kiba
             obj_comp_types: :objcomptypeid,
             obj_components: :componentid,
             obj_insurance: :objinsuranceid,
+            obj_locations: :objlocationid,
             objects: :objectid,
             package_folder_xrefs: :packageid,
             reference_master: :referenceid,

@@ -18,40 +18,46 @@ module Kiba
             )
           end
 
-          def lookups
-            base = %i[
-                      prep__obj_locations
-                      locs__compiled_clean
-                    ]
+          def lookups(mode = :main)
+            base = %i[locs__compiled_clean]
+            case mode
+            when :main
+              base << :prep__obj_locations
+            else
+              base << :tms__obj_locations
+            end
+
             base.select{ |job| Tms.job_output?(job) }
           end
 
-          def xforms
+          def xforms(mode = :main)
             bind = binding
 
             Kiba.job_segment do
               job = bind.receiver
               lookups = job.send(:lookups)
 
+              lkup = mode == :main ? prep__obj_locations : tms__obj_locations
+              idsrc = mode == :main ? :fulllocid : :locationid
               transform Merge::MultiRowLookup,
-                lookup: prep__obj_locations,
+                lookup: lkup,
                 keycolumn: :prevobjlocid,
                 fieldmap: {
-                  prevlocid: :fulllocid,
+                  prevlocid: idsrc,
                 },
                 delim: Tms.delim
               transform Merge::MultiRowLookup,
-                lookup: prep__obj_locations,
+                lookup: lkup,
                 keycolumn: :nextobjlocid,
                 fieldmap: {
-                  nextlocid: :fulllocid,
+                  nextlocid: idsrc,
                 },
                 delim: Tms.delim
               transform Merge::MultiRowLookup,
-                lookup: prep__obj_locations,
+                lookup: lkup,
                 keycolumn: :schedobjlocid,
                 fieldmap: {
-                  schedlocid: :fulllocid,
+                  schedlocid: idsrc,
                 },
                 delim: Tms.delim
 

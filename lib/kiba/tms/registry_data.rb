@@ -2785,6 +2785,19 @@ module Kiba
             tags: %i[obj_components],
             lookup_on: :componentid
           }
+          register :problem_components, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponents,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_components_problem.csv'),
+            tags: %i[obj_components postmigcleanup],
+            lookup_on: :componentid
+          }
+          register :problem_component_lmi, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_components_problem_lmi.csv'),
+            tags: %i[obj_components postmigcleanup]
+          }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
             path: File.join(Kiba::Tms.datadir, 'working',

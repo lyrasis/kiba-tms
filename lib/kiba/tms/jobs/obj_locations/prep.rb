@@ -34,7 +34,12 @@ module Kiba
                 destination: :prep__obj_locations,
                 lookup: lookups
               },
-              transformer: xforms
+              # Transforms are split up because the general xforms are reused by
+              #   ObjComponents::ProblemComponentLmi
+              transformer: [
+                remove_problem_component_locs,
+                xforms
+              ]
             )
           end
 
@@ -52,6 +57,20 @@ module Kiba
             base.select{ |job| Tms.job_output?(job) }
           end
 
+
+          def remove_problem_component_locs
+            Kiba.job_segment do
+              transform Merge::MultiRowLookup,
+                lookup: obj_components__problem_components,
+                keycolumn: :componentid,
+                fieldmap: {problem: :componentnumber}
+              transform FilterRows::FieldPopulated,
+                action: :reject,
+                field: :problem
+              transform Delete::Fields, fields: :problem
+            end
+          end
+
           def xforms
             bind = binding
 
@@ -66,15 +85,6 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
-
-              transform Merge::MultiRowLookup,
-                lookup: obj_components__problem_components,
-                keycolumn: :componentid,
-                fieldmap: {problem: :componentnumber}
-              transform FilterRows::FieldPopulated,
-                action: :reject,
-                field: :problem
-              transform Delete::Fields, fields: :problem
 
               if config.fields.any?(:loclevel)
                 transform Delete::FieldValueMatchingRegexp,
