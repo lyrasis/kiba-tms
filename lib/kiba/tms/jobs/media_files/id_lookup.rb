@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :media_files__shaped,
+                source: :media_files__migrating,
                 destination: :media_files__id_lookup
               },
               transformer: xforms

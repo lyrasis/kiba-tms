@@ -40,9 +40,13 @@ module Kiba
               transform FilterRows::AllFieldsPopulated,
                 action: :keep,
                 fields: %i[item1_id item2_id]
-              transform CombineValues::FullRecord, target: :index
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[item1_id item2_id item1_type item2_type],
+                target: :combined,
+                sep: ' ',
+                delete_sources: false
               transform Deduplicate::Table,
-                field: :index,
+                field: :combined,
                 delete_field: true
             end
           end

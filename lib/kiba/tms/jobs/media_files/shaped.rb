@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__media_files,
+                source: :media_files__migratable,
                 destination: :media_files__shaped
               },
               transformer: xforms
@@ -42,25 +42,26 @@ module Kiba
               transform Tms::Transforms::DeleteTimestamps,
                 fields: :filedate
 
-              transform Tms::Transforms::IdGenerator,
-                prefix: 'MR',
-                id_source: :rend_renditionnumber,
-                id_target: :identificationnumber,
-                sort_on: :filedate,
-                sort_type: :date,
-                separator: ' '
-
               transform Rename::Fields, fieldmap: {
                 checksum: :checksumvalue,
                 filedate: :dategroup,
                 ms_publishto: :publishto,
-                rend_mediamasterid: :mediamasterid
+                rend_mediamasterid: :mediamasterid,
+                rend_mediatype: :type
               }
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.description_sources,
                 target: :description,
                 sep: '%CR%',
                 delete_sources: true
+
+              if config.mediafileuri_generator
+                transform config.mediafileuri_generator
+              end
+
+              transform Explode::RowsFromMultivalField,
+                field: :mediafileuri,
+                delim: Tms.delim
             end
           end
         end

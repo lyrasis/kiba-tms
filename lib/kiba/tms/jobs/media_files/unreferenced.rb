@@ -26,6 +26,9 @@ module Kiba
                 lambda: ->(row) do
                   row[:targettable].blank?
                 end
+              transform Merge::ConstantValue,
+                target: :unmigratable_reason,
+                value: 'not linked to any object or procedure'
             end
           end
         end

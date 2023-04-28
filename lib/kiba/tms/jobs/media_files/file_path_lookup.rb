@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module MediaFiles
-        module Cspace
+        module FilePathLookup
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :media_files__migrating,
-                destination: :media_files__cspace
+                source: :media_files__aws_ls,
+                destination: :media_files__file_path_lookup
               },
               transformer: xforms
             )
@@ -24,12 +24,12 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              csfields = config.media_handling_fields
 
               transform do |row|
-                row.keys.each do |field|
-                  row.delete(field) unless csfields.any?(field)
-                end
+                row[:norm] = row[:filepath].downcase
+
+                prefix = "#{config.s3_url_base}/"
+                row[:filepath] = "#{prefix}#{row[:filepath]}"
                 row
               end
             end

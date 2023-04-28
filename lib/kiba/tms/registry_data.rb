@@ -1513,6 +1513,29 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace('media_files') do
+          register :file_path_lookup, {
+            creator: Kiba::Tms::Jobs::MediaFiles::FilePathLookup,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_path_lookup.csv'
+            ),
+            desc: 'Adds normalized form of file path for lookup of actual '\
+              'media file paths in S3',
+            tags: %i[mediafiles media],
+            lookup_on: :norm
+          }
+          register :migratable, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Migratable,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_migratable.csv'
+            ),
+            desc: 'Removes rows for media files included in '\
+              ':media_files__unmigratable_report',
+            tags: %i[mediafiles media]
+          }
           register :shaped, {
             creator: Kiba::Tms::Jobs::MediaFiles::Shaped,
             path: File.join(
@@ -1520,7 +1543,29 @@ module Kiba
               'working',
               'media_files_shaped.csv'
             ),
-            desc: 'Media files data reshaped for CS; Adds CS ID',
+            desc: 'Media files data reshaped for CS; Creates :mediafileuri',
+            tags: %i[mediafiles media]
+          }
+          register :migrating, {
+            creator: Kiba::Tms::Jobs::MediaFiles::Migrating,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'working',
+              'media_files_migrating.csv'
+            ),
+            desc: 'Removes rows without files, if not migrating fileless '\
+              'media; Adds :identificationnumber',
+            tags: %i[mediafiles media]
+          }
+          register :not_migrating, {
+            creator: Kiba::Tms::Jobs::MediaFiles::NotMigrating,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_files_not_migrating.csv'
+            ),
+            desc: 'Lists TMS media data rows that cannot be matched to a '\
+              'media file in S3',
             tags: %i[mediafiles media]
           }
           register :cspace, {
@@ -1530,7 +1575,8 @@ module Kiba
               'working',
               'media_files_cspace.csv'
             ),
-            desc: "Creates :mediafileuri; Removes non-CS fields",
+            #desc: "Removes non-CS fields",
+            desc: "Removes non-CS fields",
             tags: %i[mediafiles media]
           }
           register :id_lookup, {
@@ -1624,6 +1670,17 @@ module Kiba
             desc: 'Summary of nonhierarchical relationships between Media and '\
               'other record types',
             tags: %i[mediafiles]
+          }
+          register :not_matched_to_record, {
+            creator: Kiba::Tms::Jobs::MediaFiles::NotMatchedToRecord,
+            path: File.join(
+              Kiba::Tms.datadir,
+              'reports',
+              'media_files_not_matched_to_record.csv'
+            ),
+            desc: 'List of media files uploaded to S3 that cannot be matched '\
+              'TMS data on normalized file path',
+            tags: %i[mediafiles reports]
           }
         end
 

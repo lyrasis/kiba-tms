@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module MediaFiles
-        module NoFilename
+        module NotMigrating
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :media_files__target_report,
-                destination: :media_files__no_filename
+                source: :media_files__shaped,
+                destination: :media_files__not_migrating
               },
               transformer: xforms
             )
@@ -23,10 +23,7 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::FieldPopulated,
                 action: :reject,
-                field: :filename
-              transform Merge::ConstantValue,
-                target: :unmigratable_reason,
-                value: 'no filename'
+                field: :mediafileuri
             end
           end
         end

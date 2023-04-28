@@ -13,6 +13,12 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      # Client-specific transform(s) to clean up prepped data. Run at the end
+      #   of :prep__media_files. Use to manually correct path/filenames that
+      #   do not match uploaded files, as needed
+      setting :prepped_data_cleaners,
+        default: [],
+        reader: true
       # Fields to combine into :description field
       setting :description_sources,
         default: %i[ms_description ms_publiccaption ms_mediaview],
@@ -22,7 +28,9 @@ module Kiba
         default: [],
         reader: true
       # Project-specific transform to create :mediafileuri value
-      setting :mediafileuri_generator, default: nil, reader: true
+      setting :mediafileuri_generator,
+        default: Tms::Transforms::MediaFiles::UriGenerator,
+        reader: true
       setting :migrate_fileless,
         default: false,
         reader: true
@@ -48,6 +56,29 @@ module Kiba
       setting :unmigratable_targets,
         default: ['Constituents', 'ReferenceMaster'],
         reader: true
+      setting :bucket_name,
+        default: nil,
+        reader: true
+      setting :media_handling_fields,
+        default: %i[identificationnumber title publishto name mimetype length
+                    externalurl measuredpart dimensionsummary dimension
+                    measuredbypersonlocal measuredbyorganizationlocal
+                    measurementmethod value measurementunit valuequalifier
+                    valuedate measuredpartnote checksumvalue checksumtype
+                    checksumdate contributorpersonlocal
+                    contributororganizationlocal creatorpersonlocal
+                    creatororganizationlocal language publisherpersonlocal
+                    publisherorganizationlocal relation copyrightstatement type
+                    coverage dategroup source subject rightsholderpersonlocal
+                    rightsholderorganizationlocal description alttext
+                    mediafileuri],
+        reader: true
+
+      def s3_url_base
+        return "" unless bucket_name
+
+        "https://#{bucket_name}.s3.us-west-2.amazonaws.com"
+      end
     end
   end
 end
