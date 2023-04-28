@@ -116,6 +116,7 @@ module Kiba
                   usenull: true
               end
 
+              # populates person and org names from ConXrefs
               if Tms::ConRefs.for?('Exhibitions')
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
