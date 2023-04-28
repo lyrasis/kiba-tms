@@ -48,6 +48,7 @@ module Kiba
             if config.temptext_mapping_done
               base << :obj_locations__temptext_mapped_for_merge
             end
+            base << :obj_components__problem_components
             base.select{ |job| Tms.job_output?(job) }
           end
 
@@ -65,6 +66,15 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
+              transform Merge::MultiRowLookup,
+                lookup: obj_components__problem_components,
+                keycolumn: :componentid,
+                fieldmap: {problem: :componentnumber}
+              transform FilterRows::FieldPopulated,
+                action: :reject,
+                field: :problem
+              transform Delete::Fields, fields: :problem
 
               if config.fields.any?(:loclevel)
                 transform Delete::FieldValueMatchingRegexp,
@@ -160,7 +170,7 @@ module Kiba
                   delim: Tms.delim
               end
               transform Delete::Fields,
-                fields: %i[componentid locpurposeid transstatusid transcodeid]
+                fields: %i[locpurposeid transstatusid transcodeid]
 
               transform Replace::FieldValueWithStaticMapping,
                 source: :tempflag,

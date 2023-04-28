@@ -10,7 +10,7 @@ module Kiba
           def job
             return unless config.used?
             return unless config.actual_components
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_components__with_object_numbers,
@@ -22,13 +22,17 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :reject, field: :is_top_object
-              transform FilterRows::FieldPopulated, action: :reject, field: :problemcomponent
-              
-              
+              transform FilterRows::FieldPopulated,
+                action: :reject,
+                field: :is_top_object
+              transform FilterRows::FieldPopulated,
+                action: :reject,
+                field: :problemcomponent
+
+
               transform Delete::Fields,
-                fields: %i[is_top_object problemcomponent existingobject duplicate
-                           parentname parenttitle parentdesc]
+                fields: %i[is_top_object problemcomponent existingobject
+                           duplicate parentname parenttitle parentdesc]
               transform Rename::Fields, fieldmap: {
                 parentobjectnumber: :parentobject,
                 componentname: :title
