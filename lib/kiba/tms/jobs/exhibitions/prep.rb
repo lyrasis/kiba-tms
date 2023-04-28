@@ -20,16 +20,16 @@ module Kiba
 
           def lookups
             base = [:locs__compiled_clean]
-            if Tms::Departments.used
+            if Tms::Departments.used?
               base << :prep__departments
             end
-            if Tms::ExhibitionStatuses.used
+            if Tms::ExhibitionStatuses.used?
               base << :prep__exhibition_statuses
             end
-            if Tms::ExhibitionTitles.used
+            if Tms::ExhibitionTitles.used?
               base << :prep__exhibition_titles
             end
-            if Tms::ExhVenuesXrefs.used
+            if Tms::ExhVenuesXrefs.used?
               base << :prep__exh_venues_xrefs
             end
             base.select{ |job| Tms.job_output?(job) }
