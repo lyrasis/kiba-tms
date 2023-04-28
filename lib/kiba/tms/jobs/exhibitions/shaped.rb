@@ -34,14 +34,15 @@ module Kiba
                 sep: ': ',
                 delete_sources: true
 
-              # Remove locationname/auth if there is a venue_xref
+              # Move locationname/auth to Gallery rotation if there is a
+              #   venue_xref
               transform do |row|
+                row[:galleryrotationname] = nil
                 venue = row[:venue_xref_org]
                 next row if venue.blank?
 
-                %i[locationname locationauth].each do |field|
-                  row[field] = nil
-                end
+                row[:galleryrotationname] = row[:locationname]
+                row[:locationauth] = nil
                 row
               end
 
@@ -67,13 +68,31 @@ module Kiba
                 publicinfo: :publishto
               }
 
+              transform Append::ToFieldValue,
+                field: :department, value: ' department'
+              transform Merge::ConstantValueConditional,
+                fieldmap: { dept_exhibitionpersonrole: 'Responsible department'},
+                condition: ->(row){ !row[:department].blank? }
+              transform Rename::Field,
+                from: :department,
+                to: :dept_exhibitionpersonorganizationlocal
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[
+                            exhibitionpersonorganizationlocal
+                            dept_exhibitionpersonorganizationlocal
+                           ],
+                target: :exhibitionpersonorganizationlocal,
+                sep: Tms.sgdelim,
+                delete_sources: true
+
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[
                             exhibitionpersonpersonlocalrole
                             exhibitionpersonorganizationlocalrole
+                            dept_exhibitionpersonrole
                            ],
                 target: :exhibitionpersonrole,
-                sep: Tms.delim,
+                sep: Tms.sgdelim,
                 delete_sources: true
 
               %i[boilerplatetext curatorialnote generalnote
@@ -101,6 +120,7 @@ module Kiba
                 target: :type,
                 sep: ' + ',
                 delete_sources: true
+
               transform Delete::EmptyFields
             end
           end

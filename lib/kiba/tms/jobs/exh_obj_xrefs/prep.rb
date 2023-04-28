@@ -78,6 +78,14 @@ module Kiba
 
               if Tms::TextEntries.for?('ExhObjXrefs')
                 transform Tms::TextEntries.for_exh_obj_xrefs_merge
+
+                if config.text_entry_handling == :exhibition_planning_note
+                  transform CombineValues::FromFieldsWithDelimiter,
+                    sources: %i[objectnumber text_entry],
+                    target: :planningnote,
+                    sep: ': ',
+                    delete_sources: false
+                end
               end
             end
           end
