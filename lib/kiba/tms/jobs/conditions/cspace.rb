@@ -35,7 +35,6 @@ module Kiba
                 id_target: :conditioncheckrefnumber,
                 sort_on: :conditionid,
                 sort_type: :i,
-                separator: ' ',
                 delete_source: false,
                 omit_suffix_if_single: false
             end
