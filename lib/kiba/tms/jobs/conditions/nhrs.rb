@@ -21,7 +21,7 @@ module Kiba
 
           def sources
             %i[
-               :conditions__nhr_objects
+               conditions__nhr_objects
               ].select{ |job| Tms.job_output?(job) }
           end
 
