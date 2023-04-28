@@ -516,6 +516,12 @@ module Kiba
                  datenote]
             }
           }
+          register :postmig, {
+            creator: Kiba::Tms::Jobs::ConDates::Postmig,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_dates_for_post_mig_handling.csv'),
+            tags: %i[con condates reports postmigcleanup]
+          }
         end
 
         Kiba::Tms.registry.namespace('con_email') do
