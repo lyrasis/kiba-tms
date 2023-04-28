@@ -25,6 +25,7 @@ module Kiba
                obj_deaccession__obj_rel
                obj_locations__nhr_lmi_obj
                valuation_control__nhrs
+               conservation_treatments__nhrs_all
               ].select{ |job| Tms.job_output?(job) }
           end
 

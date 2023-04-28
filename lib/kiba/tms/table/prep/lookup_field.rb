@@ -30,6 +30,7 @@ module Kiba
             classifications: :classificationid,
             classification_notations: :classificationnotationid,
             classification_xrefs: :recordid,
+            conditions: :conditionid,
             constituents: :constituentid,
             con_address: :conaddressid,
             con_alt_names: :altnameid,

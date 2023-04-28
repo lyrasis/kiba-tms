@@ -25,6 +25,7 @@ module Kiba
           FIELDS = {
             con_alt_names: :altnameid,
             cond_line_items: :conditionid,
+            conditions: :conditionid,
             constituents: :constituentid,
             departments: :departmentid,
             exhibitions: :exhibitionid,

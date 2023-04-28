@@ -273,6 +273,61 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace('cond_line_items') do
+          register :to_conservation, {
+            creator: Kiba::Tms::Jobs::CondLineItems::ToConservation,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'condlineitems_conservation.csv'),
+            desc: 'Limits to rows which, based on attribute type value, need'\
+              'to be mapped to conservation treatment record, as well as '\
+              'mentioned in condition check record',
+            tags: %i[conditions conservationtreatments],
+            lookup_on: :conditionid
+          }
+        end
+
+        Kiba::Tms.registry.namespace('conservation_treatments') do
+          register :from_cond_line_items, {
+            creator: Kiba::Tms::Jobs::ConservationTreatments::FromCondLineItems,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conservation_from_condlineitems.csv'),
+            desc: 'Conservation treatment records derived from CondLineItems '\
+              'rows',
+            tags: %i[conservationtreatments]
+          }
+          register :all, {
+            creator: Kiba::Tms::Jobs::ConservationTreatments::All,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conservation_all.csv'),
+            desc: 'Conservation treatment records from all sources. Finalizes '\
+              ':conservationnumber',
+            tags: %i[conservationtreatments]
+          }
+          register :nhrs_cond_line_items, {
+            creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsCondLineItems,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhrs_conservation_from_condlineitems.csv'),
+            desc: 'Nonhierarchical relationships between conservation records '\
+              'derived from CondLineItems and a) object or other record type; '\
+              'and b) related Condition Check record',
+            tags: %i[conservationtreatments conditions nhrs objects]
+          }
+          register :nhrs_all, {
+            creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsAll,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'nhrs_conservation_all.csv'),
+            desc: 'Compiled and deduplicated nhrs for conservation records',
+            tags: %i[conservationtreatments conditions nhrs objects]
+          }
+          register :cspace, {
+            creator: Kiba::Tms::Jobs::ConservationTreatments::Cspace,
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'conservation_cspace.csv'),
+            desc: ':conservation_treatment__all with non-CS fields removed ',
+            tags: %i[conservationtreatments]
+          }
+        end
+
         Kiba::Tms.registry.namespace('conditions') do
           # NOTE: The handling here seems a bit over-convoluted, but the way TMS
           #   has Conditions table set up as a multi-table mergeable table
