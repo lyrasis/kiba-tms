@@ -73,7 +73,7 @@ module Kiba
                   lookup: prep__exhibition_titles,
                   keycolumn: :exhibitionid,
                   fieldmap: {othertitle: :title},
-                  delim: Tms.delim
+                  delim: "%CR%"
               end
 
               if config.fields.any?(:locationid)
