@@ -35,7 +35,8 @@ module Kiba
               transform Tms::Transforms::IdGenerator,
                 prefix: 'VC',
                 id_source: :idbase,
-                id_target: :valuationcontrolrefnumber
+                id_target: :valuationcontrolrefnumber,
+                omit_suffix_if_single: false
               transform Append::NilFields,
                 fields: config.multi_source_normalizer.get_fields
             end
