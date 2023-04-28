@@ -32,7 +32,7 @@ module Kiba
                 replace: ''
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :objectnumber,
-                find: ' \d{3}$',
+                find: '\/\/\d{3}$',
                 replace: ''
               transform Rename::Fields, fieldmap: {
                 objectnumber: :item1_id,

@@ -90,7 +90,7 @@ module Kiba
                 id_target: :exitnumber,
                 sort_on: :deaccessionid,
                 sort_type: :i,
-                separator: ' '
+                separator: '//'
             end
           end
         end

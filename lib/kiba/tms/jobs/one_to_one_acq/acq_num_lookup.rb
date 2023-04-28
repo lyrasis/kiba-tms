@@ -34,7 +34,7 @@ module Kiba
                 transform Tms::Transforms::IdGenerator,
                   id_source: :acqrefnum,
                   id_target: :acqrefnum,
-                  separator: '_'
+                  separator: '//'
               end
             end
           end
