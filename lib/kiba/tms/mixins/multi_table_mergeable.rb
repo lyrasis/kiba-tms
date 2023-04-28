@@ -130,6 +130,7 @@ module Kiba
             config.each do |const, cfg|
               filekey = const.filekey
               params = {
+                ns: ns,
                 source: "#{source_ns}__#{filekey}".to_sym,
                 dest: "#{ns}__#{filekey}".to_sym,
                 config: cfg
@@ -139,7 +140,7 @@ module Kiba
           end
         end
 
-        def reportable_job_hash(source:, dest:, config:)
+        def reportable_job_hash(ns:, source:, dest:, config:)
           {
             path: File.join(Tms.datadir, 'working', "#{dest}.csv"),
             creator: {callee: Tms::Jobs::ReportableForTable,
@@ -148,7 +149,8 @@ module Kiba
                         dest: dest,
                         config: config
                       }
-                     }
+                     },
+            tags: [ns.to_sym]
           }
         end
 
