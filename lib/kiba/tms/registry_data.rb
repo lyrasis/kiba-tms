@@ -187,19 +187,23 @@ module Kiba
         Kiba::Tms.registry.namespace('alt_nums') do
           register :description_single_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_single_occ.csv'),
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'alt_nums_description_single_occ.csv'),
             desc: 'AltNums with a description only used once',
             tags: %i[altnums reports]
           }
           register :description_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_description_occs.csv'),
-            desc: 'AltNums with count of description occurrences - source data for other reports',
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'alt_nums_description_occs.csv'),
+            desc: 'AltNums with count of description occurrences - source '\
+              'data for other reports',
             tags: %i[altnums]
           }
           register :no_description, {
             creator: Kiba::Tms::Jobs::AltNums::NoDescription,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'alt_nums_no_description.csv'),
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'alt_nums_no_description.csv'),
             desc: 'AltNums without a description value',
             tags: %i[altnums reports]
           }
@@ -411,9 +415,12 @@ module Kiba
         Kiba::Tms.registry.namespace('con_dates') do
           register :compiled, {
             creator: Kiba::Tms::Jobs::ConDates::Compiled,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_compiled.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'con_dates_compiled.csv'),
             tags: %i[con condates],
-            desc: 'Combines data from constituents__clean_dates and, if used, prep__con_dates; Reduces to unique value per date type, as much as possible',
+            desc: 'Combines data from constituents__clean_dates and, if used, '\
+              'prep__con_dates; Reduces to unique value per date type, as '\
+              'much as possible',
             dest_special_opts: {
               initial_headers:
               %i[constituentid datasource datedescription date remarks]
@@ -422,9 +429,11 @@ module Kiba
           }
           register :prep_compiled, {
             creator: Kiba::Tms::Jobs::ConDates::PrepCompiled,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_compiled_prep.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'con_dates_compiled_prep.csv'),
             tags: %i[con condates],
-            desc: 'Adds warnings to be pulled into review; creates :datenotes; adds CS mappable fields',
+            desc: 'Adds warnings to be pulled into review; creates '\
+              ':datenotes; adds CS mappable fields',
             dest_special_opts: {
               initial_headers:
               %i[constituentid datasource warn datedescription date remarks
@@ -433,19 +442,23 @@ module Kiba
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConDates::ToMerge,
-            path: File.join(Kiba::Tms.datadir, 'working', 'con_dates_to_merge.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'con_dates_to_merge.csv'),
             tags: %i[con condates],
-            desc: 'Keeps only fields from :prep_compiled to be merged back into Constituents.',
+            desc: 'Keeps only fields from :prep_compiled to be merged back '\
+            'into Constituents.',
             lookup_on: :constituentid
           }
           register :for_review, {
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
-            path: File.join(Kiba::Tms.datadir, 'reports', 'con_dates_for_review.csv'),
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'con_dates_for_review.csv'),
             tags: %i[con condates reports cleanup],
             dest_special_opts: {
               initial_headers:
-              %i[constituentname constituentid datasource warn datedescription date remarks
-                 birth_foundation_date death_dissolution_date datenote	]
+              %i[constituentname constituentid datasource warn datedescription
+                 date remarks birth_foundation_date death_dissolution_date
+                 datenote]
             }
           }
         end
@@ -2189,9 +2202,12 @@ module Kiba
             tags: %i[names]
           }
           register :variants_from_duplicate_constituents, {
-            creator: Kiba::Tms::Jobs::NameCompile::VariantsFromDuplicateConstituents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'names_variants_from_duplicate_constituents.csv'),
-            desc: 'Variant names from duplicate (after normalization!) constituent names that are not literally duplicates',
+            creator:
+              Kiba::Tms::Jobs::NameCompile::VariantsFromDuplicateConstituents,
+              path: File.join(Kiba::Tms.datadir, 'working',
+                              'names_variants_from_duplicate_constituents.csv'),
+              desc: 'Variant names from duplicate (after normalization!) '\
+                'constituent names that are not literally duplicates',
             tags: %i[names constituents]
           }
         end
@@ -2646,19 +2662,22 @@ module Kiba
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_actual.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_components_actual.csv'),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_parent_objects.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_components_parent_objects.csv'),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::Objects,
-            path: File.join(Kiba::Tms.datadir, 'working', 'obj_components_objects.csv'),
+            path: File.join(Kiba::Tms.datadir, 'working',
+                            'obj_components_objects.csv'),
             tags: %i[obj_components objects],
             desc: 'Converts rows from :actual_components to object records'
           }
@@ -3241,7 +3260,8 @@ module Kiba
         Kiba::Tms.registry.namespace('thes_xrefs') do
           register :term_ids_used, {
             creator: Kiba::Tms::Jobs::ThesXrefs::TermIdsUsed,
-            path: File.join(Kiba::Tms.datadir, 'reference', 'term_ids_used_in_thes_xrefs.csv'),
+            path: File.join(Kiba::Tms.datadir, 'reference',
+                            'term_ids_used_in_thes_xrefs.csv'),
             desc: 'List of term ids used in ThesXrefs.',
             tags: %i[termdata thesxrefs terms reference],
             lookup_on: :termid

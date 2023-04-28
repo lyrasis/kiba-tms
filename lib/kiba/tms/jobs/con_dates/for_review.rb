@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless Tms::Table::List.include?('ConDates')
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :con_dates__prep_compiled,
