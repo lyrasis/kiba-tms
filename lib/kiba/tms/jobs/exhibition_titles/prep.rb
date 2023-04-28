@@ -36,10 +36,15 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: tms__exhibitions,
                 keycolumn: :exhibitionid,
-                fieldmap: {maintitle: :exhtitle}
+                fieldmap: {
+                  maintitle: :exhtitle,
+                  subtitle: :subtitle
+                }
 
               transform do |row|
                 next if row[:title] == row[:maintitle]
+                next if row[:title] == row[:subtitle]
+                next if row[:title] == "#{row[:maintitle]}: #{row[:subtitle]}"
 
                 row
               end
