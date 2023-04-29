@@ -38,4 +38,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'chronic', "~> 0.10.2"
   spec.add_dependency "dry-monads", "~> 1.4"
   spec.add_dependency 'zeitwerk', '~> 2.5'
+
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "standard"
 end
