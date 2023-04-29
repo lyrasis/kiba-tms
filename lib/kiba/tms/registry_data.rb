@@ -2822,6 +2822,22 @@ module Kiba
               'current locations',
             lookup_on: :fullfingerprint
           }
+          register :parent_title_mismatch, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ParentTitleMismatch,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_components_parent_title_mismatch.csv'),
+            tags: %i[obj_components postmigcleanup],
+            desc: "Components that have a title, but where that title does "\
+              "appear in the parent object's title or objectname fields"
+          }
+          register :parent_desc_mismatch, {
+            creator: Kiba::Tms::Jobs::ObjComponents::ParentDescMismatch,
+            path: File.join(Kiba::Tms.datadir, 'reports',
+                            'obj_components_parent_desc_mismatch.csv'),
+            tags: %i[obj_components postmigcleanup],
+            desc: "Components that have a physdesc field value, and where "\
+              "the parent object's record does not contain that description"
+          }
         end
 
         Kiba::Tms.registry.namespace('obj_context') do
