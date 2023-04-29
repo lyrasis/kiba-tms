@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module DatesTranslated
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -14,16 +15,16 @@ module Kiba
 
       setting :cs_date_fields,
         default: %i[datedisplaydate dateperiod dateassociation datenote
-                    dateearliestsingleyear dateearliestsinglemonth
-                    dateearliestsingleday dateearliestsingleera
-                    dateearliestsinglecertainty dateearliestsinglequalifier
-                    dateearliestsinglequalifiervalue
-                    dateearliestsinglequalifierunit datelatestyear
-                    datelatestmonth datelatestday datelatestera
-                    datelatestcertainty datelatestqualifier
-                    datelatestqualifiervalue datelatestqualifierunit
-                    dateearliestscalarvalue datelatestscalarvalue
-                    scalarvaluescomputed],
+          dateearliestsingleyear dateearliestsinglemonth
+          dateearliestsingleday dateearliestsingleera
+          dateearliestsinglecertainty dateearliestsinglequalifier
+          dateearliestsinglequalifiervalue
+          dateearliestsinglequalifierunit datelatestyear
+          datelatestmonth datelatestday datelatestera
+          datelatestcertainty datelatestqualifier
+          datelatestqualifiervalue datelatestqualifierunit
+          dateearliestscalarvalue datelatestscalarvalue
+          scalarvaluescomputed],
         reader: true
 
       # Name of file(s) to be compiled into CS detailed date field lookup table.
@@ -32,9 +33,9 @@ module Kiba
       #   directory
       setting :lookup_sources,
         default: [],
-        reader:true,
-        constructor: ->(value){
-          value.map{ |file| "#{Tms.datadir}/supplied/#{file}" }
+        reader: true,
+        constructor: ->(value) {
+          value.map { |file| "#{Tms.datadir}/supplied/#{file}" }
         }
 
       def lookup_source_jobs
@@ -44,7 +45,7 @@ module Kiba
       end
 
       def merge_fieldmap(target_prefix = "")
-        cs_date_fields.map{ |field|
+        cs_date_fields.map { |field|
           prefix = target_prefix.empty? ? "" : "#{target_prefix}_"
           ["#{prefix}#{field}".to_sym, field]
         }.to_h

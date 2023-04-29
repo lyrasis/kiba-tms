@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[locationid location_name parent_location
-                           storage_location_authority locationtype address]
+                  storage_location_authority locationtype address]
               transform Tms::Transforms::ObjLocations::AddFulllocid
               transform Delete::Fields, fields: :locationid
               transform Merge::ConstantValue,

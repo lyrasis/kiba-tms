@@ -6,8 +6,7 @@ module Kiba
       module NameTypeCleanup
         class OverlayAll
           def initialize(typetarget: :contype,
-                         nametarget: Tms::Constituents.preferred_name_field
-                        )
+            nametarget: Tms::Constituents.preferred_name_field)
             @typetarget = typetarget
             @nametarget = nametarget
             @dropper = OverlayDrop.new(

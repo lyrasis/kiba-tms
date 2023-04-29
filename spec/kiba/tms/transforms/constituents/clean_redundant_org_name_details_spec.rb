@@ -3,14 +3,14 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails do
-  before(:all){ Tms::Constituents.config.preferred_name_field = :displayname }
-  after(:all){ Tms::Constituents.reset_config }
-  
-  subject(:xform){ described_class.new }
-  let(:result){ xform.process(row.dup) }
+  before(:all) { Tms::Constituents.config.preferred_name_field = :displayname }
+  after(:all) { Tms::Constituents.reset_config }
+
+  subject(:xform) { described_class.new }
+  let(:result) { xform.process(row.dup) }
 
   context "when not Organization" do
-    let(:row){ {constituenttype: nil, displayname: "foo", lastname: "foo", } }
+    let(:row) { {constituenttype: nil, displayname: "foo", lastname: "foo"} }
 
     it "returns row unchanged" do
       expect(result).to eq(row)
@@ -22,7 +22,8 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
       {
         constituenttype: "Organization",
         displayname: "John Doe & Associates",
-        lastname: "John Doe Associates"}
+        lastname: "John Doe Associates"
+      }
     end
 
     it "returns row unchanged" do
@@ -36,14 +37,16 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
         constituenttype: "Organization",
         displayname: "Moe Press, Inc.",
         firstname: "Inc",
-        lastname: "Moe Press"}
+        lastname: "Moe Press"
+      }
     end
     let(:expected) do
       {
         constituenttype: "Organization",
         displayname: "Moe Press, Inc.",
         firstname: nil,
-        lastname: nil}
+        lastname: nil
+      }
     end
 
     it "returns cleaned row" do
@@ -57,7 +60,8 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
         constituenttype: "Organization",
         displayname: "Moe Press, Inc.",
         firstname: "Incorporated",
-        lastname: "Moe Press"}
+        lastname: "Moe Press"
+      }
     end
 
     it "returns original row" do
@@ -79,5 +83,4 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
       expect(result).to eq(row)
     end
   end
-
 end

@@ -20,7 +20,6 @@ module Kiba
 
             def xforms
               Kiba.job_segment do
-                
               end
             end
           end

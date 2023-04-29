@@ -10,7 +10,7 @@ module Kiba
           include Dry::Monads[:result]
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           def initialize(counter: Tms::Services::RowCounter)
@@ -20,8 +20,8 @@ module Kiba
 
           def call
             set_targets.either(
-              ->(success){ Success(targets) },
-              ->(failure){ Failure(failure) }
+              ->(success) { Success(targets) },
+              ->(failure) { Failure(failure) }
             )
           end
 
@@ -53,7 +53,7 @@ module Kiba
             ) > 0
               targets << "Uncontrolled"
             end
-          rescue StandardError => err
+          rescue => err
             Failure(err)
           else
             Success()

@@ -57,30 +57,30 @@ module Kiba
             result[val] = 0 unless result.key?(val)
             result[val] += 1
           end
-        rescue StandardError => err
+        rescue => err
           Failure(err)
         else
           Success(result)
         end
 
         def rows_to_vals(rows)
-          result = rows.map{ |row| row.key?(field) ? row[field] : nil }
+          result = rows.map { |row| row.key?(field) ? row[field] : nil }
             .compact
             .sort
             .uniq
-        rescue StandardError => err
+        rescue => err
           Failure(err)
         else
           Success(result)
         end
 
         def set_mod(mod)
-          if mod.is_a?(Module) || mod.is_a?(Symbol)
-            result = mod
+          result = if mod.is_a?(Module) || mod.is_a?(Symbol)
+            mod
           else
-            result = Tms.const_get(mod)
+            Tms.const_get(mod)
           end
-        rescue StandardError => err
+        rescue => err
           @status = Failure(err)
           nil
         else

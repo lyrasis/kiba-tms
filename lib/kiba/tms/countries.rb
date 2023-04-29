@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Countries
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[defaultaddrformatid], reader: true

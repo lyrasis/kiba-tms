@@ -3,14 +3,16 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::ConAddress::ReshapeAddressData do
-  subject(:xform){ described_class.new }
-  let(:result){ input.map{ |row| xform.process(row) } }
+  subject(:xform) { described_class.new }
+  let(:result) { input.map { |row| xform.process(row) } }
   let(:input) do
     [
-      {displayname1: "a", displayname2: "b", streetline1: "1", streetline2: "2", streetline3: "3"},
+      {displayname1: "a", displayname2: "b", streetline1: "1",
+       streetline2: "2", streetline3: "3"},
       {displayname1: "c", displayname2: "", streetline1: "4", streetline2: "5"},
       {displayname1: "", displayname2: "d", streetline1: "", streetline2: "6"},
-      {displayname1: "", displayname2: "", streetline1: "7", streetline2: "8", streetline3: "9"},
+      {displayname1: "", displayname2: "", streetline1: "7", streetline2: "8",
+       streetline3: "9"},
       {foo: "bar"}
     ]
   end
@@ -24,7 +26,7 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::ReshapeAddressData do
       {addressplace1: nil, addressplace2: nil, foo: "bar"}
     ]
   end
-  
+
   it "transforms as expected" do
     expect(result).to eq(expected)
   end

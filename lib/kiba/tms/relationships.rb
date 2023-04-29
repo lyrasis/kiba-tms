@@ -6,11 +6,12 @@ module Kiba
   module Tms
     module Relationships
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[movecolocated rel1prep rel2prep relation1plural
-                    relation2plural transitive],
+          relation2plural transitive],
         reader: true
       extend Tms::Mixins::Tableable
 

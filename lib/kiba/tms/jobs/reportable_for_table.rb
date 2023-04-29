@@ -5,6 +5,7 @@ module Kiba
     module Jobs
       module ReportableForTable
         extend Tms::Mixins::ForTable
+
         module_function
 
         def job(source:, dest:, config:)

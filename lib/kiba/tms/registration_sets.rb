@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module RegistrationSets
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[displayorder],
         reader: true,
-        constructor: Proc.new{ |value| set_deletes(value) }
+        constructor: proc { |value| set_deletes(value) }
       setting :non_content_fields,
         default: %i[registrationsetid],
         reader: true
@@ -19,10 +20,10 @@ module Kiba
 
       setting :multi_set_lots, default: false, reader: true
       setting :configurable, default: {
-        multi_set_lots: Proc.new{
-          Tms::Services::RegistrationSets::MultiSetLotChecker.call
-        }
-      },
+                               multi_set_lots: proc {
+                                 Tms::Services::RegistrationSets::MultiSetLotChecker.call
+                               }
+                             },
         reader: true
 
       setting :con_ref_name_merge_rules,

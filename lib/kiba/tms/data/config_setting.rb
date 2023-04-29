@@ -24,12 +24,10 @@ module Kiba
           existing = getter.call
           if value == existing
             @status = :unchanged
+          elsif name == :empty_fields
+            diff_empty_fields
           else
-            if name == :empty_fields
-              diff_empty_fields
-            else
-              @status = :changed
-            end
+            @status = :changed
           end
         end
 
@@ -95,8 +93,8 @@ module Kiba
         end
 
         def hash_lines
-          value.map{ |key, val| "#{key.inspect} => #{val.inspect}" }
-          .join(",\n")
+          value.map { |key, val| "#{key.inspect} => #{val.inspect}" }
+            .join(",\n")
         end
       end
     end

@@ -26,7 +26,7 @@ module Kiba
               job = bind.receiver
               config = job.send(:config)
 
-              logic = ->(row){ row.values.any?(nil) }
+              logic = ->(row) { row.values.any?(nil) }
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: ->(row) do

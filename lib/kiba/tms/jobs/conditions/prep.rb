@@ -36,13 +36,13 @@ module Kiba
 
           def lookups
             base = %i[
-                      objects__number_lookup
-                      names__by_constituentid
-                     ]
+              objects__number_lookup
+              names__by_constituentid
+            ]
             base << :prep__survey_types if Tms::SurveyTypes.used?
             base << :prep__overall_conditions if Tms::OverallConditions.used?
             base << :tms__cond_line_items if Tms::CondLineItems.used?
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -78,8 +78,8 @@ module Kiba
                 delete_sources: false
               transform FilterRows::WithLambda,
                 action: :reject,
-                lambda: ->(row){
-                  ( row[:index].blank? || row[:index].match?(/^[ 0]+$/) ) &&
+                lambda: ->(row) {
+                  (row[:index].blank? || row[:index].match?(/^[ 0]+$/)) &&
                     row[:condlineitem_ct] == 0
                 }
               transform Delete::Fields, fields: :index
@@ -93,8 +93,8 @@ module Kiba
                   lookup: objects__number_lookup,
                   keycolumn: :id,
                   fieldmap: {objectnumber: :objectnumber},
-                  conditions: ->(row, rows){
-                    row[:tablename] == "Objects" ? rows : []
+                  conditions: ->(row, rows) {
+                    (row[:tablename] == "Objects") ? rows : []
                   }
               end
               # If any other target tables exist, add their conditional number
@@ -106,7 +106,7 @@ module Kiba
                   transform Merge::MultiRowLookup,
                     lookup: names__by_constituentid,
                     keycolumn: :examinerid,
-                    fieldmap: {"examiner_#{type}".to_sym=>type}
+                    fieldmap: {"examiner_#{type}".to_sym => type}
                 end
               end
               transform Delete::Fields, fields: :examinerid

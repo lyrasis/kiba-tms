@@ -54,7 +54,7 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[departmentid
-                           publicaccess approvedforweb]
+                  publicaccess approvedforweb]
             end
           end
         end

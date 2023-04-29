@@ -6,7 +6,7 @@ module Kiba
       module ObjectStatuses
         module Prep
           extend self
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

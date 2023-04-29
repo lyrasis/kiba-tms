@@ -24,7 +24,7 @@ module Kiba
               base << :name_compile__persons_uncontrolled_for_norm_lookup
             end
             base << :name_compile__person_from_con_org_name_parts_for_norm_lookup
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

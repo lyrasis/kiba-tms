@@ -9,7 +9,6 @@ module Kiba
       # - If A contains B, set value of B to nil
       # - If B contains A, set value of A to nil
       class ClearContainedFields
-
         # @param a [Symbol] the first field to compare
         # @param b [Symbol] the second field to compare
         # @param delim [nil, String] if given, value of each field will be split
@@ -27,8 +26,8 @@ module Kiba
         #   strip non alphanumeric characters from values for comparison. Does
         #   not change case on its own.
         def initialize(a:, b:, delim: nil, b_only: false,
-                       casesensitive: false,
-                       normalized: true)
+          casesensitive: false,
+          normalized: true)
           @a = a
           @b = b
           @delim = delim
@@ -47,8 +46,8 @@ module Kiba
           ap = wrap(aval)
           bp = wrap(bval)
 
-          b_res = bp.reject{ |bv| norm(ap).any?(normalize(bv)) }
-            .reject{ |bv| norm(ap).any?{ |av| av[normalize(bv)] } }
+          b_res = bp.reject { |bv| norm(ap).any?(normalize(bv)) }
+            .reject { |bv| norm(ap).any? { |av| av[normalize(bv)] } }
 
           row[a] = finalize(a_result(ap, b_res))
           row[b] = finalize(b_res)
@@ -63,7 +62,7 @@ module Kiba
           return a_arr if b_only
           return a_arr if b_arr.empty?
 
-          a_arr.reject{ |av| norm(b_arr).any?{ |bv| bv[normalize(av)] } }
+          a_arr.reject { |av| norm(b_arr).any? { |bv| bv[normalize(av)] } }
         end
 
         def finalize(arr)
@@ -81,7 +80,7 @@ module Kiba
         end
 
         def norm(arr)
-          arr.map{ |v| normalize(v) }
+          arr.map { |v| normalize(v) }
         end
 
         def wrap(val)

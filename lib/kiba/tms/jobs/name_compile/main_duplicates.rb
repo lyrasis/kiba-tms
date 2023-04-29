@@ -22,9 +22,9 @@ module Kiba
 
           def sources
             %i[name_compile__untyped_main_duplicates
-               name_compile__typed_main_duplicates].select do |src|
-                Tms.job_output?(src)
-              end
+              name_compile__typed_main_duplicates].select do |src|
+              Tms.job_output?(src)
+            end
           end
 
           def xforms

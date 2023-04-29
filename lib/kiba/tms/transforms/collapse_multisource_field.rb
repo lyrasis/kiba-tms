@@ -5,9 +5,8 @@ module Kiba
     module Transforms
       class CollapseMultisourceField
         def initialize(fields:,
-                       target:,
-                       getter: Kiba::Extend::Transforms::Helpers::FieldValueGetter
-                      )
+          target:,
+          getter: Kiba::Extend::Transforms::Helpers::FieldValueGetter)
           @fields = fields
           @target = target
           @deletes = fields - [target]
@@ -23,7 +22,7 @@ module Kiba
             .join(Tms.delim)
           row[target] = vals
 
-          deletes.each{ |field| row.delete(field) }
+          deletes.each { |field| row.delete(field) }
           row
         end
 

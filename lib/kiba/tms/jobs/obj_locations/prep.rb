@@ -45,8 +45,8 @@ module Kiba
 
           def lookups
             base = %i[
-                      obj_components__with_object_numbers_by_compid
-                     ]
+              obj_components__with_object_numbers_by_compid
+            ]
             base << :prep__loc_purposes if Tms::LocPurposes.used?
             base << :prep__trans_status if Tms::TransStatus.used?
             base << :prep__trans_codes if Tms::TransCodes.used?
@@ -54,9 +54,8 @@ module Kiba
               base << :obj_locations__temptext_mapped_for_merge
             end
             base << :obj_components__problem_components
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
-
 
           def remove_problem_component_locs
             Kiba.job_segment do
@@ -157,7 +156,7 @@ module Kiba
                   lookup: prep__loc_purposes,
                   keycolumn: :locpurposeid,
                   fieldmap: {
-                    location_purpose: :locpurpose,
+                    location_purpose: :locpurpose
                   },
                   delim: Tms.delim
               end
@@ -166,7 +165,7 @@ module Kiba
                   lookup: prep__trans_status,
                   keycolumn: :transstatusid,
                   fieldmap: {
-                    transport_status: :transstatus,
+                    transport_status: :transstatus
                   },
                   delim: Tms.delim
               end
@@ -175,7 +174,7 @@ module Kiba
                   lookup: prep__trans_codes,
                   keycolumn: :transcodeid,
                   fieldmap: {
-                    transport_type: :transcode,
+                    transport_type: :transcode
                   },
                   delim: Tms.delim
               end

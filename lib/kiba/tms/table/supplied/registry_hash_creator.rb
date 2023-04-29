@@ -7,7 +7,7 @@ module Kiba
         # Convert table filename to registry hash
         class RegistryHashCreator
           def self.call(table_obj)
-            self.new(table_obj).call
+            new(table_obj).call
           end
 
           def initialize(table_obj)
@@ -28,7 +28,7 @@ module Kiba
               supplied: true
             }
           end
-          
+
           def filepath
             File.join(Tms.datadir, "tms", table.filename)
           end
@@ -37,9 +37,9 @@ module Kiba
             lookup_field = Tms::Table::Supplied::LookupField.call(table.filekey)
             return {} if lookup_field.nil?
 
-            { lookup_on: lookup_field }
+            {lookup_on: lookup_field}
           end
-         end
+        end
       end
     end
   end

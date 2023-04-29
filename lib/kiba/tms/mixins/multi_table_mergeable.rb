@@ -14,10 +14,10 @@ module Kiba
       #   in your config module before extending MultiTableMergeable
       module MultiTableMergeable
         def self.extended(mod)
-          self.set_for_table_source_job_key_setting(mod)
-          self.set_split_on_column_setting(mod)
-          self.set_target_tables_setting(mod)
-          self.set_checkable(mod)
+          set_for_table_source_job_key_setting(mod)
+          set_split_on_column_setting(mod)
+          set_target_tables_setting(mod)
+          set_checkable(mod)
         end
 
         def is_multi_table_mergeable?
@@ -39,11 +39,11 @@ module Kiba
         #   in the config
         def check_needed_table_transform_settings
           needed = target_transform_settings_expected.reject do |transform|
-            self.respond_to?(transform)
+            respond_to?(transform)
           end
           return nil if needed.empty?
 
-          "#{self.name}: add config settings: #{needed.join(', ')}"
+          "#{name}: add config settings: #{needed.join(", ")}"
         end
 
         # Reports if a defined for-target-table transform setting defined in the
@@ -55,13 +55,13 @@ module Kiba
             target_transform_settings - target_transform_settings_handled
           return nil if undefined.empty?
 
-          "#{self.name}: no transforms defined for: #{undefined.join(', ')}"
+          "#{name}: no transforms defined for: #{undefined.join(", ")}"
         end
 
         def target_transform_settings
-          self.settings
+          settings
             .map(&:to_s)
-            .select{ |meth| meth.match?(/^for_.*_prepper$/) }
+            .select { |meth| meth.match?(/^for_.*_prepper$/) }
             .map(&:to_sym)
         end
 
@@ -106,9 +106,9 @@ module Kiba
         #   is the target table config Constant, and value is the
         #   :record_num_merge_config setting value
         def reportable_for_tables
-          target_tables.map{ |t| Object.const_get("Tms::#{t}") }
-            .select{ |t| t.respond_to?(:record_num_merge_config) }
-            .map{ |t| [t, t.send(:record_num_merge_config)] }
+          target_tables.map { |t| Object.const_get("Tms::#{t}") }
+            .select { |t| t.respond_to?(:record_num_merge_config) }
+            .map { |t| [t, t.send(:record_num_merge_config)] }
             .to_h
         end
 
@@ -148,8 +148,7 @@ module Kiba
                         source: source,
                         dest: dest,
                         config: config
-                      }
-                     },
+                      }},
             tags: [ns.to_sym]
           }
         end
@@ -193,7 +192,7 @@ module Kiba
         def target_job_hash(mod, ns_name, targetobj, field, xforms)
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
-            .map{ |val| val.gsub("_", "") }
+            .map { |val| val.gsub("_", "") }
             .map(&:to_sym)
           tabletag = tags.shift
           [tabletag.to_s.delete_suffix("_for").to_sym, :for_table].each do |tag|
@@ -209,8 +208,7 @@ module Kiba
                         targettable: targetobj.tablename,
                         field: field,
                         xforms: xforms
-                      }
-                     },
+                      }},
             tags: tags,
             lookup_on: mod.lookup_on_field
           }
@@ -237,19 +235,19 @@ module Kiba
           jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
 
           moddef = <<~MODDEF
-          module #{for_table_module_name(jobkey)}
-            extend Dry::Configurable
-            module_function
+            module #{for_table_module_name(jobkey)}
+              extend Dry::Configurable
+              module_function
 
-            setting :source_job_key, default: :#{jobkey}, reader: true
-            setting :delete_fields, default: [], reader: true
-            setting :empty_fields, default: {}, reader: true
-            extend Tms::Mixins::Tableable
+              setting :source_job_key, default: :#{jobkey}, reader: true
+              setting :delete_fields, default: [], reader: true
+              setting :empty_fields, default: {}, reader: true
+              extend Tms::Mixins::Tableable
 
-            def used?
-              true
+              def used?
+                true
+              end
             end
-          end
           MODDEF
           Tms.module_eval(moddef)
         end
@@ -257,9 +255,9 @@ module Kiba
         # METHODS FOR EXTENDING
         def self.set_checkable(mod)
           if mod.respond_to?(:checkable)
-            self.checkable_as_needed(mod)
+            checkable_as_needed(mod)
           else
-            self.checkable_from_scratch(mod)
+            checkable_from_scratch(mod)
           end
         end
         private_class_method :set_checkable
@@ -280,7 +278,7 @@ module Kiba
           return if mod.respond_to?(:split_on_column)
 
           mod.module_eval(
-            "setting :split_on_column, default: :tablename, reader: true"
+            "setting :split_on_column, default: :tablename, reader: true", __FILE__, __LINE__
           )
         end
         private_class_method :set_split_on_column_setting
@@ -288,21 +286,22 @@ module Kiba
         def self.set_target_tables_setting(mod)
           return if mod.respond_to?(:target_tables)
 
-          mod.module_eval("setting :target_tables, default: [], reader: true")
+          mod.module_eval("setting :target_tables, default: [], reader: true",
+            __FILE__, __LINE__ - 1)
         end
         private_class_method :set_target_tables_setting
 
         # METHODS USED BY METHODS USED FOR EXTENDING
         def self.checkable_as_needed(mod)
           existing = mod.checkable.dup
-          self.checkable_from_scratch(mod)
+          checkable_from_scratch(mod)
           combined = mod.checkable.merge(existing)
           mod.config.checkable = combined
         end
         private_class_method :checkable_as_needed
 
         def self.checkable_from_scratch(mod)
-          code = %{
+          code = %(
           setting :checkable,
             default:              {
               needed_table_transform_settings: Proc.new{
@@ -313,12 +312,11 @@ module Kiba
               }
             },
             reader: true
-          }.gsub("\n", " ")
+          ).gsub("\n", " ")
 
           mod.module_eval(code)
         end
         private_class_method :checkable_from_scratch
-
       end
     end
   end

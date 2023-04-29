@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ConXrefs
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,

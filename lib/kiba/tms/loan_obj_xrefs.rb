@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module LoanObjXrefs
       extend Dry::Configurable
+
       module_function
 
       setting :non_content_fields,

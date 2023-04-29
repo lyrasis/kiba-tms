@@ -23,7 +23,7 @@ module Kiba
             if config.cleanup_done
               base << :locs__cleanup_added_locs
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def lookups
@@ -31,7 +31,7 @@ module Kiba
             if config.cleanup_done
               base << :locs__cleanup_changes
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -53,7 +53,7 @@ module Kiba
                   }
 
                 %i[location_name storage_location_authority
-                   address].each do |target|
+                  address].each do |target|
                   srcfield = "new_#{target}".to_sym
 
                   transform do |row|

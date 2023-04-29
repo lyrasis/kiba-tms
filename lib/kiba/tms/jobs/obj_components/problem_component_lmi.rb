@@ -18,7 +18,7 @@ module Kiba
                 lookup: [
                   Tms::Jobs::ObjLocations::Prep.lookups,
                   Tms::Jobs::ObjLocations::LocationNamesMerged.lookups
-                  ].flatten
+                ].flatten
               },
               transformer: [
                 keep_problem_component_locs,

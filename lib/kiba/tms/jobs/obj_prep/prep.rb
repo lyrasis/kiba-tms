@@ -20,8 +20,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[]
-            base
+            %i[]
           end
 
           def xforms

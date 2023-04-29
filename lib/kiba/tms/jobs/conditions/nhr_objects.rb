@@ -10,7 +10,7 @@ module Kiba
           def job
             return unless config.used?
 
-          Kiba::Extend::Jobs::Job.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :conditions__cspace,
                 destination: :conditions__nhr_objects
@@ -27,7 +27,7 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :tablename,
                 mapping: {
-                  "Objects"=>"collectionobjects"
+                  "Objects" => "collectionobjects"
                 }
               transform Rename::Fields, fieldmap: {
                 recordnumber: :item1_id,

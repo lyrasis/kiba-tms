@@ -26,7 +26,7 @@ module Kiba
             date.blank? ? set_active(row, remarks) : row[:warn] = warntext
             row
           end
-          
+
           private
 
           attr_reader :eligiblematch, :cleanmatch, :warntext
@@ -34,7 +34,7 @@ module Kiba
           def cleaned(remarks)
             remarks.sub(cleanmatch, "")
           end
-          
+
           def eligible?(remarks)
             return false if remarks.blank?
             return false unless remarks.match?(eligiblematch)

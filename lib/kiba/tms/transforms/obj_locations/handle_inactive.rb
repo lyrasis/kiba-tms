@@ -10,7 +10,7 @@ module Kiba
             return if target == :ignore
 
             @action = set_action
-            @delim = target == :currentlocationnote ? " -- " : "\n"
+            @delim = (target == :currentlocationnote) ? " -- " : "\n"
             @note = Tms::ObjLocations.inactive_note_string
           end
 

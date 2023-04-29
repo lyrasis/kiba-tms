@@ -6,11 +6,12 @@ module Kiba
       module Terms
         module Reports
           extend self
-          
+
           def in_mig
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: %i[thes_xrefs__with_notation_uniq_typed thes_xrefs__without_notation_uniq_typed],
+                source: %i[thes_xrefs__with_notation_uniq_typed
+                  thes_xrefs__without_notation_uniq_typed],
                 destination: :report__terms_in_mig
               },
               transformer: in_mig_xforms

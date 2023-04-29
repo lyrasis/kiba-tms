@@ -5,7 +5,7 @@ module Kiba
     module Utils
       class PerTableJobRegistrar
         def self.call
-          self.new.call
+          new.call
         end
 
         def initialize
@@ -27,8 +27,8 @@ module Kiba
         def gather
           Tms.configs.select do |config|
             config.respond_to?(:target_tables) &&
-            config.respond_to?(:used?) &&
-            config.used?
+              config.respond_to?(:used?) &&
+              config.used?
           end
         end
       end

@@ -11,11 +11,11 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: %i[
-                           name_compile__unique_split_main
-                           name_compile__unique_split_note
-                           name_compile__unique_split_contact
-                           name_compile__unique_split_variant
-                          ],
+                  name_compile__unique_split_main
+                  name_compile__unique_split_note
+                  name_compile__unique_split_contact
+                  name_compile__unique_split_variant
+                ],
                 destination: :name_compile__worksheet,
                 lookup: lookups
               },
@@ -37,7 +37,7 @@ module Kiba
               transform Rename::Field, from: :contype, to: :authority
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[authority name constituentid relation_type
-                            termsource],
+                  termsource],
                 target: :cleanupid,
                 sep: " ",
                 delete_sources: false
@@ -56,12 +56,12 @@ module Kiba
                   targetfield: :ct,
                   result_type: :int
                 transform do |row|
-                  if row[:termsource] == "clientcleanupprev"
-                    row[:to_review] = "n"
+                  row[:to_review] = if row[:termsource] == "clientcleanupprev"
+                    "n"
                   elsif row[:ct] == 0
-                    row[:to_review] = "y"
+                    "y"
                   else
-                    row[:to_review] = "n"
+                    "n"
                   end
                   row.delete(:ct)
                   row

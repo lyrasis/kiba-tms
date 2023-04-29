@@ -11,7 +11,7 @@ module Kiba
 
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -39,7 +39,7 @@ module Kiba
             headers: true,
             header_converters: %i[downcase symbol]
           )
-        rescue StandardError => err
+        rescue => err
           Failure(err)
         else
           Success(csv)

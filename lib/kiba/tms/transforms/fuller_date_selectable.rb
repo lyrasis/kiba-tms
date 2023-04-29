@@ -14,8 +14,6 @@ module Kiba
             da
           elsif db[da]
             db
-          else
-            nil
           end
         end
       end

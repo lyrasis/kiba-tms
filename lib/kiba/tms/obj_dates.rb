@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module ObjDates
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -11,7 +12,7 @@ module Kiba
         reader: true
       setting :empty_fields,
         default: {
-          :eventtype=>[nil, "", "(not entered)", "[not entered]"]
+          eventtype: [nil, "", "(not entered)", "[not entered]"]
         },
         reader: true
       setting :non_content_fields,

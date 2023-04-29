@@ -24,13 +24,13 @@ module Kiba
             row[:remarks] = nil
             row
           end
-          
+
           private
 
           attr_reader :months
 
           def eligible?(remark)
-            months.any?{ |month| remark.start_with?(month) }
+            months.any? { |month| remark.start_with?(month) }
           end
         end
       end

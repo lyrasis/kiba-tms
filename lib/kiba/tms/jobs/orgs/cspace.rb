@@ -29,7 +29,7 @@ module Kiba
             if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def merge_name_bio_notes?
@@ -44,7 +44,6 @@ module Kiba
             lookups.any?(:name_compile__variant_term)
           end
 
-
           def xforms
             bind = binding
 
@@ -54,9 +53,9 @@ module Kiba
               transform Tms::Transforms::Names::RemoveDropped
               transform Delete::Fields,
                 fields: %i[sort contype relation_type variant_term
-                           variant_qualifier related_term related_role
-                           note_text prefnormorig nonprefnormorig
-                           altnorm alttype mainnorm]
+                  variant_qualifier related_term related_role
+                  note_text prefnormorig nonprefnormorig
+                  altnorm alttype mainnorm]
               transform Deduplicate::Table,
                 field: :namemergenorm,
                 delete_field: false
@@ -72,8 +71,10 @@ module Kiba
                   lookup: name_compile__bio_note,
                   keycolumn: :namemergenorm,
                   conditions: ->(_pref, rows) do
-                    rows.select{ |row| row[:contype] &&
-                        row[:contype].start_with?("Person") }
+                    rows.select { |row|
+                      row[:contype] &&
+                        row[:contype].start_with?("Person")
+                    }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
                   delim: "%CR%"
@@ -118,7 +119,6 @@ module Kiba
                 transform Tms::ConGeography.person_merger
               end
 
-
               if bind.receiver.send(:merge_name_contact_persons?)
                 transform Tms::Transforms::Org::ContactName,
                   lookup: name_compile__contact_person
@@ -127,7 +127,7 @@ module Kiba
               transform Rename::Fields, fieldmap: {
                 birth_foundation_date: :foundingdategroup,
                 death_dissolution_date: :dissolutiondategroup,
-                nationality: :foundingplace,
+                nationality: :foundingplace
               }
 
               transform Delete::Fields,

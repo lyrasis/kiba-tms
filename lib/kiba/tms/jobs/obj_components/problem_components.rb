@@ -16,9 +16,9 @@ module Kiba
                 source: :obj_components__with_object_numbers_by_compid,
                 destination: :obj_components__problem_components,
                 lookup: %i[
-                            locs__compiled_clean
-                            tms__obj_locations
-                           ]
+                  locs__compiled_clean
+                  tms__obj_locations
+                ]
               },
               transformer: xforms
             )
@@ -39,16 +39,16 @@ module Kiba
                 fields: :currentobjlocid
               %i[homelocationid currentlocationid].each do |id|
                 target = id.to_s.delete_suffix("id").to_sym
-              transform Append::ToFieldValue,
-                field: id,
-                value: "|nil"
-              transform Merge::MultiRowLookup,
-                lookup: locs__compiled_clean,
-                keycolumn: id,
-                fieldmap: {
-                  target=>:location_name
-                }
-              transform Delete::Fields, fields: id
+                transform Append::ToFieldValue,
+                  field: id,
+                  value: "|nil"
+                transform Merge::MultiRowLookup,
+                  lookup: locs__compiled_clean,
+                  keycolumn: id,
+                  fieldmap: {
+                    target => :location_name
+                  }
+                transform Delete::Fields, fields: id
               end
             end
           end

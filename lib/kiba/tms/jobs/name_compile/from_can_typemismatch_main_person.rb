@@ -25,7 +25,8 @@ module Kiba
 
               transform Tms::Transforms::NameCompile::SelectCanTypemismatchMainPerson
 
-              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.typemismatch_main_person"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS ConAltNames.typemismatch_main_person"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
@@ -33,9 +34,11 @@ module Kiba
                 delete_sources: true
 
               if treatment == :variant
-                transform Tms::Transforms::NameCompile::DeriveVariantName, mode: :alt
+                transform Tms::Transforms::NameCompile::DeriveVariantName,
+                  mode: :alt
               elsif treatment == :contact_person
-                transform Tms::Transforms::NameCompile::DeriveOrgWithContactFromPerson, mode: :alt
+                transform Tms::Transforms::NameCompile::DeriveOrgWithContactFromPerson,
+                  mode: :alt
               end
             end
           end

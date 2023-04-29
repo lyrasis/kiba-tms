@@ -27,10 +27,9 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                     ]
+            base = %i[]
             base << :prep__survey_attr_types if Tms::SurveyAttrTypes.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

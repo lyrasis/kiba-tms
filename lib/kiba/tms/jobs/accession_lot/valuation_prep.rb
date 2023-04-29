@@ -33,7 +33,8 @@ module Kiba
                 action: :keep,
                 field: :accessionvalue
               transform Delete::FieldsExcept,
-                fields: %i[acquisitionlotid lotnumber accessionvalue entereddate]
+                fields: %i[acquisitionlotid lotnumber accessionvalue
+                  entereddate]
               transform Prepend::ToFieldValue, field: :lotnumber, value: "VC"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :entereddate,

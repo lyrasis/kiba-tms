@@ -10,7 +10,7 @@ module Kiba
           end
 
           def as_filenames
-            call.map{ |table| "#{table}.csv" }
+            call.map { |table| "#{table}.csv" }
           end
 
           def call
@@ -26,12 +26,13 @@ module Kiba
           end
 
           private
+
           def from_dir
             Dir.new(Tms.tms_table_dir_path)
               .children
-              .map{ |table| table.delete_suffix(".csv") }
-              .reject{ |table| table["~lock."] }
-              .reject{ |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
+              .map { |table| table.delete_suffix(".csv") }
+              .reject { |table| table["~lock."] }
+              .reject { |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
           end
 
           def empty_tables

@@ -12,7 +12,7 @@ module Kiba
             @normer = Kiba::Extend::Transforms::Cspace::NormalizeForID.new(
               source: field,
               target: normfield
-              )
+            )
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: normfield,
@@ -20,7 +20,7 @@ module Kiba
             )
             @deleter = Delete::Fields.new(
               fields: [normfield, matchedfield]
-              )
+            )
           end
 
           def process(row)

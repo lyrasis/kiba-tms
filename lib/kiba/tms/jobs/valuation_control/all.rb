@@ -21,9 +21,9 @@ module Kiba
 
           def sources
             %i[
-               valuation_control__from_obj_insurance
-               valuation_control__from_accession_lot
-              ].select{ |job| Tms.job_output?(job) }
+              valuation_control__from_obj_insurance
+              valuation_control__from_accession_lot
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

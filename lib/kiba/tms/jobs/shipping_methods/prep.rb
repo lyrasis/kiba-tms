@@ -6,7 +6,7 @@ module Kiba
       module ShippingMethods
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -20,7 +20,8 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :shippingmethod
+              transform Tms::Transforms::DeleteNoValueTypes,
+                field: :shippingmethod
             end
           end
         end

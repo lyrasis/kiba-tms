@@ -35,7 +35,7 @@ module Kiba
           end
 
           def merges_paths?
-            Tms::MediaPaths.used? && config.fields.any?{ |f| f.to_s["pathid"] }
+            Tms::MediaPaths.used? && config.fields.any? { |f| f.to_s["pathid"] }
           end
 
           def merges_statuses?

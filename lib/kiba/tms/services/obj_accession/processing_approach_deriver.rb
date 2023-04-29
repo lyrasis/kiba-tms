@@ -10,7 +10,7 @@ module Kiba
           include Dry::Monads[:result]
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           def initialize(counter: Tms::Services::RowCounter)
@@ -21,9 +21,9 @@ module Kiba
 
           def call
             set_approaches.either(
-              ->(success){ Success(approaches) },
-              ->(failure){ Failure(failure) }
-              )
+              ->(success) { Success(approaches) },
+              ->(failure) { Failure(failure) }
+            )
           end
 
           private
@@ -41,7 +41,7 @@ module Kiba
               counter.call(:obj_accession__linked_lot) > 0
             approaches << :linkedset if mod.used? &&
               counter.call(:obj_accession__linked_set) > 0
-          rescue StandardError => err
+          rescue => err
             Failure(err)
           else
             Success()

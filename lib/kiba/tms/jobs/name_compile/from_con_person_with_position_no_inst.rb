@@ -25,18 +25,23 @@ module Kiba
 
               transform Tms::Transforms::NameCompile::SelectConPersonWithPositionNoInst
 
-              transform Append::ToFieldValue, field: :constituentid, value: ".position"
-              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.person_with_position_no_institution"
+              transform Append::ToFieldValue, field: :constituentid,
+                value: ".position"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS Constituents.person_with_position_no_institution"
               transform Rename::Fields, fieldmap: {
                 position: :note_text
               }
 
               if treatment == :bio_note
-                transform Merge::ConstantValue, target: :relation_type, value: treatment
+                transform Merge::ConstantValue, target: :relation_type,
+                  value: treatment
               elsif treatment == :name_note
-                transform Merge::ConstantValue, target: :relation_type, value: treatment
+                transform Merge::ConstantValue, target: :relation_type,
+                  value: treatment
               elsif treatment == :qualifier
-                transform Merge::ConstantValue, target: :relation_type, value: "main term qualifier"
+                transform Merge::ConstantValue, target: :relation_type,
+                  value: "main term qualifier"
               end
               transform Delete::Fields, fields: Tms::NameCompile.variant_nil
             end

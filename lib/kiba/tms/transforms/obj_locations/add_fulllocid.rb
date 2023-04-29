@@ -36,7 +36,7 @@ module Kiba
           def field_vals(row)
             getter.call(row)
               .values
-              .map{ |val| val.blank? ? "nil" : val }
+              .map { |val| val.blank? ? "nil" : val }
               .join(delim)
           end
 

@@ -53,12 +53,12 @@ module Kiba
                 next row if chk.blank?
 
                 at = row[:authoritytype]
-                if at.blank?
-                  val = config.untyped_treatment == "Person" ? "p" : "o"
+                val = if at.blank?
+                  (config.untyped_treatment == "Person") ? "p" : "o"
                 elsif at.start_with?("P")
-                  val = "p"
+                  "p"
                 else
-                  val = "o"
+                  "o"
                 end
                 row[:correctauthoritytype] = val
 
@@ -66,7 +66,7 @@ module Kiba
               end
               transform Delete::FieldsExcept,
                 fields: %i[correctname authoritytype correctauthoritytype
-                           constituentid origname termsource cleanupid]
+                  constituentid origname termsource cleanupid]
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: :origname,
                 target: :orignorm

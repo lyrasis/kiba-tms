@@ -7,7 +7,7 @@ module Kiba
     module Services
       class UnmappedTypeValueChecker
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod)
@@ -33,11 +33,13 @@ module Kiba
 
         private
 
-        attr_reader :mod, :mapped, :value_getter, :idfield, :typefield, :migrate_no_val, :no_val_pattern, :unmapped
+        attr_reader :mod, :mapped, :value_getter, :idfield, :typefield,
+          :migrate_no_val, :no_val_pattern, :unmapped
 
         def get_unmapped
           ids = {}
-          CSV.foreach(mod.table.supplied_data_path, headers: true, header_converters: %i[downcase symbol]) do |row|
+          CSV.foreach(mod.table.supplied_data_path, headers: true,
+            header_converters: %i[downcase symbol]) do |row|
             val = row[typefield]
             next if mapped.any?(val)
             next if !migrate_no_val && no_val_pattern.match?(val)
@@ -49,7 +51,7 @@ module Kiba
 
         def inverted(result)
           inverted = {}
-          result.reject{ |col, vals| vals.empty? }
+          result.reject { |col, vals| vals.empty? }
             .each do |col, vals|
               vals.each do |val|
                 inverted[val] = [] unless inverted.key?(val)
@@ -62,7 +64,7 @@ module Kiba
         def report_format(result)
           report = []
           inverted(result).each do |val, col|
-            report << "#{mod}: `#{unmapped[val]}` (id: #{val}) used in: #{col.join(', ')}"
+            report << "#{mod}: `#{unmapped[val]}` (id: #{val}) used in: #{col.join(", ")}"
           end
           report
         end
@@ -85,7 +87,11 @@ module Kiba
 
         def unmapped_values
           value_getter.call
-            .map{ |col, vals| [col, vals.select{ |val| unmapped.key?(val) }] }.to_h
+            .map { |col, vals|
+            [col, vals.select { |val|
+                    unmapped.key?(val)
+                  }]
+          }.to_h
         end
       end
     end

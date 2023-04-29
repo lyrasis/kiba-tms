@@ -30,7 +30,7 @@ module Kiba
                 target: :combined,
                 sep: " - ",
                 delete_sources: false
-             end
+            end
           end
         end
       end

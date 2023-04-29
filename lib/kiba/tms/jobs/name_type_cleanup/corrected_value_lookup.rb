@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[name correctname authoritytype correctauthoritytype
-                           cleanupid]
+                  cleanupid]
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[correctname correctauthoritytype]

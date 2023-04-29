@@ -39,11 +39,11 @@ module Kiba
               :obj_info
             elsif !config.migrate_exh_obj_info &&
                 Tms::ExhObjXrefs.text_entry_handling ==
-                :exhibition_planning_note
+                    :exhibition_planning_note
               :text_entry_notes
             elsif !config.migrate_exh_obj_info &&
                 Tms::ExhObjXrefs.text_entry_handling ==
-                :exhibited_object_information
+                    :exhibited_object_information
               :obj_info_text_entries
             else
               :unhandled
@@ -72,8 +72,8 @@ module Kiba
                 keycolumn: :exhibitionid,
                 fieldmap: {te_planningnote: :planningnote},
                 delim: "%CR%",
-                conditions: ->(_tr, rows){
-                  rows.reject{ |r| r[:text_entry].blank? }
+                conditions: ->(_tr, rows) {
+                  rows.reject { |r| r[:text_entry].blank? }
                 }
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[planningnote te_planningnote],
@@ -96,8 +96,8 @@ module Kiba
                   exhibitionobjectnote: :text_entry
                 },
                 delim: Tms.delim,
-                conditions: ->(_tr, rows){
-                  rows.reject{ |r| r[:text_entry].blank? }
+                conditions: ->(_tr, rows) {
+                  rows.reject { |r| r[:text_entry].blank? }
                 }
             end
           end

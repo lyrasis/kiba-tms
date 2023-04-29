@@ -19,14 +19,14 @@ module Kiba
 
           def sources
             %i[
-               acquisitions__obj_rels
-               exhibitions__nhrs
-               loans__nhrs
-               obj_deaccession__obj_rel
-               obj_locations__nhr_lmi_obj
-               valuation_control__nhrs
-               conservation_treatments__nhrs_all
-              ].select{ |job| Tms.job_output?(job) }
+              acquisitions__obj_rels
+              exhibitions__nhrs
+              loans__nhrs
+              obj_deaccession__obj_rel
+              obj_locations__nhr_lmi_obj
+              valuation_control__nhrs
+              conservation_treatments__nhrs_all
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

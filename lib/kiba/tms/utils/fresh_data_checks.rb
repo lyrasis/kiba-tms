@@ -5,7 +5,7 @@ module Kiba
     module Utils
       class FreshDataChecks
         def self.call
-          self.new.call
+          new.call
         end
 
         def call

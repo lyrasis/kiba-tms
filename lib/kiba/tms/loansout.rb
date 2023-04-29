@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Loansout
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :loans__out, reader: true
@@ -29,7 +30,7 @@ module Kiba
       setting :conditions_source_fields,
         default: %i[loanconditions insind],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :conditions
             value << :display_dates_note
           end
@@ -60,7 +61,7 @@ module Kiba
       setting :note_source_fields,
         default: %i[description],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :note
             value << :display_dates_note
           end
@@ -90,9 +91,9 @@ module Kiba
       setting :status_sources,
         default: %i[req app agsent agrec origloanend],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :status
-            %i[dispbeg dispend].each{ |src| value << src }
+            %i[dispbeg dispend].each { |src| value << src }
           end
           if remarks_treatment == :statusnote
             value << :rem
@@ -104,7 +105,7 @@ module Kiba
       setting :status_targets,
         default: %i[loanindividual loanstatus loanstatusdate],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if remarks_treatment == :statusnote
             value << :loanstatusnote
           end
@@ -116,27 +117,32 @@ module Kiba
         reader: true
 
       def display_dates?
-        true unless ( %i[dispbegisodate dispendisodate] - omitted_fields ).empty?
+        true unless (%i[dispbegisodate
+          dispendisodate] - omitted_fields).empty?
       end
 
       def status_pad_fields(fieldmap)
         prefix = fieldmap.values.first.to_s.split("_").first
-        present = fieldmap.values.map{ |val| val.to_s.delete_prefix("#{prefix}_").to_sym }
-        ( status_targets - present - [:loanstatus] ).map{ |val| "#{prefix}_#{val}".to_sym }
+        present = fieldmap.values.map { |val|
+          val.to_s.delete_prefix("#{prefix}_").to_sym
+        }
+        (status_targets - present - [:loanstatus]).map { |val|
+          "#{prefix}_#{val}".to_sym
+        }
       end
 
       def status_nil_append_fields(fieldmap)
         needed = status_pad_fields(fieldmap)
         return [] if needed.empty?
 
-        needed.map{ |val| val.to_s.sub("_", "").to_sym }
+        needed.map { |val| val.to_s.sub("_", "").to_sym }
       end
 
       def status_nil_merge_fields(fieldmap)
         needed = status_pad_fields(fieldmap)
         return {} if needed.empty?
 
-        needed.map{ |val| [val.to_s.sub("_", "").to_sym, val] }.to_h
+        needed.map { |val| [val.to_s.sub("_", "").to_sym, val] }.to_h
       end
     end
   end

@@ -7,7 +7,7 @@ module Kiba
         # Return nil or lookup_on field value for prepped table
         class LookupField
           def self.call(table_key)
-            self.new(table_key).call
+            new(table_key).call
           end
 
           def initialize(table_key)

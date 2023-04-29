@@ -22,7 +22,7 @@ module Kiba
           # ```
           # @param source [Symbol] field containing corrected type code
           def initialize(target:,
-                         source: :correctauthoritytype)
+            source: :correctauthoritytype)
             @target = target
             @source = source
           end

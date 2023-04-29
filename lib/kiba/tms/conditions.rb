@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Conditions
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -30,7 +31,7 @@ module Kiba
         reader: true
       setting :conditionchecknote_sources,
         default: %i[requestdate duedate project overallanalysis remarks
-                    reportisodate durationdays],
+          reportisodate durationdays],
         reader: true
       setting :multisource_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
@@ -40,14 +41,14 @@ module Kiba
         reader: true
       setting :prepend_label_map,
         default: {
-          :reportisodate=>"Report date: ",
-          :durationdays=>"Assessment duration (days): ",
-          :project=>"Related project: ",
-          :requestdate=>"Request date: ",
-          :duedate=>"Due date: "
+          reportisodate: "Report date: ",
+          durationdays: "Assessment duration (days): ",
+          project: "Related project: ",
+          requestdate: "Request date: ",
+          duedate: "Due date: "
         },
         reader: true,
-        constructor: proc{ |value| delete_omitted_fields(value) }
+        constructor: proc { |value| delete_omitted_fields(value) }
       setting :rename_fieldmap,
         default: {
           survey_type: :conditioncheckreason,
@@ -57,7 +58,7 @@ module Kiba
           overallcondition: :primary_condition
         },
         reader: true,
-        constructor: proc{ |value| delete_omitted_fields(value) }
+        constructor: proc { |value| delete_omitted_fields(value) }
     end
   end
 end

@@ -6,10 +6,12 @@ module Kiba
   module Tms
     module ObjCompStatuses
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
-        default: %i[compstatforecolor compstatbackcolor available system systemid],
+        default: %i[compstatforecolor compstatbackcolor available system
+          systemid],
         reader: true
       extend Tms::Mixins::Tableable
 

@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :duplicate
               transform Deduplicate::Table, field: :norm, delete_field: false
               transform Delete::FieldsExcept, fields: :norm
               transform Merge::ConstantValue, target: :duplicate, value: "y"

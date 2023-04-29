@@ -30,7 +30,7 @@ module Kiba
           def process(row)
             merger.process(row)
             chk = getter.call(row).values
-            names.each{ |name| remove_redundant(row, name, chk) }
+            names.each { |name| remove_redundant(row, name, chk) }
             deleter.process(row)
             row
           end

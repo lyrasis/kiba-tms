@@ -4,10 +4,9 @@ module Kiba
   module Tms
     module Data
       class ColumnFromString
-
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -30,7 +29,7 @@ module Kiba
         attr_reader :str, :col
 
         def check_mod(mod)
-          unless Tms.configs.any?{ |cfg| cfg.to_s.end_with?("::#{mod}") }
+          unless Tms.configs.any? { |cfg| cfg.to_s.end_with?("::#{mod}") }
             fail(Tms::UnconfiguredModuleError.new(mod.to_s))
           end
         end

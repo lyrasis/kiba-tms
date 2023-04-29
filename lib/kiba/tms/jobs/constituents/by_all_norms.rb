@@ -11,10 +11,10 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: %i[
-                           constituents__by_norm
-                           constituents__by_norm_orig
-                           constituents__by_nonpref_norm
-                           ],
+                  constituents__by_norm
+                  constituents__by_norm_orig
+                  constituents__by_nonpref_norm
+                ],
                 destination: :constituents__by_all_norms
               },
               transformer: xforms

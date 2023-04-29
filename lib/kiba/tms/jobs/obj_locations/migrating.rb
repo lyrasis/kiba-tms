@@ -45,7 +45,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: lookup,
                   keycolumn: "#{prefix}objlocid".to_sym,
-                  fieldmap: {"#{prefix}fp".to_sym=>:fingerprint}
+                  fieldmap: {"#{prefix}fp".to_sym => :fingerprint}
               end
               transform Tms::Transforms::ObjLocations::AddFingerprint,
                 sources: config.full_fingerprint_fields,

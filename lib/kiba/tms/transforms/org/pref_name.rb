@@ -34,7 +34,7 @@ module Kiba
 
           # @private
           def process(row)
-            xforms.each{ |xform| xform.process(row) }
+            xforms.each { |xform| xform.process(row) }
             row
           end
 

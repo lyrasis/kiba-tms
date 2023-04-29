@@ -13,9 +13,9 @@ module Kiba
                 source: :constituents__prep_clean,
                 destination: :names__by_constituentid,
                 lookup: %i[
-                           orgs__by_constituentid
-                           persons__by_constituentid
-                          ]
+                  orgs__by_constituentid
+                  persons__by_constituentid
+                ]
               },
               transformer: xforms
             )
@@ -27,10 +27,10 @@ module Kiba
               nonprefname = Tms::Constituents.var_name_field
 
               transform Delete::FieldsExcept,
-                fields: [:constituentid, prefname,  nonprefname]
+                fields: [:constituentid, prefname, nonprefname]
               transform Rename::Fields, fieldmap: {
-                prefname=>:cleanedprefname,
-                nonprefname=>:nonprefname
+                prefname => :cleanedprefname,
+                nonprefname => :nonprefname
               }
 
               transform Merge::MultiRowLookup,

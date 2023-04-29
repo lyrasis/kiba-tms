@@ -6,10 +6,10 @@ module Kiba
       module DimensionUnits
         module Prep
           extend self
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__dimension_units,

@@ -6,7 +6,7 @@ module Kiba
       module Constituents
         class CleanPersonNamePartsFromOrg
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
           end
 
@@ -15,10 +15,11 @@ module Kiba
             type = row.fetch(:constituenttype, nil)
             return row unless type == "Organization"
 
-            %i[lastname firstname nametitle middlename suffix salutation].each do |field|
+            %i[lastname firstname nametitle middlename suffix
+              salutation].each do |field|
               row[field] = nil
             end
-          
+
             row
           end
         end

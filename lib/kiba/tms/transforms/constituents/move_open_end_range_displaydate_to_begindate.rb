@@ -7,12 +7,12 @@ module Kiba
         class MoveOpenEndRangeDisplaydateToBegindate
           include Tms::Transforms::FullerDateSelectable
           include Tms::Transforms::ValueAppendable
-          
+
           def initialize
             @source = :displaydate
             @target = :begindateiso
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)
@@ -41,7 +41,7 @@ module Kiba
             fuller = select_fuller_date(val, begindate)
             fuller ? add(row, fuller) : add_note(row, val)
           end
-          
+
           def eligible?(dd)
             return false if dd.blank?
 

@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :reject, field: :description
+              transform FilterRows::FieldPopulated, action: :reject,
+                field: :description
             end
           end
         end

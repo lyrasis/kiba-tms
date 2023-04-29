@@ -20,17 +20,22 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[approver handler requestedby]
+              transform Delete::FieldsExcept,
+                fields: %i[approver handler requestedby]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[approver handler requestedby], target: :combined,
                 sep: "|||", delete_sources: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :combined
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :combined
               transform Delete::FieldsExcept, fields: :combined
-              transform Explode::RowsFromMultivalField, field: :combined, delim: "|||"
+              transform Explode::RowsFromMultivalField, field: :combined,
+                delim: "|||"
               transform Deduplicate::Table, field: :combined
               transform Cspace::NormalizeForID, source: :combined, target: :norm
-              transform Rename::Field, from: :combined, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: "TMS ObjLocations"
+              transform Rename::Field, from: :combined,
+                to: Tms::Constituents.preferred_name_field
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS ObjLocations"
             end
           end
         end

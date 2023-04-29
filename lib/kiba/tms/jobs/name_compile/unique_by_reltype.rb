@@ -63,22 +63,22 @@ module Kiba
                 delim: "␟",
                 target: :fp_o_ed
               transform Fingerprint::Add,
-                fields: p_not_editable  + config.not_editable_internal,
+                fields: p_not_editable + config.not_editable_internal,
                 delim: "␟",
                 target: :fp_p_ned
               transform Fingerprint::Add,
-                fields: o_not_editable  + config.not_editable_internal,
+                fields: o_not_editable + config.not_editable_internal,
                 delim: "␟",
                 target: :fp_o_ned
 
               transform do |row|
                 contype = row[:contype]
                 if contype.start_with?("P")
-                  p_not_editable.each{ |fld| row[fld] = naval }
+                  p_not_editable.each { |fld| row[fld] = naval }
                   row[:fp_o_ed] = nil
                   row[:fp_o_ned] = nil
                 else
-                  o_not_editable.each{ |fld| row[fld] = naval }
+                  o_not_editable.each { |fld| row[fld] = naval }
                   row[:fp_p_ed] = nil
                   row[:fp_p_ned] = nil
                 end
@@ -115,7 +115,7 @@ module Kiba
                 target: :fp_not_editable
 
               transform do |row|
-                not_editable.each{ |fld| row[fld] = naval }
+                not_editable.each { |fld| row[fld] = naval }
                 row
               end
             end

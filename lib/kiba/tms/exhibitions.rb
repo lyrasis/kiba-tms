@@ -6,11 +6,12 @@ module Kiba
   module Tms
     module Exhibitions
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[exhmnemonic nextdexid exhibitiontitleid
-                   beginyear endyear displaydate],
+          beginyear endyear displaydate],
         reader: true
       extend Tms::Mixins::Tableable
 

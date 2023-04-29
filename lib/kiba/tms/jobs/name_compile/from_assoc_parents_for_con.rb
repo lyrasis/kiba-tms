@@ -34,7 +34,7 @@ module Kiba
                 lookup: constituents__by_all_norms,
                 keycolumn: :norm,
                 fieldmap: {contype: :contype},
-                conditions: ->(_r, rows){ [rows.first] }
+                conditions: ->(_r, rows) { [rows.first] }
               transform FilterRows::FieldPopulated,
                 action: :reject,
                 field: :contype

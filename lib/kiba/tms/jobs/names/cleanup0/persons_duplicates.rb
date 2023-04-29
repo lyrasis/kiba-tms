@@ -21,8 +21,10 @@ module Kiba
             def xforms
               Kiba.job_segment do
                 @deduper = {}
-                transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper, explicit_no: false
-                transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
+                transform Deduplicate::Flag, on_field: :norm,
+                  in_field: :duplicate, using: @deduper, explicit_no: false
+                transform FilterRows::FieldPopulated, action: :keep,
+                  field: :duplicate
               end
             end
           end

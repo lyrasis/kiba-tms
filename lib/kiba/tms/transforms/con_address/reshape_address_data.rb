@@ -25,7 +25,7 @@ module Kiba
 
           # @private
           def process(row)
-            %i[addressplace1 addressplace2].each{ |field| row[field] = nil }
+            %i[addressplace1 addressplace2].each { |field| row[field] = nil }
 
             ap1 = getter1.call(row).values
             ap2 = getter2.call(row).values
@@ -35,7 +35,7 @@ module Kiba
             ap1 << ap2.shift if ap1.empty? && !ap2.empty?
             row[:addressplace1] = ap1.join(delim1)
             row[:addressplace2] = ap2.join(delim2)
-            [fields1, fields2].flatten.each{ |field| row.delete(field) }
+            [fields1, fields2].flatten.each { |field| row.delete(field) }
             row
           end
 
@@ -43,7 +43,6 @@ module Kiba
 
           attr_reader :fields1, :fields2, :getter1, :getter2, :deleter, :delim1,
             :delim2
-
         end
       end
     end

@@ -8,12 +8,12 @@ module Kiba
           module_function
 
           def desc
-              <<~DESC
-                With lookup on :constituentid gives :person and :org columns
-                from which to merge authorized form of name. Also gives a
-                :prefname and :nonprefname columns for use if type of name does
-                not matter. Only name values are retained in this table.
-              DESC
+            <<~DESC
+              With lookup on :constituentid gives :person and :org columns
+              from which to merge authorized form of name. Also gives a
+              :prefname and :nonprefname columns for use if type of name does
+              not matter. Only name values are retained in this table.
+            DESC
           end
 
           def job

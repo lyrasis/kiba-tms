@@ -6,7 +6,7 @@ module Kiba
       module Terms
         module UsedInXrefs
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

@@ -30,7 +30,7 @@ module Kiba
                 srcs = Tms::NameCompile.uncontrolled_name_source_tables
                   .keys
                 src = row[:termsource]
-                next row unless srcs.any?{ |s| src.match?(s) }
+                next row unless srcs.any? { |s| src.match?(s) }
 
                 row[:sourceflag] = "y"
                 row

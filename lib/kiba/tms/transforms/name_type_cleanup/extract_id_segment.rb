@@ -1,5 +1,5 @@
-
 # frozen_string_literal: true
+
 module Kiba
   module Tms
     module Transforms
@@ -9,7 +9,7 @@ module Kiba
             target:,
             segment:,
             source: :constituentid
-            )
+          )
             @target = target
             @segment = segment
             @source = source

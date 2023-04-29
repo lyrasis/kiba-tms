@@ -24,13 +24,13 @@ module Kiba
             row[:remarks] = nil
             row
           end
-          
+
           private
 
           attr_reader :indicators
 
           def eligible?(remark)
-            indicators.any?{ |ind| remark.start_with?(ind) }
+            indicators.any? { |ind| remark.start_with?(ind) }
           end
         end
       end

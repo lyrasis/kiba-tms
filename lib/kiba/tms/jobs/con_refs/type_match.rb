@@ -23,9 +23,8 @@ module Kiba
             Kiba.job_segment do
               transform do |row|
                 vals = [row[:detail_role_type],
-                        row[:xref_role_type],
-                        row[:role_role_type]
-                       ]
+                  row[:xref_role_type],
+                  row[:role_role_type]]
                 result = vals.uniq.length
                 next if !result == 1
 

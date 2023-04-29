@@ -7,17 +7,17 @@ module Kiba
         class Merger
           def initialize(lookup:, keycolumn:, targets:)
             @mergers = targets.map do |target, src|
-                Merge::MultiRowLookup.new(
-                  lookup: lookup,
-                  keycolumn: keycolumn,
-                  fieldmap: {target => src}
-                )
+              Merge::MultiRowLookup.new(
+                lookup: lookup,
+                keycolumn: keycolumn,
+                fieldmap: {target => src}
+              )
             end
             @deleter = Delete::Fields.new(fields: keycolumn)
           end
 
           def process(row)
-            mergers.each{ |merger| merger.process(row) }
+            mergers.each { |merger| merger.process(row) }
             deleter.process(row)
             row
           end

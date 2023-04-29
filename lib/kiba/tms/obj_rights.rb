@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjRights
       extend Dry::Configurable
+
       module_function
 
       def non_content_fields

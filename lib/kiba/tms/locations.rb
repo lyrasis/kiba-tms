@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module Locations
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[publicaccess unitmaxlevels bitmapname xcoord ycoord],
         reader: true,
-        constructor: ->(value){
+        constructor: ->(value) {
           if Tms::ConservationEntities.used?
             value
           else
@@ -25,7 +26,7 @@ module Kiba
       setting :authorities, default: %i[local offsite], reader: true
       setting :brief_address_mappings, default: {}, reader: true
       setting :cleanup_done, default: false, reader: true,
-        constructor: proc{ !returned_files.empty? }
+        constructor: proc { !returned_files.empty? }
       # Whether client wants the migration to include construction of a location
       #   hierarchy
       setting :hierarchy, default: true, reader: true
@@ -49,18 +50,20 @@ module Kiba
       #   of the migration base directory
       setting :provided_worksheets,
         reader: true,
-        constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, "to_client", filename)
-            end
+        constructor: proc { |value|
+          value.map do |filename|
+            File.join(Kiba::Tms.datadir, "to_client", filename)
+          end
         }
       # List returned worksheets, most recent first. Assumes they are in the
       #   client project directory/supplied subdir
       setting :returned_files,
         default: [],
         reader: true,
-        constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, "supplied", filename)
-            end
+        constructor: proc { |value|
+          value.map do |filename|
+            File.join(Kiba::Tms.datadir, "supplied", filename)
+          end
         }
       setting :multi_source_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
@@ -68,9 +71,9 @@ module Kiba
 
       def authority_vocab_mapping
         if authorities.any?(:offsite)
-          {"0"=>"Local", "1"=>"Offsite"}
+          {"0" => "Local", "1" => "Offsite"}
         else
-          {"0"=>"Local", "1"=>"Local"}
+          {"0" => "Local", "1" => "Local"}
         end
       end
 
@@ -90,10 +93,9 @@ module Kiba
         base = %i[usage_ct]
         base << :to_review if cleanup_done
         base << %i[location_name correct_location_name
-                   storage_location_authority correct_authority
-                   address correct_address
-                   term_source fulllocid origlocname
-                  ]
+          storage_location_authority correct_authority
+          address correct_address
+          term_source fulllocid origlocname]
         base.flatten
       end
     end

@@ -17,7 +17,7 @@ module Kiba
 
             row
           end
-          
+
           private
 
           attr_reader :source, :merging

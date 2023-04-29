@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Services::RoleTreatmentDeriver do
-  subject(:klass){ described_class }
+  subject(:klass) { described_class }
 
   describe ".new" do
     it "implicitly ineligible mod returns barely initialized instance" do

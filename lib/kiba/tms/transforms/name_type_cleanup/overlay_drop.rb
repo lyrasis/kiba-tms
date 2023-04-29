@@ -24,10 +24,8 @@ module Kiba
           def initialize(target:)
             @target = target
             @val = if Tms.migration_status == :dev
-                     Tms::NameTypeCleanup.dropped_name_indicator
-                   else
-                     nil
-                   end
+              Tms::NameTypeCleanup.dropped_name_indicator
+            end
           end
 
           def process(row)

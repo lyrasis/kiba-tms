@@ -29,7 +29,8 @@ module Kiba
                 target: :combined,
                 sep: " ",
                 delete_sources: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :combined
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :combined
               transform Delete::Fields, fields: :combined
               transform Delete::EmptyFields
             end

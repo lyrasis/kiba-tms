@@ -16,7 +16,7 @@ module Kiba
 
           def process(row)
             %i[birthplace geo_birthnote deathplace geo_deathnote
-               geo_note].each do |field|
+              geo_note].each do |field|
               row[field] = nil
             end
             return row if lookup.empty?
@@ -34,7 +34,7 @@ module Kiba
           attr_reader :lookup, :id, :notedelim
 
           def handle_bd_place_type(row, type, mergerows)
-            matches = mergerows.select{ |row| row[:type] == type }
+            matches = mergerows.select { |row| row[:type] == type }
             return if matches.empty?
 
             set_bd_place(row, type, matches)
@@ -50,10 +50,10 @@ module Kiba
           end
 
           def handle_place_notes(row, mergerows)
-            matches = mergerows.select{ |row| row[:type].blank? }
+            matches = mergerows.select { |row| row[:type].blank? }
             return if matches.empty?
 
-            row[:geo_note] = matches.map{ |row| row[:mergeable] }
+            row[:geo_note] = matches.map { |row| row[:mergeable] }
               .join(notedelim)
             row
           end
@@ -68,7 +68,7 @@ module Kiba
             target = "geo_#{type}note".to_sym
             prefix = "Additional #{type} place: "
             values = matches[1..-1]
-              .map{ |row| "#{prefix}#{row[:mergeable]}" }
+              .map { |row| "#{prefix}#{row[:mergeable]}" }
             row[target] = values.join(notedelim)
             row
           end

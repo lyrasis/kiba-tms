@@ -4,11 +4,12 @@ module Kiba
   module Tms
     module ConservationEntities
       extend Dry::Configurable
+
       module_function
 
       setting :checkable,
         default: {
-          populated_configured: ->{ check_populated_configured }
+          populated_configured: -> { check_populated_configured }
         },
         reader: true
 
@@ -17,14 +18,14 @@ module Kiba
         reader: true
       setting :empty_fields,
         default: {
-          :keydetails=>[nil, ""],
-          :environmentalclassificationid=>[nil, "", "0"],
-          :customenvrequirements=>[nil, "", "0"],
-          :requireipm=>[nil, "", "0"],
-          :remarks=>[nil, ""],
-          :referenceremarks=>[nil, ""],
-          :conservationlabconid=>[nil, "", "0"],
-          :environmentalrequirementextid=>[nil, "", "0"]
+          keydetails: [nil, ""],
+          environmentalclassificationid: [nil, "", "0"],
+          customenvrequirements: [nil, "", "0"],
+          requireipm: [nil, "", "0"],
+          remarks: [nil, ""],
+          referenceremarks: [nil, ""],
+          conservationlabconid: [nil, "", "0"],
+          environmentalrequirementextid: [nil, "", "0"]
         },
         reader: true
       extend Tms::Mixins::Tableable
@@ -44,7 +45,7 @@ module Kiba
       def check_populated_configured
         return unless populated.nil?
 
-        "#{self.name}: Configure :populated setting"
+        "#{name}: Configure :populated setting"
       end
     end
   end

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module DDLanguages
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :prep__dd_languages, reader: true
@@ -33,8 +34,8 @@ module Kiba
       def pre_transforms
         [
           Delete::FieldsExcept.new(
-                fields: %i[languageid mnemonic label]
-              ),
+            fields: %i[languageid mnemonic label]
+          ),
           Tms::Transforms::DDLanguages::PopulateLanguage.new,
           Tms::Transforms::DDLanguages::FormatLanguage.new
         ]

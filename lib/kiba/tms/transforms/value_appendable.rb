@@ -15,9 +15,9 @@ module Kiba
         end
 
         private def target_values(row, target, delim)
-                  vals = row[target]
-                  vals.blank? ? [] : vals.split(delim)
-                end
+          vals = row[target]
+          vals.blank? ? [] : vals.split(delim)
+        end
       end
     end
   end

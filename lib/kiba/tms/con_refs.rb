@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ConRefs
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :con_refs__create, reader: true
@@ -63,8 +64,10 @@ module Kiba
       setting :for_shipments_merge, default: nil, reader: true
 
       setting :configurable, default: {
-        target_tables: proc{ Tms::Services::ConRefs::TargetTableDeriver.call }
-      },
+                               target_tables: proc {
+                                                Tms::Services::ConRefs::TargetTableDeriver.call
+                                              }
+                             },
         reader: true
     end
   end

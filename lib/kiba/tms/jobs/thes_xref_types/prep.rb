@@ -6,7 +6,7 @@ module Kiba
       module ThesXrefTypes
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -21,8 +21,9 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Delete::Fields, fields: %i[multiselect archivedeletes showguideterms broadesttermfirst
-                                                   numlevels alwaysdisplayfullpath]
-              transform Tms::Transforms::DeleteNoValueTypes, field: :thesxreftype
+                numlevels alwaysdisplayfullpath]
+              transform Tms::Transforms::DeleteNoValueTypes,
+                field: :thesxreftype
             end
           end
         end

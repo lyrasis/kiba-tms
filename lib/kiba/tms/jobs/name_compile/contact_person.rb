@@ -26,7 +26,7 @@ module Kiba
                 value: "contact_person"
               transform Delete::FieldsExcept,
                 fields: %i[related_term related_role constituentid termsource
-                           namemergenorm]
+                  namemergenorm]
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: :related_term,
                 target: :personnorm

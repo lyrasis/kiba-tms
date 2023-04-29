@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ExhVenObjXrefs
       extend Dry::Configurable
+
       module_function
 
       # ## ABOUT THIS TABLE

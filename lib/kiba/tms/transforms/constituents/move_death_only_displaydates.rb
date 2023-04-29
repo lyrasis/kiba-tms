@@ -7,14 +7,16 @@ module Kiba
         class MoveDeathOnlyDisplaydates
           include Tms::Transforms::FullerDateSelectable
           include Tms::Transforms::ValueAppendable
-          
+
           def initialize
             @source = :displaydate
             @target = :enddateiso
             @prefixes = Tms::Constituents.dates.datedescription_variants["death"]
-              .map{ |prefix| Regexp.new("^#{prefix} *", Regexp::IGNORECASE) }
+              .map { |prefix|
+              Regexp.new("^#{prefix} *", Regexp::IGNORECASE)
+            }
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)
@@ -50,16 +52,16 @@ module Kiba
           end
 
           def prefix(dd)
-            prefixes.select{ |prefix| dd.match?(prefix) }
-              .sort_by{ |prefix| prefix.to_s.length }
+            prefixes.select { |prefix| dd.match?(prefix) }
+              .sort_by { |prefix| prefix.to_s.length }
               .reverse
               .first
           end
-            
+
           def eligible?(dd)
             return false if dd.blank?
-            
-            true if prefixes.any?{ |prefix| dd.match?(prefix) }
+
+            true if prefixes.any? { |prefix| dd.match?(prefix) }
           end
         end
       end

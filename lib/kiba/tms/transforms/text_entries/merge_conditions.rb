@@ -16,11 +16,11 @@ module Tms
             lookup: lookup,
             keycolumn: :conditionid,
             fieldmap: {
-              notetarget=>:text_entry,
-              datetarget=>:textdate
+              notetarget => :text_entry,
+              datetarget => :textdate
             },
             delim: Tms.delim
-            )
+          )
         end
 
         def process(row)

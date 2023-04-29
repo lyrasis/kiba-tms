@@ -7,7 +7,7 @@ module Kiba
         # Add 'no date type in datedescription'to :warn field if :datedescription is empty
         class WarnNoDateType
           include Warnable
-          
+
           def initialize
             @warning = "no date type in datedescription"
             @target = :warn
@@ -21,7 +21,7 @@ module Kiba
             add_warning(row)
             row
           end
-          
+
           private
 
           attr_reader :target, :warning

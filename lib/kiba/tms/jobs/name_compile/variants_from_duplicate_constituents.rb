@@ -21,10 +21,13 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate, using: {}, explicit_no: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
+              transform Deduplicate::Flag, on_field: :combined,
+                in_field: :duplicate, using: {}, explicit_no: false
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :duplicate
 
-              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.variants_from_duplicates"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS Constituents.variants_from_duplicates"
               transform Merge::MultiRowLookup,
                 lookup: constituents__for_compile,
                 keycolumn: :combined,
@@ -32,17 +35,21 @@ module Kiba
                 conditions: ->(origrow, mergerows) do
                   namefield = Tms::Constituents.preferred_name_field
                   thisname = origrow[namefield].downcase
-                  mergerows.reject{ |mrow| thisname == mrow[namefield].downcase }
+                  mergerows.reject { |mrow|
+                    thisname == mrow[namefield].downcase
+                  }
                 end
 
-              transform FilterRows::FieldPopulated, action: :keep, field: :mainname
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :mainname
 
               transform Rename::Fields, fieldmap: {
                 Tms::Constituents.preferred_name_field => :varname,
-                mainname: Tms::Constituents.preferred_name_field
+                :mainname => Tms::Constituents.preferred_name_field
               }
 
-              transform Tms::Transforms::NameCompile::DeriveVariantName, mode: :main, from: :varname
+              transform Tms::Transforms::NameCompile::DeriveVariantName,
+                mode: :main, from: :varname
             end
           end
         end

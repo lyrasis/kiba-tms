@@ -15,15 +15,15 @@ module Kiba
           def process(row)
             row[target] = nil
             vals = getter.call(row)
-            sources.each{ |field| row.delete(field) }
+            sources.each { |field| row.delete(field) }
             return row if vals.empty?
 
-            if vals.length == 2
-              row[target] = "#{note_prefix}#{vals.values.join(' - ')}"
+            row[target] = if vals.length == 2
+              "#{note_prefix}#{vals.values.join(" - ")}"
             elsif vals.key?(:dispbegisodate)
-              row[target] = "#{note_prefix}#{vals[:dispbegisodate]} -"
+              "#{note_prefix}#{vals[:dispbegisodate]} -"
             else
-              row[target] = "#{note_prefix}- #{vals[:dispendisodate]}"
+              "#{note_prefix}- #{vals[:dispendisodate]}"
             end
             row
           end

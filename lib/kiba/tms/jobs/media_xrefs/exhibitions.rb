@@ -16,9 +16,9 @@ module Kiba
                 source: :media_xrefs_for__exhibitions,
                 destination: :media_xrefs__exhibitions,
                 lookup: %i[
-                           media_files__id_lookup
-                           prep__exhibitions
-                          ]
+                  media_files__id_lookup
+                  prep__exhibitions
+                ]
               },
               transformer: xforms
             )

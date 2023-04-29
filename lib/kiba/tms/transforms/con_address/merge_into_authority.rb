@@ -35,7 +35,7 @@ module Kiba
           end
 
           def process(row)
-            mergers.each{ |merger| merger.process(row) }
+            mergers.each { |merger| merger.process(row) }
             row
           end
 

@@ -12,34 +12,36 @@ module Kiba
           def initialize(target:)
             @target = "#{target}note".to_sym
             @role_note_label = {
-              "handler"=>"Handling",
-              "approver"=>"Approval",
-              "requestedby"=>"#{target.capitalize} request"
+              "handler" => "Handling",
+              "approver" => "Approval",
+              "requestedby" => "#{target.capitalize} request"
             }
             @role_name_label = {
-              "handler"=>"Handled by: ",
-              "approver"=>"Approved by: ",
-              "requestedby"=>"Requested by: "
+              "handler" => "Handled by: ",
+              "approver" => "Approved by: ",
+              "requestedby" => "Requested by: "
             }
             @role_note_field = {
-              "handler"=>:handling_note,
-              "approver"=>:approval_note,
-              "requestedby"=>:request_note
+              "handler" => :handling_note,
+              "approver" => :approval_note,
+              "requestedby" => :request_note
             }
             @roles = %w[requestedby approver handler]
             @include_name_notes = Tms::ObjLocations.note_from_role_names
           end
 
           def process(row)
-            row[target] = roles.map{ |role| notes_for(role, row) }
-              .reject{ |val| val.blank? }
+            row[target] = roles.map { |role| notes_for(role, row) }
+              .reject { |val| val.blank? }
               .join("%CR%")
 
-            roles.map{ |role| ["#{role}_person", "#{role}_organization",
-                               "#{role}_note"] }
+            roles.map { |role|
+              ["#{role}_person", "#{role}_organization",
+                "#{role}_note"]
+            }
               .flatten
               .map(&:to_sym)
-              .each{ |field| row.delete(field) }
+              .each { |field| row.delete(field) }
 
             row
           end
@@ -60,10 +62,10 @@ module Kiba
           def name_notes_for(role, row)
             return [] unless include_name_notes
 
-            %w[person organization].map{ |auth| "#{role}_#{auth}".to_sym }
-              .map{ |field| row[field] }
-              .reject{ |val| val.blank? }
-              .map{ |val| "#{role_name_label[role]}#{val}" }
+            %w[person organization].map { |auth| "#{role}_#{auth}".to_sym }
+              .map { |field| row[field] }
+              .reject { |val| val.blank? }
+              .map { |val| "#{role_name_label[role]}#{val}" }
           end
 
           def role_note_for(role, row)

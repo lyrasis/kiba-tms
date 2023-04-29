@@ -56,10 +56,10 @@ module Kiba
               end
 
               if Tms::DimensionElements.used?
-              transform Merge::MultiRowLookup,
-                lookup: prep__dimension_elements,
-                keycolumn: :elementid,
-                fieldmap: {element: :element}
+                transform Merge::MultiRowLookup,
+                  lookup: prep__dimension_elements,
+                  keycolumn: :elementid,
+                  fieldmap: {element: :element}
               end
               transform Delete::Fields, fields: :elementid
 
@@ -95,7 +95,7 @@ module Kiba
 
                 vals = val.split(Tms.sgdelim)
                 dimdates = []
-                vals.length.times{ dimdates << dimdate }
+                vals.length.times { dimdates << dimdate }
                 row[:valuedate] = dimdates.join(Tms.sgdelim)
                 row
               end

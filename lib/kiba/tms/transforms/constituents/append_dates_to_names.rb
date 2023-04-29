@@ -6,7 +6,7 @@ module Kiba
       module Constituents
         class AppendDatesToNames
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
             @name = Kiba::Tms::Constituents.preferred_name_field
             @mode = Kiba::Tms::Constituents.date_append.to_type
@@ -15,7 +15,7 @@ module Kiba
             @date_suffix = Kiba::Tms::Constituents.date_append.date_suffix
             @date_getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: %i[birth_foundation_date death_dissolution_date]
-              )
+            )
           end
 
           def process(row)
@@ -27,7 +27,7 @@ module Kiba
             append_dates(row) if appendable?(row)
 
             if mode == :duplicate
-              %i[norm combined duplicate].each{ |field| row.delete(field) }
+              %i[norm combined duplicate].each { |field| row.delete(field) }
             end
 
             row
@@ -35,7 +35,8 @@ module Kiba
 
           private
 
-          attr_reader :name, :mode, :date_sep, :name_date_sep, :date_suffix, :date_getter, :datevals
+          attr_reader :name, :mode, :date_sep, :name_date_sep, :date_suffix,
+            :date_getter, :datevals
 
           def append_dates(row)
             nameval = row[name]
@@ -43,7 +44,7 @@ module Kiba
             row[name] = "#{nameval}#{date}"
             row
           end
-          
+
           def appendable?(row)
             name_appendable?(row) && type_appendable?(row) && date_appendable?(row)
           end

@@ -10,7 +10,7 @@ module Kiba
       # extend Tms::Mixins::UncontrolledNameCompileable
       module UncontrolledNameCompileable
         def self.extended(mod)
-          self.check_name_fields(mod)
+          check_name_fields(mod)
         end
 
         def is_uncontrolled_name_compileable?
@@ -32,7 +32,7 @@ module Kiba
 
           warn("Need to set up :#{meth} for #{mod}")
           mod.module_eval(
-            "setting :#{meth}, default: [], reader: true"
+            "setting :#{meth}, default: [], reader: true", __FILE__, __LINE__
           )
         end
         private_class_method :check_name_fields

@@ -25,7 +25,8 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[location_name parent_location]
-              transform FilterRows::FieldPopulated, action: :keep, field: :parent_location
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :parent_location
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[location_name parent_location],
                 target: :combined,

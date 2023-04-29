@@ -22,10 +22,14 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept, fields: :childstring
               transform Deduplicate::Table, field: :childstring
-              transform Rename::Field, from: :childstring, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :constituenttype, value: "Person"
-              transform Merge::ConstantValue, target: :termsource, value: "TMS AssocParents.for_constituents"
-              transform Cspace::NormalizeForID, source: Tms::Constituents.preferred_name_field, target: :norm
+              transform Rename::Field, from: :childstring,
+                to: Tms::Constituents.preferred_name_field
+              transform Merge::ConstantValue, target: :constituenttype,
+                value: "Person"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS AssocParents.for_constituents"
+              transform Cspace::NormalizeForID,
+                source: Tms::Constituents.preferred_name_field, target: :norm
             end
           end
         end

@@ -7,14 +7,14 @@ module Kiba
         class MoveLongFormDisplaydateRanges
           include Tms::Transforms::FullerDateSelectable
           include Tms::Transforms::ValueAppendable
-          
+
           def initialize
             @source = :displaydate
             @birth = :begindateiso
             @death = :enddateiso
             @pattern = Regexp.new('^(\d{3,4}(?:-\d{1,2}){1,2}) *- *(\d{3,4}(?:-\d{1,2}){1,2})$')
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)
@@ -23,7 +23,7 @@ module Kiba
 
             %i[birth death].each_with_index do |type, idx|
               sourceval = matches[idx + 1]
-              targetfield = self.send(type)
+              targetfield = send(type)
               targetdate = row[targetfield]
               if targetdate.blank?
                 add(row, targetfield, sourceval)
@@ -36,7 +36,7 @@ module Kiba
                 end
               end
             end
-            
+
             row[source] = nil
             row
           end
@@ -53,7 +53,7 @@ module Kiba
             note = "#{type.to_s.capitalize} date from TMS displayDate: #{val}"
             append_value(row, :datenote, note, "%CR%%CR%")
           end
-          
+
           def eligible?(dd)
             return false if dd.blank?
 

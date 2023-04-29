@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__phone_types,
@@ -26,7 +26,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
                 find: "Home",
-                replace: "home" 
+                replace: "home"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
                 find: "Cell",

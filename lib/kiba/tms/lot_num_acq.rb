@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module LotNumAcq
       extend Dry::Configurable
+
       module_function
 
       setting :acq_number_treatment,
@@ -18,10 +19,10 @@ module Kiba
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid
-                    objectid objectnumber
-                    objectvalueid],
+          objectid objectnumber
+          objectvalueid],
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           value << Tms::ObjAccession.delete_fields
           value << Tms.tms_fields
           value.flatten

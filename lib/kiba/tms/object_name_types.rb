@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjectNameTypes
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -18,7 +19,6 @@ module Kiba
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable
-
     end
   end
 end

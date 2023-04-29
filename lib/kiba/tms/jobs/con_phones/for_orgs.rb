@@ -26,7 +26,6 @@ module Kiba
               transform FilterRows::FieldPopulated, action: :keep, field: :org
               transform Delete::Fields, fields: :org
             end
-
           end
         end
       end

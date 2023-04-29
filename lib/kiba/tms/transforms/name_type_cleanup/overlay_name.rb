@@ -22,7 +22,7 @@ module Kiba
           # ```
           # @param source [Symbol] field containing corrected name
           def initialize(target:,
-                         source: :correctname)
+            source: :correctname)
             @target = target
             @source = source
           end

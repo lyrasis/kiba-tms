@@ -20,12 +20,14 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[location_name address fulllocid]
-              transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: :location_name, target: :norm
+              transform Delete::FieldsExcept,
+                fields: %i[location_name address fulllocid]
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: :location_name, target: :norm
               transform Merge::MultiRowLookup,
                 lookup: orgs__by_norm,
                 keycolumn: :norm,
-                fieldmap: { org: :name }
+                fieldmap: {org: :name}
               transform do |row|
                 org = row[:org]
                 if org.blank?

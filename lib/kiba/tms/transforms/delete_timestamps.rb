@@ -5,14 +5,13 @@ module Kiba
     module Transforms
       # Removes empty timestamps from the end of date fields
       class DeleteTimestamps
-
         def initialize(fields:)
           @fields = [fields].flatten
           @pattern = Regexp.new(' \d{2}:.*$')
         end
 
         def process(row)
-          fields.each{ |field| delete_timestamp(row, field) }
+          fields.each { |field| delete_timestamp(row, field) }
           row
         end
 

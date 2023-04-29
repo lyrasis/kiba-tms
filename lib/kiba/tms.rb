@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-#require 'active_support'
-#require 'active_support/core_ext/object'
-#require 'dry-configurable'
-#require 'kiba'
-#require 'kiba-common/destinations/csv'
-#require 'kiba-common/dsl_extensions/show_me'
-#require 'kiba-common/sources/csv'
+# require 'active_support'
+# require 'active_support/core_ext/object'
+# require 'dry-configurable'
+# require 'kiba'
+# require 'kiba-common/destinations/csv'
+# require 'kiba-common/dsl_extensions/show_me'
+# require 'kiba-common/sources/csv'
 require "kiba/extend"
 require "zeitwerk"
 
@@ -17,6 +17,7 @@ require "pry"
 module Kiba
   module Tms
     ::Tms = Kiba::Tms
+
     module_function
 
     def loader
@@ -36,7 +37,7 @@ module Kiba
         "dd_languages" => "DDLanguages",
         "email_types" => "EMailTypes",
         "ref_xrefs" => "RefXRefs",
-        "version"   => "VERSION"
+        "version" => "VERSION"
       )
       @loader.enable_reloading
       @loader.setup
@@ -59,10 +60,10 @@ module Kiba
       setting :tms_table_dir_path,
         default: __dir__,
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           if value["kiba-tms/lib"]
             base = value.split("/")
-            2.times{ base.pop }
+            2.times { base.pop }
             dir = base.join("/")
             File.join(dir, "data", "tms")
           else
@@ -83,46 +84,45 @@ module Kiba
 
     setting :table_lookup,
       default: {
-        "0"=>"NO TABLE WITH THIS ID BUT IT IS SOMETIMES USED",
-        "23"=>"Constituents",
-        "47"=>"Exhibitions",
-        "49"=>"ExhObjXrefs",
-        "50"=>"ExhVenObjXrefs",
-        "51"=>"ExhVenuesXrefs",
-        "79"=>"LoanObjXrefs",
-        "81"=>"Loans",
-        "83"=>"Locations",
-        "89"=>"ObjAccession",
-        "94"=>"ObjComponents",
-        "95"=>"Conditions",
-        "97"=>"CondLineItems",
-        "102"=>"ObjDeaccession",
-        "108"=>"Objects",
-        "116"=>"ObjInsurance",
-        "126"=>"ObjRights",
-        "143"=>"ReferenceMaster",
-        "187"=>"HistEvents",
-        "189"=>"Sites",
-        "287"=>"TermMasterThes",
-        "318"=>"MediaMaster",
-        "322"=>"MediaRenditions",
-        "345"=>"Shipments",
-        "355"=>"ShipmentSteps",
-        "631"=>"AccessionLot",
-        "632"=>"RegistrationSets",
-        "726"=>"ObjContext",
-        "790"=>"Projects",
-        "792"=>"ConservationReports"
+        "0" => "NO TABLE WITH THIS ID BUT IT IS SOMETIMES USED",
+        "23" => "Constituents",
+        "47" => "Exhibitions",
+        "49" => "ExhObjXrefs",
+        "50" => "ExhVenObjXrefs",
+        "51" => "ExhVenuesXrefs",
+        "79" => "LoanObjXrefs",
+        "81" => "Loans",
+        "83" => "Locations",
+        "89" => "ObjAccession",
+        "94" => "ObjComponents",
+        "95" => "Conditions",
+        "97" => "CondLineItems",
+        "102" => "ObjDeaccession",
+        "108" => "Objects",
+        "116" => "ObjInsurance",
+        "126" => "ObjRights",
+        "143" => "ReferenceMaster",
+        "187" => "HistEvents",
+        "189" => "Sites",
+        "287" => "TermMasterThes",
+        "318" => "MediaMaster",
+        "322" => "MediaRenditions",
+        "345" => "Shipments",
+        "355" => "ShipmentSteps",
+        "631" => "AccessionLot",
+        "632" => "RegistrationSets",
+        "726" => "ObjContext",
+        "790" => "Projects",
+        "792" => "ConservationReports"
       },
       reader: true
 
-
     # PROJECT SPECIFIC CONFIG
     setting :boolean_active_mapping,
-      default: {"0"=>"inactive", "1"=>"active"},
+      default: {"0" => "inactive", "1" => "active"},
       reader: true
     setting :cspace_profile, default: :fcart, reader: true
-    setting :boolean_yn_mapping, default: {"0"=>"n", "1"=>"y"}, reader: true
+    setting :boolean_yn_mapping, default: {"0" => "n", "1" => "y"}, reader: true
     # client-specific initial data cleaner, applied before processing
     setting :data_cleaner, default: nil, reader: true
     # TMS-internal fields to be deleted
@@ -131,7 +131,7 @@ module Kiba
     #   out final data for ingest)
     setting :final_data_cleaner, default: nil, reader: true
     setting :inverted_boolean_yn_mapping,
-      default: {"0"=>"y", "1"=>"n"},
+      default: {"0" => "y", "1" => "n"},
       reader: true
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
@@ -162,8 +162,8 @@ module Kiba
         "not entered", "part of an object", "not specified"
       ],
       reader: true,
-      constructor: proc{ |value|
-        alts = "(#{value.join('|')})"
+      constructor: proc { |value|
+        alts = "(#{value.join("|")})"
         "(\\(|\\[)?#{alts}(\\)|\\])?$"
       }
     setting :inventory_status_mapping,
@@ -179,15 +179,17 @@ module Kiba
     end
 
     Error = Module.new
-    UnconfiguredModuleError = Class.new(NameError){ include Error }
-    UnknownObjLocTempTextMappingError = Class.new(StandardError){ include Error }
-    UnknownAuthorityTypeCode = Class.new(StandardError){ include Error }
+    UnconfiguredModuleError = Class.new(NameError) { include Error }
+    UnknownObjLocTempTextMappingError = Class.new(StandardError) {
+      include Error
+    }
+    UnknownAuthorityTypeCode = Class.new(StandardError) { include Error }
 
     def configs
       Tms.constants.select do |constant|
         evaled = Tms.const_get(constant)
         evaled.is_a?(Module) && evaled.respond_to?(:config)
-      end.map{ |const| Tms.const_get(const) }
+      end.map { |const| Tms.const_get(const) }
     end
 
     def finalize_config
@@ -213,7 +215,7 @@ module Kiba
     end
 
     def checkable_tables
-      Tms.configs.select{ |config| config.respond_to?(:checkable) }
+      Tms.configs.select { |config| config.respond_to?(:checkable) }
     end
 
     def per_job_tables
@@ -235,7 +237,7 @@ module Kiba
 
     # methods to delete after development is done
     def needconfig
-      configs.reject{ |c| c.respond_to?(:used?) }
+      configs.reject { |c| c.respond_to?(:used?) }
     end
 
     # @param jobkey [Symbol]
@@ -261,7 +263,7 @@ module Kiba
       res = Kiba::Extend::Command::Run.job(jobkey)
       return false unless res
 
-      res.outrows == 0 ? false : true
+      !(res.outrows == 0)
     end
   end
 end

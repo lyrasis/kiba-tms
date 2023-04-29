@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :namedata
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :namedata
               transform Delete::Fields, fields: :namedata
             end
           end

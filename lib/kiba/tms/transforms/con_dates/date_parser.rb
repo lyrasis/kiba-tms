@@ -9,13 +9,13 @@ module Kiba
         # Add 'unparseable date value' to :warn field
         class DateParser
           include Warnable
-          
+
           def initialize
             @warning = "unparseable date value"
             @target = :warn
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: %i[birth_foundation_date death_dissolution_date]
-              )
+            )
           end
 
           # @private
@@ -23,14 +23,14 @@ module Kiba
             row[:date_parser_warnings] = nil
             row[:parsed_date_start] = nil
             row[:parsed_date_end] = nil
-            
+
             vals = getter.call(row)
             return row if vals.empty?
 
             val = vals.values.first
             begin
               parsed = Emendate.parse(val)
-            rescue StandardError
+            rescue
               add_warning(row, " - Emendate application error")
               return row
             end
@@ -40,14 +40,19 @@ module Kiba
             elsif unparseable_warnings(parsed)
               add_warning(row, " - Emendate untokenizable")
             else
-              row[:date_parser_warnings] = parsed.warnings.join("; ") unless parsed.warnings.empty?
-              row[:parsed_date_start] = parsed.dates.map(&:date_start_full).join("|")
-              row[:parsed_date_end] = parsed.dates.map(&:date_end_full).join("|")
+              unless parsed.warnings.empty?
+                row[:date_parser_warnings] =
+                  parsed.warnings.join("; ")
+              end
+              row[:parsed_date_start] =
+                parsed.dates.map(&:date_start_full).join("|")
+              row[:parsed_date_end] =
+                parsed.dates.map(&:date_end_full).join("|")
             end
 
             row
           end
-          
+
           private
 
           attr_reader :target, :warning, :getter
@@ -56,7 +61,9 @@ module Kiba
             warnings = parsed.warnings
             return false if warnings.empty?
 
-            unparseable = warnings.select{ |warn| warn.start_with?("Untokenizable ") }
+            unparseable = warnings.select { |warn|
+              warn.start_with?("Untokenizable ")
+            }
             true unless unparseable.empty?
           end
         end

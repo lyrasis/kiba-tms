@@ -7,7 +7,7 @@ module Kiba
         # Convert table filename to prep registry hash
         class RegistryHashCreator
           def self.call(table_obj)
-            self.new(table_obj).call
+            new(table_obj).call
           end
 
           def initialize(table_obj)
@@ -15,13 +15,16 @@ module Kiba
           end
 
           def call
-            creator = merge_data(Tms::Table::Prep::CreatorGetter, table, :creator)
+            creator = merge_data(Tms::Table::Prep::CreatorGetter, table,
+              :creator)
             return nil if creator.empty?
 
             basic_hash
               .merge(creator)
-              .merge(merge_data(Tms::Table::Prep::LookupField, table.filekey, :lookup_on))
-              .merge(merge_data(Tms::Table::Prep::DestinationOptions, table.filekey, :dest_special_opts))
+              .merge(merge_data(Tms::Table::Prep::LookupField, table.filekey,
+                :lookup_on))
+              .merge(merge_data(Tms::Table::Prep::DestinationOptions,
+                table.filekey, :dest_special_opts))
               .merge(merge_data(Tms::Table::Prep::Tags, table.filekey, :tags))
               .merge(get_desc(creator[:creator]))
           end
@@ -47,7 +50,7 @@ module Kiba
             result = klass.call(arg)
             return {} if result.nil?
 
-            { key => result }
+            {key => result}
           end
 
           def filepath

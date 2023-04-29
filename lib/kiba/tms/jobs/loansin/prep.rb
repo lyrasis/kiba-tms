@@ -26,7 +26,7 @@ module Kiba
                 :creditline_to_loanin
               base << :loan_obj_xrefs__creditlines
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -166,7 +166,7 @@ module Kiba
                 transform Deduplicate::GroupedFieldValues,
                   on_field: :cl_loanstatusnote,
                   grouped_fields: %i[cl_loanstatus cl_loanindividual
-                                     cl_loanstatusdate],
+                    cl_loanstatusdate],
                   delim: Tms.delim
               end
 
@@ -208,9 +208,9 @@ module Kiba
                     target: "contact_#{type}".to_sym,
                     sep: Tms.delim,
                     delete_sources: true
-                transform Deduplicate::FieldValues,
-                  fields: "contact_#{type}".to_sym,
-                  sep: Tms.delim
+                  transform Deduplicate::FieldValues,
+                    fields: "contact_#{type}".to_sym,
+                    sep: Tms.delim
                 end
               end
 

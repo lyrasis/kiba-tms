@@ -7,7 +7,7 @@ module Kiba
         # Return nil or tags for prepped table
         class Tags
           def self.call(table_key)
-            self.new(table_key).call
+            new(table_key).call
           end
 
           def initialize(table_key)
@@ -27,7 +27,7 @@ module Kiba
               .to_s
               .to_sym
           end
-          
+
           TAGS = {
             constituents: %i[con],
             con_types: %i[con con_types],

@@ -12,7 +12,7 @@ module Kiba
           include Dry::Monads::Do.for(:call)
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           def initialize(csver: Tms::Data::CsvEnum)
@@ -33,7 +33,7 @@ module Kiba
 
           def compare_fields(csv)
             result = do_compare(csv)
-          rescue StandardError => err
+          rescue => err
             Failure(Tms::Data::DeriverFailure.new(mod: mod, err: err))
           else
             Success(result)

@@ -24,7 +24,7 @@ module Kiba
           end
 
           def process(row)
-            targets.each{ |target| row[target] = nil }
+            targets.each { |target| row[target] = nil }
             preprocess(row)
             build_note(row)
             postprocess(row)

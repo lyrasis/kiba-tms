@@ -3,37 +3,37 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::MergeUncontrolledName do
-  subject(:xform){ described_class.new(**params) }
+  subject(:xform) { described_class.new(**params) }
 
   describe "#process" do
-    let(:results){ input.map{ |row| xform.process(row) } }
+    let(:results) { input.map { |row| xform.process(row) } }
     let(:lookup) do
       {
-        "janedoe"=>[{
+        "janedoe" => [{
           person: "Jane Doe",
           organization: nil,
           note: nil
         }],
-        "johndoe"=>[{
+        "johndoe" => [{
           person: "John Doe",
           organization: nil,
           note: nil
         }],
-        "vanguard"=>[{
+        "vanguard" => [{
           person: "Vanguard (artist)",
           organization: "Vanguard, Inc.",
           note: nil
         }],
-        "possibleformerownerartist"=>[{
+        "possibleformerownerartist" => [{
           person: nil,
           organization: nil,
           note: "Possible former owner: Artist"
-        }],
+        }]
       }
     end
 
     context "with single values" do
-      let(:params){ {field: :name, lookup: lookup} }
+      let(:params) { {field: :name, lookup: lookup} }
       let(:input) do
         [
           {name: "Jane.Doe"},
@@ -66,8 +66,7 @@ RSpec.describe Kiba::Tms::Transforms::MergeUncontrolledName do
           {foo: "bar",
            name_person: nil,
            name_org: nil,
-           name_note: nil
-          }
+           name_note: nil}
         ]
       end
 
@@ -77,7 +76,7 @@ RSpec.describe Kiba::Tms::Transforms::MergeUncontrolledName do
     end
 
     context "with multikey values" do
-      let(:params){ {field: :name, lookup: lookup, delim: "|"} }
+      let(:params) { {field: :name, lookup: lookup, delim: "|"} }
       let(:input) do
         [
           {name: "Jane.Doe|John.Doe|Possible former owner, Artist"},
@@ -91,7 +90,7 @@ RSpec.describe Kiba::Tms::Transforms::MergeUncontrolledName do
            name_note: "Possible former owner: Artist"},
           {name_person: "Jane Doe|Vanguard (artist)",
            name_org: "Vanguard, Inc.",
-           name_note: nil},
+           name_note: nil}
         ]
       end
 

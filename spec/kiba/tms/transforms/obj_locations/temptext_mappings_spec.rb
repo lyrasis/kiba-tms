@@ -3,8 +3,8 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::ObjLocations::TemptextMappings do
-  subject(:xform){ described_class.new }
-  let(:result){ input.map{ |row| xform.process(row) } }
+  subject(:xform) { described_class.new }
+  let(:result) { input.map { |row| xform.process(row) } }
 
   let(:input) do
     [
@@ -90,7 +90,7 @@ RSpec.describe Kiba::Tms::Transforms::ObjLocations::TemptextMappings do
        loc2: nil, loc4: nil, loc6: nil,
        currentlocationnote: nil,
        movementnote: nil,
-       inventorynote: "fixed"},
+       inventorynote: "fixed"}
     ]
   end
 
@@ -106,7 +106,7 @@ RSpec.describe Kiba::Tms::Transforms::ObjLocations::TemptextMappings do
     end
 
     it "raises error" do
-      expect{ result }.to raise_error(
+      expect { result }.to raise_error(
         Tms::UnknownObjLocTempTextMappingError,
         /nope/
       )

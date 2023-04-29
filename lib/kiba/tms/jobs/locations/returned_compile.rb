@@ -32,7 +32,7 @@ module Kiba
                 delete_field: true
               transform Delete::Fields,
                 fields: %i[usage_ct location_name storage_location_authority
-                           address term_source]
+                  address term_source]
             end
           end
         end

@@ -6,10 +6,10 @@ module Kiba
       module SurveyTypes
         module Prep
           module_function
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__survey_types,

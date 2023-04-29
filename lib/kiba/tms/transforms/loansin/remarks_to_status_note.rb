@@ -8,7 +8,8 @@ module Kiba
           def initialize
             @delim = Tms.delim
             @notedelim = Tms::Loansin.remarks_delim
-            @targets = %i[rem_loanstatus rem_loanstatusdate rem_loanstatusnote rem_loanindividual]
+            @targets = %i[rem_loanstatus rem_loanstatusdate rem_loanstatusnote
+              rem_loanindividual]
           end
 
           def process(row)
@@ -29,7 +30,7 @@ module Kiba
           attr_reader :notedelim, :delim, :targets
 
           def add_new_fields(row)
-            targets.each{ |field| row[field] = [] }
+            targets.each { |field| row[field] = [] }
           end
 
           def finalize(row)
@@ -42,15 +43,17 @@ module Kiba
 
           def process_remarks(row, remarks)
             split_remarks(remarks).each do |remark|
-              %i[rem_loanstatusdate rem_loanindividual].each{ |field| row[field] << "%NULLVALUE%" }
+              %i[rem_loanstatusdate rem_loanindividual].each { |field|
+                row[field] << "%NULLVALUE%"
+              }
               row[:rem_loanstatus] << Tms::Loansin.remarks_status
               row[:rem_loanstatusnote] << remark
             end
           end
-          
+
           def split_remarks(remarks)
             remarks.split(notedelim)
-              .reject{ |remark| remark.empty? }
+              .reject { |remark| remark.empty? }
           end
         end
       end

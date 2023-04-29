@@ -13,47 +13,47 @@ module Kiba
           def initialize(mode:, from: nil)
             @mode = mode
             @from = from
-            @authtypefield = mode == :alt ? :conauthtype : :contype
+            @authtypefield = (mode == :alt) ? :conauthtype : :contype
             @namefield = Tms::Constituents.preferred_name_field
             @relbuilder = Tms::Services::NameCompile::RoleBuilder.new
             @personbuilder = Tms::Services::Constituents::PersonFromNameParts.new
             @rows = []
           end
-          
+
           # @private
           def process(row)
             @authtype = row[authtypefield]
-            
+
             row[namefield] = row[:conname] if mode == :alt
             row[:contype] = authtype
             row[:relation_type] = "variant term"
             row[:variant_term] = variant_term(row)
             row[:variant_qualifier] = relbuilder.call(row)
-            deletefields.each{ |field| row.delete(field) }
+            deletefields.each { |field| row.delete(field) }
             rows << row
             nil
           end
-          
+
           private
 
           attr_reader :mode, :from, :authtypefield, :namefield, :relbuilder, :personbuilder,
             :authtype, :rows
 
           def deletefields
-            if authtype == "Person"
-              todelete = Tms::NameCompile.person_nil
+            todelete = if authtype == "Person"
+              Tms::NameCompile.person_nil
             elsif authtype == "Organization"
-              todelete = Tms::NameCompile.org_nil
+              Tms::NameCompile.org_nil
             else
-              todelete = []
+              []
             end
-            
+
             todelete << Tms::NameCompile.derived_nil
             todelete << Tms::NameCompile.alt_nil if mode == :alt
             todelete.flatten.uniq
           end
-          
-         def variant_term(row)
+
+          def variant_term(row)
             if mode == :main && authtype == "Organization" && from == :nameparts
               personbuilder.call(row)
             elsif from

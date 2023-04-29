@@ -24,7 +24,8 @@ module Kiba
               treatment = Tms::NameCompile.source_treatment[job]
 
               transform Copy::Field, from: :altname, to: :altconname
-              transform Tms::Transforms::NameCompile::AddRelatedAltNameNote, target: treatment
+              transform Tms::Transforms::NameCompile::AddRelatedAltNameNote,
+                target: treatment
             end
           end
         end

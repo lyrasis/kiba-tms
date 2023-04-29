@@ -21,9 +21,9 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[description tablename
-                           desc_occs occs_with_remarks occs_with_begindate
-                           occs_with_enddate
-                           example_rec_nums example_values]
+                  desc_occs occs_with_remarks occs_with_begindate
+                  occs_with_enddate
+                  example_rec_nums example_values]
             end
           end
         end

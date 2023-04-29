@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ReferenceMaster
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ThesXrefs
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -25,7 +26,6 @@ module Kiba
       # pass in client-specific transform classes to merge thes_xrefs rows into
       #   target tables
       setting :for_loans_merge, default: nil, reader: true
-
     end
   end
 end

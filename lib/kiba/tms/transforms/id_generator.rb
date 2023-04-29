@@ -8,9 +8,9 @@ module Kiba
         # @param omit_suffix_if_single [Boolean] if true and there is only one
         #   row with a given id source value, no suffix is added to id_target
         #   value
-        def initialize(prefix: "", id_source:, id_target:, sort_on: nil,
-                       sort_type: :date, separator: ".", delete_source: true,
-                       omit_suffix_if_single: true, padding: 3)
+        def initialize(id_source:, id_target:, prefix: "", sort_on: nil,
+          sort_type: :date, separator: ".", delete_source: true,
+          omit_suffix_if_single: true, padding: 3)
           @prefix = prefix
           @id_source = id_source
           @id_target = id_target
@@ -33,9 +33,9 @@ module Kiba
         # @private
         def close
           @data.values
-            .map{ |rows| generate_ids(rows) }
-            .map{ |rows| delete_sources(rows) }
-            .each{ |rows| rows.each{ |row| yield row } }
+            .map { |rows| generate_ids(rows) }
+            .map { |rows| delete_sources(rows) }
+            .each { |rows| rows.each { |row| yield row } }
         end
 
         private
@@ -47,20 +47,26 @@ module Kiba
           return rows unless delete_source
           return rows unless source_deleteable?
 
-          rows.map{ |row| row.delete(id_source); row }
+          rows.map { |row|
+            row.delete(id_source)
+            row
+          }
         end
 
         def generate_id(row, idx)
           num = idx + 1
           itemid = row[id_source]
-          id = "#{prefix}#{itemid}#{separator}#{num.to_s.rjust(padding, '0')}"
+          id = "#{prefix}#{itemid}#{separator}#{num.to_s.rjust(padding, "0")}"
           row[id_target] = id
           row
         end
 
         def generate_ids(rows)
           if rows.length == 1 && omit_suffix_if_single
-            rows.map{ |row| row[id_target] = "#{prefix}#{row[id_source]}"; row }
+            rows.map { |row|
+              row[id_target] = "#{prefix}#{row[id_source]}"
+              row
+            }
           elsif rows.length == 1
             [generate_id(rows[0], 0)]
           else
@@ -70,16 +76,18 @@ module Kiba
 
         def generate_multirow_ids(rows)
           if sort_on
-            sorted_rows(rows).map.with_index{ |row, idx| generate_id(row, idx) }
+            sorted_rows(rows).map.with_index { |row, idx|
+              generate_id(row, idx)
+            }
           else
-            rows.map.with_index{ |row, idx| generate_id(row, idx) }
+            rows.map.with_index { |row, idx| generate_id(row, idx) }
           end
         end
 
         def sorted_rows(rows)
           case sort_type
           when :date
-            rows.sort_by{ |row| sortable_date_from_row(row, sort_on) }
+            rows.sort_by { |row| sortable_date_from_row(row, sort_on) }
           when :i
             rows.sort_by do |row|
               val = row[sort_on]

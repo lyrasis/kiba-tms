@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module TermMaster
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :tms__term_master_thes, reader: true

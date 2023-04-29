@@ -19,7 +19,7 @@ module Kiba
               field: field,
               value: table
             unless xforms.empty?
-              xforms.each{ |xform| transform xform }
+              xforms.each { |xform| transform xform }
             end
             transform Delete::EmptyFields
           end
@@ -30,7 +30,7 @@ module Kiba
             transform Merge::MultiRowLookup,
               lookup: send(config[:sourcejob]),
               keycolumn: :recordid,
-              fieldmap: {config[:numberfield]=>config[:numberfield]}
+              fieldmap: {config[:numberfield] => config[:numberfield]}
           end
         end
       end

@@ -35,7 +35,7 @@ module Kiba
             base = []
             base << :obj_context__periods if Tms::ObjContext.used?
             base << :prep__obj_dates if Tms::ObjDates.used?
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -56,8 +56,8 @@ module Kiba
                   lookup: obj_context__periods,
                   keycolumn: :objectid,
                   fieldmap: Tms::ObjContext.date_or_chronology_fields
-                  .map{ |field| [field, field] }
-                  .to_h
+                    .map { |field| [field, field] }
+                    .to_h
               end
 
               if lookups.any?(:prep__obj_dates)

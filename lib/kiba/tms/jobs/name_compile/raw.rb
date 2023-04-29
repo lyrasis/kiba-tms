@@ -20,13 +20,13 @@ module Kiba
           def sources
             base = Tms::NameCompile.sources
             unless Tms::ConAltNames.used?
-              base.reject!{ |src| src.to_s["__from_can"]  }
+              base.reject! { |src| src.to_s["__from_can"] }
             end
             unless Tms::AssocParents.used? &&
                 Tms::AssocParents.target_tables.any?("Constituents")
               base.delete(:name_compile__from_assoc_parents_for_con)
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -38,7 +38,7 @@ module Kiba
                 to: :name
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid contype name relation_type
-                            termsource],
+                  termsource],
                 target: :fingerprint,
                 sep: " ",
                 delete_sources: false

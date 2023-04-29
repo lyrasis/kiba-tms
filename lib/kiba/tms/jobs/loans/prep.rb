@@ -92,7 +92,7 @@ module Kiba
               transform Delete::Fields, fields: :loanstatusid
 
               indfields = %i[indemnityfromlender indemnityfrompreviousvenue
-                             indemnityatvenue indemnityreturn]
+                indemnityatvenue indemnityreturn]
               if Tms::IndemnityResponsibilities.used?
                 indfields.each do |field|
                   next if config.omitted_fields.any?(field)
@@ -107,7 +107,7 @@ module Kiba
               end
 
               insfields = %i[insurancefromlender insurancefrompreviousvenue
-                             insuranceatvenue insurancereturn]
+                insuranceatvenue insurancereturn]
               if Tms::InsuranceResponsibilities.used
                 insfields.each do |field|
                   next if config.omitted_fields.any?(field)
@@ -141,7 +141,7 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :loanin,
                 target: :loantype,
-                mapping: {"1"=>"loan in", "0"=>"loan out"}
+                mapping: {"1" => "loan in", "0" => "loan out"}
 
               if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
                 if Tms::LoanObjXrefs.conditions_record == :loan

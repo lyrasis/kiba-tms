@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module DimensionMethods
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -14,7 +15,7 @@ module Kiba
       setting :type_field, default: :method, reader: true
       setting :used_in,
         default: [
-          "DimItemElemXrefs.methodid",
+          "DimItemElemXrefs.methodid"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

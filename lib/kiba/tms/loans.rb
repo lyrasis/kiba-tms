@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module Loans
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[sortnumber mnemonic isforeignlender hasspecialrequirements],
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           value << :primaryconxrefid if con_link_field == :primaryconxrefid
         }
       extend Tms::Mixins::Tableable
@@ -28,15 +29,15 @@ module Kiba
       #   merge in all names, not just a primary name
       setting :con_link_field, default: :primaryconxrefid, reader: true
 
-       setting :record_num_merge_config,
-         default: {
-           sourcejob: :tms__loans,
-           numberfield: :loannumber
-       }, reader: true
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :tms__loans,
+          numberfield: :loannumber
+        }, reader: true
 
       setting :configurable,
         default: {
-          con_link_field: Proc.new{
+          con_link_field: proc {
             Tms::Services::Loans::ConLinkFieldDeriver.call
           }
         },

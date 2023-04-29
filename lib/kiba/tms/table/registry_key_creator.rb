@@ -6,7 +6,7 @@ module Kiba
       # Convert table filename to registry hash key
       class RegistryKeyCreator
         def self.call(tablename)
-          self.new(tablename).call
+          new(tablename).call
         end
 
         def initialize(tablename)
@@ -18,8 +18,8 @@ module Kiba
             .sub(/X[Rr]ef/, "_xref")
             .sub("EMail", "Email")
             .sub(/^DD/, "Dd")
-            .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-            .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+            .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+            .gsub(/([a-z\d])([A-Z])/, '\1_\2')
             .tr("-", "_")
             .downcase
             .to_sym

@@ -13,11 +13,11 @@ module Kiba
 
           # @private
           def process(row)
-            combiners.each{ |combiner| combiner.process(row) }
+            combiners.each { |combiner| combiner.process(row) }
             clean_up_variants(row)
             row
           end
-          
+
           private
 
           attr_reader :type, :prefixes, :combiners
@@ -30,10 +30,10 @@ module Kiba
             return unless type == :person
             return if Tms::Constituents.include_flipped_as_variant
 
-            fields.map{ |field| "var_#{field}".to_sym}
-              .each{ |field| row.delete(field) }
+            fields.map { |field| "var_#{field}".to_sym }
+              .each { |field| row.delete(field) }
           end
-          
+
           def fields
             case type
             when :person
@@ -59,8 +59,11 @@ module Kiba
 
           def get_prefixes(prefixes)
             return prefixes if prefixes
-            return %w[pref alt] if type == :person && Tms::Constituents.include_flipped_as_variant == false
-            
+            if type == :person && Tms::Constituents.include_flipped_as_variant == false
+              return %w[pref
+                alt]
+            end
+
             %w[pref var alt]
           end
 
@@ -69,7 +72,9 @@ module Kiba
           end
 
           def prefixed(field)
-            prefixes.map{ |prefix| "#{prefix}_#{field}".delete_prefix("_").to_sym }
+            prefixes.map { |prefix|
+              "#{prefix}_#{field}".delete_prefix("_").to_sym
+            }
           end
         end
       end

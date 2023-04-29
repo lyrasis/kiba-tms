@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module Orgs
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :name_compile__orgs, reader: true
@@ -11,7 +12,7 @@ module Kiba
 
       setting :historynote_sources,
         default: %i[biography remarks text_entry datenote
-                    address_namenote email_web_namenote phone_fax_namenote],
+          address_namenote email_web_namenote phone_fax_namenote],
         reader: true
       setting :group_sources,
         default: [:culturegroup],

@@ -10,7 +10,7 @@ module Kiba
             @prefix = "active"
             @target = :datenote
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)

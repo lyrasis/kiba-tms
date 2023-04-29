@@ -29,7 +29,7 @@ module Kiba
             if Tms::ObjAccession.processing_approaches.any?(:linkedset)
               base << :linked_set_acq__prep
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -46,18 +46,18 @@ module Kiba
               #   nonexistent linkedlot lookup table
 
               if lookups.any?(:linked_set_acq__prep)
-              transform Merge::MultiRowLookup,
-                lookup: Tms.get_lookup(
-                  jobkey: :tms__registration_sets,
-                  column: :lotid
+                transform Merge::MultiRowLookup,
+                  lookup: Tms.get_lookup(
+                    jobkey: :tms__registration_sets,
+                    column: :lotid
                   ),
-                keycolumn: :id,
-                fieldmap: {setid: :registrationsetid}
-              transform Merge::MultiRowLookup,
-                lookup: linked_set_acq__prep,
-                keycolumn: :setid,
-                fieldmap: {item1_id_set: :acquisitionreferencenumber}
-              transform Delete::Fields, fields: :setid
+                  keycolumn: :id,
+                  fieldmap: {setid: :registrationsetid}
+                transform Merge::MultiRowLookup,
+                  lookup: linked_set_acq__prep,
+                  keycolumn: :setid,
+                  fieldmap: {item1_id_set: :acquisitionreferencenumber}
+                transform Delete::Fields, fields: :setid
               end
 
               transform CombineValues::FromFieldsWithDelimiter,

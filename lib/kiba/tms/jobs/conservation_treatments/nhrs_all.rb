@@ -21,9 +21,9 @@ module Kiba
 
           def sources
             base = %i[
-                      conservation_treatments__nhrs_cond_line_items
-                     ]
-            base.select{ |key| Tms.job_output?(key) }
+              conservation_treatments__nhrs_cond_line_items
+            ]
+            base.select { |key| Tms.job_output?(key) }
           end
 
           def xforms

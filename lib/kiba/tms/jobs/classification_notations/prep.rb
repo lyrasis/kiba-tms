@@ -6,7 +6,7 @@ module Kiba
       module ClassificationNotations
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -21,7 +21,8 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               if Tms::ClassificationNotations.omitting_fields?
-                transform Delete::Fields, fields: Tms::ClassificationNotations.omitted_fields
+                transform Delete::Fields,
+                  fields: Tms::ClassificationNotations.omitted_fields
               end
             end
           end

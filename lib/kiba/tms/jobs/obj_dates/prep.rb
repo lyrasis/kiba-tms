@@ -21,14 +21,13 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                      objects__numbers_cleaned
-                     ]
-            base
+            %i[
+              objects__numbers_cleaned
+            ]
           end
 
           def xforms
-            bind =  binding
+            bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
@@ -56,7 +55,7 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[datebegsearch dateendsearch daybegsearch dayendsearch
-                           monthbegsearch monthendsearch dateeffectiveisodate],
+                  monthbegsearch monthendsearch dateeffectiveisodate],
                 find: "^0$",
                 replace: ""
 

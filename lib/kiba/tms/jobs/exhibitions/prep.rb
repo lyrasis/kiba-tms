@@ -32,7 +32,7 @@ module Kiba
             if Tms::ExhVenuesXrefs.used?
               base << :prep__exh_venues_xrefs
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

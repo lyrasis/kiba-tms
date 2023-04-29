@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjLocations
       extend Dry::Configurable
+
       module_function
 
       # Because they are conceptually about extracting location authority terms,
@@ -53,7 +54,7 @@ module Kiba
       setting :fingerprint_fields,
         default: [],
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           value << content_fields
           value.flatten!
           unless hier_lvl_lookup.empty?
@@ -71,7 +72,7 @@ module Kiba
       setting :full_fingerprint_fields,
         default: [],
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           value = [:fingerprint]
           value + %i[prevfp nextfp schedfp]
         }
@@ -95,7 +96,7 @@ module Kiba
       # client-specific transform to select only rows that should be treated as
       #   movement LMIs
       setting :movement_selector, default: nil, reader: true
-            # Whether or not to create inventorynote and/or movementnote field
+      # Whether or not to create inventorynote and/or movementnote field
       #   values with labels appended to names in these fields. NOTE: the
       #   FIRST PERSON name from these fields is set as inventorycontact or
       #   movmementcontact, depending on how the row is treated. If there is
@@ -109,7 +110,7 @@ module Kiba
       # Settings related to extracting Location authority terms
       setting :adds_sublocations,
         reader: true,
-        constructor: ->(value){
+        constructor: ->(value) {
           return false unless temptext_mapping_done
 
           if fulllocid_fields.empty?
@@ -128,13 +129,13 @@ module Kiba
       #   added to look them up)
       setting :fulllocid_fields,
         default: %i[loclevel searchcontainer shipmentnumber cratenumber
-                    sublevel],
+          sublevel],
         reader: true
       setting :fulllocid_fields_hier,
         reader: true,
-        constructor: proc{
+        constructor: proc {
           lkup = hier_lvl_lookup
-          fulllocid_fields.map{ |field| lkup[field] }
+          fulllocid_fields.map { |field| lkup[field] }
         }
       setting :searchcontainer_lvl,
         default: :loc8,
@@ -167,7 +168,7 @@ module Kiba
           sublevel: sublevel_lvl,
           shipmentnumber: shipmentnumber_lvl,
           cratenumber: cratenumber_lvl
-        }.select{ |key, _v| fulllocid_fields.any?(key) }
+        }.select { |key, _v| fulllocid_fields.any?(key) }
       end
     end
   end

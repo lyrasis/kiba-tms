@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :reject, field: :keeping, value: "y"
+              transform FilterRows::FieldEqualTo, action: :reject,
+                field: :keeping, value: "y"
             end
           end
         end

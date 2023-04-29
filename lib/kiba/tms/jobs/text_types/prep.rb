@@ -11,7 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__text_types,
-                destination: :prep__text_types,
+                destination: :prep__text_types
               },
               transformer: config.xforms(binding)
             )

@@ -5,7 +5,7 @@ module Kiba
     module Utils
       class InitialConfigDeriver
         def self.call
-          self.new.call
+          new.call
         end
 
         def initialize
@@ -14,7 +14,7 @@ module Kiba
 
         def call
           starttime = Time.now
-          @configs = to_configure.map{ |const|
+          @configs = to_configure.map { |const|
             Tms::Services::InitialConfigDeriver.call(mod: const)
           }
           elapsedtime = (Time.now - starttime) / 60
@@ -35,8 +35,8 @@ module Kiba
             evaled = Kiba::Tms.const_get(constant)
             evaled.is_a?(Module) && evaled.respond_to?(:used?)
           end
-          constants.map{ |const| Kiba::Tms.const_get(const) }
-            .sort_by{ |mod| mod.to_s }
+          constants.map { |const| Kiba::Tms.const_get(const) }
+            .sort_by { |mod| mod.to_s }
         end
 
         def all_errors

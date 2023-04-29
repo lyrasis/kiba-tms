@@ -19,9 +19,9 @@ module Kiba
 
           def sources
             %i[
-               loansin__rel_obj
-               loansout__rel_obj
-              ].select{ |job| Tms.job_output?(job) }
+              loansin__rel_obj
+              loansout__rel_obj
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

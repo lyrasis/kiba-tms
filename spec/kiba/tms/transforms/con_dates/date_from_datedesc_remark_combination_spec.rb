@@ -3,11 +3,11 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::ConDates::DateFromDatedescRemarkCombination do
-  subject(:xform){ described_class.new }
+  subject(:xform) { described_class.new }
 
   describe "#process" do
-    let(:results){ rows.map{ |row| xform.process(row) } }
-    
+    let(:results) { rows.map { |row| xform.process(row) } }
+
     let(:rows) do
       [
         {datedescription: "birth", remarks: "born 1939", date: nil}

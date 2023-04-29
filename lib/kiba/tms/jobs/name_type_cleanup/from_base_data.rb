@@ -25,9 +25,9 @@ module Kiba
                 value: "_main term"
               transform Delete::Fields,
                 fields: %i[
-                           sort relation_type variant_term variant_qualifier
-                           related_term related_role note_text
-                          ]
+                  sort relation_type variant_term variant_qualifier
+                  related_term related_role note_text
+                ]
             end
           end
         end

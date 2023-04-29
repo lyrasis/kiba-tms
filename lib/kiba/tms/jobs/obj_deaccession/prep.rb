@@ -32,15 +32,15 @@ module Kiba
 
           def lookups
             base = %i[
-                      names__by_constituentid
-                      objects__number_lookup
-                     ]
+              names__by_constituentid
+              objects__number_lookup
+            ]
             base << :prep__disposition_methods if Tms::DispositionMethods.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
-            bind =  binding
+            bind = binding
 
             Kiba.job_segment do
               job = bind.receiver

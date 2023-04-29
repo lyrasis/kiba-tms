@@ -9,11 +9,11 @@ module Kiba
 
           def desc
             <<~DESC
-            Intermediate file for review and generating reports
+              Intermediate file for review and generating reports
 
-            - Initial compiled terms with duplicate terms flagged according to
-              :deduplicate_categories config
-            - :sort field added (contype + norm + relation type
+              - Initial compiled terms with duplicate terms flagged according to
+                :deduplicate_categories config
+              - :sort field added (contype + norm + relation type
             DESC
           end
 
@@ -30,8 +30,8 @@ module Kiba
 
           def lookups
             base = %i[
-                      name_compile__main_duplicates
-                     ]
+              name_compile__main_duplicates
+            ]
             if lookup_eligible?(:variant)
               base << :name_compile__variant_duplicates
             end
@@ -99,7 +99,8 @@ module Kiba
                 target: :sort,
                 sep: " ",
                 delete_sources: false
-              transform Delete::Fields, fields: %i[fingerprint contype_norm norm]
+              transform Delete::Fields,
+                fields: %i[fingerprint contype_norm norm]
             end
           end
         end

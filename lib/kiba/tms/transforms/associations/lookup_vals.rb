@@ -9,9 +9,8 @@ module Kiba
           include Kiba::Extend::Transforms::SingleWarnable
 
           def initialize(con_lookup: nil,
-                         obj_lookup: nil,
-                         tablefield: :tablename
-                        )
+            obj_lookup: nil,
+            tablefield: :tablename)
             @con_lookup = con_lookup
             @obj_lookup = obj_lookup
             @tablefield = tablefield

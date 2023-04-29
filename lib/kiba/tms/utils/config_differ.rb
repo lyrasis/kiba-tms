@@ -8,7 +8,7 @@ module Kiba
         include Dry::Monads[:result]
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         # @param results [Tms::Data::CompiledResult]
@@ -33,8 +33,8 @@ module Kiba
           results.successes
             .map(&:value!)
             .each(&:diff)
-            .reject{ |result| result.status == :unchanged }
-            .map{ |result| Success(result) }
+            .reject { |result| result.status == :unchanged }
+            .map { |result| Success(result) }
         end
       end
     end

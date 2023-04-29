@@ -28,7 +28,6 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
-
               if config.row_treatment == :separate
                 transform Copy::Field,
                   from: :objectnumber,

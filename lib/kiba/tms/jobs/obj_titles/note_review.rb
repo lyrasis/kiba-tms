@@ -20,7 +20,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :titlenote
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :titlenote
               transform Delete::FieldsExcept, fields: %i[objectid titlenote]
               transform Merge::MultiRowLookup,
                 lookup: objects__numbers_cleaned,

@@ -19,10 +19,10 @@ module Kiba
 
           def sources
             base = %i[
-                      names__from_constituents
-                      names__from_constituents_orgs_from_persons
-                      names__from_constituents_persons_from_orgs
-                     ]
+              names__from_constituents
+              names__from_constituents_orgs_from_persons
+              names__from_constituents_persons_from_orgs
+            ]
             base << :names__from_loans if Tms::Loans.used?
             base << :names__from_obj_accession if Tms::ObjAccession.used?
             base << :names__from_obj_locations if Tms::ObjLocations.used?
@@ -46,8 +46,10 @@ module Kiba
                 override_app_delim_check: false
               transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper,
                 explicit_no: false
-              transform Append::NilFields, fields: Tms::Names.compilation.multi_source_normalizer.get_fields
-              transform Append::NilFields, fields: %i[migration_action approx_normalized]
+              transform Append::NilFields,
+                fields: Tms::Names.compilation.multi_source_normalizer.get_fields
+              transform Append::NilFields,
+                fields: %i[migration_action approx_normalized]
             end
           end
         end

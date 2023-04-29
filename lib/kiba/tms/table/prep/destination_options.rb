@@ -7,7 +7,7 @@ module Kiba
         # Return nil or dest_special_opts hash for prepped table
         class DestinationOptions
           def self.call(table_key)
-            self.new(table_key).call
+            new(table_key).call
           end
 
           def initialize(table_key)
@@ -29,16 +29,16 @@ module Kiba
                 [:table, :recordid, Tms::Classifications.fields].flatten
               },
               constituents: {
-                initial_headers: Proc.new{ Tms::Constituents.initial_headers }
+                initial_headers: proc { Tms::Constituents.initial_headers }
               },
               con_alt_names: {
                 initial_headers:
                 %i[
-                   conname altname altconname
-                   conauthtype altauthtype typematch
-                   altnametype position
-                   mainconid altnameid altnameconid
-                  ]
+                  conname altname altconname
+                  conauthtype altauthtype typematch
+                  altnametype position
+                  mainconid altnameid altnameconid
+                ]
               },
               con_dates: {
                 initial_headers:
@@ -51,7 +51,7 @@ module Kiba
               exh_ven_obj_xrefs: {
                 initial_headers:
                 %i[exhibitionnumber venue objectnumber loannumber insindemresp
-                   approved displayed]
+                  approved displayed]
               },
               loan_obj_xrefs: {
                 initial_headers:
@@ -60,10 +60,10 @@ module Kiba
               media_files: {
                 initial_headers:
                 %i[path filename rend_renditionnumber filesize memorysize
-                   rend_mediatype]
+                  rend_mediatype]
               },
               obj_incoming: {
-                initial_headers: Proc.new{ Tms::ObjIncoming.fields }
+                initial_headers: proc { Tms::ObjIncoming.fields }
               },
               obj_locations: {
                 initial_headers:
@@ -71,7 +71,8 @@ module Kiba
               },
               terms: {
                 initial_headers: %i[termid prefterm termtype term thesaurus_name
-                                    termsource sourcetermid] }
+                  termsource sourcetermid]
+              }
             }
           end
         end

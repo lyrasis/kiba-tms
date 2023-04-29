@@ -13,8 +13,8 @@ module Kiba
                 source: :tms__status_flags,
                 destination: :prep__status_flags,
                 lookup: %i[
-                           prep__flag_labels
-                           ]
+                  prep__flag_labels
+                ]
               },
               transformer: xforms
             )
@@ -22,7 +22,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :onoff, value: "1"
+              transform FilterRows::FieldEqualTo, action: :keep, field: :onoff,
+                value: "1"
               transform Delete::Fields, fields: :onoff
 
               transform Tms::Transforms::DeleteTmsFields

@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::Fields, fields: %i[datasource warn datedescription date remarks]
+              transform Delete::Fields,
+                fields: %i[datasource warn datedescription date remarks]
             end
           end
         end

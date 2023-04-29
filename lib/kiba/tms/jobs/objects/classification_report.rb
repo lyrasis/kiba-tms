@@ -39,7 +39,7 @@ module Kiba
 
               transform Delete::FieldsExcept,
                 fields: %i[objectid objectnumber
-                           title objectname]
+                  title objectname]
 
               transform Merge::MultiRowLookup,
                 keycolumn: :objectid,

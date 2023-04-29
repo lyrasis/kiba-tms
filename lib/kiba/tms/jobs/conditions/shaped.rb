@@ -39,7 +39,8 @@ module Kiba
                 if condition.blank?
                   row[:primary_conditiondate] = nil
                 else
-                  row[:primary_conditiondate] = row[:conditioncheckassessmentdate]
+                  row[:primary_conditiondate] =
+                    row[:conditioncheckassessmentdate]
                 end
                 row
               end

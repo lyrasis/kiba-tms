@@ -22,10 +22,11 @@ module Kiba
             Kiba.job_segment do
               @alphasorter = Tms::Services::Constituents::PersonNameAlphasortConstructor.new
               @displaynamer = Tms::Services::Constituents::PersonDisplaynameConstructor.new
-              @fields = %i[constituenttype lastname firstname nametitle middlename suffix salutation nationality culturegroup]
-              
+              @fields = %i[constituenttype lastname firstname nametitle
+                middlename suffix salutation nationality culturegroup]
+
               transform Delete::FieldsExcept, fields: @fields
-              
+
               transform CombineValues::FromFieldsWithDelimiter, sources: @fields, target: :combined,
                 sep: " - ", delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
@@ -40,10 +41,13 @@ module Kiba
                 row[:displayname] = @displaynamer.call(row)
                 row
               end
-              
-              transform Merge::ConstantValue, target: :constituenttype, value: "Person"
-              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.orgs_with_person_names"
-              transform Cspace::NormalizeForID, source: Tms::Constituents.preferred_name_field, target: :norm
+
+              transform Merge::ConstantValue, target: :constituenttype,
+                value: "Person"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS Constituents.orgs_with_person_names"
+              transform Cspace::NormalizeForID,
+                source: Tms::Constituents.preferred_name_field, target: :norm
             end
           end
         end

@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_context,
-                destination: :prep__obj_context,
+                destination: :prep__obj_context
               },
               transformer: xforms
             )
@@ -38,7 +38,7 @@ module Kiba
               transform Tms.data_cleaner if Tms.data_cleaner
 
               unless config.field_cleaners.empty?
-                config.field_cleaners.each{ |cleaner| transform cleaner }
+                config.field_cleaners.each { |cleaner| transform cleaner }
               end
             end
           end

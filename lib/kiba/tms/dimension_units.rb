@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module DimensionUnits
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[unittypeid unitlabelatend isfractional
-                    basedenominator decimalplaces unitcutoff unitspersuperunit
-                    unitlabel superunitlabel issuperunit system],
+          basedenominator decimalplaces unitcutoff unitspersuperunit
+          unitlabel superunitlabel issuperunit system],
         reader: true
       extend Tms::Mixins::Tableable
 
@@ -26,10 +27,10 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          "Inches"=>"inches",
-          "Centimeters"=>"centimeters",
-          "Pounds"=>"pounds",
-          "Kilograms"=>"kilograms"
+          "Inches" => "inches",
+          "Centimeters" => "centimeters",
+          "Pounds" => "pounds",
+          "Kilograms" => "kilograms"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module TextEntries
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -14,7 +15,6 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       extend Tms::Mixins::MultiTableMergeable
-
 
       # pass in client-specific transform classes to prepare text_entry rows for
       #   merging
@@ -42,7 +42,6 @@ module Kiba
       setting :for_shipments_prepper, default: nil, reader: true
       setting :for_shipment_steps_prepper, default: nil, reader: true
       setting :for_term_master_thes_prepper, default: nil, reader: true
-
 
       # pass in client-specific transform classes to merge text_entry rows into
       #   target tables

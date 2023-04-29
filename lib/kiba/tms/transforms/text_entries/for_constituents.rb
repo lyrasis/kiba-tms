@@ -15,7 +15,7 @@ module Kiba
             final = [label_and_note, author(row)].compact.join(" --")
             row[target] = final
             %i[purpose textdate textentry remarks texttype org_author
-               person_author].each do |field|
+              person_author].each do |field|
               next unless row.key?(field)
 
               row.delete(field)
@@ -30,13 +30,12 @@ module Kiba
 
           def author(row)
             vals = [row.fetch(:person_author, nil), row.fetch(:org_author, nil)]
-              .reject{ |val| val.blank? }
+              .reject { |val| val.blank? }
 
             return nil if vals.empty?
 
             vals.first
           end
-
 
           def date_the_label(row)
             label = purpose_type_for_label(row)
@@ -64,12 +63,12 @@ module Kiba
             val = [entry(row), remarks(row)].compact
             return nil if val.empty?
 
-            val.length == 1 ? val.first : val.join("%CR%%CR%REMARKS ON NOTE: ")
+            (val.length == 1) ? val.first : val.join("%CR%%CR%REMARKS ON NOTE: ")
           end
 
           def purpose_type_for_label(row)
             val = [row.fetch(:texttype, ""), row.fetch(:purpose, "")]
-              .reject{ |val| val.blank? }
+              .reject { |val| val.blank? }
               .join("/")
             return nil if val.blank?
 

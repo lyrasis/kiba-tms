@@ -56,12 +56,12 @@ module Kiba
               end
               transform Delete::Fields, fields: :relationshipid
 
-              conlkup = ->(config){
+              conlkup = ->(config) {
                 return nil unless config.target_tables.any?("Constituents")
 
                 names__by_constituentid
               }
-              objlkup = ->(config){
+              objlkup = ->(config) {
                 return nil unless config.target_tables.any?("Objects")
 
                 objects__number_lookup

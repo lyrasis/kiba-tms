@@ -18,7 +18,6 @@ class Config < Thor
     )
   end
 
-
   desc "single_init", "Print initial config for given module to STDOUT"
   def single_init(mod)
     modconst = Tms.const_get(mod)

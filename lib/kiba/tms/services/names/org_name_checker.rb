@@ -14,7 +14,7 @@ module Kiba
             val = row[field]
             return false if val.blank?
 
-            true if patterns.any?{ |pattern| val.downcase.match?(pattern) }
+            true if patterns.any? { |pattern| val.downcase.match?(pattern) }
           end
 
           private
@@ -43,7 +43,7 @@ module Kiba
               "service",
               "studio",
               "university"
-            ].map{ |pattern| Regexp.new(pattern) }
+            ].map { |pattern| Regexp.new(pattern) }
           end
         end
       end

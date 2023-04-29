@@ -41,7 +41,7 @@ module Kiba
                 row
               end
               %i[school sortname orig_norm nonprefnorm prefnormorig
-                 nonprefnormorig namemergenorm origname].each do |field|
+                nonprefnormorig namemergenorm origname].each do |field|
                 transform do |row|
                   next row if row.key?(field)
 

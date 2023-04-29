@@ -5,6 +5,7 @@ module Kiba
     module Jobs
       module ForTable
         extend Tms::Mixins::ForTable
+
         module_function
 
         def job(source:, dest:, targettable:, field: :tablename, xforms: [])
@@ -16,7 +17,8 @@ module Kiba
             transformer: for_table_xforms(
               table: targettable,
               field: field,
-              xforms: xforms)
+              xforms: xforms
+            )
           )
         end
       end

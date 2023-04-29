@@ -34,7 +34,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: names__by_constituentid,
                 keycolumn: :constituentid,
-                fieldmap: { matches_constituent: :constituentid }
+                fieldmap: {matches_constituent: :constituentid}
               transform Tms::Transforms::ConAddress::AddRetentionFlag
             end
           end

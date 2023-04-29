@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require "pp"
-
 module Kiba
   module Tms
     module Utils
       class TableMergeStatusCreator
         def self.call
-          self.new.call
+          new.call
         end
 
         def initialize
@@ -20,7 +18,7 @@ module Kiba
           target_tables.each do |target|
             val[target] = source_tables(target)
           end
-          puts to_s
+          puts self
         end
 
         private
@@ -29,16 +27,18 @@ module Kiba
 
         def source_tables(target)
           Tms.for_merge_into(target)
-            .map{ |src| [
+            .map { |src|
+            [
               src.to_s.delete_prefix("Kiba::Tms::"),
               :todo
-            ] }
+            ]
+          }
             .to_h
         end
 
         def target_tables
-          Tms.configs.select{ |config| config.respond_to?(:target_tables) }
-            .map{ |config| config.target_tables }
+          Tms.configs.select { |config| config.respond_to?(:target_tables) }
+            .map { |config| config.target_tables }
             .flatten
             .sort
             .uniq

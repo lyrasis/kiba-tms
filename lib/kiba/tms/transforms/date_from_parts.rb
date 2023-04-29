@@ -5,7 +5,6 @@ module Kiba
     module Transforms
       # Given fields containing year, month, and day parts, returns target field combining those values
       class DateFromParts
-        
         def initialize(year:, month:, day:, target:)
           @year_f = year
           @month_f = month
@@ -53,11 +52,11 @@ module Kiba
         attr_reader :year_f, :month_f, :day_f, :target, :vals, :getter
 
         def date_data?
-          vals.reject{ |_key, val| val.blank? }.empty? ? false : true
+          vals.reject { |_key, val| val.blank? }.empty? ? false : true
         end
-        
+
         def delete_sources(row)
-          [year_f, month_f, day_f].each{ |field| row.delete(field) }
+          [year_f, month_f, day_f].each { |field| row.delete(field) }
           row
         end
 

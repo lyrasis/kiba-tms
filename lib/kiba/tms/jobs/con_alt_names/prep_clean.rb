@@ -20,9 +20,9 @@ module Kiba
 
           def lookups
             base = %i[
-                      constituents__prep_clean
-                      constituents__by_norm
-                     ]
+              constituents__prep_clean
+              constituents__by_norm
+            ]
             if ntc_needed?
               base << :name_type_cleanup__for_con_alt_names
             end
@@ -69,47 +69,48 @@ module Kiba
                   row
                 end
 
-               transform Merge::MultiRowLookup,
-                lookup: constituents__by_norm,
-                keycolumn: :altnorm,
-                fieldmap: {
-                  altconname: prefname,
-                  altconauthtype: :contype,
-                  altnameconid: :constituentid
-                }
-              transform Delete::Fields, fields: %i[connorm]
+                transform Merge::MultiRowLookup,
+                  lookup: constituents__by_norm,
+                  keycolumn: :altnorm,
+                  fieldmap: {
+                    altconname: prefname,
+                    altconauthtype: :contype,
+                    altnameconid: :constituentid
+                  }
+                transform Delete::Fields, fields: %i[connorm]
 
-              transform Tms::Transforms::Constituents::DeriveType, mode: :alt
-              transform Tms::Transforms::Names::NormalizeContype,
-                source: :altauthtype,
-                target: :alttype
+                transform Tms::Transforms::Constituents::DeriveType, mode: :alt
+                transform Tms::Transforms::Names::NormalizeContype,
+                  source: :altauthtype,
+                  target: :alttype
 
-              # force separate constituent type value as altauthtype where
-              #   available
-              transform do |row|
-                alttype = row[:altconauthtype]
-                next row if alttype.blank?
+                # force separate constituent type value as altauthtype where
+                #   available
+                transform do |row|
+                  alttype = row[:altconauthtype]
+                  next row if alttype.blank?
 
-                row[:altauthtype] = alttype.split(Tms.delim).uniq.join(Tms.delim)
-                row
-              end
-
-              # add :typematch column
-              transform do |row|
-                con = row[:conauthtype]
-                alt = row[:alttype]
-
-                if con == alt
-                  row[:typematch] = "y"
-                else
-                  row[:typematch] = "n"
+                  row[:altauthtype] =
+                    alttype.split(Tms.delim).uniq.join(Tms.delim)
+                  row
                 end
-                row
-              end
-              transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
-              transform FilterRows::FieldPopulated,
-                action: :keep,
-                field: :altname
+
+                # add :typematch column
+                transform do |row|
+                  con = row[:conauthtype]
+                  alt = row[:alttype]
+
+                  row[:typematch] = if con == alt
+                    "y"
+                  else
+                    "n"
+                  end
+                  row
+                end
+                transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
+                transform FilterRows::FieldPopulated,
+                  action: :keep,
+                  field: :altname
               end
             end
           end

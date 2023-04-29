@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__term_master,

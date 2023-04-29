@@ -25,7 +25,6 @@ module Kiba
                 value: "y"
               transform Delete::Fields, fields: :keeping
             end
-
           end
         end
       end

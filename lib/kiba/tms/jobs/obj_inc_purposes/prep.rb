@@ -6,7 +6,7 @@ module Kiba
       module ObjIncPurposes
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -20,7 +20,8 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              transform Tms::Transforms::DeleteNoValueTypes, field: :objincomingpurpose
+              transform Tms::Transforms::DeleteNoValueTypes,
+                field: :objincomingpurpose
             end
           end
         end

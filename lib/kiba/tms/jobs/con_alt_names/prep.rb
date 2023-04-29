@@ -19,11 +19,10 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                      prep__constituents
-                      constituents__by_norm
-                     ]
-            base
+            %i[
+              prep__constituents
+              constituents__by_norm
+            ]
           end
 
           def prep_xforms
@@ -44,7 +43,8 @@ module Kiba
                 fieldmap: {
                   chkid: :defaultnameid,
                   conname: Tms::Constituents.preferred_name_field,
-                  conauthtype: :contype}
+                  conauthtype: :contype
+                }
 
               transform do |row|
                 altid = row[:altnameid]
@@ -115,7 +115,8 @@ module Kiba
                 alttype = row[:altconauthtype]
                 next row if alttype.blank?
 
-                row[:altauthtype] = alttype.split(Tms.delim).uniq.join(Tms.delim)
+                row[:altauthtype] =
+                  alttype.split(Tms.delim).uniq.join(Tms.delim)
                 row
               end
 
@@ -124,19 +125,19 @@ module Kiba
                 con = row[:conauthtype]
                 alt = row[:altauthtype]
 
-                if con == alt
-                  row[:typematch] = "y"
+                row[:typematch] = if con == alt
+                  "y"
                 else
-                  row[:typematch] = "n"
+                  "n"
                 end
                 row
               end
 
               transform Rename::Fields, fieldmap: {
                 Tms::Constituents.preferred_name_field => :altname,
-                constituentid: :mainconid,
-                nametype: :altnametype,
-                altnorm: :prefnormorig
+                :constituentid => :mainconid,
+                :nametype => :altnametype,
+                :altnorm => :prefnormorig
               }
 
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues

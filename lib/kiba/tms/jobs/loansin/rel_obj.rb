@@ -22,9 +22,11 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::WithLambda,
                 action: :keep,
-                lambda: ->(row, lkup: loans__in){ lkup.key?(row[:loanid]) }
-              transform Delete::FieldsExcept, fields: %i[loannumber objectnumber]
-              transform Rename::Fields, fieldmap: {loannumber: :item2_id, objectnumber: :item1_id}
+                lambda: ->(row, lkup: loans__in) { lkup.key?(row[:loanid]) }
+              transform Delete::FieldsExcept,
+                fields: %i[loannumber objectnumber]
+              transform Rename::Fields,
+                fieldmap: {loannumber: :item2_id, objectnumber: :item1_id}
               transform Merge::ConstantValues,
                 constantmap: {
                   item2_type: "loansin",

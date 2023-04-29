@@ -16,9 +16,9 @@ module Kiba
                 source: :media_xrefs_for__cond_line_items,
                 destination: :media_xrefs__cond_line_items,
                 lookup: %i[
-                           media_files__id_lookup
-                           conditions__cspace
-                          ]
+                  media_files__id_lookup
+                  conditions__cspace
+                ]
               },
               transformer: xforms
             )

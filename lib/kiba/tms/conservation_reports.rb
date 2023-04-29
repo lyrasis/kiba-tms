@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ConservationReports
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable

@@ -6,7 +6,7 @@ module Kiba
       module AccessionMethods
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

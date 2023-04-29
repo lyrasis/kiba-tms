@@ -9,7 +9,8 @@ module Kiba
 
       module_function
 
-      setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+      setting :multi_source_normalizer,
+        default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
     end
   end
 end

@@ -40,8 +40,8 @@ module Kiba
           attr_reader :delim, :target, :fields, :getter
 
           def get_unit(vals)
-            result = %i[unittype unitnumber].select{ |src| fields.any?(src) }
-              .map{ |src| vals[src] }
+            result = %i[unittype unitnumber].select { |src| fields.any?(src) }
+              .map { |src| vals[src] }
               .compact
             return nil if result.empty?
 

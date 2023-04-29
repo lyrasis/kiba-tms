@@ -16,9 +16,9 @@ module Kiba
                 source: :media_xrefs_for__loans,
                 destination: :media_xrefs__loansin,
                 lookup: %i[
-                           media_files__id_lookup
-                           tms__loans
-                          ]
+                  media_files__id_lookup
+                  tms__loans
+                ]
               },
               transformer: xforms
             )

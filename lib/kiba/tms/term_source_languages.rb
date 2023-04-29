@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module TermSourceLanguages
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable

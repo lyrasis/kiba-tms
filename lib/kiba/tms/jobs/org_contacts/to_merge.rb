@@ -19,8 +19,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :merge_contact
-              transform Delete::FieldsExcept, fields: %i[norm merge_contact contact_role]
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :merge_contact
+              transform Delete::FieldsExcept,
+                fields: %i[norm merge_contact contact_role]
             end
           end
         end

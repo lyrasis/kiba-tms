@@ -12,7 +12,7 @@ module Kiba
             field: field,
             ignore_case: true,
             match: Tms.no_value_type_pattern
-            )
+          )
         end
 
         def process(row)

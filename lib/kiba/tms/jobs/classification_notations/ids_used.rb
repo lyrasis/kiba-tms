@@ -6,7 +6,7 @@ module Kiba
       module ClassificationNotations
         module IdsUsed
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -21,8 +21,10 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept, fields: :primarycnid
               @deduper = {}
-              transform Deduplicate::Flag, on_field: :primarycnid, in_field: :duplicate, using: @deduper
-              transform FilterRows::FieldEqualTo, action: :keep, field: :duplicate, value: "n"
+              transform Deduplicate::Flag, on_field: :primarycnid,
+                in_field: :duplicate, using: @deduper
+              transform FilterRows::FieldEqualTo, action: :keep,
+                field: :duplicate, value: "n"
               transform Delete::Fields, fields: :duplicate
             end
           end

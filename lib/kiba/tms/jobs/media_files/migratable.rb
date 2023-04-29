@@ -22,7 +22,7 @@ module Kiba
 
           def lookups
             base = [:media_files__unmigratable_report]
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

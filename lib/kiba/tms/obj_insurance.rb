@@ -6,22 +6,23 @@ module Kiba
   module Tms
     module ObjInsurance
       extend Dry::Configurable
+
       module_function
 
       setting :checkable, default: {
-        adjval_eq_val: Proc.new do
-          Tms::Services::CompareFieldPairValuesChecker.call(
-            mod: self,
-            fields: %i[value adjustedvalue]
-          )
-        end,
-        currval_eq_val: Proc.new do
-          Tms::Services::CompareFieldPairValuesChecker.call(
-            mod: self,
-            fields: %i[value currencyvalue]
-          )
-        end
-      },
+                            adjval_eq_val: proc do
+                              Tms::Services::CompareFieldPairValuesChecker.call(
+                                mod: self,
+                                fields: %i[value adjustedvalue]
+                              )
+                            end,
+                            currval_eq_val: proc do
+                                              Tms::Services::CompareFieldPairValuesChecker.call(
+                                                mod: self,
+                                                fields: %i[value currencyvalue]
+                                              )
+                                            end
+                          },
         reader: true
 
       # :currencyid or :localcurrencyid
@@ -32,7 +33,7 @@ module Kiba
         reader: true
       setting :nonpref_currencyid,
         reader: true,
-        constructor: ->(value){
+        constructor: ->(value) {
           if pref_currencyid == :currencyid
             :localcurrencyid
           else
@@ -41,11 +42,11 @@ module Kiba
         }
       setting :systemvaluetype_mapping,
         default: {
-          "0"=>"object insurance value",
-          "1"=>"loan object insurance value",
-          "2"=>"loan object 3rd party appraisal value",
-          "3"=>"shipment insurance value",
-          "4"=>"object accession value"
+          "0" => "object insurance value",
+          "1" => "loan object insurance value",
+          "2" => "loan object 3rd party appraisal value",
+          "3" => "shipment insurance value",
+          "4" => "object accession value"
         },
         reader: true
       # What to do with row if :value = 0
@@ -55,12 +56,12 @@ module Kiba
         reader: true
       setting :delete_fields,
         default: %i[currencyrate2 currencyrateisodate currencyvalue
-                    iscurrent isratelocked
-                    riskfactor riskfactorisodate
-                    roundedisodate roundedvalue roundeddecimals
-                    adjustedvalue],
+          iscurrent isratelocked
+          riskfactor riskfactorisodate
+          roundedisodate roundedvalue roundeddecimals
+          adjustedvalue],
         reader: true,
-        constructor: ->(value){ value << nonpref_currencyid }
+        constructor: ->(value) { value << nonpref_currencyid }
       extend Tms::Mixins::Tableable
     end
   end

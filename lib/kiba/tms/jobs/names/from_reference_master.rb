@@ -21,11 +21,15 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Delete::FieldsExcept, fields: %i[stmtresponsibility]
-              transform FilterRows::FieldPopulated, action: :keep, field: :stmtresponsibility
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :stmtresponsibility
               transform Deduplicate::Table, field: :stmtresponsibility
-              transform Cspace::NormalizeForID, source: :stmtresponsibility, target: :norm
-              transform Rename::Field, from: :stmtresponsibility, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: "TMS ReferenceMaster.stmtresponsibility"
+              transform Cspace::NormalizeForID, source: :stmtresponsibility,
+                target: :norm
+              transform Rename::Field, from: :stmtresponsibility,
+                to: Tms::Constituents.preferred_name_field
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS ReferenceMaster.stmtresponsibility"
             end
           end
         end

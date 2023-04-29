@@ -20,14 +20,14 @@ module Kiba
 
           def lookups(mode = :main)
             base = %i[locs__compiled_clean]
-            case mode
+            base << case mode
             when :main
-              base << :prep__obj_locations
+              :prep__obj_locations
             else
-              base << :tms__obj_locations
+              :tms__obj_locations
             end
 
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms(mode = :main)
@@ -37,27 +37,27 @@ module Kiba
               job = bind.receiver
               lookups = job.send(:lookups)
 
-              lkup = mode == :main ? prep__obj_locations : tms__obj_locations
-              idsrc = mode == :main ? :fulllocid : :locationid
+              lkup = (mode == :main) ? prep__obj_locations : tms__obj_locations
+              idsrc = (mode == :main) ? :fulllocid : :locationid
               transform Merge::MultiRowLookup,
                 lookup: lkup,
                 keycolumn: :prevobjlocid,
                 fieldmap: {
-                  prevlocid: idsrc,
+                  prevlocid: idsrc
                 },
                 delim: Tms.delim
               transform Merge::MultiRowLookup,
                 lookup: lkup,
                 keycolumn: :nextobjlocid,
                 fieldmap: {
-                  nextlocid: idsrc,
+                  nextlocid: idsrc
                 },
                 delim: Tms.delim
               transform Merge::MultiRowLookup,
                 lookup: lkup,
                 keycolumn: :schedobjlocid,
                 fieldmap: {
-                  schedlocid: idsrc,
+                  schedlocid: idsrc
                 },
                 delim: Tms.delim
 
@@ -74,21 +74,21 @@ module Kiba
                   lookup: locs__compiled_clean,
                   keycolumn: :prevlocid,
                   fieldmap: {
-                    prev_location: :location_name,
+                    prev_location: :location_name
                   },
                   delim: Tms.delim
                 transform Merge::MultiRowLookup,
                   lookup: locs__compiled_clean,
                   keycolumn: :nextlocid,
                   fieldmap: {
-                    next_location: :location_name,
+                    next_location: :location_name
                   },
                   delim: Tms.delim
                 transform Merge::MultiRowLookup,
                   lookup: locs__compiled_clean,
                   keycolumn: :schedlocid,
                   fieldmap: {
-                    sched_location: :location_name,
+                    sched_location: :location_name
                   },
                   delim: Tms.delim
               end

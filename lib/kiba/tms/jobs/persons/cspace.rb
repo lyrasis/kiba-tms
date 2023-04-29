@@ -28,7 +28,7 @@ module Kiba
             if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def merge_name_bio_notes?
@@ -48,9 +48,9 @@ module Kiba
               transform Tms::Transforms::Names::RemoveDropped
               transform Delete::Fields,
                 fields: %i[sort contype relation_type variant_term
-                           variant_qualifier related_term related_role
-                           note_text prefnormorig nonprefnormorig
-                           altnorm alttype mainnorm]
+                  variant_qualifier related_term related_role
+                  note_text prefnormorig nonprefnormorig
+                  altnorm alttype mainnorm]
               transform Deduplicate::Table,
                 field: :namemergenorm,
                 delete_field: false
@@ -65,8 +65,10 @@ module Kiba
                   lookup: name_compile__bio_note,
                   keycolumn: :namemergenorm,
                   conditions: ->(_pref, rows) do
-                    rows.select{ |row| row[:contype] &&
-                        row[:contype].start_with?("Person") }
+                    rows.select { |row|
+                      row[:contype] &&
+                        row[:contype].start_with?("Person")
+                    }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
                   delim: "%CR%"
@@ -78,8 +80,8 @@ module Kiba
                 replace: ""
 
               term_targets = %i[termdisplayname salutation title forename
-                                middlename surname nameadditions termflag
-                                termsourcenote]
+                middlename surname nameadditions termflag
+                termsourcenote]
               if Tms::Names.set_term_source
                 term_targets << :termsource
               else

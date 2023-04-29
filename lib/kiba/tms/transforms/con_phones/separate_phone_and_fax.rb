@@ -47,10 +47,10 @@ module Kiba
           end
 
           def treat_as_fax(number, row, desc)
-            if desc.match(/^#{fax_pattern}$/i)
-              row[:description] = nil
+            row[:description] = if desc.match(/^#{fax_pattern}$/i)
+              nil
             else
-              row[:description] = desc.gsub(/#{fax_pattern}/i, "")
+              desc.gsub(/#{fax_pattern}/i, "")
                 .strip
             end
             row[:fax] = number

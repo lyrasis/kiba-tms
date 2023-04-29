@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module FlagLabels
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[flaguse important], reader: true

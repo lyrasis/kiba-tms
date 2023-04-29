@@ -6,11 +6,12 @@ module Kiba
   module Tms
     module ThesXrefTypes
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[multiselect archivedeletes showguideterms broadesttermfirst
-                    numlevels primarycnid alwaysdisplayfullpath],
+          numlevels primarycnid alwaysdisplayfullpath],
         reader: true
       extend Tms::Mixins::Tableable
 

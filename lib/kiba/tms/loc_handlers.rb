@@ -8,6 +8,7 @@ module Kiba
     # Names are extracted from it
     module LocHandlers
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable

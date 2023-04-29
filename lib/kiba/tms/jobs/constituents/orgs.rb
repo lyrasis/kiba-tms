@@ -16,7 +16,7 @@ module Kiba
               transformer: xforms
             )
           end
-          
+
           def xforms
             Kiba.job_segment do
               transform FilterRows::WithLambda,

@@ -23,15 +23,16 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
-              
+
               if Tms::Constituents.dates.initial_remarks_cleaner
                 transform Tms::Constituents.dates.initial_remarks_cleaner
               end
-              
+
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[
-                           datebegsearch monthbegsearch daybegsearch
-                           dateendsearch monthendsearch dayendsearch],
+                  datebegsearch monthbegsearch daybegsearch
+                  dateendsearch monthendsearch dayendsearch
+                ],
                 match: "^0$"
 
               transform Tms::Transforms::DateFromParts,
@@ -42,12 +43,13 @@ module Kiba
                 sep: " - ", delete_sources: true
 
               transform Append::NilFields, fields: :warn
-              
+
               Tms::Constituents.dates.cleaners.each do |cleaner|
                 transform cleaner
               end
 
-              transform Merge::ConstantValue, target: :datasource, value: "ConDates"
+              transform Merge::ConstantValue, target: :datasource,
+                value: "ConDates"
             end
           end
         end

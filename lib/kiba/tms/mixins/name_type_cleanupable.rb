@@ -5,7 +5,7 @@ module Kiba
     module Mixins
       module NameTypeCleanupable
         def self.extended(mod)
-          self.define_ntc_needed(mod)
+          define_ntc_needed(mod)
         end
 
         def is_name_type_cleanupable?
@@ -26,7 +26,7 @@ module Kiba
           return if mod.respond_to?(meth)
 
           warn("Need to set :#{meth} returning Boolean value for #{mod}")
-          mod.define_method(meth){ false }
+          mod.define_method(meth) { false }
         end
         private_class_method :define_ntc_needed
       end

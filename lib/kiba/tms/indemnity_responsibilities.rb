@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module IndemnityResponsibilities
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[system], reader: true
@@ -18,7 +19,7 @@ module Kiba
           "ExhVenuesXrefs.indemnityreturn",
           "ExhVenuesXrefs.indemnityatvenue",
           "ExhVenuesXrefs.indemnityfromlender",
-          "ExhVenuesXrefs.indemnityfrompreviousvenue",
+          "ExhVenuesXrefs.indemnityfrompreviousvenue"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

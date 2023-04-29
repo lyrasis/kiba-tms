@@ -16,9 +16,9 @@ module Kiba
                 source: :media_xrefs_for__obj_insurance,
                 destination: :media_xrefs__obj_insurance,
                 lookup: %i[
-                           media_files__id_lookup
-                           valuation_control__all
-                          ]
+                  media_files__id_lookup
+                  valuation_control__all
+                ]
               },
               transformer: xforms
             )
@@ -41,7 +41,7 @@ module Kiba
                 fieldmap: {item2_id: :identificationnumber}
               transform Merge::ConstantValues, constantmap: {
                 item1_type: "valuationcontrols",
-                item2_type: "media",
+                item2_type: "media"
               }
             end
           end

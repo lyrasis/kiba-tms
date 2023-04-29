@@ -7,7 +7,7 @@ module Kiba
         # Return creator method
         class CreatorGetter
           def self.call(table)
-            self.new(table).call
+            new(table).call
           end
 
           def initialize(table)
@@ -20,10 +20,10 @@ module Kiba
             return abstract if klass.nil?
             return prep_klass.constantize.method(meth) if has_prep_class?
             return klass.method(:prep) if has_prep_method?
-            
+
             abstract
           end
-        
+
           private
 
           attr_reader :tablename, :filekey, :meth
@@ -31,13 +31,13 @@ module Kiba
           def abstract
             Kiba::Tms::Jobs::AbstractPrep.new(filekey).method(:prep)
           end
-          
+
           def define_klass
             klass_name.constantize = Class.new(Kiba::Tms::Jobs::AbstractPrep) do
               @key = filekey
             end
           end
-          
+
           def klass
             klass_name.constantize
           rescue NameError
@@ -57,7 +57,7 @@ module Kiba
 
             false
           end
-          
+
           def has_prep_method?
             klass.methods.any?(:prep)
           end

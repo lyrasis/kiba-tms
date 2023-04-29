@@ -4,27 +4,28 @@ module Kiba
   module Tms
     module Objects
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[
-                    sortnumber textsearchid accountability injurisdiction
-                    searchobjectnumber sortsearchnumber
-                    usernumber1 usernumber2 usernumber3 usernumber4
-                    istemplate isvirtual
-                   ],
+          sortnumber textsearchid accountability injurisdiction
+          searchobjectnumber sortsearchnumber
+          usernumber1 usernumber2 usernumber3 usernumber4
+          istemplate isvirtual
+        ],
         reader: true,
-        constructor: ->(value){ value + date_fields }
+        constructor: ->(value) { value + date_fields }
       setting :empty_fields, default: {
-        loanclassid: "0",
-        objectlevelid: "0",
-        objectnameid: "0",
-        objectnamealtid: "0",
-        objecttypeid: "0",
-        publicaccess: "0",
-        subclassid: "0",
-        type: "0"
-      },
+                               loanclassid: "0",
+                               objectlevelid: "0",
+                               objectnameid: "0",
+                               objectnamealtid: "0",
+                               objecttypeid: "0",
+                               publicaccess: "0",
+                               subclassid: "0",
+                               type: "0"
+                             },
         reader: true
       extend Tms::Mixins::Tableable
 
@@ -91,7 +92,7 @@ module Kiba
       setting :date_fields,
         default: %i[dated datebegin dateend beginisodate endisodate],
         reader: true,
-        constructor: ->(value){ value - empty_fields.keys }
+        constructor: ->(value) { value - empty_fields.keys }
       # Necessary if :department_target = :dept_namedcollection. Should be a
       #   String value if populated
       setting :department_coll_prefix, default: nil, reader: true
@@ -112,12 +113,12 @@ module Kiba
       setting :objectproductionnote_delim, default: "%CR%%CR%", reader: true
       setting :objectproductionnote_sources,
         default: %i[con_refs_p_objectproductionnote
-                    con_refs_o_objectproductionnote],
+          con_refs_o_objectproductionnote],
         reader: true
       setting :objecthistorynote_delim, default: "%CR%%CR%", reader: true
       setting :objecthistorynote_sources,
         default: %i[con_refs_p_objecthistorynote
-                    con_refs_o_objecthistorynote],
+          con_refs_o_objecthistorynote],
         reader: true
       setting :period_target, default: nil, reader: true
       setting :record_num_merge_config,

@@ -19,8 +19,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[termdisplayname address new_org]
-              transform FilterRows::FieldPopulated, action: :keep, field: :new_org
+              transform Delete::FieldsExcept,
+                fields: %i[termdisplayname address new_org]
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :new_org
               transform Delete::Fields, fields: %i[new_org fulllocid]
               transform Rename::Field, from: :address, to: :addressplace1
             end

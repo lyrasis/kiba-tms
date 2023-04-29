@@ -7,12 +7,12 @@ module Kiba
         class MoveSingleYearDisplaydates
           include Tms::Transforms::FullerDateSelectable
           include Tms::Transforms::ValueAppendable
-          
+
           def initialize
             @source = :displaydate
             @target = :begindateiso
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)
@@ -45,11 +45,11 @@ module Kiba
               add_note(row, val)
             end
           end
-          
+
           def eligible?(dd)
             return false if dd.blank?
             return false if dd.split("-").length > 1
-            
+
             true if dd.downcase.match?(/^(\d{2,4}|ca?\.? ?\d)/)
           end
         end

@@ -6,18 +6,18 @@ module Kiba
       module Terms
         module Prep
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :terms__used_row_data,
                 destination: :prep__terms,
                 lookup: %i[
-                           prep__term_types
-                           term_master_thes__used_in_xrefs
-                           classification_notations__used
-                           tms__thesaurus_bases
-                          ]
+                  prep__term_types
+                  term_master_thes__used_in_xrefs
+                  classification_notations__used
+                  tms__thesaurus_bases
+                ]
               },
               transformer: xforms
             )
@@ -30,9 +30,9 @@ module Kiba
               transform Merge::MultiRowLookup,
                 keycolumn: :termtypeid,
                 lookup: prep__term_types,
-                fieldmap: { termtype: :termtype }
+                fieldmap: {termtype: :termtype}
               transform Delete::Fields, fields: :termtypeid
-              
+
               transform Merge::MultiRowLookup,
                 keycolumn: :termmasterid,
                 lookup: term_master_thes__used_in_xrefs,
@@ -46,7 +46,7 @@ module Kiba
                   sourcetermid: :sourcetermid
                 }
               transform Delete::Fields, fields: :termmasterid
-              
+
               transform Merge::MultiRowLookup,
                 keycolumn: :primarycnid,
                 lookup: classification_notations__used,

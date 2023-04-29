@@ -6,19 +6,21 @@ module Kiba
       module NameCompile
         class SelectConOrgsWithNameParts
           def initialize
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[firstname middlename lastname])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              firstname middlename lastname
+            ])
           end
 
           # @private
           def process(row)
             @contype = ""
             @parts = {}
-            
+
             return unless eligible?(row)
-            
+
             row
           end
-          
+
           private
 
           attr_reader :getter, :contype, :parts
@@ -31,7 +33,7 @@ module Kiba
           end
 
           def eligible?(row)
-            type_eligible?(row) && parts_eligible?(row) && data_eligible?(row)            
+            type_eligible?(row) && parts_eligible?(row) && data_eligible?(row)
           end
 
           def parts_eligible?(row)

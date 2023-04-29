@@ -12,14 +12,13 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       col: Tms::Data::Column,
-                       settingobj: Tms::Data::ConfigSetting,
-                       failobj: Tms::Data::DeriverFailure
-                      )
+          col: Tms::Data::Column,
+          settingobj: Tms::Data::ConfigSetting,
+          failobj: Tms::Data::DeriverFailure)
           @setting = :con_ref_role_to_field_mapping
           @mod = mod
           @failobj = failobj
@@ -28,7 +27,7 @@ module Kiba
           @colobj = col
           @settingobj = settingobj
           @current_mapping = mod.send(setting)
-          @known_roles = current_mapping.reject{ |key, _v| key == :unmapped }
+          @known_roles = current_mapping.reject { |key, _v| key == :unmapped }
             .values
             .flatten
         end
@@ -58,9 +57,8 @@ module Kiba
           unless mod.respond_to?(meth)
             return Failure(
               failobj.new(mod: mod,
-                                name: setting,
-                                sym: :missing_eligibility_setting
-                         )
+                name: setting,
+                sym: :missing_eligibility_setting)
             )
           end
 
@@ -69,15 +67,14 @@ module Kiba
             Success()
           else
             Failure(failobj.new(mod: mod,
-                                name: setting,
-                                sym: :not_eligible)
-                   )
+              name: setting,
+              sym: :not_eligible))
           end
         end
 
         def get_role_mod
           result = Tms.const_get("ConRefsFor#{mod.table_name}")
-        rescue StandardError => err
+        rescue => err
           Failure(
             failobj.new(mod: mod, name: setting, err: err)
           )
@@ -87,7 +84,7 @@ module Kiba
 
         def get_column(role_mod)
           result = colobj.new(mod: role_mod, field: :role)
-        rescue StandardError => err
+        rescue => err
           Failure(
             failobj.new(mod: mod, name: setting, err: err)
           )
@@ -97,7 +94,7 @@ module Kiba
 
         def mapping_hash
           current_mapping.merge({unmapped: new_roles})
-            .transform_values{ |value| value.sort }
+            .transform_values { |value| value.sort }
         end
       end
     end

@@ -8,10 +8,10 @@ module Kiba
           # @private
           def process(row)
             return unless eligible?(row)
-            
+
             row
           end
-          
+
           private
 
           def alt_org?(row)
@@ -33,7 +33,7 @@ module Kiba
           def main_person?(row)
             main = row[:conauthtype]
             return false if main.blank?
-            
+
             true if main.start_with?("Person")
           end
         end

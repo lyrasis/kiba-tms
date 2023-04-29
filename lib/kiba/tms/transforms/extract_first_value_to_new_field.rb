@@ -29,7 +29,6 @@ module Kiba
         private
 
         attr_reader :source, :newfield, :delim
-
       end
     end
   end

@@ -22,7 +22,7 @@ module Kiba
             return class_variable_get(:@@config_module_name)
           end
 
-          nameparts = self.name.split("::")
+          nameparts = name.split("::")
           nameparts.pop
           nameparts.delete("Jobs")
           class_variable_set(:@@config_module_name, nameparts.join("::"))

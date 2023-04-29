@@ -26,7 +26,7 @@ module Kiba
             if Tms::InsuranceResponsibilities.used
               base << :prep__insurance_responsibilities
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -56,7 +56,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: names__by_constituentid,
                   keycolumn: :constituentid,
-                  fieldmap: {type=>type}
+                  fieldmap: {type => type}
                 transform Delete::FieldValueIfEqualsOtherField,
                   delete: type,
                   if_equal_to: "venue#{type}".to_sym
@@ -65,7 +65,7 @@ module Kiba
               transform Delete::EmptyFields
 
               indfields = %i[indemnityfromlender indemnityfrompreviousvenue
-                             indemnityatvenue indemnityreturn]
+                indemnityatvenue indemnityreturn]
               if lookups.any?(:prep__indemnity_responsibilities)
                 indfields.each do |field|
                   next if config.omitted_fields.any?(field)
@@ -80,7 +80,7 @@ module Kiba
               end
 
               insfields = %i[insurancefromlender insurancefrompreviousvenue
-                             insuranceatvenue insurancereturn]
+                insuranceatvenue insurancereturn]
               if lookups.any?(:prep__insurance_responsibilities)
                 insfields.each do |field|
                   next if config.omitted_fields.any?(field)

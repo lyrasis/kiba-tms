@@ -6,7 +6,7 @@ module Kiba
       module ConAltNames
         class MergeIntoAuthority
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize(lookup:, authority_type:)
             @type = authority_type
             @pref_name_field = Tms::Constituents.preferred_name_field
@@ -23,7 +23,7 @@ module Kiba
           def process(row)
             merger.process(row)
           end
-          
+
           private
 
           attr_reader :type, :pref_name_field, :merger
@@ -40,7 +40,7 @@ module Kiba
           def person?
             type == :person
           end
-          
+
           def person_fieldmap
             {
               alt_salutation: :salutation,

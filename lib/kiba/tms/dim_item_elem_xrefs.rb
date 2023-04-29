@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module DimItemElemXrefs
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,

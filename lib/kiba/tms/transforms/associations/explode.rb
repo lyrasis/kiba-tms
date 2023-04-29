@@ -9,20 +9,19 @@ module Kiba
         # id1 rel1 lookupValueForId2
         # id2 rel2 lookupValueForId1
         class Explode
-
           def initialize
             @rows = []
           end
 
           # @private
           def process(row)
-            make_new_row()
+            make_new_row
 
             nil
           end
 
           def close
-            rows.each{ |r| yield r }
+            rows.each { |r| yield r }
           end
 
           private
@@ -31,9 +30,7 @@ module Kiba
 
           def make_new_row(n, row)
             exrow = row.dup
-
           end
-
         end
       end
     end

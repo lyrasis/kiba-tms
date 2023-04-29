@@ -10,14 +10,14 @@ module Kiba
             @typefield = :altnametype
             @vartypes = Tms::NameCompile.altname_typematch_variant_nametypes
           end
-          
+
           # @private
           def process(row)
             row[target] = determine_treatment(row)
-            
+
             row
           end
-          
+
           private
 
           attr_reader :target, :typefield, :vartypes
@@ -37,7 +37,7 @@ module Kiba
 
           def variant_type?(type)
             lc = type.downcase
-            vartypes.any?{ |vartype| lc.start_with?(vartype) }
+            vartypes.any? { |vartype| lc.start_with?(vartype) }
           end
         end
       end

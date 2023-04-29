@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module PhoneTypes
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -19,9 +20,9 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          "Home"=>"home",
-          "Cell"=>"mobile",
-          "Office"=>"business"
+          "Home" => "home",
+          "Cell" => "mobile",
+          "Office" => "business"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

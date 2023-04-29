@@ -12,7 +12,7 @@ module Kiba
               fieldmap: {text_entry: :text_entry},
               delim: "%CR%%CR%",
               sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
-              )
+            )
           end
 
           # @private

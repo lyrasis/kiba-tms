@@ -38,7 +38,7 @@ module Kiba
             if Tms::NameTypeCleanup.done && treatment == :contact_person
               base << :constituents__by_all_norms
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def termsource
@@ -83,10 +83,10 @@ module Kiba
                   # no cleanup needed
                 elsif treatment == :contact_person
                   transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                    typetarget: {"_main term"=>:contype},
+                    typetarget: {"_main term" => :contype},
                     nametarget: {
-                      "_main term"=>prefname,
-                      "contact_person"=>:related_term
+                      "_main term" => prefname,
+                      "contact_person" => :related_term
                     }
                 end
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
@@ -99,7 +99,7 @@ module Kiba
                   conditions: ->(row, rows) do
                     return [] unless row[:contype] &&
                       row[:contype].start_with?("Person")
-                    rows.select{ |r| r[:contype] && r[:contype] == "Person" }
+                    rows.select { |r| r[:contype] && r[:contype] == "Person" }
                   end
                 transform do |row|
                   next row if row[:cleaned].blank?

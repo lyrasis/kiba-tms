@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Acquisitions
       extend Dry::Configurable
+
       module_function
 
       setting :multisource_normalizer,

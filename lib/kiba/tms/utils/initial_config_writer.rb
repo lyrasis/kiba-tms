@@ -6,7 +6,7 @@ module Kiba
       # Outputs results of Utils::InitialConfigDeriver to file
       class InitialConfigWriter
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         # Where config will be written

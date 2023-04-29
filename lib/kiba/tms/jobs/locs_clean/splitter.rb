@@ -20,7 +20,8 @@ module Kiba
           def xforms(type)
             Kiba.job_segment do
               match_type = type.to_s.capitalize
-              transform FilterRows::FieldEqualTo, action: :keep, field: :storage_location_authority, value: match_type
+              transform FilterRows::FieldEqualTo, action: :keep,
+                field: :storage_location_authority, value: match_type
               transform Delete::Fields, fields: :storage_location_authority
             end
           end

@@ -22,9 +22,9 @@ module Kiba
 
           def lookups
             base = %i[
-                      names__by_altnameid
-                      objects__number_lookup
-                     ]
+              names__by_altnameid
+              objects__number_lookup
+            ]
             base << :prep__valuation_purposes if purposes?
             base << :prep__currencies if currencies?
             base
@@ -71,14 +71,14 @@ module Kiba
                 keycolumn: :appraiserid,
                 fieldmap: {valuesourcepersonlocal: :person},
                 conditions: ->(_r, rows) do
-                  rows.reject{ |row| row[:person].blank? }
+                  rows.reject { |row| row[:person].blank? }
                 end
               transform Merge::MultiRowLookup,
                 lookup: names__by_altnameid,
                 keycolumn: :appraiserid,
                 fieldmap: {valuesourceorganizationlocal: :org},
                 conditions: ->(_r, rows) do
-                  rows.reject{ |row| row[:org].blank? }
+                  rows.reject { |row| row[:org].blank? }
                 end
               transform Delete::Fields, fields: :appraiserid
 

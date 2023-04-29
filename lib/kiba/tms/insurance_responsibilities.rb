@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module InsuranceResponsibilities
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[system], reader: true
@@ -16,7 +17,7 @@ module Kiba
           "ExhVenuesXrefs.insurancereturn",
           "ExhVenuesXrefs.insuranceatvenue",
           "ExhVenuesXrefs.insurancefromlender",
-          "ExhVenuesXrefs.insurancefrompreviousvenue",
+          "ExhVenuesXrefs.insurancefrompreviousvenue"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

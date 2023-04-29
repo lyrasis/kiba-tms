@@ -27,10 +27,10 @@ module Kiba
 
               transform do |row|
                 loanin = row[:loanin]
-                if loanin.blank?
-                  row[:item2_type] = "loansout"
+                row[:item2_type] = if loanin.blank?
+                  "loansout"
                 else
-                  row[:item2_type] = "loansin"
+                  "loansin"
                 end
                 row
               end

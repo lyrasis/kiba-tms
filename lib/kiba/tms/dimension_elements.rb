@@ -6,10 +6,12 @@ module Kiba
   module Tms
     module DimensionElements
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
-        default: %i[displayed showelementname showdescription position showsecondaryunit],
+        default: %i[displayed showelementname showdescription position
+          showsecondaryunit],
         reader: true
       extend Tms::Mixins::Tableable
 
@@ -23,7 +25,7 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          "Overall"=>"overall"
+          "Overall" => "overall"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

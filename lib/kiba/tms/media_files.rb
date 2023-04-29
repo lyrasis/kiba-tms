@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module MediaFiles
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -61,17 +62,17 @@ module Kiba
         reader: true
       setting :media_handling_fields,
         default: %i[identificationnumber title publishto name mimetype length
-                    externalurl measuredpart dimensionsummary dimension
-                    measuredbypersonlocal measuredbyorganizationlocal
-                    measurementmethod value measurementunit valuequalifier
-                    valuedate measuredpartnote checksumvalue checksumtype
-                    checksumdate contributorpersonlocal
-                    contributororganizationlocal creatorpersonlocal
-                    creatororganizationlocal language publisherpersonlocal
-                    publisherorganizationlocal relation copyrightstatement type
-                    coverage dategroup source subject rightsholderpersonlocal
-                    rightsholderorganizationlocal description alttext
-                    mediafileuri],
+          externalurl measuredpart dimensionsummary dimension
+          measuredbypersonlocal measuredbyorganizationlocal
+          measurementmethod value measurementunit valuequalifier
+          valuedate measuredpartnote checksumvalue checksumtype
+          checksumdate contributorpersonlocal
+          contributororganizationlocal creatorpersonlocal
+          creatororganizationlocal language publisherpersonlocal
+          publisherorganizationlocal relation copyrightstatement type
+          coverage dategroup source subject rightsholderpersonlocal
+          rightsholderorganizationlocal description alttext
+          mediafileuri],
         reader: true
 
       def s3_url_base

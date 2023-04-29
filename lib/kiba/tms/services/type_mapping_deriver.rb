@@ -12,14 +12,13 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       settingobj: Tms::Data::ConfigSetting,
-                       failobj: Tms::Data::DeriverFailure,
-                       getter: UniqueTypeValuesUsed
-                      )
+          settingobj: Tms::Data::ConfigSetting,
+          failobj: Tms::Data::DeriverFailure,
+          getter: UniqueTypeValuesUsed)
           @mod = mod
           @settingobj = settingobj
           @failobj = failobj
@@ -79,8 +78,8 @@ module Kiba
         end
 
         def mapping_hash(values)
-          result = values.map{ |val| [val, default_mapped(val)] }.to_h
-        rescue StandardError => err
+          result = values.map { |val| [val, default_mapped(val)] }.to_h
+        rescue => err
           Failure(
             failobj.new(mod: mod, name: setting, err: err)
           )

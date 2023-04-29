@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module MediaMaster
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -22,7 +23,7 @@ module Kiba
 
       setting :configurable,
         default: {
-          display_is_primary: proc{
+          display_is_primary: proc {
             Tms::Services::MediaMaster::DisplayIsPrimaryDeriver.call
           }
         },

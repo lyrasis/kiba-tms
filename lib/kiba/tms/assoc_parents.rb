@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module AssocParents
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[complete mixed], reader: true

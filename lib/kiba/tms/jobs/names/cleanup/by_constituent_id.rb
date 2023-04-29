@@ -34,7 +34,8 @@ module Kiba
             def xforms
               Kiba.job_segment do
                 transform Tms::Transforms::Names::ExtractConstituentIds
-                transform Deduplicate::Table, field: :constituentid, delete_field: false
+                transform Deduplicate::Table, field: :constituentid,
+                  delete_field: false
               end
             end
           end

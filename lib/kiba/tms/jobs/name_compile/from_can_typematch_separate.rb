@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :treatment, value: "separate_name"
+              transform FilterRows::FieldEqualTo, action: :keep,
+                field: :treatment, value: "separate_name"
               transform Delete::Fields, fields: :treatment
             end
           end

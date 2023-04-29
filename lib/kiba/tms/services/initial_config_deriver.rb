@@ -7,18 +7,17 @@ module Kiba
         include Dry::Monads[:result]
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       empty_deriver: EmptyFieldsDeriver,
-                       mapping_deriver: TypeMappingDeriver,
-                       known_val_deriver: TypeTableKnownValueDeriver,
-                       target_table_deriver: TargetTableDeriver,
-                       successobj: Tms::Data::ConfigSetting,
-                       failobj: Tms::Data::DeriverFailure,
-                       resobj: Tms::Data::CompiledResult
-                      )
+          empty_deriver: EmptyFieldsDeriver,
+          mapping_deriver: TypeMappingDeriver,
+          known_val_deriver: TypeTableKnownValueDeriver,
+          target_table_deriver: TargetTableDeriver,
+          successobj: Tms::Data::ConfigSetting,
+          failobj: Tms::Data::DeriverFailure,
+          resobj: Tms::Data::CompiledResult)
           @mod = mod
           @empty_deriver = empty_deriver
           @mapping_deriver = mapping_deriver
@@ -57,20 +56,20 @@ module Kiba
         def configs
           base = []
           if mod.respond_to?(:is_tableable?)
-            base << proc{ empty_deriver.call(mod: mod) }
+            base << proc { empty_deriver.call(mod: mod) }
           end
 
           if mod.respond_to?(:is_type_lookup_table?)
-            if mod.mappable_type?
-              base << proc{ mapping_deriver.call(mod: mod) }
+            base << if mod.mappable_type?
+              proc { mapping_deriver.call(mod: mod) }
             else
-              base << proc{ known_val_deriver.call(mod: mod) }
+              proc { known_val_deriver.call(mod: mod) }
             end
           end
 
           if mod.respond_to?(:is_multi_table_mergeable?) &&
               mod.auto_generate_target_tables
-            base << proc{ target_table_deriver.call(mod: mod) }
+            base << proc { target_table_deriver.call(mod: mod) }
           end
 
           base
@@ -80,34 +79,32 @@ module Kiba
           return nil unless mod.respond_to?(:configurable)
 
           mod.configurable.map do |setting, proc|
-            begin
-              result = proc.call
-            rescue StandardError => err
-              Failure(failobj.new(
+            result = proc.call
+          rescue => err
+            Failure(failobj.new(
+              mod: mod,
+              name: setting,
+              err: err
+            ))
+          else
+            if result.success?
+              Success(successobj.new(
                 mod: mod,
                 name: setting,
-                err: err
-                ))
+                value: result.value!
+              ))
             else
-              if result.success?
-                Success(successobj.new(
-                  mod: mod,
-                  name: setting,
-                  value: result.value!
-                  ))
-              else
-                result
-              end
+              result
             end
           end
         end
 
         def successful_custom_config_monad(setting_name, result)
           result.either(
-            ->success{
+            ->(success) {
               config << Success("#{setting_name} = #{success.inspect}")
             },
-            ->failure{ config << Failure([setting_name, failure]) }
+            ->(failure) { config << Failure([setting_name, failure]) }
           )
         end
 

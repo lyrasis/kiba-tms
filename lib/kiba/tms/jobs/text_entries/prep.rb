@@ -24,7 +24,7 @@ module Kiba
             base = %i[names__by_constituentid]
             base << :prep__text_types if Tms::TextTypes.used
             base << :prep__text_statuses if Tms::TextStatuses.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -55,7 +55,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__text_types,
                   keycolumn: :texttypeid,
-                  fieldmap: { texttype: :texttype }
+                  fieldmap: {texttype: :texttype}
               end
               transform Delete::Fields, fields: :texttypeid
 
@@ -63,7 +63,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__text_statuses,
                   keycolumn: :textstatusid,
-                  fieldmap: { textstatus: :textstatus }
+                  fieldmap: {textstatus: :textstatus}
               end
               transform Delete::Fields, fields: :textstatusid
 

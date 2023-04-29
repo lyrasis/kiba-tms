@@ -16,7 +16,7 @@ module Kiba
             check_for_fields_without_rules
             if config.key?(:unmapped) && !config[:unmapped].empty?
               warn(
-                "Unmapped role vals for #{into}: #{config[:unmapped].join(', ')}"
+                "Unmapped role vals for #{into}: #{config[:unmapped].join(", ")}"
               )
             end
             @lookup = Tms.get_lookup(
@@ -27,7 +27,7 @@ module Kiba
           end
 
           def process(row)
-            xforms.each{ |xform| xform.process(row) }
+            xforms.each { |xform| xform.process(row) }
             row
           end
 
@@ -63,7 +63,7 @@ module Kiba
           end
 
           def build_rule_xforms(field, rule)
-            rule[:suffixes].map{ |suff| build_xform(field, suff, rule) }
+            rule[:suffixes].map { |suff| build_xform(field, suff, rule) }
           end
 
           def build_xform(field, suffix, rule)
@@ -71,8 +71,8 @@ module Kiba
             fieldmap = build_fieldmap(field, suffix, rule, source)
             values = config[field]
             conditions = ->(_orig, rows) do
-              rows.reject{ |row| row[source].blank? }
-                .select{ |row| values.any?(row[:role]) }
+              rows.reject { |row| row[source].blank? }
+                .select { |row| values.any?(row[:role]) }
             end
 
             Merge::MultiRowLookup.new(
@@ -88,7 +88,7 @@ module Kiba
 
           def build_xforms
             [
-              fieldrules.map{ |field, rule| build_rule_xforms(field, rule) }
+              fieldrules.map { |field, rule| build_rule_xforms(field, rule) }
             ].flatten
               .compact
           end
@@ -98,7 +98,7 @@ module Kiba
             return if missing.empty?
 
             warn(
-              "Add rules for fields to #{into} config: #{missing.join(', ')}"
+              "Add rules for fields to #{into} config: #{missing.join(", ")}"
             )
           end
 

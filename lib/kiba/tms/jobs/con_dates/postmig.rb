@@ -8,7 +8,6 @@ module Kiba
           module_function
 
           def job
-
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__con_dates,

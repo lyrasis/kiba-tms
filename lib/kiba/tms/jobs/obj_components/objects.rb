@@ -41,8 +41,8 @@ module Kiba
 
               transform Delete::FieldsExcept,
                 fields: %i[componentid componentnumber objcompstatus active
-                           physdesc storagecomments installcomments compcount
-                           title te_comment]
+                  physdesc storagecomments installcomments compcount
+                  title te_comment]
               transform Rename::Fields, fieldmap: {
                 componentnumber: :objectnumber,
                 physdesc: :briefdescription,

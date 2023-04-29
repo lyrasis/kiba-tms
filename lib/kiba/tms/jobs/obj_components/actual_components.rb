@@ -29,10 +29,9 @@ module Kiba
                 action: :reject,
                 field: :problemcomponent
 
-
               transform Delete::Fields,
                 fields: %i[is_top_object problemcomponent existingobject
-                           duplicate parentname parenttitle parentdesc]
+                  duplicate parentname parenttitle parentdesc]
               transform Rename::Fields, fieldmap: {
                 parentobjectnumber: :parentobject,
                 componentname: :title

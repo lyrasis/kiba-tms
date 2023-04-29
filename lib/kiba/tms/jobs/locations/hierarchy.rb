@@ -8,8 +8,8 @@ module Kiba
           module_function
 
           AUTH_SUBTYPE = {
-            "Local"=>"location",
-            "Offsite"=>"offsite_sla"
+            "Local" => "location",
+            "Offsite" => "offsite_sla"
           }
           def job
             Kiba::Extend::Jobs::Job.new(
@@ -32,7 +32,7 @@ module Kiba
                 field: :parent_location
               transform Delete::FieldsExcept,
                 fields: %i[location_name parent_location
-                           storage_location_authority]
+                  storage_location_authority]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[location_name parent_location],
                 target: :combined,

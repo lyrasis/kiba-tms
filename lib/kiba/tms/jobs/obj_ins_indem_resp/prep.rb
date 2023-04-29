@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_ins_indem_resp,
@@ -29,14 +29,14 @@ module Kiba
 
           def xforms
             bind = binding
-            
+
             Kiba.job_segment do
               config = bind.receiver.send(:config)
               ins_ind_fields = config.ins_ind_fields
-              
+
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::TmsTableNames
-              
+
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
@@ -47,8 +47,10 @@ module Kiba
                 target: :combined,
                 sep: Tms.delim,
                 delete_sources: false
-              transform Deduplicate::FieldValues, fields: :combined, sep: Tms.delim
-              transform FilterRows::FieldEqualTo, action: :reject, field: :combined, value: "0"
+              transform Deduplicate::FieldValues, fields: :combined,
+                sep: Tms.delim
+              transform FilterRows::FieldEqualTo, action: :reject,
+                field: :combined, value: "0"
               transform Delete::Fields, fields: :combined
 
               # merge in responsibility values
@@ -58,7 +60,7 @@ module Kiba
                     keycolumn: insresp,
                     lookup: prep__insurance_responsibilities,
                     fieldmap: {
-                      insresp=>:responsibility
+                      insresp => :responsibility
                     },
                     delim: Tms.delim
                 end
@@ -70,15 +72,16 @@ module Kiba
                     keycolumn: indemresp,
                     lookup: prep__indemnity_responsibilities,
                     fieldmap: {
-                      indemresp=>:responsibility
+                      indemresp => :responsibility
                     },
                     delim: Tms.delim
                 end
               end
-              
+
               ins_ind_fields.each do |fieldname|
                 labeltext = Tms::ObjInsIndemResp.fieldlabels[fieldname]
-                transform Prepend::ToFieldValue, field: fieldname, value: "#{labeltext}: "
+                transform Prepend::ToFieldValue, field: fieldname,
+                  value: "#{labeltext}: "
               end
 
               transform CombineValues::FromFieldsWithDelimiter,

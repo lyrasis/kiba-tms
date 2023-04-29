@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Classifications
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -32,7 +33,7 @@ module Kiba
           classification: :classification,
           subclassification: :subclassification,
           subclassification2: :subclassification2,
-          subclassification3: :subclassification3,
+          subclassification3: :subclassification3
         },
         reader: true
     end

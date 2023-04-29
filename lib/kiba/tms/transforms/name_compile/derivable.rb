@@ -12,7 +12,7 @@ module Kiba
             row[:relation_type] = "_main term"
             del = [Tms::NameCompile.org_nil, Tms::NameCompile.derived_nil]
             del << Tms::NameCompile.alt_nil if mode == :alt
-            del.flatten.each{ |field| row.delete(field) }
+            del.flatten.each { |field| row.delete(field) }
             row
           end
 
@@ -23,7 +23,7 @@ module Kiba
             row[:relation_type] = "_main term"
             del = [Tms::NameCompile.person_nil, Tms::NameCompile.derived_nil]
             del << Tms::NameCompile.alt_nil if mode == :alt
-            del.flatten.each{ |field| row.delete(field) }
+            del.flatten.each { |field| row.delete(field) }
             row
           end
 

@@ -10,6 +10,7 @@ module Kiba
     #   manually create a "supplied" table in their TMS source files directory.
     module TransStatus
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -18,8 +19,8 @@ module Kiba
       setting :type_field, default: :transstatus, reader: true
       setting :used_in,
         default: [
-          "ObjLocations.#{id_field}",
-#          "ShipCrateHiers.#{id_field}"
+          "ObjLocations.#{id_field}"
+          #          "ShipCrateHiers.#{id_field}"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

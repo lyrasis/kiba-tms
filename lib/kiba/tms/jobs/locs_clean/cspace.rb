@@ -20,9 +20,12 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Delete::Fields,
-                fields: %i[current_location_note term_source fulllocid parent_location]
-              transform Deduplicate::Table, field: :location_name, delete_field: false
-              transform Rename::Field, from: :location_name, to: :termdisplayname
+                fields: %i[current_location_note term_source fulllocid
+                  parent_location]
+              transform Deduplicate::Table, field: :location_name,
+                delete_field: false
+              transform Rename::Field, from: :location_name,
+                to: :termdisplayname
             end
           end
         end

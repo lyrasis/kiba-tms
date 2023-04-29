@@ -7,7 +7,8 @@ module Kiba
         class TitleNoteCreator
           def initialize
             @target = :titlenote
-            @content_fields = %i[remarks dateeffectiveisodate] - Tms::ObjTitles.empty_fields.keys
+            @content_fields = %i[remarks
+              dateeffectiveisodate] - Tms::ObjTitles.empty_fields.keys
             @context_fields = %i[titletype title]
             @contentgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: content_fields
@@ -30,10 +31,11 @@ module Kiba
             delete_content(row)
             row
           end
-          
+
           private
 
-          attr_reader :target, :content_fields, :context_fields, :contentgetter, :contextgetter
+          attr_reader :target, :content_fields, :context_fields,
+            :contentgetter, :contextgetter
 
           def date_label(context)
             return "#{context[:titletype].capitalize} title #{title(context)} effective" if context.key?(:titletype)
@@ -42,9 +44,9 @@ module Kiba
           end
 
           def delete_content(row)
-            content_fields.each{ |field| row.delete(field) }
+            content_fields.each { |field| row.delete(field) }
           end
-          
+
           def note(row, content)
             [
               note_label(content, contextgetter.call(row)),
@@ -69,7 +71,7 @@ module Kiba
           def title(context)
             "(#{context[:title]})"
           end
-          
+
           def transform_date(content)
             date = content[:dateeffectiveisodate]
             if content.key?(:remarks)

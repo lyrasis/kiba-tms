@@ -22,7 +22,7 @@ module Kiba
             Kiba.job_segment do
               merge_fields =
                 Tms::ConXrefs.fields - [:conxrefid] + [:xref_role_type]
-              merge_map = merge_fields.map{ |field| [field, field] }.to_h
+              merge_map = merge_fields.map { |field| [field, field] }.to_h
               transform Merge::MultiRowLookup,
                 lookup: prep__con_xrefs,
                 keycolumn: :conxrefid,

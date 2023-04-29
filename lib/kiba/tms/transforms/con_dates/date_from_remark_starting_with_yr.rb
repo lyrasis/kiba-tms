@@ -27,7 +27,7 @@ module Kiba
 
             row
           end
-          
+
           private
 
           attr_reader :target, :remark_start

@@ -14,7 +14,7 @@ module Tms
             keycolumn: :exhobjxrefid,
             fieldmap: {text_entry: :textentry},
             delim: Tms.delim
-            )
+          )
         end
 
         def process(row)

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module OverallConditions
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable
@@ -19,11 +20,11 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          "Excellent"=>"excellent",
-          "Fair"=>"fair",
-          "Good"=>"good",
-          "Poor"=>"poor",
-          "Very Good"=>"very good"
+          "Excellent" => "excellent",
+          "Fair" => "fair",
+          "Good" => "good",
+          "Poor" => "poor",
+          "Very Good" => "very good"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

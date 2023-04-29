@@ -14,14 +14,14 @@ module Kiba
         module RowEvenable
           def close
             fields = rows.map(&:keys).flatten.uniq
-            rows.each{ |row| even(row, fields) }
-            rows.each{ |row| yield row }
+            rows.each { |row| even(row, fields) }
+            rows.each { |row| yield row }
           end
-          
+
           private def even(row, fields)
-                    missing = fields - row.keys
-                    missing.each{ |field| row[field] = nil }
-                  end
+            missing = fields - row.keys
+            missing.each { |field| row[field] = nil }
+          end
         end
       end
     end

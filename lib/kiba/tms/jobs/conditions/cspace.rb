@@ -10,7 +10,7 @@ module Kiba
           def job
             return unless config.used?
 
-          Kiba::Extend::Jobs::Job.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
                 destination: :conditions__cspace
@@ -21,7 +21,7 @@ module Kiba
 
           def sources
             base = [:conditions__objects]
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

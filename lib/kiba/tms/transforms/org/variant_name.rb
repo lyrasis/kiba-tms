@@ -29,8 +29,10 @@ module Kiba
                 fieldmap: fieldmap,
                 constantmap: constantmap,
                 conditions: ->(_pref, rows) do
-                  rows.select{ |row| row[:contype] &&
-                      row[:contype].start_with?("Org") }
+                  rows.select { |row|
+                    row[:contype] &&
+                      row[:contype].start_with?("Org")
+                  }
                 end,
                 delim: Tms.delim,
                 null_placeholder: Tms.nullvalue
@@ -39,7 +41,7 @@ module Kiba
           end
 
           def process(row)
-            xforms.each{ |xform| xform.process(row) }
+            xforms.each { |xform| xform.process(row) }
             row
           end
 

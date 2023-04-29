@@ -16,9 +16,8 @@ module Kiba
         #    preferred; last is least preferred
         # @param target [Symbol]
         def initialize(fields:,
-                       target:,
-                       getter: Kiba::Extend::Transforms::Helpers::FieldValueGetter
-                      )
+          target:,
+          getter: Kiba::Extend::Transforms::Helpers::FieldValueGetter)
           @fields = fields
           @target = target
           @deletes = fields - [target]
@@ -27,7 +26,7 @@ module Kiba
 
         def process(row)
           row[target] = preferred_value(row)
-          deletes.each{ |field| row.delete(field) }
+          deletes.each { |field| row.delete(field) }
           row
         end
 

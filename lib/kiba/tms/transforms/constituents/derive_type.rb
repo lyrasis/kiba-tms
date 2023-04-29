@@ -10,7 +10,9 @@ module Kiba
             @mode = mode
             @type = :constituenttype
             @target = mainmode? ? :derivedcontype : :altauthtype
-            @pgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[lastname firstname])
+            @pgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              lastname firstname
+            ])
             @ogetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [:institution])
             @ochecker = Tms::Services::Names::OrgNameChecker.new(field: Tms::Constituents.preferred_name_field)
           end
@@ -22,10 +24,10 @@ module Kiba
               typeval = row[type]
               return row unless typeval.blank?
             end
-            
+
             derived = derived_type(row)
             row[target] = derived if derived
-            
+
             row
           end
 
@@ -47,7 +49,7 @@ module Kiba
               "Organization?"
             end
           end
-          
+
           def mainmode?
             mode == :main
           end

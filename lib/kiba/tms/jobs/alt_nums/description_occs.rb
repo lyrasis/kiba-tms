@@ -34,21 +34,21 @@ module Kiba
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_remarks,
                 conditions: ->(_r, rows) do
-                  rows.reject{ |row| row[:remarks].blank? }
+                  rows.reject { |row| row[:remarks].blank? }
                 end
               transform Count::MatchingRowsInLookup,
                 lookup: prep__alt_nums,
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_begindate,
                 conditions: ->(_r, rows) do
-                  rows.reject{ |row| row[:beginisodate].blank? }
+                  rows.reject { |row| row[:beginisodate].blank? }
                 end
               transform Count::MatchingRowsInLookup,
                 lookup: prep__alt_nums,
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_enddate,
                 conditions: ->(_r, rows) do
-                  rows.reject{ |row| row[:endisodate].blank? }
+                  rows.reject { |row| row[:endisodate].blank? }
                 end
               transform Merge::MultiRowLookup,
                 lookup: prep__alt_nums,
@@ -57,7 +57,7 @@ module Kiba
                   example_rec_nums: :targetrecord,
                   example_values: :altnum
                 },
-                conditions: ->(_r, rows){ rows.first(3) },
+                conditions: ->(_r, rows) { rows.first(3) },
                 delim: " ||| "
             end
           end

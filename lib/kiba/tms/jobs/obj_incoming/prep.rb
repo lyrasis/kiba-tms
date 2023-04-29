@@ -64,11 +64,11 @@ module Kiba
 
               transform Tms::Transforms::DeleteTimestamps,
                 fields: %i[actualindate actualoutdate approvaldate conservationdate custodybegdate custodyenddate
-                           displaybegdate displayenddate entereddate expectedindate expectedoutdate loanbegdate
-                           loanenddate requestdate]
+                  displaybegdate displayenddate entereddate expectedindate expectedoutdate loanbegdate
+                  loanenddate requestdate]
 
               moneyfields = %i[cratingactual cratingestimate ininsuractual ininsurestimate ininsurvalue
-                               shippingactual shippingestimate]
+                shippingactual shippingestimate]
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: moneyfields
               transform Clean::RegexpFindReplaceFieldVals,

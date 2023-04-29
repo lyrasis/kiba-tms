@@ -20,10 +20,10 @@ module Kiba
 
           def lookups
             base = %i[
-                      prep__exhibitions
-                      prep__loans
-                     ]
-            base.select{ |job| Tms.job_output?(job) }
+              prep__exhibitions
+              prep__loans
+            ]
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

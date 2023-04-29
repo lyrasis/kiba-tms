@@ -6,7 +6,7 @@ module Kiba
       module Terms
         module Preferred
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :prefterm
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :prefterm
             end
           end
         end

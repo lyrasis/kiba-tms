@@ -15,9 +15,9 @@ module Kiba
                 source: :tms__packages,
                 destination: :prep__packages,
                 lookup: %i[
-                           tms__package_folder_xrefs
-                           prep__package_folders
-                          ]
+                  tms__package_folder_xrefs
+                  prep__package_folders
+                ]
               },
               transformer: xforms
             )

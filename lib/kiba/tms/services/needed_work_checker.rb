@@ -13,7 +13,7 @@ module Kiba
         include Dry::Monads[:result]
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         attr_reader :mod
@@ -25,7 +25,7 @@ module Kiba
         end
 
         def call
-          to_check.each{ |name, check| run(check, name) }
+          to_check.each { |name, check| run(check, name) }
           self
         end
 
@@ -36,7 +36,7 @@ module Kiba
 
         def successes
           @successes ||= results.select(&:success?)
-            .reject{ |succ| succ.value!.nil? }
+            .reject { |succ| succ.value!.nil? }
             .map(&:value!)
         end
 
@@ -46,14 +46,14 @@ module Kiba
 
         def run(check, name)
           result = check.call
-        rescue StandardError => err
+        rescue => err
           results << Failure([name, err])
         else
-          if result.is_a?(Dry::Monads::Result)
-            results << result
+          results << if result.is_a?(Dry::Monads::Result)
+            result
           else
 
-            results << Success(result)
+            Success(result)
           end
         end
       end

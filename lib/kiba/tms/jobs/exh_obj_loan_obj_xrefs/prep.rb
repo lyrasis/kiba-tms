@@ -20,7 +20,7 @@ module Kiba
 
           def lookups
             base = [:prep__exh_obj_xrefs]
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

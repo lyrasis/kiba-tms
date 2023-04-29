@@ -27,7 +27,6 @@ module Kiba
                 action: :keep,
                 field: :org
             end
-
           end
         end
       end

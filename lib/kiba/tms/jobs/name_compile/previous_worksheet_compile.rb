@@ -24,7 +24,7 @@ module Kiba
             Kiba.job_segment do
               idcreator = CombineValues::FromFieldsWithDelimiter.new(
                 sources: %i[authority name constituentid relation_type
-                            termsource],
+                  termsource],
                 target: :cleanupid,
                 sep: " ",
                 delete_sources: false

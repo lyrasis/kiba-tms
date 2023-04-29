@@ -16,15 +16,18 @@ module Kiba
           end
 
           def process(row)
-            [status, note, :rem_loanindividual, :rem_loanstatusdate].each{ |field| row[field] = nil }
+            [status, note, :rem_loanindividual,
+              :rem_loanstatusdate].each { |field|
+              row[field] = nil
+            }
             remarks = row[:remarks]
             row.delete(:remarks)
             return row if remarks.blank?
 
             notes = remarks.split(notedelim)
-              .reject{ |remark| remark.empty? }
+              .reject { |remark| remark.empty? }
             row[note] = notes.join(delim)
-            statuses = notes.dup.map{ |note| statusval }
+            statuses = notes.dup.map { |note| statusval }
             row[status] = statuses.join(delim)
             row
           end

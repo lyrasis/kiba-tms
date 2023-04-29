@@ -71,32 +71,32 @@ module Kiba
               transform Append::ToFieldValue,
                 field: :department, value: " department"
               transform Merge::ConstantValueConditional,
-                fieldmap: { dept_exhibitionpersonrole: "Responsible department"},
-                condition: ->(row){ !row[:department].blank? }
+                fieldmap: {dept_exhibitionpersonrole: "Responsible department"},
+                condition: ->(row) { !row[:department].blank? }
               transform Rename::Field,
                 from: :department,
                 to: :dept_exhibitionpersonorganizationlocal
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[
-                            exhibitionpersonorganizationlocal
-                            dept_exhibitionpersonorganizationlocal
-                           ],
+                  exhibitionpersonorganizationlocal
+                  dept_exhibitionpersonorganizationlocal
+                ],
                 target: :exhibitionpersonorganizationlocal,
                 sep: Tms.sgdelim,
                 delete_sources: true
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[
-                            exhibitionpersonpersonlocalrole
-                            exhibitionpersonorganizationlocalrole
-                            dept_exhibitionpersonrole
-                           ],
+                  exhibitionpersonpersonlocalrole
+                  exhibitionpersonorganizationlocalrole
+                  dept_exhibitionpersonrole
+                ],
                 target: :exhibitionpersonrole,
                 sep: Tms.sgdelim,
                 delete_sources: true
 
               %i[boilerplatetext curatorialnote generalnote
-                 planningnote].each do |field|
+                planningnote].each do |field|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{field}_sources".to_sym),
                   target: field,
@@ -105,10 +105,11 @@ module Kiba
               end
 
               {
-                exhtravelling: {"0"=>nil, "1"=>"traveling"},
-                publishto: {"0"=>"None", "1"=>job.send(:publishto_true_value)},
-                isinhouse: {"0"=>nil, "1"=>"in-house"},
-                isvirtual: {"0"=>nil, "1"=>"virtual"}
+                exhtravelling: {"0" => nil, "1" => "traveling"},
+                publishto: {"0" => "None",
+                            "1" => job.send(:publishto_true_value)},
+                isinhouse: {"0" => nil, "1" => "in-house"},
+                isvirtual: {"0" => nil, "1" => "virtual"}
               }.each do |field, mapping|
                 transform Replace::FieldValueWithStaticMapping,
                   source: field,

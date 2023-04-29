@@ -11,15 +11,14 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       table_field: :tableid,
-                       col: Tms::Data::Column,
-                       settingobj: Tms::Data::ConfigSetting,
-                       failobj: Tms::Data::DeriverFailure
-                      )
+          table_field: :tableid,
+          col: Tms::Data::Column,
+          settingobj: Tms::Data::ConfigSetting,
+          failobj: Tms::Data::DeriverFailure)
           @mod = mod
           @table_field = table_field
           @col = col
@@ -39,9 +38,8 @@ module Kiba
           clean = yield used_tables(named)
 
           Success(settingobj.new(mod: mod,
-                                 name: setting,
-                                 value: clean
-                                ))
+            name: setting,
+            value: clean))
         end
 
         private
@@ -50,8 +48,8 @@ module Kiba
           :lookup, :nontables
 
         def map_table_names(vals)
-          result = vals.map{ |val| lookup_table_name(val) }
-        rescue StandardError => err
+          result = vals.map { |val| lookup_table_name(val) }
+        rescue => err
           Failure(
             failobj.new(mod: mod, name: setting, err: err)
           )
@@ -71,8 +69,8 @@ module Kiba
         end
 
         def used_tables(tables)
-          result = tables.reject{ |table| nontables.any?(table) }
-        rescue StandardError => err
+          result = tables.reject { |table| nontables.any?(table) }
+        rescue => err
           Failure(
             failobj.new(mod: mod, name: setting, err: err)
           )

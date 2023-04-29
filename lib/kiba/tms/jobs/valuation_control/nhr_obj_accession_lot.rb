@@ -19,9 +19,9 @@ module Kiba
                 source: :obj_accession__linked_lot,
                 destination: :valuation_control__nhr_obj_accession_lot,
                 lookup: %i[
-                           accession_lot__valuation_prep
-                           objects__numbers_cleaned
-                          ]
+                  accession_lot__valuation_prep
+                  objects__numbers_cleaned
+                ]
               },
               transformer: xforms
             )

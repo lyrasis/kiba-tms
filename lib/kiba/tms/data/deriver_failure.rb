@@ -4,7 +4,6 @@ module Kiba
   module Tms
     module Data
       class DeriverFailure
-
         attr_reader :mod, :name, :err, :sym
 
         # @param mod [Module]
@@ -35,7 +34,7 @@ module Kiba
         def backtrace
           return nil unless trace
 
-          trace.map{ |line| "   #{line}" }
+          trace.map { |line| "   #{line}" }
             .join("\n")
         end
 

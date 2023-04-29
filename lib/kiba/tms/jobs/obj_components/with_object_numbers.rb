@@ -13,9 +13,9 @@ module Kiba
                 source: :prep__obj_components,
                 destination: :obj_components__with_object_numbers,
                 lookup: %i[
-                           objects__numbers_cleaned
-                           objects__by_number
-                           ]
+                  objects__numbers_cleaned
+                  objects__by_number
+                ]
               },
               transformer: xforms
             )
@@ -41,7 +41,7 @@ module Kiba
                 lookup: objects__by_number,
                 keycolumn: :componentnumber,
                 fieldmap: {
-                  existingobject: :objectnumber,
+                  existingobject: :objectnumber
                 },
                 delim: Tms.delim
               # Removes :existingobject value altogether if row is for a top object, where it is expected to exist in
@@ -52,14 +52,13 @@ module Kiba
                 next row if exobj.blank?
 
                 istop = row[:is_top_object]
-                if istop.blank?
-                  row[:existingobject] = "y"
-                else
-                  row[:existingobject] = nil
+                row[:existingobject] = if istop.blank?
+                  "y"
                 end
                 row
               end
-              transform Deduplicate::FlagAll, on_field: :componentnumber, in_field: :duplicate, explicit_no: false
+              transform Deduplicate::FlagAll, on_field: :componentnumber,
+                in_field: :duplicate, explicit_no: false
 
               # add :problemcomponent flag field for non-top-objects
               transform do |row|
@@ -67,8 +66,8 @@ module Kiba
                 istop = row[:is_top_object]
                 next row unless istop.blank?
 
-                vals = %i[existingobject duplicate].map{ |field| row[field] }
-                  .reject{ |val| val.blank? }
+                vals = %i[existingobject duplicate].map { |field| row[field] }
+                  .reject { |val| val.blank? }
                 next row if vals.empty?
 
                 row[:problemcomponent] = "y"

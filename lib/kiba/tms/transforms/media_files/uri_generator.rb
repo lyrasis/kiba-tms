@@ -7,7 +7,6 @@ module Kiba
         # Generates :mediafileuri value in :media_files__cspace. Assumes there is
         #   a :media_files__file_path_lookup
         class UriGenerator
-
           def initialize
             @lookup = Tms.get_lookup(
               jobkey: :media_files__file_path_lookup,
@@ -29,12 +28,12 @@ module Kiba
             row
           end
 
-            private
+          private
 
-            attr_reader :lookup, :merger
+          attr_reader :lookup, :merger
 
-            def norm_path(row)
-              val = row[:fullpath]
+          def norm_path(row)
+            val = row[:fullpath]
             return nil if val.blank?
 
             val.downcase

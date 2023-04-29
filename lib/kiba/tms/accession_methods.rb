@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module AccessionMethods
       extend Dry::Configurable
+
       module_function
 
       extend Tms::Mixins::Tableable

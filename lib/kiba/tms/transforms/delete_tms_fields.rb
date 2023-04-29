@@ -9,7 +9,7 @@ module Kiba
         end
 
         def process(row)
-          @fields.each{ |field| row.delete(field) }
+          @fields.each { |field| row.delete(field) }
           row
         end
       end

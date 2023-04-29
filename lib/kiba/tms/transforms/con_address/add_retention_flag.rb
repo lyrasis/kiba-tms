@@ -12,10 +12,10 @@ module Kiba
               fields: Tms::ConAddress.address_fields
             )
             @chks = if Tms::ConAddress.omit_inactive_address
-                      %i[no_match inactive data]
-                    else
-                      %i[no_match data]
-                    end
+              %i[no_match inactive data]
+            else
+              %i[no_match data]
+            end
           end
 
           # @private

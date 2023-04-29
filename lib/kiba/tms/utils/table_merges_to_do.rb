@@ -5,7 +5,7 @@ module Kiba
     module Utils
       class TableMergesToDo
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(checker = Tms::Services::TableMergesToDo)
@@ -15,8 +15,8 @@ module Kiba
 
         def call
           src.keys
-            .map{ |key| Tms.const_get(key) }
-            .map{ |mod| checker.call(mod) }
+            .map { |key| Tms.const_get(key) }
+            .map { |mod| checker.call(mod) }
             .flatten
         end
 

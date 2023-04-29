@@ -14,13 +14,13 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       col_obj: Tms::Data::ColumnFromString,
-                       failobj: Tms::Data::DeriverFailure,
-                       table_getter: Tms::Data::CsvEnum)
+          col_obj: Tms::Data::ColumnFromString,
+          failobj: Tms::Data::DeriverFailure,
+          table_getter: Tms::Data::CsvEnum)
           @mod = mod
           @table_getter = table_getter
           @col_obj = col_obj
@@ -55,39 +55,39 @@ module Kiba
         attr_reader :mod, :col_obj, :failobj, :used_in, :table_getter, :matcher
 
         def actually_used_in(arr)
-          arr.map{ |tabfld| tabfld.split(".") }
+          arr.map { |tabfld| tabfld.split(".") }
             .to_h
-            .select{ |mod, _fld| Tms::Table::Obj.new(mod).used? }
-            .map{ |mod, fld| "#{mod}.#{fld}" }
+            .select { |mod, _fld| Tms::Table::Obj.new(mod).used? }
+            .map { |mod, fld| "#{mod}.#{fld}" }
         end
 
         def clean_vals(vals)
           return Success(vals) if Tms.migrate_no_value_types
 
-          cleaned = vals.reject{ |val| val.match?(matcher) }
-        rescue StandardError => err
+          cleaned = vals.reject { |val| val.match?(matcher) }
+        rescue => err
           Failure(err)
         else
           Success(cleaned)
         end
 
         def used_values
-          vals = used_in.map{ |col| col_obj.call(str: col).unique_values }
+          vals = used_in.map { |col| col_obj.call(str: col).unique_values }
             .select(&:success?)
             .map(&:value!)
             .flatten
             .sort
             .uniq
-        rescue StandardError => err
+        rescue => err
           Failure(Tms::Data::DeriverFailure.new(mod: mod, err: err))
         else
           Success(vals)
         end
 
         def vals_for_ids(ids_used, lkup)
-          vals = lkup.select{ |row| ids_used.any?(row[mod.id_field]) }
-            .map{ |row| row[mod.type_field] }
-        rescue StandardError => err
+          vals = lkup.select { |row| ids_used.any?(row[mod.id_field]) }
+            .map { |row| row[mod.type_field] }
+        rescue => err
           Failure(err)
         else
           Success(vals)

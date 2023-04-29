@@ -12,12 +12,11 @@ module Kiba
           include Dry::Monads::Do.for(:call)
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           def initialize(mod: Tms::ConRefs,
-                         table_getter: Tms::Data::CsvEnum
-                        )
+            table_getter: Tms::Data::CsvEnum)
             @mod = mod
             @table_getter = table_getter
             @field = mod.split_on_column
@@ -39,11 +38,11 @@ module Kiba
           end
 
           def rows_to_vals(rows)
-            result = rows.map{ |row| row.key?(field) ? row[field] : nil }
+            result = rows.map { |row| row.key?(field) ? row[field] : nil }
               .compact
               .sort
               .uniq
-          rescue StandardError => err
+          rescue => err
             Failure(err)
           else
             Success(result)

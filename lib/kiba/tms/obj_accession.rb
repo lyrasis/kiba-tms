@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjAccession
       extend Dry::Configurable
+
       module_function
 
       # What to do with accessionvalue data
@@ -92,10 +93,10 @@ module Kiba
 
       setting :delete_fields,
         default: %i[currencyamount currencyrate localamount
-                    accessionminutes1 accessionminutes2 budget capitalprogram
-                    currencyid originalentityid currententityid],
+          accessionminutes1 accessionminutes2 budget capitalprogram
+          currencyid originalentityid currententityid],
         reader: true,
-        constructor: Proc.new{ |value| set_deletes(value) }
+        constructor: proc { |value| set_deletes(value) }
       extend Tms::Mixins::Tableable
 
       setting :name_fields,
@@ -105,10 +106,10 @@ module Kiba
 
       setting :date_fields,
         default: %i[accessionisodate authdate
-                           approvalisodate1 approvalisodate2
-                           initdate suggestedvalueisodate],
+          approvalisodate1 approvalisodate2
+          initdate suggestedvalueisodate],
         reader: true,
-        constructor: proc{ |value| value.select{ |f| fields.any?(f) } }
+        constructor: proc { |value| value.select { |f| fields.any?(f) } }
 
       # approaches required for creation of CS acquisitions and obj/acq
       #   relations
@@ -118,7 +119,7 @@ module Kiba
 
       setting :configurable,
         default: {
-          processing_approaches: proc{
+          processing_approaches: proc {
             Tms::Services::ObjAccession::ProcessingApproachDeriver.call
           }
         },

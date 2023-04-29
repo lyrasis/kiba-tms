@@ -10,7 +10,7 @@ module Kiba
           def job
             return unless config.used?
 
-          Kiba::Extend::Jobs::Job.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
                 destination: :conditions__nhrs
@@ -21,8 +21,8 @@ module Kiba
 
           def sources
             %i[
-               conditions__nhr_objects
-              ].select{ |job| Tms.job_output?(job) }
+              conditions__nhr_objects
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module Currencies
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[localeid currencycode iseuro numberofdecimals
-                    replacedbycurrencyid replacementrate replacedonisodate
-                    allowedforlocalvalues],
+          replacedbycurrencyid replacementrate replacedonisodate
+          allowedforlocalvalues],
         reader: true
       extend Tms::Mixins::Tableable
 

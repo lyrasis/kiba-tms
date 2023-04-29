@@ -6,14 +6,15 @@ module Kiba
   module Tms
     module AcqNumAcq
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :acq_num_acq__obj_rows, reader: true
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid acquisitionlot
-                    objectid objectnumber objectvalueid],
+          objectid objectnumber objectvalueid],
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           value << Tms::ObjAccession.delete_fields
           value << Tms.tms_fields
           value.flatten

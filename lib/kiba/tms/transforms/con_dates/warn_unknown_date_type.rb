@@ -7,7 +7,7 @@ module Kiba
         # Add "unknown/unmapped date type in datedescription" to :warn field
         class WarnUnknownDateType
           include Warnable
-          
+
           def initialize
             @warning = "unknown/unmapped date type in datedescription"
             @target = :warn
@@ -18,11 +18,11 @@ module Kiba
             type = row[:datedescription]
             return row if type.blank?
             return row if Tms::Constituents.dates.known_types.any?(type)
-            
+
             add_warning(row)
             row
           end
-          
+
           private
 
           attr_reader :target, :warning

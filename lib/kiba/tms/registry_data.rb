@@ -16,7 +16,9 @@ module Kiba
       end
 
       def register_prep_files
-        tables = Kiba::Tms::Table::List.call.map{ |table| Kiba::Tms::Table::Obj.new(table) }
+        tables = Kiba::Tms::Table::List.call.map { |table|
+          Kiba::Tms::Table::Obj.new(table)
+        }
           .select(&:included)
 
         Kiba::Tms.registry.namespace("prep") do
@@ -31,19 +33,21 @@ module Kiba
       private_class_method :register_prep_files
 
       def register_supplied_files
-        tables = Kiba::Tms::Table::List.call.map{ |table| Kiba::Tms::Table::Obj.new(table) }
+        tables = Kiba::Tms::Table::List.call.map { |table|
+          Kiba::Tms::Table::Obj.new(table)
+        }
           .select(&:included)
 
         Kiba::Tms.registry.namespace("tms") do
           tables.each do |table|
-            register table.filekey, Tms::Table::Supplied::RegistryHashCreator.call(table)
+            register table.filekey,
+              Tms::Table::Supplied::RegistryHashCreator.call(table)
           end
         end
       end
       private_class_method :register_supplied_files
 
       def register_files
-
         # register :object_numbers, {
         #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_numbers.csv'),
         #   creator: Kiba::Tms::Jobs::Objects.method(:object_numbers),
@@ -54,7 +58,8 @@ module Kiba
         Kiba::Tms.registry.namespace("report") do
           register :terms_in_mig, {
             creator: Kiba::Tms::Jobs::Terms::Reports.method(:in_mig),
-            path: File.join(Kiba::Tms.datadir, "reports", "terms_in_migration.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "terms_in_migration.csv"),
             desc: "Unique terms in migration",
             tags: %i[termdata reports]
           }
@@ -63,7 +68,8 @@ module Kiba
         Kiba::Tms.registry.namespace("accession_lot") do
           register :valuation_prep, {
             creator: Kiba::Tms::Jobs::AccessionLot::ValuationPrep,
-            path: File.join(Kiba::Tms.datadir, "working", "accession_lot_valuation_prep.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "accession_lot_valuation_prep.csv"),
             desc: "Valuation Control procedures created from AccessionLot data. Still with ID for creating relationships",
             tags: %i[valuation acquisitions],
             lookup_on: :acquisitionlotid
@@ -188,14 +194,14 @@ module Kiba
           register :description_single_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "alt_nums_description_single_occ.csv"),
+              "alt_nums_description_single_occ.csv"),
             desc: "AltNums with a description only used once",
             tags: %i[altnums reports]
           }
           register :description_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "alt_nums_description_occs.csv"),
+              "alt_nums_description_occs.csv"),
             desc: "AltNums with count of description occurrences - source "\
               "data for other reports",
             tags: %i[altnums]
@@ -203,7 +209,7 @@ module Kiba
           register :no_description, {
             creator: Kiba::Tms::Jobs::AltNums::NoDescription,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "alt_nums_no_description.csv"),
+              "alt_nums_no_description.csv"),
             desc: "AltNums without a description value",
             tags: %i[altnums reports]
           }
@@ -239,9 +245,9 @@ module Kiba
               dest_special_opts: {
                 initial_headers:
                 %i[number_type correct_type treatment note
-                   occurrences occs_with_remarks occs_with_begindate
-                   occs_with_enddate
-                   example_rec_nums example_values]
+                  occurrences occs_with_remarks occs_with_begindate
+                  occs_with_enddate
+                  example_rec_nums example_values]
               }
             }
           end
@@ -250,7 +256,8 @@ module Kiba
         Kiba::Tms.registry.namespace("associations") do
           register :missing_values, {
             creator: Kiba::Tms::Jobs::Associations::MissingValues,
-            path: File.join(Kiba::Tms.datadir, "reports", "associations_missing_values.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "associations_missing_values.csv"),
             desc: "One of the involved ids could not be mapped to a value, human-readable relationship cannot be created.",
             tags: %i[associations reports]
           }
@@ -259,14 +266,16 @@ module Kiba
         Kiba::Tms.registry.namespace("classification_notations") do
           register :ids_used, {
             creator: Kiba::Tms::Jobs::ClassificationNotations::IdsUsed,
-            path: File.join(Kiba::Tms.datadir, "reference", "classification_notation_ids_used.csv"),
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "classification_notation_ids_used.csv"),
             desc: "Extracts list of unique classification notation ids in used TermMasterThes rows",
             lookup_on: :primarycnid,
             tags: %i[termdata terms reference]
           }
           register :used, {
             creator: Kiba::Tms::Jobs::ClassificationNotations::Used,
-            path: File.join(Kiba::Tms.datadir, "reference", "classification_notation_ids_used.csv"),
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "classification_notation_ids_used.csv"),
             desc: "ClassificationNotation rows in used TermMasterThes rows",
             lookup_on: :classificationnotationid,
             tags: %i[termdata terms reference]
@@ -277,7 +286,7 @@ module Kiba
           register :to_conservation, {
             creator: Kiba::Tms::Jobs::CondLineItems::ToConservation,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "condlineitems_conservation.csv"),
+              "condlineitems_conservation.csv"),
             desc: "Limits to rows which, based on attribute type value, need"\
               "to be mapped to conservation treatment record, as well as "\
               "mentioned in condition check record",
@@ -290,7 +299,7 @@ module Kiba
           register :from_cond_line_items, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::FromCondLineItems,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conservation_from_condlineitems.csv"),
+              "conservation_from_condlineitems.csv"),
             desc: "Conservation treatment records derived from CondLineItems "\
               "rows",
             tags: %i[conservationtreatments]
@@ -298,7 +307,7 @@ module Kiba
           register :all, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::All,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conservation_all.csv"),
+              "conservation_all.csv"),
             desc: "Conservation treatment records from all sources. Finalizes "\
               ":conservationnumber",
             tags: %i[conservationtreatments]
@@ -306,7 +315,7 @@ module Kiba
           register :nhrs_cond_line_items, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsCondLineItems,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhrs_conservation_from_condlineitems.csv"),
+              "nhrs_conservation_from_condlineitems.csv"),
             desc: "Nonhierarchical relationships between conservation records "\
               "derived from CondLineItems and a) object or other record type; "\
               "and b) related Condition Check record",
@@ -315,14 +324,14 @@ module Kiba
           register :nhrs_all, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsAll,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhrs_conservation_all.csv"),
+              "nhrs_conservation_all.csv"),
             desc: "Compiled and deduplicated nhrs for conservation records",
             tags: %i[conservationtreatments conditions nhrs objects]
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::Cspace,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conservation_cspace.csv"),
+              "conservation_cspace.csv"),
             desc: ":conservation_treatment__all with non-CS fields removed ",
             tags: %i[conservationtreatments]
           }
@@ -338,7 +347,7 @@ module Kiba
           register :shaped, {
             creator: Kiba::Tms::Jobs::Conditions::Shaped,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conditions_shaped.csv"),
+              "conditions_shaped.csv"),
             desc: "Reshapes to CS data model as closely as possible without "\
               "introducing source-record-type specifics",
             tags: %i[conditions]
@@ -346,28 +355,28 @@ module Kiba
           register :objects, {
             creator: Kiba::Tms::Jobs::Conditions::Objects,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conditions_objects.csv"),
+              "conditions_objects.csv"),
             desc: "Renames :objectnumber to :recordnumber",
             tags: %i[conditions objects]
           }
           register :nhr_objects, {
             creator: Kiba::Tms::Jobs::Conditions::NhrObjects,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhr_conditions_objects.csv"),
+              "nhr_conditions_objects.csv"),
             desc: "Creates Object<->Conditioncheck NHRs",
             tags: %i[conditions objects nhr]
           }
           register :nhrs, {
             creator: Kiba::Tms::Jobs::Conditions::Nhrs,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhr_conditions_nhrs.csv"),
+              "nhr_conditions_nhrs.csv"),
             desc: "All Conditioncheck NHRs",
             tags: %i[conditions objects nhr]
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Conditions::Cspace,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "conditions_for_cspace.csv"),
+              "conditions_for_cspace.csv"),
             desc: "Adds :conditioncheckrefnumber based on :recordnumber",
             tags: %i[conditions objects],
             lookup_on: :conditionid
@@ -377,7 +386,8 @@ module Kiba
         Kiba::Tms.registry.namespace("con_address") do
           register :shaped, {
             creator: Kiba::Tms::Jobs::ConAddress::Shaped,
-            path: File.join(Kiba::Tms.datadir, "working", "con_address_shaped.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_address_shaped.csv"),
             desc: "Removes rows with no address data, merges in coded values, "\
               "shapes for CS, flags duplicate address data rows",
             tags: %i[con con_address]
@@ -385,28 +395,30 @@ module Kiba
           register :countries_unmapped_before_clean, {
             creator: Kiba::Tms::Jobs::ConAddress::CountriesUnmappedBeforeClean,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_address_countries_clean_review.csv"),
+              "con_address_countries_clean_review.csv"),
             desc: "Addresses with country values that cannot be exactly or "\
               "cleanly mapped to CS countries vocabulary.",
             tags: %i[con con_address postmigcleanup]
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
-            path: File.join(Kiba::Tms.datadir, "working", "con_address_to_merge.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_address_to_merge.csv"),
             desc: "Removes rows with no address data, merges in coded values, shapes for CS",
             tags: %i[con con_address],
             lookup_on: :constituentid
           }
           register :for_orgs, {
             creator: Kiba::Tms::Jobs::ConAddress::ForOrgs,
-            path: File.join(Kiba::Tms.datadir, "working", "con_address_for_orgs.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_address_for_orgs.csv"),
             tags: %i[con con_address],
             lookup_on: :org
           }
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConAddress::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_address_dropping.csv"),
+              "con_address_dropping.csv"),
             desc: "Addresses dropped from migration because (1) they are for "\
               "constituents that are not migrating; (2) they are marked "\
               "inactive and the migration is set to omit inactive addresses; "\
@@ -416,7 +428,7 @@ module Kiba
           register :duplicates, {
             creator: Kiba::Tms::Jobs::ConAddress::Duplicates,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_address_duplicates.csv"),
+              "con_address_duplicates.csv"),
             desc: "Addresses dropped from migration because, once data was "\
               "processed/shaped, the address duplicated another address for "\
               "the same constituent. Remarks/notes for the address were NOT "\
@@ -426,21 +438,24 @@ module Kiba
           }
           register :add_counts, {
             creator: Kiba::Tms::Jobs::ConAddress::AddCounts,
-            path: File.join(Kiba::Tms.datadir, "working", "constituents_with_address_counts.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "constituents_with_address_counts.csv"),
             desc: "Merge in count of how many addresses for each constituent",
             tags: %i[con con_address],
             lookup_on: :constituentid
           }
           register :multi, {
             creator: Kiba::Tms::Jobs::ConAddress::Multi,
-            path: File.join(Kiba::Tms.datadir, "reports", "constituents_with_multiple_address.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "constituents_with_multiple_address.csv"),
             tags: %i[con con_address reports],
             dest_special_opts: {
               initial_headers:
               %i[
-                 addresscount type termdisplayname rank address_notes
-                 addressplace1 addressplace2 city state zipcode addresscountry
-                ] }
+                addresscount type termdisplayname rank address_notes
+                addressplace1 addressplace2 city state zipcode addresscountry
+              ]
+            }
           }
         end
 
@@ -471,7 +486,7 @@ module Kiba
           register :compiled, {
             creator: Kiba::Tms::Jobs::ConDates::Compiled,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "con_dates_compiled.csv"),
+              "con_dates_compiled.csv"),
             tags: %i[con condates],
             desc: "Combines data from constituents__clean_dates and, if used, "\
               "prep__con_dates; Reduces to unique value per date type, as "\
@@ -485,20 +500,20 @@ module Kiba
           register :prep_compiled, {
             creator: Kiba::Tms::Jobs::ConDates::PrepCompiled,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "con_dates_compiled_prep.csv"),
+              "con_dates_compiled_prep.csv"),
             tags: %i[con condates],
             desc: "Adds warnings to be pulled into review; creates "\
               ":datenotes; adds CS mappable fields",
             dest_special_opts: {
               initial_headers:
               %i[constituentid datasource warn datedescription date remarks
-                 birth_foundation_date death_dissolution_date datenote	]
+                birth_foundation_date death_dissolution_date datenote	]
             }
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConDates::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "con_dates_to_merge.csv"),
+              "con_dates_to_merge.csv"),
             tags: %i[con condates],
             desc: "Keeps only fields from :prep_compiled to be merged back "\
             "into Constituents.",
@@ -507,19 +522,19 @@ module Kiba
           register :for_review, {
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_dates_for_review.csv"),
+              "con_dates_for_review.csv"),
             tags: %i[con condates reports cleanup],
             dest_special_opts: {
               initial_headers:
               %i[constituentname constituentid datasource warn datedescription
-                 date remarks birth_foundation_date death_dissolution_date
-                 datenote]
+                date remarks birth_foundation_date death_dissolution_date
+                datenote]
             }
           }
           register :postmig, {
             creator: Kiba::Tms::Jobs::ConDates::Postmig,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_dates_for_post_mig_handling.csv"),
+              "con_dates_for_post_mig_handling.csv"),
             tags: %i[con condates reports postmigcleanup]
           }
         end
@@ -528,7 +543,7 @@ module Kiba
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "con_email_dropping.csv"),
+              "con_email_dropping.csv"),
             tags: %i[con conemail prep postmigcleanup],
             desc: "Rows from TMS ConEMail table that are omitted from the "\
               "migration because the associated constituent is not migrating"
@@ -536,7 +551,7 @@ module Kiba
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConEMail::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "con_email_to_merge.csv"),
+              "con_email_to_merge.csv"),
             tags: %i[con conemail],
             lookup_on: :constituentid
           }
@@ -545,7 +560,8 @@ module Kiba
         Kiba::Tms.registry.namespace("con_phones") do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConPhones::Dropping,
-            path: File.join(Kiba::Tms.datadir, "reports", "con_phones_dropping.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "con_phones_dropping.csv"),
             tags: %i[con conphones prep not_migrating reports]
           }
           register :to_merge, {
@@ -605,18 +621,21 @@ module Kiba
           }
           register :prep, {
             creator: Kiba::Tms::Jobs::ConRefs::Prep,
-            path: File.join(Kiba::Tms.datadir, "working", "con_refs_prepped.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_refs_prepped.csv"),
             tags: %i[con_xrefs]
           }
           register :type_mismatch, {
             creator: Kiba::Tms::Jobs::ConRefs::TypeMismatch,
-            path: File.join(Kiba::Tms.datadir, "reports", "con_refs_type_mismatch.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "con_refs_type_mismatch.csv"),
             desc: "Role type values from role, con_xrefs, and con_xref_details do not match",
             tags: %i[con_xrefs]
           }
           register :type_match, {
             creator: Kiba::Tms::Jobs::ConRefs::TypeMatch,
-            path: File.join(Kiba::Tms.datadir, "working", "con_refs_type_match.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_refs_type_match.csv"),
             desc: "Role type values from role, con_xrefs, and con_xref_details do match; redundant fields removed",
             tags: %i[con_xrefs]
           }
@@ -774,37 +793,43 @@ module Kiba
           }
           register :with_type, {
             creator: Kiba::Tms::Jobs::Constituents::WithType,
-            path: File.join(Kiba::Tms.datadir, "reports", "constituents_with_type.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "constituents_with_type.csv"),
             desc: "Constituents with a constituent type entered",
             tags: %i[con reports]
           }
           register :without_type, {
             creator: Kiba::Tms::Jobs::Constituents::WithoutType,
-            path: File.join(Kiba::Tms.datadir, "working", "constituents_without_type.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "constituents_without_type.csv"),
             desc: "Constituents without a constituent type entered",
             tags: %i[con]
           }
           register :with_name_data, {
             creator: Kiba::Tms::Jobs::Constituents::WithNameData,
-            path: File.join(Kiba::Tms.datadir, "working", "constituents_with_name_data.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "constituents_with_name_data.csv"),
             desc: "Constituents with displayname or alphasort name",
             tags: %i[con]
           }
           register :without_name_data, {
             creator: Kiba::Tms::Jobs::Constituents::WithoutNameData,
-            path: File.join(Kiba::Tms.datadir, "reports", "constituents_without_name_data.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "constituents_without_name_data.csv"),
             desc: "Constituents without displayname or alphasort name",
             tags: %i[con reports]
           }
           register :derived_type, {
             creator: Kiba::Tms::Jobs::Constituents::DerivedType,
-            path: File.join(Kiba::Tms.datadir, "reports", "constituents_with_derived_type.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "constituents_with_derived_type.csv"),
             desc: "Constituents with a derived type",
             tags: %i[con reports]
           }
           register :no_derived_type, {
             creator: Kiba::Tms::Jobs::Constituents::NoDerivedType,
-            path: File.join(Kiba::Tms.datadir, "reports", "constituents_without_derived_type.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "constituents_without_derived_type.csv"),
             desc: "Constituents without a derived type",
             tags: %i[con reports]
           }
@@ -814,11 +839,11 @@ module Kiba
           if Tms::DatesTranslated.used?
             Tms::DatesTranslated.lookup_sources
               .each_with_index do |src, idx|
-                name = "source_orig_#{idx}"
-                register name.to_sym, {
-                  path: src,
-                  supplied: true
-                }
+              name = "source_orig_#{idx}"
+              register name.to_sym, {
+                path: src,
+                supplied: true
+              }
             end
             register :lookup, {
               creator: Kiba::Tms::Jobs::DatesTranslated::Lookup,
@@ -1089,7 +1114,8 @@ module Kiba
           }
           register :in_lookup, {
             creator: Kiba::Tms::Jobs::Loans::InLookup,
-            path: File.join(Kiba::Tms.datadir, "working", "loans_in_lookup.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "loans_in_lookup.csv"),
             desc: "Loans with :loantype = `loan in`; does NOT require running "\
               "prep__loans job as a dependency; outputs single field: "\
               ":loanid",
@@ -1111,7 +1137,8 @@ module Kiba
           }
           register :unexpected_type, {
             creator: Kiba::Tms::Jobs::Loans::UnexpectedType,
-            path: File.join(Kiba::Tms.datadir, "reports", "loans_unexpected_type.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "loans_unexpected_type.csv"),
             desc: "Loans with :loantype not `loan in` or `loan out`. Non-zero means work to do!",
             tags: %i[loans todochk]
           }
@@ -1125,13 +1152,14 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Loansin::Cspace,
-            path: File.join(Kiba::Tms.datadir, "working", "loansin__cspace.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "loansin__cspace.csv"),
             tags: %i[loans loansin]
           }
           register :lender_contact_structure_review, {
             creator: Kiba::Tms::Jobs::Loansin::LenderContactStructureReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "loansin_lender_contact_structure_review.csv"),
+              "loansin_lender_contact_structure_review.csv"),
             tags: %i[loans loansin postmigcleanup],
             desc: "Contact names may be stored in the :contact field in TMS "\
               "and/or merged in from ConXrefs tables. Lender names are merged "\
@@ -1146,7 +1174,8 @@ module Kiba
           }
           register :rel_obj, {
             creator: Kiba::Tms::Jobs::Loansin::RelObj,
-            path: File.join(Kiba::Tms.datadir, "working", "loansin__rel_obj.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "loansin__rel_obj.csv"),
             tags: %i[loans loansin relations nhr]
           }
         end
@@ -1159,12 +1188,14 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Loansout::Cspace,
-            path: File.join(Kiba::Tms.datadir, "working", "loansout__cspace.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "loansout__cspace.csv"),
             tags: %i[loans loansout]
           }
           register :rel_obj, {
             creator: Kiba::Tms::Jobs::Loansout::RelObj,
-            path: File.join(Kiba::Tms.datadir, "working", "loansout__rel_obj.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "loansout__rel_obj.csv"),
             tags: %i[loans loansout relations]
           }
         end
@@ -1246,26 +1277,28 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 usage_ct location_name parent_location
-                 storage_location_authority address
-                 term_source fulllocid
-                ] },
+                usage_ct location_name parent_location
+                storage_location_authority address
+                term_source fulllocid
+              ]
+            },
             lookup_on: :fulllocid
           }
           register :compiled_clean, {
             creator: Kiba::Tms::Jobs::Locations::CompiledClean,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "locs_compiled_clean.csv"),
+              "locs_compiled_clean.csv"),
             desc: "Locations from different sources, compiled, with cleanup "\
               "applied",
             tags: %i[locations],
             dest_special_opts: {
               initial_headers:
               %i[
-                 usage_ct location_name
-                 storage_location_authority address
-                 term_source fulllocid
-                ] },
+                usage_ct location_name
+                storage_location_authority address
+                term_source fulllocid
+              ]
+            },
             lookup_on: :fulllocid
           }
           register :worksheet, {
@@ -1278,7 +1311,7 @@ module Kiba
             desc: "Locations for client review",
             tags: %i[locations],
             dest_special_opts: {
-              initial_headers: proc{ Tms::Locations.worksheet_columns }
+              initial_headers: proc { Tms::Locations.worksheet_columns }
             }
           }
           if Tms::Locations.cleanup_done
@@ -1575,7 +1608,7 @@ module Kiba
               "working",
               "media_files_cspace.csv"
             ),
-            #desc: "Removes non-CS fields",
+            # desc: "Removes non-CS fields",
             desc: "Removes non-CS fields",
             tags: %i[mediafiles media]
           }
@@ -1623,7 +1656,7 @@ module Kiba
             tags: %i[mediafiles reports],
             dest_special_opts: {
               initial_headers: %i[targettable fullpath_duplicate
-                                  filename_duplicate path filename]
+                filename_duplicate path filename]
             }
           }
           register :unmigratable_report, {
@@ -1886,13 +1919,14 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 contype name relation_type
-                 variant_term variant_qualifier
-                 related_term related_role
-                 note_text
-                 birth_foundation_date death_dissolution_date datenote
-                 salutation nametitle firstname middlename lastname suffix
-                ] },
+                contype name relation_type
+                variant_term variant_qualifier
+                related_term related_role
+                note_text
+                birth_foundation_date death_dissolution_date datenote
+                salutation nametitle firstname middlename lastname suffix
+              ]
+            },
             lookup_on: :norm
           }
           register :worksheet, {
@@ -1918,7 +1952,7 @@ module Kiba
                 args: {reltype: reltype, value: typevalue}
               },
               path: File.join(Kiba::Tms.datadir, "working",
-                              "name_compile_uniq_split_#{reltype}.csv"),
+                "name_compile_uniq_split_#{reltype}.csv"),
               desc: "Rows from :name_compile__unique with `relation_type` "\
                 "value: #{typevalue}. Derives two fingerprint fields, one "\
                 "of editable field values, and one of non-editable field "\
@@ -1996,7 +2030,7 @@ module Kiba
                   args: {reltype: reltype, value: typevalue}
                 },
                 path: File.join(Kiba::Tms.datadir, "working",
-                                "name_compile_returned_split_#{reltype}.csv"),
+                  "name_compile_returned_split_#{reltype}.csv"),
                 desc: "Rows from returned worksheet with `relation_type` "\
                   "value: #{typevalue}.\n"\
                   "- Reverts any edited non-editable field to original value\n"\
@@ -2041,170 +2075,197 @@ module Kiba
           }
           register :typed_main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::TypedMainDuplicates,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_typed_main_duplicates.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_typed_main_duplicates.csv"),
             desc: "Only typed (person/org) main terms from initial compiled terms flagged as duplicates",
             tags: %i[names],
             lookup_on: :fingerprint
           }
           register :untyped_main_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::UntypedMainDuplicates,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_untyped_main_duplicates.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_untyped_main_duplicates.csv"),
             desc: "Only untyped main terms from initial compiled terms flagged as duplicates",
             tags: %i[names],
             lookup_on: :fingerprint
           }
           register :variant_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::VariantDuplicates,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_variant_duplicates.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_variant_duplicates.csv"),
             desc: "Only variant terms from initial compiled terms flagged as duplicates",
             tags: %i[names],
             lookup_on: :fingerprint
           }
           register :related_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::RelatedDuplicates,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_related_duplicates.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_related_duplicates.csv"),
             desc: "Only related terms from initial compiled terms flagged as duplicates",
             tags: %i[names],
             lookup_on: :fingerprint
           }
           register :note_duplicates, {
             creator: Kiba::Tms::Jobs::NameCompile::NoteDuplicates,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_note_duplicates.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_note_duplicates.csv"),
             desc: "Only note terms from initial compiled terms flagged as duplicates",
             tags: %i[names],
             lookup_on: :fingerprint
           }
           register :duplicates_flagged, {
             creator: Kiba::Tms::Jobs::NameCompile::DuplicatesFlagged,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_duplicates_flagged.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_duplicates_flagged.csv"),
             desc: Kiba::Tms::Jobs::NameCompile::DuplicatesFlagged.send(:desc),
             tags: %i[names],
             dest_special_opts: {initial_headers: %i[sort]}
           }
           register :unique, {
             creator: Kiba::Tms::Jobs::NameCompile::Unique,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_unique.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_unique.csv"),
             desc: Kiba::Tms::Jobs::NameCompile::Unique.send(:desc),
             tags: %i[names],
             dest_special_opts: {initial_headers: %i[sort]}
           }
           register :from_con_org_plain, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgPlain,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_org_plain.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_org_plain.csv"),
             desc: "Org MAIN TERMS from Constituents",
             tags: %i[names constituents]
           }
           register :from_con_org_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithInst,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_org_with_inst.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_org_with_inst.csv"),
             desc: "From Constituents orgs with institution field",
             tags: %i[names constituents]
           }
           register :from_con_org_with_name_parts, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithNameParts,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_org_with_name_parts.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_org_with_name_parts.csv"),
             desc: "From Constituents orgs with multipe core name detail elements OR (a single core name detail element AND a position value)",
             tags: %i[names constituents]
           }
           register :from_con_org_with_single_name_part_no_position, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithSingleNamePartNoPosition,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_org_with_single_name_part_no_position.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_org_with_single_name_part_no_position.csv"),
             desc: "From Constituents orgs with a single core name detail element, and no position value",
             tags: %i[names constituents]
           }
           register :from_con_person_plain, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonPlain,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_person_plain.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_person_plain.csv"),
             desc: "Person MAIN TERMS from Constituents",
             tags: %i[names constituents]
           }
           register :from_con_person_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithInst,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_person_with_inst.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_person_with_inst.csv"),
             desc: "From Constituents persons with institution value",
             tags: %i[names constituents]
           }
           register :from_con_person_with_position_no_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithPositionNoInst,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_con_person_with_position_no_inst.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_con_person_with_position_no_inst.csv"),
             desc: "From Constituents persons with position value but no institution value",
             tags: %i[names constituents]
           }
           register :from_can_typematch_alt_established, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchAltEstablished,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch_alt_established.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch_alt_established.csv"),
             desc: "From ConAltNames where type is same for main and alt name, and alt name matches an established constituent name",
             tags: %i[names con_alt_names]
           }
           register :from_can_main_person_alt_org_established, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanMainPersonAltOrgEstablished,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_main_person_alt_org_established.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_main_person_alt_org_established.csv"),
             desc: "From ConAltNames where main name is Person, and alt name matches an established organization name",
             tags: %i[names con_alt_names]
           }
           register :from_can_main_org_alt_person_established, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanMainOrgAltPersonEstablished,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_main_org_alt_person_established.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_main_org_alt_person_established.csv"),
             desc: "From ConAltNames where main name is Organization, and alt name matches an established person name",
             tags: %i[names con_alt_names]
           }
           register :from_can_typematch, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematch,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch.csv"),
             desc: "Adds :treatment field to rows from ConAltNames where main and alt name types match AND altname is not established as separate constituent name",
             tags: %i[names con_alt_names]
           }
           register :from_can_typematch_variant, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchVariant,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch_variant.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch_variant.csv"),
             desc: "name_compile__from_can_typematch variants",
             tags: %i[names con_alt_names]
           }
           register :from_can_typematch_separate, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparate,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch_separate.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch_separate.csv"),
             desc: "name_compile__from_can_typematch separates",
             tags: %i[names con_alt_names]
           }
           register :from_can_typematch_separate_names, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparateNames,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch_separate_names.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch_separate_names.csv"),
             desc: "output main name rows from alt names in name_compile__from_can_typematch separates",
             tags: %i[names con_alt_names]
           }
           register :from_can_typematch_separate_notes, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchSeparateNotes,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typematch_separate_notes.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typematch_separate_notes.csv"),
             desc: "output related name note rows from alt names in name_compile__from_can_typematch separates",
             tags: %i[names con_alt_names]
           }
           register :from_can_typemismatch_main_person, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypemismatchMainPerson,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typemismatch_main_person.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typemismatch_main_person.csv"),
             desc: "ConAltNames rows where altname is not established, alt name type is Organization, and main name type is Person",
             tags: %i[names con_alt_names]
           }
           register :from_can_typemismatch_main_org, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypemismatchMainOrg,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_typemismatch_main_org.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_typemismatch_main_org.csv"),
             desc: "ConAltNames rows where altname is not established, alt name type is Person, and main name type is Organization",
             tags: %i[names con_alt_names]
           }
           register :from_can_no_altnametype, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanNoAltnametype,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_can_no_altnametype.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_can_no_altnametype.csv"),
             desc: "ConAltNames rows where altname is not established, alt name type is empty",
             tags: %i[names con_alt_names]
           }
           register :from_assoc_parents_for_con, {
             creator: Kiba::Tms::Jobs::NameCompile::FromAssocParentsForCon,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_assoc_parents_for_con.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_assoc_parents_for_con.csv"),
             desc: "Names extracted from AssocParents (for constituents) table",
             tags: %i[names assoc_parents]
           }
           register :from_reference_master, {
             creator: Kiba::Tms::Jobs::NameCompile::FromReferenceMaster,
-            path: File.join(Kiba::Tms.datadir, "working", "names_compiled_from_reference_master.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_reference_master.csv"),
             desc: "Names extracted from reference_master table",
             tags: %i[names reference_master]
           }
@@ -2322,9 +2383,9 @@ module Kiba
           register :variants_from_duplicate_constituents, {
             creator:
               Kiba::Tms::Jobs::NameCompile::VariantsFromDuplicateConstituents,
-              path: File.join(Kiba::Tms.datadir, "working",
-                              "names_variants_from_duplicate_constituents.csv"),
-              desc: "Variant names from duplicate (after normalization!) "\
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_variants_from_duplicate_constituents.csv"),
+            desc: "Variant names from duplicate (after normalization!) "\
                 "constituent names that are not literally duplicates",
             tags: %i[names constituents]
           }
@@ -2333,7 +2394,8 @@ module Kiba
         Kiba::Tms.registry.namespace("name_type_cleanup") do
           register :from_base_data, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::FromBaseData,
-            path: File.join(Kiba::Tms.datadir, "working", "name_type_cleanup_from_base_data.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "name_type_cleanup_from_base_data.csv"),
             desc: "Data from main/base data source used to create Name Type review/cleanup worksheet",
             tags: %i[names cleanup]
           }
@@ -2466,25 +2528,29 @@ module Kiba
           end
           register :for_con_alt_names, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConAltNames,
-            path: File.join(Kiba::Tms.datadir, "working", "name_type_cleanup_for_con_alt_names.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "name_type_cleanup_for_con_alt_names.csv"),
             tags: %i[names cleanup],
             lookup_on: :altnameid
           }
           register :for_constituents, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConstituents,
-            path: File.join(Kiba::Tms.datadir, "working", "name_type_cleanup_for_constituents.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "name_type_cleanup_for_constituents.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
           register :for_con_org_with_name_parts, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConOrgWithNameParts,
-            path: File.join(Kiba::Tms.datadir, "working", "name_type_cleanup_for_con_org_with_name_parts.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "name_type_cleanup_for_con_org_with_name_parts.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
           register :for_con_person_with_inst, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConPersonWithInst,
-            path: File.join(Kiba::Tms.datadir, "working", "name_type_cleanup_for_con_person_with_inst.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "name_type_cleanup_for_con_person_with_inst.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
@@ -2496,7 +2562,8 @@ module Kiba
               "name_type_cleanup_for_uncontrolled_tables.csv"
             ),
             tags: %i[names cleanup],
-            lookup_on: :constituentid          }
+            lookup_on: :constituentid
+          }
         end
 
         Kiba::Tms.registry.namespace("names") do
@@ -2690,13 +2757,15 @@ module Kiba
           }
           register :linked_lot, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
-            path: File.join(Kiba::Tms.datadir, "working", "obj_accession_linked_lot.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_accession_linked_lot.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using LinkedLot approach"
           }
           register :linked_set, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedSet,
-            path: File.join(Kiba::Tms.datadir, "working", "obj_accession_linked_set.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_accession_linked_set.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using LinkedSet approach"
           }
@@ -2724,7 +2793,8 @@ module Kiba
           }
           register :one_to_one, {
             creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,
-            path: File.join(Kiba::Tms.datadir, "working", "obj_accession_one_to_one.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_accession_one_to_one.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using OneToOne approach"
           }
@@ -2748,13 +2818,14 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 parentobjectnumber componentnumber is_top_object
-                 problemcomponent existingobject duplicate
-                 componentname parentname parenttitle
-                 physdesc parentdesc
-                 component_type objcompstatus active
-                 physdesc
-                ] },
+                parentobjectnumber componentnumber is_top_object
+                problemcomponent existingobject duplicate
+                componentname parentname parenttitle
+                physdesc parentdesc
+                component_type objcompstatus active
+                physdesc
+              ]
+            },
             lookup_on: :objectid
           }
           register :with_object_numbers_by_compid, {
@@ -2769,53 +2840,54 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                 parentobjectnumber componentnumber is_top_object
-                 problemcomponent existingobject duplicate
-                 componentname parentname parenttitle
-                 physdesc parentdesc
-                 component_type objcompstatus active
-                 physdesc
-                ] },
+                parentobjectnumber componentnumber is_top_object
+                problemcomponent existingobject duplicate
+                componentname parentname parenttitle
+                physdesc parentdesc
+                component_type objcompstatus active
+                physdesc
+              ]
+            },
             lookup_on: :componentid
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_components_actual.csv"),
+              "obj_components_actual.csv"),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :problem_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponents,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_components_problem.csv"),
+              "obj_components_problem.csv"),
             tags: %i[obj_components postmigcleanup],
             lookup_on: :componentid
           }
           register :problem_component_lmi, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_components_problem_lmi.csv"),
+              "obj_components_problem_lmi.csv"),
             tags: %i[obj_components postmigcleanup]
           }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_components_parent_objects.csv"),
+              "obj_components_parent_objects.csv"),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::Objects,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_components_objects.csv"),
+              "obj_components_objects.csv"),
             tags: %i[obj_components objects],
             desc: "Converts rows from :actual_components to object records"
           }
           register :current_loc_lookup, {
             creator: Kiba::Tms::Jobs::ObjComponents::CurrentLocLookup,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_components_current_loc_lookup.csv"),
+              "obj_components_current_loc_lookup.csv"),
             tags: %i[obj_components obj_locations],
             desc: "Lookup via :fullfingerprint. Only field: :fullfingerprint. "\
               "Use to identify which clumped ObjLocations rows are for "\
@@ -2825,7 +2897,7 @@ module Kiba
           register :parent_title_mismatch, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentTitleMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_components_parent_title_mismatch.csv"),
+              "obj_components_parent_title_mismatch.csv"),
             tags: %i[obj_components postmigcleanup],
             desc: "Components that have a title, but where that title does "\
               "appear in the parent object's title or objectname fields"
@@ -2833,7 +2905,7 @@ module Kiba
           register :parent_desc_mismatch, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentDescMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_components_parent_desc_mismatch.csv"),
+              "obj_components_parent_desc_mismatch.csv"),
             tags: %i[obj_components postmigcleanup],
             desc: "Components that have a physdesc field value, and where "\
               "the parent object's record does not contain that description"
@@ -2844,7 +2916,7 @@ module Kiba
           register :periods, {
             creator: Kiba::Tms::Jobs::ObjContext::Periods,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_context_periods.csv"),
+              "obj_context_periods.csv"),
             tags: %i[obj_context dates objects],
             desc: "Only populated :period values, looked up by objectid",
             lookup_on: :objectid
@@ -2855,28 +2927,31 @@ module Kiba
           register :shaped, {
             creator: Kiba::Tms::Jobs::ObjDeaccession::Shaped,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_deaccession_shaped.csv"),
+              "obj_deaccession_shaped.csv"),
             tags: %i[obj_deaccession],
             desc: "Renames fields and reshapes data into CS Object Exit",
             dest_special_opts: {
-              initial_headers: %i[exitnumber disposalmethod] }
+              initial_headers: %i[exitnumber disposalmethod]
+            }
           }
           register :obj_rel, {
             creator: Kiba::Tms::Jobs::ObjDeaccession::ObjRel,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_deaccession_obj_rel.csv"),
-            tags: %i[obj_deaccession objects nhr],
+              "obj_deaccession_obj_rel.csv"),
+            tags: %i[obj_deaccession objects nhr]
           }
         end
 
         Kiba::Tms.registry.namespace("obj_incoming") do
           register :for_initial_review, {
             creator: Kiba::Tms::Jobs::ObjIncoming::ForInitialReview,
-            path: File.join(Kiba::Tms.datadir, "reports", "obj_incoming_initial_review.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "obj_incoming_initial_review.csv"),
             tags: %i[obj_incoming reports],
             desc: "Merges object number from object table into prepped obj_incoming table",
             dest_special_opts: {
-              initial_headers: %i[objincomingid objectnumber] }
+              initial_headers: %i[objincomingid objectnumber]
+            }
           }
         end
 
@@ -2884,7 +2959,7 @@ module Kiba
           register :migrating, {
             creator: Kiba::Tms::Jobs::ObjLocations::Migrating,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_migrating.csv"),
+              "obj_locations_migrating.csv"),
             tags: %i[obj_locations],
             desc: "- Removes rows where :objlocationid = -1\n"\
               "- Removes rows where :locationid = -1\n"\
@@ -2894,14 +2969,15 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
-                 location_purpose transport_type transport_status
-                 location prevobjlocid nextobjlocid] },
+                location_purpose transport_type transport_status
+                location prevobjlocid nextobjlocid]
+            },
             lookup_on: :objlocationid
           }
           register :migrating_custom, {
             creator: Kiba::Tms::Jobs::ObjLocations::MigratingCustom,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_migrating_custom.csv"),
+              "obj_locations_migrating_custom.csv"),
             tags: %i[obj_locations],
             desc: "- Removes project-specific omission rows",
             lookup_on: :objlocationid
@@ -2909,7 +2985,7 @@ module Kiba
           register :unique, {
             creator: Kiba::Tms::Jobs::ObjLocations::Unique,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_unique.csv"),
+              "obj_locations_unique.csv"),
             tags: %i[obj_locations],
             desc: "- Deduplicates on :fullfingerprint\n"\
               "- Merge in related objectnumbers\n"\
@@ -2919,60 +2995,61 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
-                 location_purpose transport_type transport_status
-                 location homelocationname prevobjlocid nextobjlocid] }
+                location_purpose transport_type transport_status
+                location homelocationname prevobjlocid nextobjlocid]
+            }
           }
           register :inventory, {
             creator: Kiba::Tms::Jobs::ObjLocations::Inventory,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_inventory.csv"),
+              "obj_locations_inventory.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Inventory LMI"
           }
           register :lmi, {
             creator: Kiba::Tms::Jobs::ObjLocations::Lmi,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_lmi.csv"),
+              "obj_locations_lmi.csv"),
             tags: %i[obj_locations],
             desc: "Compile inventory, location, and movement LMIs"
           }
           register :nhr_lmi_obj, {
             creator: Kiba::Tms::Jobs::ObjLocations::NhrLmiObj,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhr_lmi_obj.csv"),
+              "nhr_lmi_obj.csv"),
             tags: %i[movement objects nhr]
           }
           register :location, {
             creator: Kiba::Tms::Jobs::ObjLocations::Location,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_location.csv"),
+              "obj_locations_location.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Location LMI"
           }
           register :movement, {
             creator: Kiba::Tms::Jobs::ObjLocations::Movement,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_movement.csv"),
+              "obj_locations_movement.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Movement LMI"
           }
           register :inactive_review, {
             creator: Kiba::Tms::Jobs::ObjLocations::InactiveReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_locations_inactive_review.csv"),
+              "obj_locations_inactive_review.csv"),
             tags: %i[obj_locations reports],
             dest_special_opts: {
               initial_headers:
               %i[objectnumber transdate location currentlocationnote is_temp
-                 inactive location_purpose transport_type transport_status
-                 objlocationid prevobjlocid nextobjlocid
-                 prev_location next_location]
+                inactive location_purpose transport_type transport_status
+                objlocationid prevobjlocid nextobjlocid
+                prev_location next_location]
             }
           }
           register :dropping, {
             creator: Kiba::Tms::Jobs::ObjLocations::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "obj_locations_dropping_from_migration.csv"),
+              "obj_locations_dropping_from_migration.csv"),
             tags: %i[obj_locations reports],
             desc: "ObjLocation rows that will be omitted from the migration. "\
               "The reason for omission is stated in the :dropreason column. "\
@@ -2989,7 +3066,7 @@ module Kiba
           register :dropping_no_location, {
             creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoLocation,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_dropping_no_location.csv"),
+              "obj_locations_dropping_no_location.csv"),
             tags: %i[obj_locations],
             desc: "ObjLocation rows having no linked Storage Location value. "\
               "Adds :dropreason column"
@@ -2997,7 +3074,7 @@ module Kiba
           register :dropping_no_object, {
             creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoObject,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_dropping_no_object.csv"),
+              "obj_locations_dropping_no_object.csv"),
             tags: %i[obj_locations],
             desc: "ObjLocation rows having no linked Object value. "\
               "Adds :dropreason column"
@@ -3005,7 +3082,7 @@ module Kiba
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_locations_location_names_merged.csv"),
+              "obj_locations_location_names_merged.csv"),
             tags: %i[obj_locations],
             desc: "Merges location names (using fulllocid) into location, "\
               "prevloc, nextloc, and scheduled loc fields",
@@ -3023,9 +3100,8 @@ module Kiba
               "categorize/map into sublocations or notes",
             dest_special_opts: {
               initial_headers: %i[temptext mapping corrected_value
-                                  loc1 loc3 loc5
-                                  objectnumber transdate dateout
-                                 ]
+                loc1 loc3 loc5
+                objectnumber transdate dateout]
             }
           }
           register :mappable_temptext_support, {
@@ -3041,8 +3117,7 @@ module Kiba
               "support completing mappable_temptext worksheet",
             dest_special_opts: {
               initial_headers: %i[temptext loc1 loc3 loc5
-                                  objectnumber transdate dateout
-                                 ]
+                objectnumber transdate dateout]
             }
           }
           if Tms::ObjLocations.temptext_mapping_done
@@ -3069,14 +3144,16 @@ module Kiba
           end
           register :fulllocid_lookup, {
             creator: Kiba::Tms::Jobs::ObjLocations::FulllocidLookup,
-            path: File.join(Kiba::Tms.datadir, "working", "obj_locations_by_fulllocid.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_locations_by_fulllocid.csv"),
             tags: %i[obj_locations],
             desc: "Deletes everything else. Used to get counts of location usages",
             lookup_on: :fulllocid
           }
           register :prev_next_sched_loc_merge, {
             creator: Kiba::Tms::Jobs::ObjLocations::PrevNextSchedLocMerge,
-            path: File.join(Kiba::Tms.datadir, "working", "obj_locations_prev_next_sched_merged.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_locations_prev_next_sched_merged.csv"),
             tags: %i[obj_locations obj_components reports]
           }
         end
@@ -3084,7 +3161,8 @@ module Kiba
         Kiba::Tms.registry.namespace("obj_titles") do
           register :note_review, {
             creator: Kiba::Tms::Jobs::ObjTitles::NoteReview,
-            path: File.join(Kiba::Tms.datadir, "reports", "obj_titles_note_review.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "obj_titles_note_review.csv"),
             desc: "Object title notes for client review/cleanup",
             tags: %i[obj_titles objects postmigcleanup]
           }
@@ -3093,7 +3171,8 @@ module Kiba
         Kiba::Tms.registry.namespace("objecthierarchy") do
           register :from_obj_components, {
             creator: Kiba::Tms::Jobs::Objecthierarchy::FromObjComponents,
-            path: File.join(Kiba::Tms.datadir, "working", "objecthierarchy_from_obj_components.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "objecthierarchy_from_obj_components.csv"),
             tags: %i[objecthierarchy obj_components]
           }
         end
@@ -3124,7 +3203,8 @@ module Kiba
           }
           register :by_number, {
             creator: Kiba::Tms::Jobs::Objects::ByNumber,
-            path: File.join(Kiba::Tms.datadir, "working", "objects_by_number.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "objects_by_number.csv"),
             desc: "Original TMS Objects table rows, lookedup by :objectnumber",
             lookup_on: :objectnumber,
             tags: %i[objects]
@@ -3250,9 +3330,10 @@ module Kiba
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Orgs::Cspace,
-            path: File.join(Kiba::Tms.datadir, "working", "orgs_for_cspace.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "orgs_for_cspace.csv"),
             tags: %i[orgs cspace],
-            dest_special_opts: {initial_headers: %i[termdisplayname]},
+            dest_special_opts: {initial_headers: %i[termdisplayname]}
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Orgs::Brief,
@@ -3267,18 +3348,22 @@ module Kiba
         Kiba::Tms.registry.namespace("org_contacts") do
           register :prep, {
             creator: Kiba::Tms::Jobs::OrgContacts::Prep,
-            path: File.join(Kiba::Tms.datadir, "working", "org_contacts_prepped.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "org_contacts_prepped.csv"),
             tags: %i[orgs cspace],
-            dest_special_opts: {initial_headers: %i[norm contact_person contact_norm merge_contact contact_role]},
+            dest_special_opts: {initial_headers: %i[norm contact_person
+              contact_norm merge_contact contact_role]}
           }
           register :without_person, {
             creator: Kiba::Tms::Jobs::OrgContacts::WithoutPerson,
-            path: File.join(Kiba::Tms.datadir, "reports", "org_contacts_without_person.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "org_contacts_without_person.csv"),
             tags: %i[orgs cspace reports]
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::OrgContacts::ToMerge,
-            path: File.join(Kiba::Tms.datadir, "working", "org_contacts_to_merge.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "org_contacts_to_merge.csv"),
             tags: %i[orgs cspace],
             lookup_on: :norm
           }
@@ -3288,19 +3373,19 @@ module Kiba
           register :flagged, {
             creator: Kiba::Tms::Jobs::Persons::Flagged,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "persons_flagged.csv"),
+              "persons_flagged.csv"),
             tags: %i[persons],
             desc: "Flags duplicates (on normalized final name value)."
           }
           register :duplicates_not_migrated, {
             creator: Kiba::Tms::Jobs::Persons::DuplicatesNotMigrated,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "persons_duplicates_not_migrating.csv"),
+              "persons_duplicates_not_migrating.csv"),
             tags: %i[persons],
             dest_special_opts: {
               initial_headers: %i[
-                                  drop_from_mig termdisplayname namemergenorm
-                                 ]
+                drop_from_mig termdisplayname namemergenorm
+              ]
             },
             desc: "Report of all duplicate persons. The :drop_from_mig "\
               "column indicates which one was kept (y) and which ones "\
@@ -3330,16 +3415,18 @@ module Kiba
           }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Persons::ByNorm,
-            path: File.join(Kiba::Tms.datadir, "working", "persons_by_norm.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "persons_by_norm.csv"),
             desc: "Person authority values (:name) lookup by normalized value",
             lookup_on: :norm,
             tags: %i[persons]
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Persons::Cspace,
-            path: File.join(Kiba::Tms.datadir, "working", "persons_for_cspace.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "persons_for_cspace.csv"),
             tags: %i[persons cspace],
-            dest_special_opts: {initial_headers: %i[termdisplayname]},
+            dest_special_opts: {initial_headers: %i[termdisplayname]}
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Persons::Brief,
@@ -3354,19 +3441,22 @@ module Kiba
         Kiba::Tms.registry.namespace("registration_sets") do
           register :for_ingest, {
             creator: Kiba::Tms::Jobs::RegistrationSets::ForIngest,
-            path: File.join(Kiba::Tms.datadir, "working", "reg_set_for_ingest.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "reg_set_for_ingest.csv"),
             desc: "Acquisitions for ingest, derived from RegSets. RegSet id removed.",
             tags: %i[acquisitions]
           }
           register :not_linked, {
             creator: Kiba::Tms::Jobs::RegistrationSets::NotLinked,
-            path: File.join(Kiba::Tms.datadir, "reports", "reg_sets_not_linked.csv"),
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "reg_sets_not_linked.csv"),
             desc: "RegistrationSet rows not linked to objects in ObjAccession",
             tags: %i[acquisitions]
           }
           register :obj_rels, {
             creator: Kiba::Tms::Jobs::RegistrationSets::ObjRels,
-            path: File.join(Kiba::Tms.datadir, "working", "reg_set_acq_obj_rels.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "reg_set_acq_obj_rels.csv"),
             tags: %i[nhr acquisitions objects]
           }
         end
@@ -3374,21 +3464,24 @@ module Kiba
         Kiba::Tms.registry.namespace("terms") do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
-            path: File.join(Kiba::Tms.datadir, "reference", "terms_used_in_xrefs.csv"),
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "terms_used_in_xrefs.csv"),
             desc: "Terms table rows for term IDs used in ThesXrefs",
             lookup_on: :termid,
             tags: %i[termdata terms reference]
           }
           register :used_row_data, {
             creator: Kiba::Tms::Jobs::Terms::UsedRowData,
-            path: File.join(Kiba::Tms.datadir, "reference", "terms_used_row_data.csv"),
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "terms_used_row_data.csv"),
             desc: "All Terms rows having termmasterid that appears in Terms row used in ThesXrefs. (Allowing merging of alternate terms, etc.)",
             lookup_on: :termid,
             tags: %i[termdata terms reference]
           }
           register :preferred, {
             creator: Kiba::Tms::Jobs::Terms::Preferred,
-            path: File.join(Kiba::Tms.datadir, "working", "terms_preferred.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "terms_preferred.csv"),
             lookup_on: :termid,
             tags: %i[termdata terms]
           }
@@ -3397,7 +3490,8 @@ module Kiba
         Kiba::Tms.registry.namespace("term_master_thes") do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::TermMasterThes::UsedInXrefs,
-            path: File.join(Kiba::Tms.datadir, "reference", "term_master_thes_used_in_xrefs.csv"),
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "term_master_thes_used_in_xrefs.csv"),
             desc: "TermMasterThes table rows referenced by Terms referenced in ThesXrefs",
             lookup_on: :termmasterid,
             tags: %i[termdata terms reference]
@@ -3408,7 +3502,7 @@ module Kiba
           register :term_ids_used, {
             creator: Kiba::Tms::Jobs::ThesXrefs::TermIdsUsed,
             path: File.join(Kiba::Tms.datadir, "reference",
-                            "term_ids_used_in_thes_xrefs.csv"),
+              "term_ids_used_in_thes_xrefs.csv"),
             desc: "List of term ids used in ThesXrefs.",
             tags: %i[termdata thesxrefs terms reference],
             lookup_on: :termid
@@ -3429,12 +3523,14 @@ module Kiba
           }
           register :from_accession_lot, {
             creator: Kiba::Tms::Jobs::ValuationControl::FromAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working", "vc_from_accessionlot.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "vc_from_accessionlot.csv"),
             tags: %i[valuation acquisitions]
           }
           register :from_obj_insurance, {
             creator: Kiba::Tms::Jobs::ValuationControl::FromObjInsurance,
-            path: File.join(Kiba::Tms.datadir, "working", "vc_from_obj_insurance.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "vc_from_obj_insurance.csv"),
             tags: %i[valuation obj_insurance]
           }
           register :nhrs, {
@@ -3444,18 +3540,20 @@ module Kiba
           }
           register :nhr_acq_accession_lot, {
             creator: Kiba::Tms::Jobs::ValuationControl::NhrAcqAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working", "nhr_acq_vc_from_accessionlot.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "nhr_acq_vc_from_accessionlot.csv"),
             tags: %i[valuation acquisitions nhr]
           }
           register :nhr_obj_accession_lot, {
             creator: Kiba::Tms::Jobs::ValuationControl::NhrObjAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working", "nhr_obj_vc_from_accessionlot.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "nhr_obj_vc_from_accessionlot.csv"),
             tags: %i[valuation objects nhr]
           }
           register :nhr_obj, {
             creator: Kiba::Tms::Jobs::ValuationControl::NhrObj,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "nhr_obj_vc.csv"),
+              "nhr_obj_vc.csv"),
             tags: %i[valuation objects nhr]
           }
         end
@@ -3468,12 +3566,14 @@ module Kiba
           }
           register :from_object_departments, {
             creator: Kiba::Tms::Jobs::Works::FromObjectDepartments,
-            path: File.join(Kiba::Tms.datadir, "working", "works_from_obj_depts.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "works_from_obj_depts.csv"),
             tags: %i[works]
           }
           register :from_object_period, {
             creator: Kiba::Tms::Jobs::Works::FromObjectPeriod,
-            path: File.join(Kiba::Tms.datadir, "working", "works_from_obj_period.csv"),
+            path: File.join(Kiba::Tms.datadir, "working",
+              "works_from_obj_period.csv"),
             tags: %i[works]
           }
         end

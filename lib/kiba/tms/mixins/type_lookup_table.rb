@@ -10,8 +10,8 @@ module Kiba
       # - `extend Tms::Mixins::TypeLookupTable`
       module TypeLookupTable
         def self.extended(mod)
-          self.check_required_manual_settings(mod)
-          self.set_mappings_setting(mod)
+          check_required_manual_settings(mod)
+          set_mappings_setting(mod)
         end
 
         def is_type_lookup_table?
@@ -52,7 +52,7 @@ module Kiba
             origtypefield = "orig_#{typefield}".to_sym
 
             config.pre_transforms.each do |xform|
-              transform{ |row| xform.process(row) }
+              transform { |row| xform.process(row) }
             end
 
             transform Tms::Transforms::DeleteTmsFields
@@ -73,7 +73,7 @@ module Kiba
             end
 
             config.post_transforms.each do |xform|
-              transform{ |row| xform.process(row) }
+              transform { |row| xform.process(row) }
             end
           end
         end
@@ -86,7 +86,7 @@ module Kiba
             origtypefield = "orig_#{typefield}".to_sym
 
             config.pre_transforms.each do |xform|
-              transform{ |row| xform.process(row) }
+              transform { |row| xform.process(row) }
             end
 
             transform Tms::Transforms::DeleteTmsFields
@@ -108,7 +108,7 @@ module Kiba
             transform Tms::Transforms::TmsTableNames
 
             config.post_transforms.each do |xform|
-              transform{ |row| xform.process(row) }
+              transform { |row| xform.process(row) }
             end
           end
         end
@@ -126,7 +126,8 @@ module Kiba
         def self.set_mappings_setting(mod)
           return if mod.respond_to?(:mappings)
 
-          mod.module_eval("setting :mappings, default: {}, reader: true")
+          mod.module_eval("setting :mappings, default: {}, reader: true",
+            __FILE__, __LINE__ - 1)
         end
         private_class_method :set_mappings_setting
       end

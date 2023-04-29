@@ -19,10 +19,10 @@ module Kiba
 
           def sources
             %i[
-               exh_loan_xrefs__nhr_exh_loan
-               exh_obj_loan_obj_xrefs__nhr_exh_loan
-               exh_obj_xrefs__nhr_obj_exh
-              ].select{ |job| Tms.job_output?(job) }
+              exh_loan_xrefs__nhr_exh_loan
+              exh_obj_loan_obj_xrefs__nhr_exh_loan
+              exh_obj_xrefs__nhr_obj_exh
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

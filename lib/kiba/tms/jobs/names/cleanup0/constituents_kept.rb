@@ -20,7 +20,8 @@ module Kiba
 
             def xforms
               Kiba.job_segment do
-                transform FilterRows::FieldPopulated, action: :keep, field: :fp_constituentid
+                transform FilterRows::FieldPopulated, action: :keep,
+                  field: :fp_constituentid
               end
             end
           end

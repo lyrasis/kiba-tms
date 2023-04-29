@@ -20,7 +20,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Tms::Transforms::Locations::EnsureHierarchy, lookup: locs__compiled_0
+              transform Tms::Transforms::Locations::EnsureHierarchy,
+                lookup: locs__compiled_0
               transform Tms::Transforms::Locations::AddLocationType
             end
           end

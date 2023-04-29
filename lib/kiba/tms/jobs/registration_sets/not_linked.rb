@@ -28,7 +28,6 @@ module Kiba
               file: path,
               keycolumn: :registrationsetid
             )
-
           end
 
           def xforms

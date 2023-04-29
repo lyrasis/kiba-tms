@@ -6,7 +6,7 @@ module Kiba
       class ConRefTargetExtender
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -41,8 +41,8 @@ module Kiba
 
         def prep_extendable
           Tms::ConRefs.target_tables
-            .select{ |table| configs.any?(table) }
-            .map{ |table| Tms.const_get(table) }
+            .select { |table| configs.any?(table) }
+            .map { |table| Tms.const_get(table) }
         end
       end
     end

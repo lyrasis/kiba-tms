@@ -5,14 +5,13 @@ module Kiba
     module Transforms
       # Removes empty money field values from the end of fields
       class DeleteEmptyMoney
-
         def initialize(fields:)
           @fields = fields
           @value = ".0000"
         end
 
         def process(row)
-          fields.each{ |field| delete_value(row, field) }
+          fields.each { |field| delete_value(row, field) }
           row
         end
 

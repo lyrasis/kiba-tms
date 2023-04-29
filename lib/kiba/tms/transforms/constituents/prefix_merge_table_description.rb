@@ -32,7 +32,7 @@ module Kiba
 
           def row_type(row)
             vals = getter.call(row)
-            return vals.keys.first
+            vals.keys.first
           end
         end
       end

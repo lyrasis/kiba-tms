@@ -19,10 +19,10 @@ module Kiba
 
           def sources
             %i[
-               obj_locations__inventory
-               obj_locations__location
-               obj_locations__movement
-              ].select{ |job| Tms.job_output?(job) }
+              obj_locations__inventory
+              obj_locations__location
+              obj_locations__movement
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -36,20 +36,18 @@ module Kiba
 
               transform Delete::FieldsExcept,
                 fields: %i[movementreferencenumber objectnumber
-                           transport_type transport_status
-                           currentlocationlocationlocal
-                           currentlocationlocationoffsite
-                           currentlocationorganizationlocal
-                           currentlocationnote
-                           normallocationlocationlocal
-                           normallocationlocationoffsite
-                           normallocationorganizationlocal
-                           locationdate removaldate plannedremovaldate
-                           reasonformove
-                           movementcontact movementnote
-                           inventorydate inventorycontact inventorynote
-                           ]
-
+                  transport_type transport_status
+                  currentlocationlocationlocal
+                  currentlocationlocationoffsite
+                  currentlocationorganizationlocal
+                  currentlocationnote
+                  normallocationlocationlocal
+                  normallocationlocationoffsite
+                  normallocationorganizationlocal
+                  locationdate removaldate plannedremovaldate
+                  reasonformove
+                  movementcontact movementnote
+                  inventorydate inventorycontact inventorynote]
             end
           end
         end

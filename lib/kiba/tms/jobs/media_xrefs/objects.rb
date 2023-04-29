@@ -15,9 +15,9 @@ module Kiba
                 source: :media_xrefs_for__objects,
                 destination: :media_xrefs__objects,
                 lookup: %i[
-                           media_files__id_lookup
-                           objects__number_lookup
-                          ]
+                  media_files__id_lookup
+                  objects__number_lookup
+                ]
               },
               transformer: xforms
             )

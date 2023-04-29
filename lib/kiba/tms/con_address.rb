@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module ConAddress
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -23,7 +24,7 @@ module Kiba
       # ConAddress columns to include in address value
       setting :address_fields,
         default: %i[displayname1 displayname2 streetline1 streetline2
-                    streetline3 city state zipcode],
+          streetline3 city state zipcode],
         reader: true
       # Client-specific country remappings.
       # We want to be able to generate a report of country values that don't
@@ -42,7 +43,7 @@ module Kiba
       setting :note_fields,
         default: %i[remarks],
         reader: true,
-        constructor: ->(value){
+        constructor: ->(value) {
           value << :addresstype if Tms::AddressTypes.used?
           value << :addressdates if dates_note
           %w[active billing mailing shipping].each do |type|

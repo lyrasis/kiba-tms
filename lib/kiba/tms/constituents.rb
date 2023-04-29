@@ -8,18 +8,18 @@ module Kiba
     #   ConAddress, ConAltNames, ConDates, ConEMail, ConTypes, Constituents
     module Constituents
       extend Dry::Configurable
+
       module_function
 
       # the final 3 date fields are deleted because they are handled in the
       #   Constituents::CleanDates job (a dependency of ConDates::ToMerge job)
       setting :delete_fields,
         default: %i[lastsoundex firstsoundex institutionsoundex n_displayname
-                    n_displaydate begindate enddate systemflag internalstatus
-                    islocked publicaccess
-                    displaydate begindateiso enddateiso],
+          n_displaydate begindate enddate systemflag internalstatus
+          islocked publicaccess
+          displaydate begindateiso enddateiso],
         reader: true
       extend Tms::Mixins::Tableable
-
 
       # transform run at the beginning of prep__constituents to force
       #   client-specific changes to TMS source data
@@ -39,7 +39,7 @@ module Kiba
       setting :lookup_job_fields,
         default: %i[constituentid norm contype combined],
         reader: true,
-        constructor: proc{ |value| value << preferred_name_field }
+        constructor: proc { |value| value << preferred_name_field }
 
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
@@ -84,20 +84,19 @@ module Kiba
       # List of client-specific custom transforms that should be applied to
       #   :displaydate field by :constituents__clean_dates
       setting :displaydate_cleaners,
-        default: [
-        ],
+        default: [],
         reader: true
       # Patterns that will be deleted from beginning of :displaydate values.
       #   Each is converted into a regular expression for find/replace
       setting :displaydate_deletable_prefixes, default: [], reader: true
-
 
       # config for processing ConDates table
       setting :dates, reader: true do
         # whether there is constituent date data to be merged into Constituents
         # set to false if running con_dates__to_merge results in an empty table
         setting :merging, default: true, reader: true
-        setting :multisource_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
+        setting :multisource_normalizer,
+          default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # custom transform to clean up remarks before any other processing
         setting :initial_remarks_cleaner, default: nil, reader: true
         setting :known_types, default: %w[birth death active], reader: true
@@ -112,10 +111,13 @@ module Kiba
           ],
           reader: true
         # used by DateFromRemarkStartingWithYr transform
-        setting :yr_remark_start, default: '^(\d{4}|\d{1,2}(\/|-))', reader: true
+        setting :yr_remark_start, default: '^(\d{4}|\d{1,2}(\/|-))',
+          reader: true
         # used by ActiveDateFromRemarks transform
-        setting :active_remark_match, default: Regexp.new("^active", Regexp::IGNORECASE), reader: true
-        setting :active_remark_clean_match, default: Regexp.new("^active ", Regexp::IGNORECASE), reader: true
+        setting :active_remark_match,
+          default: Regexp.new("^active", Regexp::IGNORECASE), reader: true
+        setting :active_remark_clean_match,
+          default: Regexp.new("^active ", Regexp::IGNORECASE), reader: true
         # used by DateFromRemarkStartWithPartialInd transform
         setting :partial_date_indicators,
           default: %w[after approximately around before c. ca. circa],
@@ -126,24 +128,29 @@ module Kiba
         setting :datedescription_variants,
           default: {
             "active" => ["active", "active dates", "fl.", "flourished"],
-            "birth" => ["b.", "birth", "birth date", "birth year", "birthdate", "birthday", "birthplace", "born", "founded"],
-            "death" => ["d.", "dead", "death", "death date", "death day", "death year", "deathdate", "deathday", "died"]
+            "birth" => ["b.", "birth", "birth date", "birth year", "birthdate",
+              "birthday", "birthplace", "born", "founded"],
+            "death" => ["d.", "dead", "death", "death date", "death day",
+              "death year", "deathdate", "deathday", "died"]
           },
           reader: true
         # Transform that creates a date-related note (in :datenote field) mergeable into Person/Org record
-        setting :note_creator, default: Tms::Transforms::ConDates::NoteCreator, reader: true
+        setting :note_creator, default: Tms::Transforms::ConDates::NoteCreator,
+          reader: true
         # Transform that adds parsed date columns and warnings about date values that cannot be parsed
-        setting :date_parser, default: Tms::Transforms::ConDates::DateParser, reader: true
+        setting :date_parser, default: Tms::Transforms::ConDates::DateParser,
+          reader: true
       end
 
       def initial_headers
-          base = [:constituentid, :constituenttype, :derivedcontype, :contype, preferred_name_field]
-          base << var_name_field if Tms::Constituents.include_flipped_as_variant
-          %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
-             institution position inconsistent_org_names].each do |field|
-            base << field
-          end
-          base
+        base = [:constituentid, :constituenttype, :derivedcontype, :contype,
+          preferred_name_field]
+        base << var_name_field if Tms::Constituents.include_flipped_as_variant
+        %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
+          institution position inconsistent_org_names].each do |field|
+          base << field
+        end
+        base
       end
     end
   end

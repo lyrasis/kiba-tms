@@ -8,7 +8,7 @@ module Kiba
         class MakeDatedescriptionConsistent
           def initialize
             @cleaners = Tms::Constituents.dates.datedescription_variants
-              .transform_values{ |val| "^ *(#{val.join('|')}) *$" }
+              .transform_values { |val| "^ *(#{val.join("|")}) *$" }
               .map do |type, variants|
                 Clean::RegexpFindReplaceFieldVals.new(
                   fields: :datedescription,
@@ -21,10 +21,10 @@ module Kiba
 
           # @private
           def process(row)
-            cleaners.each{ |cleaner| cleaner.process(row) }
+            cleaners.each { |cleaner| cleaner.process(row) }
             row
           end
-          
+
           private
 
           attr_reader :cleaners

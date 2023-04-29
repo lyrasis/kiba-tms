@@ -23,7 +23,7 @@ module Kiba
           def lookups
             base = []
             base << :prep__con_address if Tms::ConAddress.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

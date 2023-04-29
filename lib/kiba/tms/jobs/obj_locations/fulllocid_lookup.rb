@@ -7,7 +7,7 @@ module Kiba
         module FulllocidLookup
           module_function
 
-          def job            
+          def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__obj_locations,

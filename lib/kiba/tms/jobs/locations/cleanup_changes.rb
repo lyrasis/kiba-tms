@@ -26,7 +26,7 @@ module Kiba
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[correct_location_name correct_authority
-                          correct_address]
+                  correct_address]
             end
           end
         end

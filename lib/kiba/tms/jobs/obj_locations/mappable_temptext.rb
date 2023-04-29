@@ -33,7 +33,7 @@ module Kiba
                 fields: (
                 config.fulllocid_fields +
                   %i[objectnumber transdate dateout temptext]
-                ).uniq
+              ).uniq
 
               transform Tms::Transforms::ObjLocations::AddTemptextid,
                 target: :combined

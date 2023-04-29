@@ -7,7 +7,7 @@ module Kiba
       #   merged in and calls single module RoleTreatmentDeriver on each
       class RoleTreatmentDeriver
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(deriver: Tms::Services::RoleTreatmentDeriver)

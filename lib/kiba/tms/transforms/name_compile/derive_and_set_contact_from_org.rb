@@ -16,8 +16,8 @@ module Kiba
             @contactadder = Tms::Transforms::NameCompile::AddRelatedTermAndRole.new(
               target: "contact_person",
               maintype: "Organization",
-              mainnamefield: mode == :alt ? :conname : namefield,
-              relnamefield: person_name_from == :nameparts ? :personname : person_name_from,
+              mainnamefield: (mode == :alt) ? :conname : namefield,
+              relnamefield: (person_name_from == :nameparts) ? :personname : person_name_from,
               rolefield: :position
             )
           end
@@ -29,7 +29,7 @@ module Kiba
               Tms::NameTypeCleanup.dropped_name_indicator
 
             row[:personname] = personbuilder.call(row)
-            build_rows(row).each{ |row| yield row }
+            build_rows(row).each { |row| yield row }
             nil
           end
 
@@ -38,7 +38,7 @@ module Kiba
           attr_reader :mode, :namefield, :personbuilder, :contactadder
 
           def add_shared_fields(row, fields)
-            (fields - row.keys).each{ |field| row[field] = nil }
+            (fields - row.keys).each { |field| row[field] = nil }
             row
           end
 
@@ -47,9 +47,9 @@ module Kiba
               derive_main_person(row.dup, :personname, mode),
               contactadder.process(row.dup)
             ]
-            initial.each{ |irow| irow.delete(:personname) }
-            fields = initial.map{ |irow| irow.keys }.flatten.uniq
-            initial.map{ |irow| add_shared_fields(irow, fields) }
+            initial.each { |irow| irow.delete(:personname) }
+            fields = initial.map { |irow| irow.keys }.flatten.uniq
+            initial.map { |irow| add_shared_fields(irow, fields) }
           end
         end
       end

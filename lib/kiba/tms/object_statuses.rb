@@ -6,9 +6,11 @@ module Kiba
   module Tms
     module ObjectStatuses
       extend Dry::Configurable
+
       module_function
 
-      setting :delete_fields, default: %i[inpermanentjurisdiction system], reader: true
+      setting :delete_fields, default: %i[inpermanentjurisdiction system],
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :id_field, default: :objectstatusid, reader: true

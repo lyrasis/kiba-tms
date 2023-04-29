@@ -8,7 +8,7 @@ module Kiba
       # Returns :success if the given field is empty. Returns :failure if not.
       class EmptyFieldChecker
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:, field:, criteria:)

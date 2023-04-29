@@ -19,10 +19,10 @@ module Kiba
 
             vals = getter.call(row).values
             unless vals.empty?
-              row[target] = "#{prefix}#{vals.join(', ')}"
+              row[target] = "#{prefix}#{vals.join(", ")}"
             end
 
-            fields.each{ |f| row.delete(f) if row.key?(f) }
+            fields.each { |f| row.delete(f) if row.key?(f) }
             row
           end
 

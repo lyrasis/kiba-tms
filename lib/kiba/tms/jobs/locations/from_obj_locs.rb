@@ -31,7 +31,7 @@ module Kiba
                   fli = row[:fulllocid]
                     .split(Tms.delim)
                   fli.shift
-                  fli.reject{ |val| val == "nil" || val.blank? }
+                  fli.reject { |val| val == "nil" || val.blank? }
                     .empty?
                 end
 
@@ -45,7 +45,7 @@ module Kiba
                 },
                 delim: Tms.delim
               locsrc = [:parent_location,
-                        Tms::ObjLocations.temptext_target_fields].flatten
+                Tms::ObjLocations.temptext_target_fields].flatten
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: locsrc,
                 target: :location_name,
@@ -53,7 +53,7 @@ module Kiba
                 delete_sources: false
               transform Delete::FieldsExcept,
                 fields: %i[fulllocid location_name parent_location
-                           storage_location_authority address]
+                  storage_location_authority address]
               transform Deduplicate::Table,
                 field: :fulllocid,
                 delete_field: false

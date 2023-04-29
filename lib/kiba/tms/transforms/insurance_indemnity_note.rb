@@ -7,9 +7,9 @@ module Kiba
         def initialize(target: :insind)
           @target = target
           @sources = %i[insurancefromlender insurancefrompreviousvenue
-                        insuranceatvenue insurancereturn
-                        indemnityfromlender indemnityfrompreviousvenue
-                        indemnityatvenue indemnityreturn]
+            insuranceatvenue insurancereturn
+            indemnityfromlender indemnityfrompreviousvenue
+            indemnityatvenue indemnityreturn]
           @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
             fields: sources
           )
@@ -28,10 +28,10 @@ module Kiba
         def process(row)
           row[target] = nil
           vals = getter.call(row)
-          sources.each{ |field| row.delete(field) }
+          sources.each { |field| row.delete(field) }
           return row if vals.empty?
 
-          row[target] = vals.map{ |field, val| "#{prefixes[field]}: #{val}" }
+          row[target] = vals.map { |field, val| "#{prefixes[field]}: #{val}" }
             .join("%CR%")
           row
         end

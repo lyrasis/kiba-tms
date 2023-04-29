@@ -32,7 +32,6 @@ module Kiba
               config = bind.receiver.send(:config)
               prefname = config.preferred_name_field
 
-
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields,
@@ -94,7 +93,7 @@ module Kiba
               #   name data
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[displayname alphasort lastname firstname middlename
-                            institution],
+                  institution],
                 target: :namedata,
                 sep: "",
                 delete_sources: false
@@ -138,7 +137,6 @@ module Kiba
                   Tms::AltNums.for_constituents_merge
                 transform Tms::AltNums.for_constituents_merge
               end
-
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: config.preferred_name_field,

@@ -22,8 +22,8 @@ module Kiba
 
           def lookups
             base = %i[
-                      objects__numbers_cleaned
-                     ]
+              objects__numbers_cleaned
+            ]
             if Tms::AccessionMethods.used? &&
                 config.fields.any?(Tms::AccessionMethods.id_field)
               base << :prep__accession_methods
@@ -43,7 +43,7 @@ module Kiba
           end
 
           def xforms
-            bind =  binding
+            bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
@@ -150,7 +150,7 @@ module Kiba
 
               transform Tms::Transforms::ObjAccession::AuthDateSetter
 
-              if config.fields.any?{ |f| f.to_s.start_with?("approvaliso") }
+              if config.fields.any? { |f| f.to_s.start_with?("approvaliso") }
                 case config.approval_date_treatment
                 when :drop
                   transform Delete::Fields,

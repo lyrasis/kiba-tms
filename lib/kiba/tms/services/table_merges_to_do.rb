@@ -5,7 +5,7 @@ module Kiba
     module Services
       class TableMergesToDo
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod)
@@ -18,9 +18,9 @@ module Kiba
           return [] if src.blank?
           return [] unless src.key?(target)
 
-          src[target].select{ |table, status| status == :todo }
+          src[target].select { |table, status| status == :todo }
             .keys
-            .map{ |key| "#{target}: merge into from #{key}" }
+            .map { |key| "#{target}: merge into from #{key}" }
         end
 
         private

@@ -24,7 +24,7 @@ module Kiba
 
               transform FilterRows::WithLambda,
                 action: :keep,
-                lambda: ->(row){ row[:role] && roles.any?(row[:role]) }
+                lambda: ->(row) { row[:role] && roles.any?(row[:role]) }
               transform Merge::MultiRowLookup,
                 lookup: prep__exhibitions,
                 keycolumn: :recordid,

@@ -9,8 +9,8 @@ module Kiba
             @source = :publicaccess
             @target = :publishto
             @mapping = {
-              "1"=>"CollectionSpace Public Browser",
-              "0"=>"None"
+              "1" => "CollectionSpace Public Browser",
+              "0" => "None"
             }
           end
 

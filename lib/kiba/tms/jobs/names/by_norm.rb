@@ -13,10 +13,10 @@ module Kiba
                 source: :names__by_norm_prep,
                 destination: :names__by_norm,
                 lookup: %i[
-                           names__by_norm_prep
-                           orgs__by_norm
-                           persons__by_norm
-                          ]
+                  names__by_norm_prep
+                  orgs__by_norm
+                  persons__by_norm
+                ]
               },
               transformer: xforms
             )
@@ -40,8 +40,8 @@ module Kiba
                 keycolumn: :norm,
                 fieldmap: {note: :name},
                 conditions: ->(_r, rows) do
-                  res = rows.select{ |row| row[:contype] == "Note" }
-                  res.empty? ? res :  [res.first]
+                  res = rows.select { |row| row[:contype] == "Note" }
+                  res.empty? ? res : [res.first]
                 end
             end
           end

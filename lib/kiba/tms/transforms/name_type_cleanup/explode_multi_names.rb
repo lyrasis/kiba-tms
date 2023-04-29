@@ -5,11 +5,9 @@ module Kiba
     module Transforms
       module NameTypeCleanup
         class ExplodeMultiNames
-          def initialize(delim: Tms.delim,
-                         target: Tms::Constituents.preferred_name_field,
-                         lookup:,
-                         keycolumn: :constituentid
-                         )
+          def initialize(lookup:, delim: Tms.delim,
+            target: Tms::Constituents.preferred_name_field,
+            keycolumn: :constituentid)
             @delim = delim
             @target = target
             @merger = Merge::MultiRowLookup.new(
@@ -48,7 +46,7 @@ module Kiba
           end
 
           def close
-            rows.each{ |row| yield row }
+            rows.each { |row| yield row }
           end
 
           private

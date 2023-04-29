@@ -45,33 +45,37 @@ module Kiba
         def attributed(row)
           safe_join(
             vals: [textentry(row), authors(row)],
-            delim: " ")
+            delim: " "
+          )
         end
 
         def textentry(row)
           safe_join(
             vals: [prefix(row), body(row)],
-            delim: ": ")
+            delim: ": "
+          )
         end
 
         # Methods that create the combinable sub-methods
         def prefix(row)
           safe_join(
-            vals: prefix_source_fields.map{ |field| row[field] },
-            delim: prefix_delim)
+            vals: prefix_source_fields.map { |field| row[field] },
+            delim: prefix_delim
+          )
         end
 
         def body(row)
           safe_join(
-            vals: body_source_fields.map{ |field| row[field] },
-            delim: body_delim)
+            vals: body_source_fields.map { |field| row[field] },
+            delim: body_delim
+          )
         end
 
         def authors(row)
           vals = [row[:person_author], row[:org_author]].reject(&:blank?)
           return if vals.empty?
 
-          "--#{vals.join(', ')}"
+          "--#{vals.join(", ")}"
         end
       end
     end

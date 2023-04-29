@@ -14,7 +14,7 @@ module Kiba
         # - `target` - Symbol - the target field for warnings
         module Warnable
           def add_warning(row, appended = nil)
-            warns = appended ? warnings(row) << "#{warning}#{appended}" : warnings(row) << warning
+            warns = warnings(row) << (appended ? "#{warning}#{appended}" : warning)
             row[target] = warns.join("; ")
           end
 

@@ -28,7 +28,6 @@ module Kiba
           private
 
           attr_reader :delim, :target
-
         end
       end
     end

@@ -98,7 +98,7 @@ module Kiba
                 explicit_no: false
 
               if mod.send(:merges_renditions?)
-                rendfm = config.rendition_merge_fields.map{ |f|
+                rendfm = config.rendition_merge_fields.map { |f|
                   ["rend_#{f}".to_sym, f]
                 }.to_h
                 transform Merge::MultiRowLookup,
@@ -108,7 +108,7 @@ module Kiba
               end
 
               if mod.send(:merges_master?)
-                fm = config.master_merge_fields.map{ |f|
+                fm = config.master_merge_fields.map { |f|
                   ["ms_#{f}".to_sym, f]
                 }.to_h
                 transform Merge::MultiRowLookup,

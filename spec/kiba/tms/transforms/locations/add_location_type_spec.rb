@@ -3,9 +3,12 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationType do
-  let(:accumulator){ [] }
-  let(:test_job){ Helpers::TestJob.new(input: input, accumulator: accumulator, transforms: transforms) }
-  let(:result){ test_job.accumulator.map{ |row| row[:locationtype] } }
+  let(:accumulator) { [] }
+  let(:test_job) {
+    Helpers::TestJob.new(input: input, accumulator: accumulator,
+      transforms: transforms)
+  }
+  let(:result) { test_job.accumulator.map { |row| row[:locationtype] } }
   let(:transforms) do
     Kiba.job_segment do
       transform Kiba::Tms::Transforms::Locations::AddLocationType
@@ -32,7 +35,7 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationType do
       {location_name: "a >> Room 7 >> Storage Box"},
       {location_name: "a >> Room 7 >> Case10"},
       {location_name: "a >> Room 7 >> Case 10"},
-      {location_name: "a >> Room 7 >> Storage Case"},
+      {location_name: "a >> Room 7 >> Storage Case"}
     ]
   end
 
@@ -56,8 +59,8 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationType do
       "Box",
       "Box",
       "Case",
-      "Case",     
       "Case",
+      "Case"
     ]
     expect(result).to eq(expected)
   end

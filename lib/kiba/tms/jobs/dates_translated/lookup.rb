@@ -31,7 +31,7 @@ module Kiba
                 missing = datefields - row.keys
                 next row if missing.empty?
 
-                missing.each{ |field| row[field] = nil }
+                missing.each { |field| row[field] = nil }
                 row
               end
 

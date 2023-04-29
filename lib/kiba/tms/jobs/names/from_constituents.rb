@@ -19,13 +19,16 @@ module Kiba
           end
 
           def xforms
-            Kiba.job_segment do              
-              transform Delete::Fields, fields: %i[namedata defaultdisplaybioid defaultnameid displaydate]
+            Kiba.job_segment do
+              transform Delete::Fields,
+                fields: %i[namedata defaultdisplaybioid defaultnameid
+                  displaydate]
               transform Rename::Field, from: :position, to: :contact_role
               transform Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
                 target: :norm
-              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents"
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS Constituents"
             end
           end
         end

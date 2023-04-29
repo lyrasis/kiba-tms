@@ -14,7 +14,7 @@ module Kiba
       #   are required, due to changes in the data.
       class NeededWorkChecker
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(checker = Tms::Services::NeededWorkChecker)
@@ -23,7 +23,7 @@ module Kiba
         end
 
         def call
-          results = to_check.map{ |mod| checker.call(mod) }
+          results = to_check.map { |mod| checker.call(mod) }
           handle_successes(extract(results, :successes))
           #          needed_merges
           handle_failures(extract(results, :failures))
@@ -34,8 +34,8 @@ module Kiba
         attr_reader :checker, :to_check
 
         def extract(results, type)
-          results.reject{ |res| res.send(type).empty? }
-            .map{ |res| [res.mod, res.send(type)] }
+          results.reject { |res| res.send(type).empty? }
+            .map { |res| [res.mod, res.send(type)] }
             .to_h
         end
 
@@ -45,7 +45,7 @@ module Kiba
           results.each do |mod, msgs|
             puts(mod)
 
-            msgs.each{ |msg| puts("  #{msg}") }
+            msgs.each { |msg| puts("  #{msg}") }
           end
         end
 
@@ -58,7 +58,7 @@ module Kiba
             next if fails.compact.empty?
 
             puts(mod)
-            fails.each{ |f| puts "  #{f[0]}\n    #{f[1]}" }
+            fails.each { |f| puts "  #{f[0]}\n    #{f[1]}" }
           end
         end
       end

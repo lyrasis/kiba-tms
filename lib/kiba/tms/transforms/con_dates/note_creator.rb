@@ -8,14 +8,18 @@ module Kiba
         class NoteCreator
           def initialize
             @target = :datenote_created
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[remarks date])
-            @bdgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[datedescription remarks date])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              remarks date
+            ])
+            @bdgetter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              datedescription remarks date
+            ])
           end
 
           # @private
           def process(row)
             row[target] = nil
-            
+
             type = row[:datedescription]
             if type == "active"
               add_active_note(row)
@@ -26,7 +30,7 @@ module Kiba
             end
             row
           end
-          
+
           private
 
           attr_reader :target, :getter, :bdgetter
@@ -34,10 +38,11 @@ module Kiba
           def add_active_note(row)
             vals = getter.call(row)
             return if vals.empty?
-            
-            simple_active?(vals) ? add_simple_active_note(row, vals) : add_complex_active_note(row, vals)
+
+            simple_active?(vals) ? add_simple_active_note(row,
+              vals) : add_complex_active_note(row, vals)
           end
-          
+
           def add_birth_death_note(row)
             duplicate = row[:duplicate_subsequent]
             if duplicate && duplicate == "y"
@@ -56,18 +61,22 @@ module Kiba
             return if vals.empty?
 
             if vals.key?(:remarks)
-              base = ["Additional #{vals[:datedescription]} date", vals[:date]].join(": ")
+              base = ["Additional #{vals[:datedescription]} date",
+                vals[:date]].join(": ")
               row[target] = "#{base} (#{vals[:remarks]})"
             else
-              row[target] = ["Additional #{vals[:datedescription]} date", vals[:date]].join(": ")
+              row[target] =
+                ["Additional #{vals[:datedescription]} date",
+                  vals[:date]].join(": ")
             end
           end
-            
+
           def add_other_note(row)
             vals = getter.call(row)
             return if vals.empty?
-            
-            row[target] = [other_label(row, vals), vals[:date]].compact.join(": ")
+
+            row[target] =
+              [other_label(row, vals), vals[:date]].compact.join(": ")
           end
 
           def add_complex_active_note(row, vals)
@@ -87,7 +96,7 @@ module Kiba
           def other_label(row, vals)
             [row[:datedescription], vals[:remarks]].compact.join(", ")
           end
-          
+
           def simple_active?(vals)
             return false if vals.key?(:remarks)
             return false unless vals.key?(:date)

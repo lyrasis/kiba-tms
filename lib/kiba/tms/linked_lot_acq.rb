@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module LinkedLotAcq
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key,

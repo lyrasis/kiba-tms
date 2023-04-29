@@ -16,9 +16,9 @@ module Kiba
                 source: :obj_components__actual_components,
                 destination: :obj_components__parent_title_mismatch,
                 lookup: %i[
-                           objects__numbers_cleaned
-                           prep__objects
-                           ]
+                  objects__numbers_cleaned
+                  prep__objects
+                ]
               },
               transformer: xforms
             )

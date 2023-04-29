@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ExhObjLoanObjXrefs
       extend Dry::Configurable
+
       module_function
 
       # ## About this table

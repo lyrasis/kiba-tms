@@ -6,12 +6,12 @@ module Kiba
       module Constituents
         class MoveRemainingDisplaydatesToNotes
           include Tms::Transforms::ValueAppendable
-          
+
           def initialize
             @source = :displaydate
             @target = :datenote
           end
-          
+
           def process(row)
             dd = row[source]
             return row unless eligible?(dd)
@@ -28,7 +28,7 @@ module Kiba
 
           def eligible?(dd)
             return false if dd.blank?
-            
+
             true
           end
         end

@@ -7,17 +7,17 @@ module Kiba
         class RemoveDropped
           def initialize
             @xform = if Tms.migration_status == :dev
-                       FilterRows::FieldEqualTo.new(
-                         action: :reject,
-                         field: :name,
-                         value: Tms::NameTypeCleanup.dropped_name_indicator
-                       )
-                     else
-                       FilterRows::FieldPopulated.new(
-                         action: :keep,
-                         field: :name
-                       )
-                     end
+              FilterRows::FieldEqualTo.new(
+                action: :reject,
+                field: :name,
+                value: Tms::NameTypeCleanup.dropped_name_indicator
+              )
+            else
+              FilterRows::FieldPopulated.new(
+                action: :keep,
+                field: :name
+              )
+            end
           end
 
           def process(row)

@@ -9,7 +9,7 @@ module Kiba
 
           def desc
             <<~DESC
-            Removes subsequent duplicates from name_compile__duplicates_flagged
+              Removes subsequent duplicates from name_compile__duplicates_flagged
             DESC
           end
 
@@ -40,7 +40,7 @@ module Kiba
               )
               idcreator = CombineValues::FromFieldsWithDelimiter.new(
                 sources: %i[contype name constituentid relation_type
-                            termsource],
+                  termsource],
                 target: :cleanupid,
                 sep: " ",
                 delete_sources: false
@@ -49,19 +49,18 @@ module Kiba
               transform FilterRows::AnyFieldsPopulated,
                 action: :reject,
                 fields: %i[
-                           name_duplicate
-                           variant_duplicate
-                           related_duplicate
-                           note_duplicate
-                          ]
+                  name_duplicate
+                  variant_duplicate
+                  related_duplicate
+                  note_duplicate
+                ]
               transform Delete::Fields,
                 fields: %i[name_duplicate
-                           variant_duplicate related_duplicate
-                           note_duplicate constituent_duplicate_all
-                           name_duplicate_all variant_duplicate_all
-                           related_duplicate_all note_duplicate_all
-                           combined duplicate varname to_review
-                          ]
+                  variant_duplicate related_duplicate
+                  note_duplicate constituent_duplicate_all
+                  name_duplicate_all variant_duplicate_all
+                  related_duplicate_all note_duplicate_all
+                  combined duplicate varname to_review]
               transform do |row|
                 normval = row[:namemergenorm]
                 next row unless normval.blank?

@@ -13,13 +13,12 @@ module Kiba
                 find: "^#{prefix},? *",
                 replace: "",
                 casesensitive: false
-                )
+              )
             end
-
           end
-          
+
           def process(row)
-            cleaners.each{ |cleaner| cleaner.process(row) }
+            cleaners.each { |cleaner| cleaner.process(row) }
             row
           end
 

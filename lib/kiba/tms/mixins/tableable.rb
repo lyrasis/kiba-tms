@@ -22,10 +22,10 @@ module Kiba
       #   produces the source data for the module you are configuring
       module Tableable
         def self.extended(mod)
-          self.set_delete_fields_setting(mod)
-          self.set_empty_fields_setting(mod)
-          self.set_non_content_fields_setting(mod)
-          self.check_source_job_key(mod)
+          set_delete_fields_setting(mod)
+          set_empty_fields_setting(mod)
+          set_non_content_fields_setting(mod)
+          check_source_job_key(mod)
         end
 
         def is_tableable?
@@ -54,7 +54,7 @@ module Kiba
         end
 
         def delete_omitted_fields(hash)
-          omitted_fields.each{ |field| hash.delete(field) if hash.key?(field) }
+          omitted_fields.each { |field| hash.delete(field) if hash.key?(field) }
           hash
         end
 
@@ -86,7 +86,7 @@ module Kiba
         end
 
         def omitted_fields
-          base = ( delete_fields + emptyfields ).uniq
+          base = (delete_fields + emptyfields).uniq
           return base unless all_fields.any?(:conservationentityid)
 
           unless Tms::ConservationEntities.used?
@@ -100,7 +100,7 @@ module Kiba
         end
 
         def table_path
-          table.type == :tms ? table.supplied_data_path : table.filename
+          (table.type == :tms) ? table.supplied_data_path : table.filename
         end
 
         def supplied?
@@ -116,7 +116,7 @@ module Kiba
         def table
           if Tms::Table::List.all.any?(table_name)
             Tms::Table::Obj.new(table_name)
-          elsif self.respond_to?(:source_job_key)
+          elsif respond_to?(:source_job_key)
             Tms::Table::Obj.new(source_job_key)
           else
             Tms::Table::Obj.new("UnknownTable")
@@ -160,14 +160,16 @@ module Kiba
         def self.set_delete_fields_setting(mod)
           return if mod.respond_to?(:delete_fields)
 
-          mod.module_eval("setting :delete_fields, default: [], reader: true")
+          mod.module_eval("setting :delete_fields, default: [], reader: true",
+            __FILE__, __LINE__ - 1)
         end
         private_class_method :set_delete_fields_setting
 
         def self.set_empty_fields_setting(mod)
           return if mod.respond_to?(:empty_fields)
 
-          mod.module_eval("setting :empty_fields, default: {}, reader: true")
+          mod.module_eval("setting :empty_fields, default: {}, reader: true",
+            __FILE__, __LINE__ - 1)
         end
 
         def self.set_non_content_fields_setting(mod)

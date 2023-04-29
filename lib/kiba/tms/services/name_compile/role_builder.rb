@@ -9,7 +9,9 @@ module Kiba
         class RoleBuilder
           def initialize(include_nametype: true)
             @include_nametype = include_nametype
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[position institution])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              position institution
+            ])
           end
 
           def call(row)
@@ -19,7 +21,7 @@ module Kiba
           private
 
           attr_reader :getter, :include_nametype
-          
+
           def from_position(row)
             vals = getter.call(row)
             return nil if vals.empty?
@@ -29,16 +31,16 @@ module Kiba
 
           def from_type(row)
             return nil unless include_nametype
-            
+
             type = row[:altnametype]
             return nil if type.blank?
 
-            "#{type.downcase.delete_suffix(' name')} name"
+            "#{type.downcase.delete_suffix(" name")} name"
           end
-          
+
           def relator(row)
             position = from_position(row)
-            position ? position : from_type(row)
+            position || from_type(row)
           end
         end
       end

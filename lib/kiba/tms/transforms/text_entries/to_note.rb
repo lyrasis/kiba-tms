@@ -32,21 +32,23 @@ module Tms
           author_val = [
             row[:person_author],
             row[:org_author]
-          ].reject{ |author| author.blank? }
+          ].reject { |author| author.blank? }
           return nil if author_val.empty?
 
           author_val.join(", ")
         end
 
         def combine_label_and_note(row, label)
-          val = [label, row.fetch(:textentry, nil)].reject{ |part| part.blank? }
+          val = [label, row.fetch(:textentry, nil)].reject { |part|
+            part.blank?
+          }
           return nil if val.empty?
 
           val.join(": ")
         end
 
         def signed(row, body)
-          val = [body, author(row)].reject{ |part| part.blank? }
+          val = [body, author(row)].reject { |part| part.blank? }
           return nil if val.empty?
 
           val.join(" --")

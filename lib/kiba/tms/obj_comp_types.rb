@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjCompTypes
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields, default: %i[comptypemnemonic], reader: true
@@ -15,7 +16,7 @@ module Kiba
       setting :type_field, default: :objcomptype, reader: true
       setting :used_in,
         default: [
-          "ObjComponents.componenttype",
+          "ObjComponents.componenttype"
         ],
         reader: true
       setting :mappings,

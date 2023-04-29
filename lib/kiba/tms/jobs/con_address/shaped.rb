@@ -46,7 +46,7 @@ module Kiba
                 find: '^n\/a$', replace: ""
 
               contentfields = config.address_fields
-                .reject{ |field| field.to_s.start_with?("display") }
+                .reject { |field| field.to_s.start_with?("display") }
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: contentfields
@@ -136,10 +136,10 @@ module Kiba
                   edit = val.delete_suffix(" ()")
                 else
                   match = val.match(/\((.*)\)/)
-                  if match
-                    edit = match[1] ? match[1] : val
+                  edit = if match
+                    match[1] || val
                   else
-                    edit = val
+                    val
                   end
                 end
 
@@ -169,7 +169,7 @@ module Kiba
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid addressplace1 addressplace2 city state
-                            zipcode addresscountry],
+                  zipcode addresscountry],
                 target: :combined,
                 sep: " - ",
                 delete_sources: false

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ValuationControl
       extend Dry::Configurable
+
       module_function
 
       setting :multi_source_normalizer,

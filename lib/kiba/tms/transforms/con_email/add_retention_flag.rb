@@ -6,7 +6,7 @@ module Kiba
       module ConEmail
         class AddRetentionFlag
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
             @matches_field = :matches_constituent
             @target = :keeping
@@ -28,7 +28,7 @@ module Kiba
             row[target] = "y"
             row
           end
-          
+
           private
 
           attr_reader :matches_field, :target

@@ -7,7 +7,7 @@ module Kiba
         class CreateCondLineItemNhrs
           def initialize
             @table_type_lookup = {
-              "Objects"=>"collectionobjects"
+              "Objects" => "collectionobjects"
             }
           end
 
@@ -15,7 +15,7 @@ module Kiba
             [
               produce_obj_or_other_rel(row),
               produce_condition_rel(row)
-            ].each{ |outrow| yield outrow }
+            ].each { |outrow| yield outrow }
             nil
           end
 

@@ -21,11 +21,11 @@ module Kiba
             Kiba.job_segment do
               transform FilterRows::WithLambda,
                 action: :keep,
-                lambda: ->(row){
+                lambda: ->(row) {
                   row[:storage_location_authority].downcase == type.to_s
                 }
               to_delete = %i[usage_ct fulllocid storage_location_authority
-                             parent_location]
+                parent_location]
               to_delete << :term_source unless Tms::Names.set_term_source
               transform Delete::Fields,
                 fields: to_delete

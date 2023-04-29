@@ -21,19 +21,19 @@ module Kiba
           end
 
           def close
-            data.each{ |group, gdata| collect_rows(gdata) }
-            rows.each{ |row| yield row }
+            data.each { |group, gdata| collect_rows(gdata) }
+            rows.each { |row| yield row }
           end
-          
+
           private
 
           attr_reader :groupfield, :valuefield, :eligible_types, :data, :rows
 
           def add_new_group(group, row)
-            eligible?(row) ? data[group] = {} : data[group] = []
+            data[group] = eligible?(row) ? {} : []
             add_row_to_group(group, row)
           end
-          
+
           def add_row_to_group(group, row)
             if eligible?(row)
               data[group][row[valuefield]] = row
@@ -41,26 +41,26 @@ module Kiba
               data[group] << row
             end
           end
-          
+
           def collect_rows(group)
             if group.is_a?(Array)
-              group.each{ |row| rows << row }
+              group.each { |row| rows << row }
             else
-              group.length == 1 ? collect_single_hash_row(group) : collect_reduced_hash_rows(group)  
+              (group.length == 1) ? collect_single_hash_row(group) : collect_reduced_hash_rows(group)
             end
           end
 
           # keeps the order of rows/values
           def collect_reduced_hash_rows(group)
             keeping = retained_keys(group)
-            group.select{ |key, value| keeping.any?(key) }
-              .each{ |_key, val| rows << val }
+            group.select { |key, value| keeping.any?(key) }
+              .each { |_key, val| rows << val }
           end
 
           def collect_single_hash_row(group)
             rows << group.values.first
           end
-          
+
           def eligible?(row)
             type = row[:datedescription]
             return false if type.blank?
@@ -69,17 +69,18 @@ module Kiba
           end
 
           def populate_data(group, row)
-            data.key?(group) ? add_row_to_group(group, row) : add_new_group(group, row)
+            data.key?(group) ? add_row_to_group(group,
+              row) : add_new_group(group, row)
           end
 
           def retained_keys(group)
             retain = []
             retain << nil if group.keys.any?(&:nil?)
-            
-            keys = group.keys.compact.sort_by{ |key| key.length }
+
+            keys = group.keys.compact.sort_by { |key| key.length }
             until keys.empty?
               thiskey = keys.shift
-              retain << thiskey unless keys.any?{ |key| key[thiskey] }
+              retain << thiskey unless keys.any? { |key| key[thiskey] }
             end
             retain
           end

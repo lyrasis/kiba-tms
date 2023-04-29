@@ -24,7 +24,7 @@ module Kiba
               base << :locs__previous_worksheet_compile
               base << :locs__returned_compile
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -69,7 +69,7 @@ module Kiba
               else
                 transform Append::NilFields,
                   fields: %i[correct_location_name correct_authority
-                             correct_address]
+                    correct_address]
               end
             end
           end

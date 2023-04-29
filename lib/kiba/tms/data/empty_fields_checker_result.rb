@@ -5,7 +5,7 @@ module Kiba
     module Data
       class EmptyFieldsCheckerResult
         attr_reader :status, :mod, :empty, :not_empty
-        
+
         def initialize(status:, mod:, empty: nil, not_empty: nil)
           @status = status
           @mod = mod

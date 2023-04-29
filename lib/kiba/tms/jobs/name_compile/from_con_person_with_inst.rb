@@ -33,7 +33,7 @@ module Kiba
           def lookups
             base = []
             if ntc_needed?
-                base << :name_type_cleanup__for_con_person_with_inst
+              base << :name_type_cleanup__for_con_person_with_inst
             end
             base
           end
@@ -78,7 +78,7 @@ module Kiba
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   lookup: name_type_cleanup__for_con_person_with_inst
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  typetarget: {"_main term"=>:contype},
+                  typetarget: {"_main term" => :contype},
                   nametarget: Tms::Constituents.preferred_name_field
               end
             end

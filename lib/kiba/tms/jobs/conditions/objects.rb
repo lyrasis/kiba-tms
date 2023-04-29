@@ -10,7 +10,7 @@ module Kiba
           def job
             return unless config.used?
 
-          Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
                 source: :conditions_for__objects,
                 destination: :conditions__objects

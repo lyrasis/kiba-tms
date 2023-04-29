@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module Loansin
       extend Dry::Configurable
+
       module_function
 
       setting :source_job_key, default: :loans__in, reader: true
@@ -54,15 +55,14 @@ module Kiba
       #   constant value for status on derived status notes
       setting :remarks_status, default: "Note", reader: true
 
-
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
       #   to build status field group
       setting :status_sources,
         default: %i[req app agsent agrec origloanend],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :status
-            %i[dispbeg dispend].each{ |src| value << src }
+            %i[dispbeg dispend].each { |src| value << src }
           end
           if remarks_treatment == :statusnote
             value << :rem
@@ -77,7 +77,7 @@ module Kiba
       setting :status_targets,
         default: %i[loanindividual loanstatus loanstatusdate],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if remarks_treatment == :statusnote
             value << :loanstatusnote
           end
@@ -88,7 +88,7 @@ module Kiba
       setting :note_source_fields,
         default: %i[description],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :note
             value << :display_dates_note
           end
@@ -110,7 +110,7 @@ module Kiba
       setting :conditions_source_fields,
         default: %i[loanconditions insind],
         reader: true,
-        constructor: Proc.new{ |value|
+        constructor: proc { |value|
           if display_date_treatment == :conditions
             value << :display_dates_note
           end
@@ -133,7 +133,7 @@ module Kiba
         present = fieldmap.values.map do |val|
           val.to_s.delete_prefix("#{prefix}_").to_sym
         end
-        ( status_targets - present - [:loanstatus] ).map do |val|
+        (status_targets - present - [:loanstatus]).map do |val|
           "#{prefix}_#{val}".to_sym
         end
       end
@@ -142,14 +142,14 @@ module Kiba
         needed = status_pad_fields(fieldmap)
         return [] if needed.empty?
 
-        needed.map{ |val| val.to_s.sub("_", "").to_sym }
+        needed.map { |val| val.to_s.sub("_", "").to_sym }
       end
 
       def status_nil_merge_fields(fieldmap)
         needed = status_pad_fields(fieldmap)
         return {} if needed.empty?
 
-        needed.map{ |val| [val.to_s.sub("_", "").to_sym, val] }.to_h
+        needed.map { |val| [val.to_s.sub("_", "").to_sym, val] }.to_h
       end
     end
   end

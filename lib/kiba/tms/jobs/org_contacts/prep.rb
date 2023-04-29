@@ -24,14 +24,17 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[constituenttype contact_person contact_role norm]
-              transform FilterRows::FieldEqualTo, action: :keep, field: :constituenttype, value: "Organization"
+              transform FilterRows::FieldEqualTo, action: :keep,
+                field: :constituenttype, value: "Organization"
               transform Delete::Fields, fields: :constituenttype
-              transform FilterRows::FieldPopulated, action: :keep, field: :contact_person
-              transform Kiba::Extend::Transforms::Cspace::NormalizeForID, source: :contact_person, target: :contact_norm
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :contact_person
+              transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
+                source: :contact_person, target: :contact_norm
               transform Merge::MultiRowLookup,
                 lookup: persons__by_norm,
                 keycolumn: :contact_norm,
-                fieldmap: { merge_contact: :name }
+                fieldmap: {merge_contact: :name}
             end
           end
         end

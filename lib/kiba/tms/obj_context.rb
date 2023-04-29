@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module ObjContext
       extend Dry::Configurable
+
       module_function
 
       def non_content_fields
@@ -14,7 +15,7 @@ module Kiba
       setting :date_or_chronology_fields,
         default: %i[reign dynasty period],
         reader: true,
-        constructor: ->(value){ value - empty_fields.keys }
+        constructor: ->(value) { value - empty_fields.keys }
       # Transforms to clean individual fields
       # Elements should be transform classes that do not need to be initialized
       #   with arguments

@@ -22,15 +22,15 @@ module Kiba
         include Dry::Monads[:result]
 
         def self.extended(mod)
-          self.set_treatment_mappings(mod)
-          self.set_checkable(mod)
-          self.set_con_ref_name_merge_rules(mod)
+          set_treatment_mappings(mod)
+          set_checkable(mod)
+          set_con_ref_name_merge_rules(mod)
           # Adds con_ref_fieldrules_override config setting, which can be used
           #   to override rules for one or more target fields in a specific
           #   migration project. To change `owner/note_fields`, you need to
           #   include the entire `owner` field rule hash, updated as needed
           #   for your project
-          self.set_con_ref_name_merge_rules_override(mod)
+          set_con_ref_name_merge_rules_override(mod)
         end
 
         def gets_roles_merged_in?
@@ -61,7 +61,9 @@ module Kiba
         private :con_ref_suffixed_fields
 
         def con_ref_target_fields
-          con_ref_target_base_fields.map{ |field| con_ref_suffixed_fields(field) }
+          con_ref_target_base_fields.map { |field|
+            con_ref_suffixed_fields(field)
+          }
             .flatten
         end
 
@@ -78,15 +80,15 @@ module Kiba
           return nil if unmapped.blank?
 
           Success(Tms::Data::ConfigSetting.new(
-            mod:"#{name}.#{__callee__}",
+            mod: "#{name}.#{__callee__}",
             name: :unmapped_role_terms,
             value: unmapped.join(", ")
-            ))
+          ))
         end
 
         def self.checkable_as_needed(mod)
           existing = mod.checkable.dup
-          self.checkable_from_scratch(mod)
+          checkable_from_scratch(mod)
           combined = mod.checkable.merge(existing)
           mod.config.checkable = combined
         end
@@ -107,18 +109,18 @@ module Kiba
 
         def self.set_checkable(mod)
           if mod.respond_to?(:checkable)
-            self.checkable_as_needed(mod)
+            checkable_as_needed(mod)
           else
-            self.checkable_from_scratch(mod)
+            checkable_from_scratch(mod)
           end
         end
         private_class_method :set_checkable
 
         def self.set_treatment_mappings(mod)
           unless mod.respond_to?(:con_ref_role_to_field_mapping)
-          mod.module_eval(
-            "setting :con_ref_role_to_field_mapping, default: {}, reader: true"
-          )
+            mod.module_eval(
+              "setting :con_ref_role_to_field_mapping, default: {}, reader: true", __FILE__, __LINE__
+            )
           end
         end
         private_class_method :set_treatment_mappings
@@ -126,7 +128,7 @@ module Kiba
         def self.set_con_ref_name_merge_rules(mod)
           unless mod.respond_to?(:con_ref_name_merge_rules)
             mod.module_eval(
-              "setting :con_ref_name_merge_rules, default: {}, reader: true"
+              "setting :con_ref_name_merge_rules, default: {}, reader: true", __FILE__, __LINE__
             )
           end
 
@@ -143,7 +145,7 @@ module Kiba
             mod.module_eval(
               "setting :con_ref_name_merge_rules_override, "\
                 "default: {}, "\
-                "reader: true"
+                "reader: true", __FILE__, __LINE__ - 2
             )
           end
         end

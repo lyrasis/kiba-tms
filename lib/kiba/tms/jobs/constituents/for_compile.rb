@@ -28,7 +28,7 @@ module Kiba
                 field: :namedata
               transform Delete::Fields,
                 fields: %i[constituenttype derivedcontype inconsistent_org_names
-                           defaultnameid defaultdisplaybioid namedata norm]
+                  defaultnameid defaultdisplaybioid namedata norm]
               # remove non-preferred form of name if not including flipped as
               #   variant
               unless config.include_flipped_as_variant

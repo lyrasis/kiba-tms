@@ -5,7 +5,6 @@ module Kiba
     module Transforms
       module DDLanguages
         class FormatLanguage
-
           def initialize
             @target = Tms::DDLanguages.type_field
           end

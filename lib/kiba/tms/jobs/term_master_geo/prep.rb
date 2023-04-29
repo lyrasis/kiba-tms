@@ -6,10 +6,10 @@ module Kiba
       module TermMasterGeo
         module Prep
           module_function
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__term_master_geo,

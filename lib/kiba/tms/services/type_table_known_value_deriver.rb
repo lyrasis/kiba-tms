@@ -12,13 +12,12 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       settingobj: Tms::Data::ConfigSetting,
-                       failobj: Tms::Data::DeriverFailure
-                      )
+          settingobj: Tms::Data::ConfigSetting,
+          failobj: Tms::Data::DeriverFailure)
           @mod = mod
           return unless eligible?
 
@@ -48,16 +47,17 @@ module Kiba
 
         private
 
-        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform, :default_mapping, :setting_name
+        attr_reader :mod, :value_getter, :id_field, :type_field, :no_val_xform,
+          :default_mapping, :setting_name
 
         def cleaned
           vals = vals_as_rows
           return Failure(nil) unless vals
 
-          result = vals.map{ |row| no_val_xform.process(row) }
+          result = vals.map { |row| no_val_xform.process(row) }
             .compact
-            .map{ |row| row[type_field] }
-        rescue StandardError => err
+            .map { |row| row[type_field] }
+        rescue => err
           Failure(setting_name, err)
         else
           default_mapping ? Success(result - mod.mappings.keys) : Success(result)
@@ -79,8 +79,8 @@ module Kiba
         end
 
         def mapping_hash(values)
-          result = values.map{ |val| [val, default_mapped(val)] }.to_h
-        rescue StandardError => err
+          result = values.map { |val| [val, default_mapped(val)] }.to_h
+        rescue => err
           Failure(setting_name, err)
         else
           Success(result)
@@ -99,7 +99,7 @@ module Kiba
           vals = vals_from_table
           return nil unless vals
 
-          vals.map{ |val| {type_field => val} }
+          vals.map { |val| {type_field => val} }
         end
 
         def vals_from_table
@@ -108,7 +108,8 @@ module Kiba
           return nil unless used
 
           vals = []
-          CSV.foreach(path, headers: true, header_converters: %i[downcase symbol]) do |row|
+          CSV.foreach(path, headers: true,
+            header_converters: %i[downcase symbol]) do |row|
             next unless used.any?(row[id_field])
 
             vals << row[type_field]

@@ -8,15 +8,17 @@ module Kiba
         class SeparateContacts
           def initialize(delim: Tms.delim)
             @delim = delim
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[lenderscontact person personrole])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: %i[
+              lenderscontact person personrole
+            ])
           end
 
           def process(row)
             vals = getter.call(row)
             return row if vals.empty?
-            vals.transform_values!{ |val| val.split(delim, -1) }
+            vals.transform_values! { |val| val.split(delim, -1) }
             return row unless vals.key?(:personrole)
-            
+
             roles = vals[:personrole]
             return row unless contact?(roles)
 
@@ -38,25 +40,25 @@ module Kiba
           end
 
           def clean_from_person(vals, index)
-            %i[person personrole].each{ |field| vals[field].delete_at(index) }
+            %i[person personrole].each { |field| vals[field].delete_at(index) }
           end
-          
+
           def contact?(val)
             if val.is_a?(Array)
-              val.any?{ |v| v.downcase == "contact" }
+              val.any? { |v| v.downcase == "contact" }
             elsif val.is_a?(String)
               val.downcase == "contact"
             end
           end
-          
+
           def first_contact(roles)
             ind = []
-            roles.each_with_index{ |r, i| ind << i if contact?(r) }
+            roles.each_with_index { |r, i| ind << i if contact?(r) }
             return nil if ind.empty?
 
             ind.first
           end
-          
+
           def move_contact_person(vals, roles)
             index = first_contact(roles)
             add_to_contact(vals, index)
@@ -64,8 +66,8 @@ module Kiba
           end
 
           def move_contact_persons(vals, roles)
-            move_contact_person(vals, roles) until !contact?(roles)
-            vals.transform_values!{ |val| val.empty? ? nil : val.join(delim) }
+            move_contact_person(vals, roles) while contact?(roles)
+            vals.transform_values! { |val| val.empty? ? nil : val.join(delim) }
           end
         end
       end

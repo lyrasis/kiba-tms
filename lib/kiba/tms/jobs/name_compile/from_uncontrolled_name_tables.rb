@@ -24,15 +24,15 @@ module Kiba
           def sources
             config.uncontrolled_name_source_tables
               .keys
-              .map{ |key| Tms.const_get(key) }
-              .map{ |mod| "name_compile_from__#{mod.filekey}".to_sym }
+              .map { |key| Tms.const_get(key) }
+              .map { |mod| "name_compile_from__#{mod.filekey}".to_sym }
           end
 
           def lookups
             base = %i[
-                      constituents__by_nonpref_norm
-                      constituents__by_norm
-                     ]
+              constituents__by_nonpref_norm
+              constituents__by_norm
+            ]
             if ntc_needed?
               base << :name_type_cleanup__for_uncontrolled_name_tables
             end
@@ -84,7 +84,7 @@ module Kiba
                 value: "Uncontrolled"
 
               [constituents__by_nonpref_norm,
-               constituents__by_norm].each do |lkup|
+                constituents__by_norm].each do |lkup|
                 transform Merge::MultiRowLookup,
                   lookup: lkup,
                   keycolumn: :constituentid,

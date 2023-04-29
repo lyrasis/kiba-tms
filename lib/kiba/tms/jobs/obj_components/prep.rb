@@ -34,15 +34,15 @@ module Kiba
             base = []
             if config.actual_components
               base << %i[
-                         prep__obj_comp_types
-                         prep__obj_comp_statuses
-                        ]
+                prep__obj_comp_types
+                prep__obj_comp_statuses
+              ]
             end
             if Tms::TextEntries.for?("ObjComponents")
               base << :text_entries_for__obj_components
             end
             base.flatten
-              .select{ |job| Tms.job_output?(job) }
+              .select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -66,14 +66,14 @@ module Kiba
                   lookup: prep__obj_comp_types,
                   keycolumn: :componenttype,
                   fieldmap: {
-                    component_type: :objcomptype,
+                    component_type: :objcomptype
                   },
                   delim: Tms.delim
                 transform Merge::MultiRowLookup,
                   lookup: prep__obj_comp_statuses,
                   keycolumn: :objcompstatusid,
                   fieldmap: {
-                    objcompstatus: :objcompstatus,
+                    objcompstatus: :objcompstatus
                   },
                   delim: Tms.delim
 
@@ -85,7 +85,7 @@ module Kiba
                 merger = config.text_entries_merge_xform.new(
                   text_entries_for__obj_components
                 )
-                transform{ |row| merger.process(row) }
+                transform { |row| merger.process(row) }
               end
 
               transform Replace::FieldValueWithStaticMapping,

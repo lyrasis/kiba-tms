@@ -20,9 +20,9 @@ module Kiba
 
           def lookups
             base = %i[
-                      prep__con_xrefs
-                      tms__con_alt_names
-                     ]
+              prep__con_xrefs
+              tms__con_alt_names
+            ]
 
             if Tms::Names.cleanup_iteration
               base << :persons__by_constituentid
@@ -39,12 +39,13 @@ module Kiba
               transform Tms::Transforms::DeleteTmsFields
               # :nameid links to ConAltNames table. We don't deal with alt names at the point of merging
               #   authorized forms of names into records
-                transform Merge::MultiRowLookup,
-                  lookup: tms__con_alt_names,
-                  keycolumn: :nameid,
-                  fieldmap: {alt_name: Tms::Constituents.preferred_name_field}
-              
-              transform Delete::Fields, fields: %i[conxrefdetailid roletypeid addressid nameid]
+              transform Merge::MultiRowLookup,
+                lookup: tms__con_alt_names,
+                keycolumn: :nameid,
+                fieldmap: {alt_name: Tms::Constituents.preferred_name_field}
+
+              transform Delete::Fields,
+                fields: %i[conxrefdetailid roletypeid addressid nameid]
 
               if Tms::Names.cleanup_iteration
                 transform Merge::MultiRowLookup,
@@ -86,7 +87,7 @@ module Kiba
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[tablename recordid role person org datebegin dateend prefix remarks
-                            constatement suffix amount displaydate],
+                  constatement suffix amount displaydate],
                 target: :combined,
                 sep: " ",
                 delete_sources: false

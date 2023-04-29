@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep, field: :derivedcontype
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :derivedcontype
             end
           end
         end

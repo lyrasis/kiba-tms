@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module ObjComponents
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -19,7 +20,7 @@ module Kiba
       setting :actual_components, default: false, reader: true
 
       setting :inactive_mapping,
-        default: {"0"=>"active", "1"=>"inactive"},
+        default: {"0" => "active", "1" => "inactive"},
         reader: true
       setting :text_entries_merge_xform, default: nil, reader: true
       setting :inventorystatus_fields,
@@ -30,10 +31,10 @@ module Kiba
         reader: true
 
       setting :configurable, default: {
-        actual_components: proc{
-          Tms::Services::ObjComponents::ActualComponentDeterminer.call
-        }
-      },
+                               actual_components: proc {
+                                 Tms::Services::ObjComponents::ActualComponentDeterminer.call
+                               }
+                             },
         reader: true
 
       def merging_text_entries?

@@ -12,14 +12,13 @@ module Kiba
           include Dry::Monads[:result]
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           attr_reader :mod
 
           def initialize(mod: :prep__registration_sets,
-                         col: Tms::Data::Column
-                        )
+            col: Tms::Data::Column)
             @mod = mod
             @col = col
           end
@@ -38,7 +37,7 @@ module Kiba
 
           def is_multival?(counts)
             cts = counts.values.uniq
-            return false if  cts == [1]
+            return false if cts == [1]
 
             true
           end

@@ -6,6 +6,7 @@ module Kiba
   module Tms
     module DimensionTypes
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
@@ -23,10 +24,10 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          "Height"=>"height",
-          "Width"=>"width",
-          "Depth"=>"depth",
-          "Weight"=>"weight"
+          "Height" => "height",
+          "Width" => "width",
+          "Depth" => "depth",
+          "Weight" => "weight"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

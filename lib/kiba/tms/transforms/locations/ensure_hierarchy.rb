@@ -8,7 +8,8 @@ module Kiba
           # @param lookup [Hash]; should be created with csv_to_multi_hash
           # @param inherit [Array<Symbol>] fields that should be populated with the values of the row from which
           #   new hierarchy level is derived
-          def initialize(lookup:, inherited: %i[storage_location_authority address])
+          def initialize(lookup:,
+            inherited: %i[storage_location_authority address])
             @lookup = lookup
             @inherited = inherited
             @handled = {}
@@ -21,7 +22,7 @@ module Kiba
             return if parent.blank?
             return if handled.key?(parent)
 
-            handle_parent(row, parent).each{ |nr| yield(nr) }
+            handle_parent(row, parent).each { |nr| yield(nr) }
             nil
           end
 
@@ -55,7 +56,9 @@ module Kiba
 
           def handle_parent(row, parent)
             @handled[parent] = nil
-            get_levels(parent.split(delim)).map{ |arr| handle_parent_level(row, arr) }
+            get_levels(parent.split(delim)).map { |arr|
+              handle_parent_level(row, arr)
+            }
               .compact
           end
 
@@ -70,12 +73,12 @@ module Kiba
           end
 
           def inherit(row, hash)
-            inherited.each{ |field| hash[field] = row.fetch(field, nil) }
+            inherited.each { |field| hash[field] = row.fetch(field, nil) }
             hash
           end
 
           def pad_remaining_fields(row, hash)
-            row.keys.each{ |field| hash[field] = nil unless hash.key?(field) }
+            row.keys.each { |field| hash[field] = nil unless hash.key?(field) }
             hash
           end
         end

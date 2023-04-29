@@ -6,10 +6,10 @@ module Kiba
       module TransCodes
         module Prep
           module_function
-          
+
           def job
             return unless config.used?
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__trans_codes,

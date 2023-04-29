@@ -22,9 +22,9 @@ module Kiba
 
           def lookups
             base = %i[
-                      persons__by_constituentid
-                      orgs__by_constituentid
-                     ]
+              persons__by_constituentid
+              orgs__by_constituentid
+            ]
             base << :tms__con_alt_names if Tms::ConAltNames.used?
             base << :prep__departments if Tms::Departments.used?
             base << :prep__roles if Tms::Roles.used?
@@ -81,7 +81,8 @@ module Kiba
                   keycolumn: :roleid,
                   fieldmap: {
                     role: :role,
-                    role_role_type: :role_role_type},
+                    role_role_type: :role_role_type
+                  },
                   delim: Tms.delim
               end
 

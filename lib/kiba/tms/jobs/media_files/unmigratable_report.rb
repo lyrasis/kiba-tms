@@ -31,7 +31,7 @@ module Kiba
             unless config.migrate_unmigratable
               base << :media_files__unmigratable
             end
-            base.select{ |key| Tms.job_output?(key) }
+            base.select { |key| Tms.job_output?(key) }
           end
 
           def xforms

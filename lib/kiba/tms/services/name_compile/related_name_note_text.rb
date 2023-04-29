@@ -23,9 +23,8 @@ module Kiba
           attr_reader :mode, :alt_label_prefix, :alt_label_suffix
 
           def formatted_type(type)
-            type.blank? ? " " : " #{type.downcase.delete_suffix('?')} "
+            type.blank? ? " " : " #{type.downcase.delete_suffix("?")} "
           end
-
 
           def label(type, relator)
             return "Related#{formatted_type(type)}name" if relator.blank?

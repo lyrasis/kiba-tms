@@ -26,7 +26,7 @@ module Kiba
           def lookups
             base = []
             base << :constituents__by_all_norms if Tms::NameTypeCleanup.done
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -57,7 +57,7 @@ module Kiba
               if Tms::NameTypeCleanup.done
                 transform FilterRows::WithLambda,
                   action: :reject,
-                  lambda: ->(row){ row[prefname] == row[:institution] }
+                  lambda: ->(row) { row[prefname] == row[:institution] }
               end
 
               if treatment == :variant

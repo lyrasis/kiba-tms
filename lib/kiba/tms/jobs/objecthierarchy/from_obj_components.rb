@@ -19,7 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept, fields: %i[componentnumber parentobject component_type]
+              transform Delete::FieldsExcept,
+                fields: %i[componentnumber parentobject component_type]
               transform Rename::Fields, fieldmap: {
                 componentnumber: :narrower_object_number,
                 parentobject: :broader_object_number,

@@ -32,7 +32,7 @@ module Kiba
                   return false if val.blank?
 
                   val.split(Tms.delim)
-                    .reject{ |v| config.unmigratable_targets.any?(v) }
+                    .reject { |v| config.unmigratable_targets.any?(v) }
                     .empty?
                 end
               transform Merge::ConstantValue,

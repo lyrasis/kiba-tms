@@ -6,7 +6,7 @@ module Kiba
       module ClassificationNotations
         module Used
           module_function
-          
+
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {

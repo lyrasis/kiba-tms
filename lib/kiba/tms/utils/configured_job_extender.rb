@@ -8,7 +8,7 @@ module Kiba
       class ConfiguredJobExtender
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -44,7 +44,7 @@ module Kiba
 
         def prep_extendable
           Tms::Jobs.constants
-            .select{ |const| configs.any?(const) }
+            .select { |const| configs.any?(const) }
         end
       end
     end

@@ -15,7 +15,9 @@ module Kiba
             @pref = Tms::Constituents.preferred_name_field
             @alt = Tms::Constituents.var_name_field
             @target = :inconsistent_org_names
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [pref, alt])
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: [
+              pref, alt
+            ])
           end
 
           # @private

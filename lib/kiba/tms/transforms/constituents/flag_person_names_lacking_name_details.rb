@@ -6,7 +6,7 @@ module Kiba
       module Constituents
         class FlagPersonNamesLackingNameDetails
           include Kiba::Extend::Transforms::Helpers
-          
+
           def initialize
             @type = :constituenttype
             @target = :missing_last_name

@@ -19,15 +19,18 @@ module Kiba
             row[:remarks] = nil
             row
           end
-          
+
           private
 
           attr_reader :config
 
           def cleaned_remark(row)
-            row[:remarks].sub(Regexp.new("^#{to_delete(row)} +", Regexp::IGNORECASE), "")
+            row[:remarks].sub(
+              Regexp.new("^#{to_delete(row)} +",
+                Regexp::IGNORECASE), ""
+            )
           end
-          
+
           def eligible?(row)
             date = row[:date]
             return false unless date.blank?
@@ -39,13 +42,13 @@ module Kiba
             return false unless config.keys.any?(type)
 
             lower = remark.downcase
-            config[type].any?{ |val| lower.start_with?(val) }
+            config[type].any? { |val| lower.start_with?(val) }
           end
 
           def to_delete(row)
             remark = row[:remarks].downcase
             config[row[:datedescription]]
-              .select{ |val| remark.start_with?(val) }
+              .select { |val| remark.start_with?(val) }
               .first
           end
         end

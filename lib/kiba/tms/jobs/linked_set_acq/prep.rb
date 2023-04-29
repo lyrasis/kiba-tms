@@ -21,16 +21,15 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-                      prep__accession_lot
-                      prep__registration_sets
-                     ]
-            base
+            %i[
+              prep__accession_lot
+              prep__registration_sets
+            ]
           end
 
           def multifield_hash
             fieldhash = Tms::ObjAccession.con_ref_target_fields
-              .map{ |field| [field, [field]] }
+              .map { |field| [field, [field]] }
               .to_h
             Tms::AccessionLot.con_ref_target_fields.each do |field|
               if fieldhash.key?(field)
@@ -62,7 +61,7 @@ module Kiba
               almap = Tms::Table::ContentFields.call(
                 jobkey: :prep__accession_lot
               )
-                .map{ |field| ["lot_#{field}".to_sym, field] }
+                .map { |field| ["lot_#{field}".to_sym, field] }
                 .to_h
               transform Merge::MultiRowLookup,
                 lookup: prep__accession_lot,
@@ -73,7 +72,7 @@ module Kiba
               rsmap = Tms::Table::ContentFields.call(
                 jobkey: :prep__registration_sets
               )
-                .map{ |field| ["set_#{field}".to_sym, field] }
+                .map { |field| ["set_#{field}".to_sym, field] }
                 .to_h
               transform Merge::MultiRowLookup,
                 lookup: prep__registration_sets,
@@ -81,9 +80,9 @@ module Kiba
                 fieldmap: rsmap
 
               bind.receiver.send(:multifield_hash).each do |target, fields|
-                  transform Tms::Transforms::CollapseMultisourceField,
-                    fields: fields,
-                    target: target
+                transform Tms::Transforms::CollapseMultisourceField,
+                  fields: fields,
+                  target: target
               end
 
               # The target should be the form used in ObjAccession, so we can

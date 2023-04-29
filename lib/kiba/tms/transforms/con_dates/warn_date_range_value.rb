@@ -7,7 +7,7 @@ module Kiba
         # Add "range date value" to :warn field if :date contains ' - ' and :datedescription is not 'active'
         class WarnDateRangeValue
           include Warnable
-          
+
           def initialize
             @warning = "date value is range"
             @target = :warn
@@ -18,7 +18,7 @@ module Kiba
             type = row[:datedescription]
             return row if type.blank?
             return row if type == "active"
-            
+
             date = row[:date]
             return row if date.blank?
             return row unless date[" - "]
@@ -26,7 +26,7 @@ module Kiba
             add_warning(row)
             row
           end
-          
+
           private
 
           attr_reader :target, :warning

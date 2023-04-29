@@ -25,7 +25,7 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              config.custom_droppers.each{ |dropper| transform dropper }
+              config.custom_droppers.each { |dropper| transform dropper }
             end
           end
         end

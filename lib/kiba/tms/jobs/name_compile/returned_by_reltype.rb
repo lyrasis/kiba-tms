@@ -70,10 +70,10 @@ module Kiba
 
                 if source == "clientcleanup"
                   row.delete(:fp_not_editable)
-                  if contype.start_with?("P")
-                    fields = p_not_editable
+                  fields = if contype.start_with?("P")
+                    p_not_editable
                   else
-                    fields = o_not_editable
+                    o_not_editable
                   end
 
                   fields.each do |field|

@@ -10,7 +10,7 @@ module Kiba
           include Dry::Monads[:result]
 
           def self.call(...)
-            self.new(...).call
+            new(...).call
           end
 
           attr_reader :mod

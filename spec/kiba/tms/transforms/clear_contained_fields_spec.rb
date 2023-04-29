@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
-  subject(:xform){ described_class.new(**params) }
-  let(:results){ input.map{ |row| xform.process(row) } }
-  let(:params){ {a: :a, b: :b} }
+  subject(:xform) { described_class.new(**params) }
+  let(:results) { input.map { |row| xform.process(row) } }
+  let(:params) { {a: :a, b: :b} }
 
   context "blank vals" do
     let(:input) do
@@ -65,7 +65,7 @@ RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
         {a: "foo-foo", b: "Foo--foo."}
       ]
     end
-    let(:params){ {a: :a, b: :b, b_only: true} }
+    let(:params) { {a: :a, b: :b, b_only: true} }
     let(:expected) do
       [
         {a: "foo", b: nil},
@@ -90,7 +90,7 @@ RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
         {a: "foo|moo", b: "boo|too"}
       ]
     end
-    let(:params){ {a: :a, b: :b, delim: "|"} }
+    let(:params) { {a: :a, b: :b, delim: "|"} }
     let(:expected) do
       [
         {a: "foo|bar", b: nil},
@@ -106,7 +106,7 @@ RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
   end
 
   context "with casesensitive: true and normalized: true" do
-    let(:params){ {a: :a, b: :b, casesensitive: true} }
+    let(:params) { {a: :a, b: :b, casesensitive: true} }
     let(:input) do
       [
         {a: "foo", b: "Foo"},
@@ -134,7 +134,7 @@ RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
   end
 
   context "with casesensitive: true and normalized: false" do
-    let(:params){ {a: :a, b: :b, casesensitive: true, normalized: false} }
+    let(:params) { {a: :a, b: :b, casesensitive: true, normalized: false} }
     let(:input) do
       [
         {a: "foo", b: "Foo"},
@@ -162,7 +162,7 @@ RSpec.describe Kiba::Tms::Transforms::ClearContainedFields do
   end
 
   context "with casesensitive: false and normalized: false" do
-    let(:params){ {a: :a, b: :b, normalized: false} }
+    let(:params) { {a: :a, b: :b, normalized: false} }
     let(:input) do
       [
         {a: "foo", b: "Foo"},

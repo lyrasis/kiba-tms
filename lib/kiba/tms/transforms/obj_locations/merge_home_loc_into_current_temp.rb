@@ -7,7 +7,7 @@ module Kiba
         class MergeHomeLocIntoCurrentTemp
           def initialize(homelocprefix: "normallocation")
             @targets = %w[locationlocal locationoffsite
-                          organizationlocal].map{ |target|
+              organizationlocal].map { |target|
               ["#{homelocprefix}#{target}".to_sym, nil]
             }.to_h
             @merger = Tms::Transforms::ObjLocations::LocToColumns.new(
@@ -21,7 +21,7 @@ module Kiba
             if current_temp?(row)
               merger.process(row)
             else
-              %i[homelocationname homelocationauth].each{ |f| row.delete(f) }
+              %i[homelocationname homelocationauth].each { |f| row.delete(f) }
               row.merge(targets)
             end
           end

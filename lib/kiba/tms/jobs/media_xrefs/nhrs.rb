@@ -30,7 +30,7 @@ module Kiba
             end
             base << :media_xrefs__objects if config.for?("Objects")
             base << :media_xrefs__obj_insurance if config.for?("ObjInsurance")
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

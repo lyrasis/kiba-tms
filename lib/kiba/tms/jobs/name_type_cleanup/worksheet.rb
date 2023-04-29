@@ -26,7 +26,7 @@ module Kiba
               base << :name_type_cleanup__corrected_name_lookup
               base << :name_type_cleanup__corrected_value_lookup
             end
-            base.select{ |jobkey| Tms.job_output?(jobkey) }
+            base.select { |jobkey| Tms.job_output?(jobkey) }
           end
 
           def returned_fields
@@ -46,7 +46,7 @@ module Kiba
           end
 
           def merge_map
-            base = mergeable_fields.map{ |field|
+            base = mergeable_fields.map { |field|
               ["m_#{field}".to_sym, field]
             }.to_h
             base.merge({doneid: :constituentid})
@@ -71,7 +71,7 @@ module Kiba
                   fieldmap: {
                     origname: :origname
                   },
-                  conditions: ->(_r, rows){ [rows.first] },
+                  conditions: ->(_r, rows) { [rows.first] },
                   constantmap: {to_review: "n"}
               end
 

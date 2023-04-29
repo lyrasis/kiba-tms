@@ -6,17 +6,16 @@ module Kiba
       class ContentFields
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
         def initialize(jobkey:,
-                       tablegetter: Tms::Data::CsvEnum
-                      )
+          tablegetter: Tms::Data::CsvEnum)
           @table = tablegetter.call(mod: jobkey)
             .either(
-              ->(success){ success },
-              ->(failure){
+              ->(success) { success },
+              ->(failure) {
                 warn("Cannot get table for #{jobkey}")
                 nil
               }
@@ -27,7 +26,6 @@ module Kiba
             .mod
             .config
         end
-
 
         def call
           return unless table

@@ -23,7 +23,7 @@ module Kiba
       #   everything on base data. If yes, we merge in/overlay cleanup on the
       #   affected base data tables
       setting :done, default: false, reader: true,
-        constructor: proc{ !returned_files.empty? }
+        constructor: proc { !returned_files.empty? }
       setting :dropped_name_indicator,
         default: "DROPPED FROM MIGRATION",
         reader: true
@@ -38,32 +38,36 @@ module Kiba
       setting :provided_worksheets,
         default: [],
         reader: true,
-        constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, "to_client", filename)
-            end
+        constructor: proc { |value|
+          value.map do |filename|
+            File.join(Kiba::Tms.datadir, "to_client", filename)
+          end
         }
       # List returned worksheets, most recent first. Assumes they are in the
       #   client project directory/supplied subdir
       setting :returned_files,
         default: [],
         reader: true,
-        constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, "supplied", filename)
-            end
+        constructor: proc { |value|
+          value.map do |filename|
+            File.join(Kiba::Tms.datadir, "supplied", filename)
+          end
         }
 
       setting :targets, default: [], reader: true
 
       setting :configurable, default: {
-        targets: proc{ Tms::Services::NameTypeCleanup::TargetsDeriver.call }
-      },
+                               targets: proc {
+                                          Tms::Services::NameTypeCleanup::TargetsDeriver.call
+                                        }
+                             },
         reader: true
 
       def initial_headers
         base = %i[
-                  name correctname authoritytype correctauthoritytype termsource
-                  constituentid
-                 ]
+          name correctname authoritytype correctauthoritytype termsource
+          constituentid
+        ]
         base.unshift(:to_review) if done
         base
       end

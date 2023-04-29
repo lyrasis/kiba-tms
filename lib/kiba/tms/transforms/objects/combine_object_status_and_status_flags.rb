@@ -9,12 +9,12 @@ module Kiba
             @fields = %i[objectstatus status_flag_inventorystatus]
             @target = :inventorystatus
           end
-          
+
           def process(row)
             row[target] = nil
-            values = fields.map{ |field| row[field] }
-              .reject{ |val| val.blank? }
-              .map{ |str| str.split(Tms.delim) }
+            values = fields.map { |field| row[field] }
+              .reject { |val| val.blank? }
+              .map { |str| str.split(Tms.delim) }
               .flatten
               .uniq
             combine(values, row)
@@ -30,7 +30,7 @@ module Kiba
               fix(values)
             end
             row[target] = values.sort.join(Tms.delim)
-            fields.each{ |field| row.delete(field) }
+            fields.each { |field| row.delete(field) }
           end
 
           def fix(values)
@@ -41,11 +41,10 @@ module Kiba
 
             if values.any?("potential return") && values.any?("returned")
               values.delete("potential return")
-              return values
+              values
             end
-
           end
-          
+
           def fixable?(values)
             return false if values.empty?
             return false if values.length == 1

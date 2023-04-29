@@ -35,10 +35,9 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[filesize memorysize renditionid
-                           duplicate_filename duplicate_fullpath
-                           rend_thumbpath rend_thumbfilename
-                           rend_renditiondate
-                          ]
+                  duplicate_filename duplicate_fullpath
+                  rend_thumbpath rend_thumbfilename
+                  rend_renditiondate]
               transform Tms::Transforms::DeleteTimestamps,
                 fields: :filedate
 

@@ -6,12 +6,13 @@ module Kiba
   module Tms
     module AccessionLot
       extend Dry::Configurable
+
       module_function
 
       setting :delete_fields,
         default: %i[sortnumber lotcount],
         reader: true,
-        constructor: Proc.new{ |value| set_deletes(value) }
+        constructor: proc { |value| set_deletes(value) }
       setting :non_content_fields,
         default: %i[acquisitionlotid],
         reader: true
@@ -20,7 +21,7 @@ module Kiba
       setting :has_valuations,
         default: false,
         reader: true,
-        constructor: proc{ |value|
+        constructor: proc { |value|
           empty_fields.any?(:accessionvalue) ? false : true
         }
 

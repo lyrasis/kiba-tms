@@ -26,7 +26,7 @@ module Kiba
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[correct_location_name correct_authority
-                           correct_address]
+                  correct_address]
               transform Rename::Fields, fieldmap: {
                 correct_location_name: :location_name,
                 correct_authority: :storage_location_authority,

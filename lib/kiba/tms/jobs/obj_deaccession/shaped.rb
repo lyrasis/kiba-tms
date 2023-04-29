@@ -20,7 +20,7 @@ module Kiba
           end
 
           def xforms
-            bind =  binding
+            bind = binding
 
             Kiba.job_segment do
               job = bind.receiver
@@ -60,7 +60,7 @@ module Kiba
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[estimatelow estimatehigh proceedsrcvdisodate
-                            reportisodate],
+                  reportisodate],
                 target: :displosalnote,
                 sep: "%CR%",
                 delete_sources: true

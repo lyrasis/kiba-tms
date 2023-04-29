@@ -17,9 +17,9 @@ module Kiba
                 source: :obj_accession__linked_lot,
                 destination: :registration_sets__obj_rels,
                 lookup: %i[
-                           prep__registration_sets
-                           objects__numbers_cleaned
-                          ]
+                  prep__registration_sets
+                  objects__numbers_cleaned
+                ]
               },
               transformer: xforms
             )

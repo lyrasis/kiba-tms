@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless Tms::Table::List.include?("ConDates")
-            
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__con_dates,
@@ -21,7 +21,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-
             end
           end
         end

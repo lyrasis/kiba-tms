@@ -14,13 +14,13 @@ module Kiba
         include Dry::Monads::Do.for(:call)
 
         def self.call(...)
-          self.new(...).call
+          new(...).call
         end
 
         def initialize(mod:,
-                       fields:,
-                       failobj: Tms::Data::DeriverFailure,
-                       table_getter: Tms::Data::CsvEnum)
+          fields:,
+          failobj: Tms::Data::DeriverFailure,
+          table_getter: Tms::Data::CsvEnum)
           @mod = mod
           @fields = fields
           @table_getter = table_getter
@@ -55,7 +55,7 @@ module Kiba
 
             all_same = false unless row[fields[0]] == row[fields[1]]
           end
-        rescue StandardError => err
+        rescue => err
           results << Failure([name, err])
         else
           Success(all_same)

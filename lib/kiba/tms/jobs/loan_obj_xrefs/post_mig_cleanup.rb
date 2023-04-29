@@ -24,8 +24,8 @@ module Kiba
               .as_source(source_key)
               .args
             CSV.open(args[:filename], **args[:csv_options])
-            .readline
-            .headers
+              .readline
+              .headers
           end
 
           def source_key

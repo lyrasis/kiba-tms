@@ -22,10 +22,11 @@ module Kiba
             base << :prep__con_dates if Tms::Table::List.include?("ConDates")
             base
           end
-          
+
           def xforms
             Kiba.job_segment do
-              transform Append::NilFields, fields: Tms::Constituents.dates.multisource_normalizer.get_fields
+              transform Append::NilFields,
+                fields: Tms::Constituents.dates.multisource_normalizer.get_fields
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription date],

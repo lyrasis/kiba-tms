@@ -22,11 +22,11 @@ module Kiba
 
           def lookups
             base = %i[
-                      objects__number_lookup
-                      prep__exhibitions
-                     ]
+              objects__number_lookup
+              prep__exhibitions
+            ]
             base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

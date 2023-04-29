@@ -3,9 +3,12 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
-  let(:accumulator){ [] }
-  let(:test_job){ Helpers::TestJob.new(input: input, accumulator: accumulator, transforms: transforms) }
-  let(:result){ test_job.accumulator.map{ |row| row[:parent_location] } }
+  let(:accumulator) { [] }
+  let(:test_job) {
+    Helpers::TestJob.new(input: input, accumulator: accumulator,
+      transforms: transforms)
+  }
+  let(:result) { test_job.accumulator.map { |row| row[:parent_location] } }
   let(:transforms) do
     Kiba.job_segment do
       transform Kiba::Tms::Transforms::Locations::AddParent
@@ -30,7 +33,7 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
       nil,
       "a",
       "a >> b"
-      ]
+    ]
     expect(result).to eq(expected)
   end
 end

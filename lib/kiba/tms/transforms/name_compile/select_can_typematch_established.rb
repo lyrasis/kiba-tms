@@ -8,10 +8,10 @@ module Kiba
           # @private
           def process(row)
             return unless eligible?(row)
-            
+
             row
           end
-          
+
           private
 
           def eligible?(row)

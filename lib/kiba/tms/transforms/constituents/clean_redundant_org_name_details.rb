@@ -25,19 +25,20 @@ module Kiba
 
           private
 
-          attr_reader :type_field, :name_field, :core_name_detail_fields, :addl_name_detail_fields, :getter
+          attr_reader :type_field, :name_field, :core_name_detail_fields,
+            :addl_name_detail_fields, :getter
 
           def clean(row)
             [core_name_detail_fields, addl_name_detail_fields].flatten
               .intersection(row.keys)
-              .each{ |field| row[field] = nil }
+              .each { |field| row[field] = nil }
           end
 
           def has_position(row)
             position = row[:position]
             true unless position.blank?
           end
-          
+
           def is_org(row)
             type = row[type_field]
             return false if type.blank?
@@ -52,7 +53,9 @@ module Kiba
             details = getter.call(row)
             return false if details.empty?
 
-            details.values.map(&:downcase).map{ |dval| nameval.downcase[dval] }.none?(nil)
+            details.values.map(&:downcase).map { |dval|
+              nameval.downcase[dval]
+            }.none?(nil)
           end
         end
       end

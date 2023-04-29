@@ -25,7 +25,7 @@ module Kiba
                 value: "n"
               transform Delete::Fields,
                 fields: %i[duplicate init_addresscountry origcountry
-                           remappedcountry remappedcountrycode]
+                  remappedcountry remappedcountrycode]
             end
           end
         end

@@ -15,7 +15,7 @@ module Kiba
 
           def process(row)
             row[alt_name] = nil
-            
+
             did = row.fetch(:defaultnameid, nil).dup
             row.delete(:defaultnameid)
             return row if did.blank?
@@ -25,7 +25,7 @@ module Kiba
 
             val = vals.first
             row[alt_name] = val[name]
-            
+
             row
           end
 

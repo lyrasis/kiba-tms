@@ -22,7 +22,8 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::TmsTableNames
-              transform Delete::Fields, fields: %i[displayed active isdefaultdisplaybio roletypeid]
+              transform Delete::Fields,
+                fields: %i[displayed active isdefaultdisplaybio roletypeid]
               transform Rename::Field, from: :id, to: :recordid
               transform Merge::MultiRowLookup,
                 lookup: prep__roles,

@@ -3,11 +3,12 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Data::ColumnFromString do
-  subject(:klass){ described_class }
+  subject(:klass) { described_class }
 
   module Tms
     module UnusedMod
       module_function
+
       def used?
         false
       end
@@ -15,6 +16,7 @@ RSpec.describe Kiba::Tms::Data::ColumnFromString do
 
     module UsedMod
       module_function
+
       def used?
         true
       end
@@ -22,10 +24,10 @@ RSpec.describe Kiba::Tms::Data::ColumnFromString do
   end
 
   describe ".call" do
-    let(:result){ klass.call(str: str) }
+    let(:result) { klass.call(str: str) }
 
     context "with column in defined, used Module" do
-      let(:str){ "UsedMod.title" }
+      let(:str) { "UsedMod.title" }
 
       it "returns Data::Column" do
         expect(result).to be_a(Tms::Data::Column)

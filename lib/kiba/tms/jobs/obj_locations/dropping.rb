@@ -22,10 +22,10 @@ module Kiba
 
           def sources
             base = %i[
-                      obj_locations__dropping_no_location
-                      obj_locations__dropping_no_object
-                     ]
-            base.select{ |job| Tms.job_output?(job) }
+              obj_locations__dropping_no_location
+              obj_locations__dropping_no_object
+            ]
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

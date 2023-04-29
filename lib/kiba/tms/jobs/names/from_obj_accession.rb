@@ -24,13 +24,17 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[authorizer initiator], target: :combined,
                 sep: "|||", delete_sources: false
-              transform FilterRows::FieldPopulated, action: :keep, field: :combined
+              transform FilterRows::FieldPopulated, action: :keep,
+                field: :combined
               transform Delete::FieldsExcept, fields: :combined
-              transform Explode::RowsFromMultivalField, field: :combined, delim: "|||"
+              transform Explode::RowsFromMultivalField, field: :combined,
+                delim: "|||"
               transform Deduplicate::Table, field: :combined
               transform Cspace::NormalizeForID, source: :combined, target: :norm
-              transform Rename::Field, from: :combined, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: "TMS Objaccession"
+              transform Rename::Field, from: :combined,
+                to: Tms::Constituents.preferred_name_field
+              transform Merge::ConstantValue, target: :termsource,
+                value: "TMS Objaccession"
             end
           end
         end

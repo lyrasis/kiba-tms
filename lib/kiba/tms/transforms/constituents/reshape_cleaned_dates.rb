@@ -19,28 +19,31 @@ module Kiba
             }
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: newrowfields.keys)
           end
-          
+
           def process(row)
             vals = getter.call(row)
             return nil if vals.empty?
 
-            create_rows(row, vals).each{ |newrow| yield newrow }
+            create_rows(row, vals).each { |newrow| yield newrow }
             nil
           end
 
           private
 
-          attr_reader :newrowfields, :copydatafields, :datedescriptionmap, :getter
+          attr_reader :newrowfields, :copydatafields, :datedescriptionmap,
+            :getter
 
           def create_row(row, field, value)
-            newrow = {newrowfields[field] => value, :datedescription => datedescriptionmap[field]}
-            newrowfields[field] == :date ? newrow[:datenote] = nil : newrow[:date] = nil
-            copydatafields.each{ |cdf| newrow[cdf] = row[cdf] }
+            newrow = {newrowfields[field] => value,
+                      :datedescription => datedescriptionmap[field]}
+            (newrowfields[field] == :date) ? newrow[:datenote] =
+                                               nil : newrow[:date] = nil
+            copydatafields.each { |cdf| newrow[cdf] = row[cdf] }
             newrow
           end
-          
+
           def create_rows(row, vals)
-            vals.map{ |field, value| create_row(row, field, value) }
+            vals.map { |field, value| create_row(row, field, value) }
           end
         end
       end

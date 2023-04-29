@@ -22,12 +22,12 @@ module Kiba
 
           def sources
             base = [:cond_line_items__to_conservation]
-            base.select{ |key| Tms.job_output?(key) }
+            base.select { |key| Tms.job_output?(key) }
           end
 
           def lookups
             base = [:conditions__cspace]
-            base.select{ |key| Tms.job_output?(key) }
+            base.select { |key| Tms.job_output?(key) }
           end
 
           def xforms

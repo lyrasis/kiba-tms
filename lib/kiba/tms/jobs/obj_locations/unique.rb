@@ -15,10 +15,10 @@ module Kiba
                 source: :obj_locations__migrating_custom,
                 destination: :obj_locations__unique,
                 lookup: %i[
-                           locs__compiled_clean
-                           names__by_norm
-                           obj_components__current_loc_lookup
-                          ]
+                  locs__compiled_clean
+                  names__by_norm
+                  obj_components__current_loc_lookup
+                ]
               },
               transformer: xforms
             )
@@ -81,7 +81,7 @@ module Kiba
                   transform Merge::MultiRowLookup,
                     lookup: names__by_norm,
                     keycolumn: normfield,
-                    fieldmap: {"#{field}_#{type}".to_sym=>type},
+                    fieldmap: {"#{field}_#{type}".to_sym => type},
                     delim: Tms.delim
                 end
                 transform Delete::Fields,

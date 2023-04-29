@@ -22,11 +22,11 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform FilterRows::FieldPopulated,
-              action: :keep,
-              field: :text_entry
-            transform Delete::FieldsExcept,
-              fields: %i[objectnumber exhibitionnumber exhtitle objecttitle
-                         text_entry]
+                action: :keep,
+                field: :text_entry
+              transform Delete::FieldsExcept,
+                fields: %i[objectnumber exhibitionnumber exhtitle objecttitle
+                  text_entry]
             end
           end
         end

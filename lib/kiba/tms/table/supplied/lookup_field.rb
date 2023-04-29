@@ -7,7 +7,7 @@ module Kiba
         # Return lookup_on value for table's registry hash or nil
         class LookupField
           def self.call(table_key)
-            self.new(table_key).call
+            new(table_key).call
           end
 
           def initialize(table_key)

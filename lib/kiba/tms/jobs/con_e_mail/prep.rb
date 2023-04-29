@@ -21,7 +21,7 @@ module Kiba
           def lookups
             base = [:names__by_constituentid]
             base << :prep__email_types if Tms::EMailTypes.used
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -41,7 +41,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__email_types,
                   keycolumn: :emailtypeid,
-                  fieldmap: { emailtype: :emailtype }
+                  fieldmap: {emailtype: :emailtype}
               end
               transform Delete::Fields, fields: :emailtypeid
 

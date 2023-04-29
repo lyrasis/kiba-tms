@@ -13,10 +13,10 @@ module Kiba
           end
 
           def process(row)
-            targets.each{ |field| row[field] = nil }
+            targets.each { |field| row[field] = nil }
             mapping = row[mappingsrc]
             correct = row[correctsrc]
-            [mappingsrc, correctsrc, :lookupid].each{ |fld| row.delete(fld) }
+            [mappingsrc, correctsrc, :lookupid].each { |fld| row.delete(fld) }
             return row if mapping.blank?
             return row if mapping == "drop"
 

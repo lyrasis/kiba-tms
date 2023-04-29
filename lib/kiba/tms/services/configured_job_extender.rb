@@ -8,7 +8,7 @@ module Kiba
       class ConfiguredJobExtender
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -16,12 +16,12 @@ module Kiba
         # @param verbose [Boolean]
         def initialize(namespace:, verbose: false)
           @parent = Tms::Jobs.const_get(namespace)
-          @jobs = parent.constants.map{ |const| parent.const_get(const) }
+          @jobs = parent.constants.map { |const| parent.const_get(const) }
           @verbose = verbose
         end
 
         def call
-          jobs.each{ |job| job.extend(Tms::Mixins::ConfiguredJob) }
+          jobs.each { |job| job.extend(Tms::Mixins::ConfiguredJob) }
           if verbose
             puts "#{parent}: extended #{jobs.length} jobs with :config"
           end

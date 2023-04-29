@@ -26,7 +26,8 @@ module Kiba
             base << :prep__object_statuses if Tms::ObjectStatuses.used?
             base << :prep__obj_context if Tms::ObjContext.used?
             if Tms::Objects.classifications_xform
-              %i[prep__classifications prep__classification_xrefs].each do |lkup|
+              %i[prep__classifications
+                prep__classification_xrefs].each do |lkup|
                 base << lkup
               end
             end
@@ -76,7 +77,9 @@ module Kiba
                     keycolumn: :objectid
                 end
                 if Tms::ConRefs.for_objects_merge
-                  Tms::ConRefs.for_objects_merge.each{ |xform| transform xform }
+                  Tms::ConRefs.for_objects_merge.each { |xform|
+                    transform xform
+                  }
                 end
               end
 
@@ -102,7 +105,7 @@ module Kiba
                   to: :obj_objectname
                 transform Append::NilFields,
                   fields: %i[obj_objectnametype obj_objectnamelanguage
-                             obj_objectnamenote]
+                    obj_objectnamenote]
                 transform Merge::MultiRowLookup,
                   lookup: prep__object_names,
                   keycolumn: :objectid,
@@ -227,7 +230,7 @@ module Kiba
                 contexts_todo = contexts - contexts_merged
                 unless contexts_todo.empty?
                   warn("Handle merging ObjContext fields: "\
-                       "#{contexts_todo.join(', ')}")
+                       "#{contexts_todo.join(", ")}")
                 end
               end
 
@@ -279,8 +282,8 @@ module Kiba
                   fieldmap: {status_flag_inventorystatus: :flaglabel},
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
                   delim: Tms.delim,
-                  conditions: ->(_origrow, mergerows){
-                    mergerows.select{ |row| row[:tablename] == "Objects" }
+                  conditions: ->(_origrow, mergerows) {
+                    mergerows.select { |row| row[:tablename] == "Objects" }
                   }
                 transform Tms::Transforms::Objects::CombineObjectStatusAndStatusFlags
               end
@@ -297,17 +300,17 @@ module Kiba
                 xform = config.text_entries_merge_xform.new(
                   text_entries_for__objects
                 )
-                transform{ |row| xform.process(row) }
+                transform { |row| xform.process(row) }
               end
 
               unless config.field_cleaners.empty?
-                config.field_cleaners.each{ |cleaner| transform cleaner }
+                config.field_cleaners.each { |cleaner| transform cleaner }
               end
 
               unless config.transformer_fields.empty?
                 xforms = config.transformer_fields
-                  .map{ |field| "#{field}_xform".to_sym }
-                  .map{ |setting| config.send(setting) }
+                  .map { |field| "#{field}_xform".to_sym }
+                  .map { |setting| config.send(setting) }
                   .compact
                 transform do |row|
                   xforms.each do |xform|
@@ -323,7 +326,7 @@ module Kiba
                 description: :briefdescription,
                 medium: :materialtechniquedescription,
                 notes: :comment,
-                objectcount: :numberofobjects,
+                objectcount: :numberofobjects
               }
               unless bind.receiver.send(:merges_dimensions?)
                 unless Tms::Dimensions.migrate_secondary_unit_vals
@@ -335,15 +338,15 @@ module Kiba
                 end
                 rename_map[:dimensions] = :dimensionsummary
               end
-              custom_handled_fields.each{ |field| rename_map.delete(field) }
+              custom_handled_fields.each { |field| rename_map.delete(field) }
               transform Rename::Fields,
                 fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
 
               transform Delete::DelimiterOnlyFieldValues,
                 fields: %w[contentnote objectproductionnote
-                           objecthistorynote].map{ |prefix|
-                             config.send("#{prefix}_sources".to_sym)
-                          }.flatten,
+                  objecthistorynote].map { |prefix|
+                          config.send("#{prefix}_sources".to_sym)
+                        }.flatten,
                 delim: Tms.delim,
                 treat_as_null: Tms.nullvalue
 
@@ -373,9 +376,9 @@ module Kiba
               end
 
               %w[
-                 contentnote objectproductionnote
-                 objecthistorynote
-                ].each do |target|
+                contentnote objectproductionnote
+                objecthistorynote
+              ].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
                   target: target,

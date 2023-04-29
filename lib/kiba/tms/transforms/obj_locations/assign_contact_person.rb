@@ -18,10 +18,10 @@ module Kiba
 
           def process(row)
             names = name_getter.call(row)
-            if names.empty?
-              row[target] = nil
+            row[target] = if names.empty?
+              nil
             else
-              row[target] = names.first[1]
+              names.first[1]
             end
             row
           end

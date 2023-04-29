@@ -21,7 +21,7 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[loaninnumber lenderpersonlocal
-                           lenderorganizationlocal lenderscontact]
+                  lenderorganizationlocal lenderscontact]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[lenderpersonlocal lenderorganizationlocal],
                 target: :combined,
@@ -45,7 +45,7 @@ module Kiba
                 value: 0
               transform FilterRows::WithLambda,
                 action: :reject,
-                lambda: ->(row){
+                lambda: ->(row) {
                   row[:combined_ct] == 1 && row[:lenderscontact_ct] == 1
                 }
               transform Delete::Fields, fields: :combined
