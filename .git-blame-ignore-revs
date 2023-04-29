@@ -1,3 +1,12 @@
+# Appease rubocop - noblame
+bb6578bd2c23697acf41eb1a3bd4630c63617999
+
+# Rubocop safe autofixes - noblame
+059a4b4e082f3dee6c49dd8f74604a14baeeda1d
+
+# Autofix to doublequotes - noblame
+d6dce6b37390df8313096552840cc5109aad062e
+
 # Autofix to doublequotes - noblame
 c4d2da830d021008561643b7e2783580dd81f1d8
 
