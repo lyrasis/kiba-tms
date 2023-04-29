@@ -32,7 +32,7 @@ module Kiba
                 config.fields.any?(Tms::Currencies.id_field)
               base << :prep__currencies
             end
-            if Tms::ConRefs.for?('ObjAccession')
+            if Tms::ConRefs.for?("ObjAccession")
               base << :con_refs_for__obj_accession
             end
             if config.fields.any?(:accessionvalue) &&
@@ -57,7 +57,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objectid,
-                value: '-1'
+                value: "-1"
               transform Tms.data_cleaner if Tms.data_cleaner
 
               transform Tms::Transforms::DeleteTimestamps,
@@ -66,7 +66,7 @@ module Kiba
                 fields: %i[accessionvalue]
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[objectvalueid],
-                match: '^-1$'
+                match: "^-1$"
 
               # removes :accessionvalue if equal to the value in a linked
               #   ObjInsurance (valuation) record
@@ -117,7 +117,7 @@ module Kiba
               end
               transform Delete::Fields, fields: curr.id_field
 
-              if Tms::ConRefs.for?('ObjAccession')
+              if Tms::ConRefs.for?("ObjAccession")
                 transform Tms::Transforms::ConRefs::Merger,
                   into: config,
                   keycolumn: :objectid
@@ -150,7 +150,7 @@ module Kiba
 
               transform Tms::Transforms::ObjAccession::AuthDateSetter
 
-              if config.fields.any?{ |f| f.to_s.start_with?('approvaliso') }
+              if config.fields.any?{ |f| f.to_s.start_with?("approvaliso") }
                 case config.approval_date_treatment
                 when :drop
                   transform Delete::Fields,
@@ -189,18 +189,18 @@ module Kiba
               else
                 transform Prepend::ToFieldValue,
                   field: :valuationnotes,
-                  value: 'Valuation note: '
+                  value: "Valuation note: "
               end
 
               if config.fields.any?(:deedofgiftsentiso)
                 transform Prepend::ToFieldValue,
                   field: :deedofgiftsentiso,
-                  value: 'Deed of gift sent: '
+                  value: "Deed of gift sent: "
               end
               if config.fields.any?(:deedofgiftreceivediso)
                 transform Prepend::ToFieldValue,
                   field: :deedofgiftreceivediso,
-                  value: 'Deed of gift received: '
+                  value: "Deed of gift received: "
               end
 
               unless config.proviso_sources.empty?
@@ -236,7 +236,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :acquisitionnumber,
                 find: '\|',
-                replace: '%PIPE%'
+                replace: "%PIPE%"
             end
           end
         end

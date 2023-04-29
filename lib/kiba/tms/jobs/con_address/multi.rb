@@ -33,8 +33,8 @@ module Kiba
               transform do |row|
                 person = row[:person]
                 org = row[:org]
-                val = 'person' unless person.blank?
-                val = 'organization' unless org.blank?
+                val = "person" unless person.blank?
+                val = "organization" unless org.blank?
                 row[:type] = val
                 row
               end

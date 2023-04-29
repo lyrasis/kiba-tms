@@ -74,7 +74,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.content_fields,
                 target: :index,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform FilterRows::WithLambda,
                 action: :reject,
@@ -94,7 +94,7 @@ module Kiba
                   keycolumn: :id,
                   fieldmap: {objectnumber: :objectnumber},
                   conditions: ->(row, rows){
-                    row[:tablename] == 'Objects' ? rows : []
+                    row[:tablename] == "Objects" ? rows : []
                   }
               end
               # If any other target tables exist, add their conditional number
@@ -127,7 +127,7 @@ module Kiba
               end
               transform Delete::Fields, fields: :overallconditionid
 
-              if Tms::TextEntries.for?('Conditions')
+              if Tms::TextEntries.for?("Conditions")
                 transform Tms::TextEntries.for_conditions_merge
               end
             end

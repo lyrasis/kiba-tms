@@ -16,8 +16,8 @@ module Kiba
             parts = value_getter.call(row)
             return nil if parts.empty?
 
-            name = [parts[:firstname], parts[:middlename], parts[:lastname]].compact.join(' ')
-            [name, parts[:suffix]].compact.join(', ')
+            name = [parts[:firstname], parts[:middlename], parts[:lastname]].compact.join(" ")
+            [name, parts[:suffix]].compact.join(", ")
           end
 
           private

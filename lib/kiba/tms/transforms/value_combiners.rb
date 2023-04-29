@@ -15,7 +15,7 @@ module Kiba
         # Methods to set source fields and delimiters for the different parts.
         #   Override in including classes as necessary
         def body_delim
-          ': '
+          ": "
         end
 
         def body_source_fields
@@ -23,7 +23,7 @@ module Kiba
         end
 
         def prefix_delim
-          ', '
+          ", "
         end
 
         def prefix_source_fields
@@ -45,13 +45,13 @@ module Kiba
         def attributed(row)
           safe_join(
             vals: [textentry(row), authors(row)],
-            delim: ' ')
+            delim: " ")
         end
 
         def textentry(row)
           safe_join(
             vals: [prefix(row), body(row)],
-            delim: ': ')
+            delim: ": ")
         end
 
         # Methods that create the combinable sub-methods

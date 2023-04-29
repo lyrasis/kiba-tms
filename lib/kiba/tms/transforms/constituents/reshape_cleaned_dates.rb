@@ -13,8 +13,8 @@ module Kiba
             }
             @copydatafields = %i[constituentid condateid]
             @datedescriptionmap = {
-              begindateiso: 'birth',
-              enddateiso: 'death',
+              begindateiso: "birth",
+              enddateiso: "death",
               datenote: nil
             }
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: newrowfields.keys)

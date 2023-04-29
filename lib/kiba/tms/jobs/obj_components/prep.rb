@@ -38,7 +38,7 @@ module Kiba
                          prep__obj_comp_statuses
                         ]
             end
-            if Tms::TextEntries.for?('ObjComponents')
+            if Tms::TextEntries.for?("ObjComponents")
               base << :text_entries_for__obj_components
             end
             base.flatten
@@ -57,7 +57,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :componentid,
-                value: '-1'
+                value: "-1"
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
@@ -81,7 +81,7 @@ module Kiba
               transform Delete::Fields,
                 fields: %i[componenttype objcompstatusid]
 
-              if Tms::TextEntries.for?('ObjComponents')
+              if Tms::TextEntries.for?("ObjComponents")
                 merger = config.text_entries_merge_xform.new(
                   text_entries_for__obj_components
                 )

@@ -7,11 +7,11 @@
 #require 'kiba-common/destinations/csv'
 #require 'kiba-common/dsl_extensions/show_me'
 #require 'kiba-common/sources/csv'
-require 'kiba/extend'
-require 'zeitwerk'
+require "kiba/extend"
+require "zeitwerk"
 
 # dev
-require 'pry'
+require "pry"
 
 # Namespace for the overall project
 module Kiba
@@ -28,15 +28,15 @@ module Kiba
       @loader = Zeitwerk::Loader.new
       #              @loader.log!
       @loader.push_dir(
-        File.expand_path(__FILE__).delete_suffix('.rb'),
+        File.expand_path(__FILE__).delete_suffix(".rb"),
         namespace: Kiba::Tms
       )
       @loader.inflector.inflect(
-        'classification_xrefs' => 'ClassificationXRefs',
-        'dd_languages' => 'DDLanguages',
-        'email_types' => 'EMailTypes',
-        'ref_xrefs' => 'RefXRefs',
-        'version'   => 'VERSION'
+        "classification_xrefs" => "ClassificationXRefs",
+        "dd_languages" => "DDLanguages",
+        "email_types" => "EMailTypes",
+        "ref_xrefs" => "RefXRefs",
+        "version"   => "VERSION"
       )
       @loader.enable_reloading
       @loader.setup
@@ -60,11 +60,11 @@ module Kiba
         default: __dir__,
         reader: true,
         constructor: proc{ |value|
-          if value['kiba-tms/lib']
-            base = value.split('/')
+          if value["kiba-tms/lib"]
+            base = value.split("/")
             2.times{ base.pop }
-            dir = base.join('/')
-            File.join(dir, 'data', 'tms')
+            dir = base.join("/")
+            File.join(dir, "data", "tms")
           else
             value
           end
@@ -72,7 +72,7 @@ module Kiba
       setting :datadir, default: "#{__dir__}/data", reader: true
       setting :delim, default: Kiba::Extend.delim, reader: true
       setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
-      setting :nullvalue, default: '%NULLVALUE%', reader: true
+      setting :nullvalue, default: "%NULLVALUE%", reader: true
       # File registry - best to just leave this as-is
       setting :registry, default: Kiba::Extend.registry, reader: true
       # TMS tables not used in a given project. Override in project application
@@ -83,46 +83,46 @@ module Kiba
 
     setting :table_lookup,
       default: {
-        '0'=>'NO TABLE WITH THIS ID BUT IT IS SOMETIMES USED',
-        '23'=>'Constituents',
-        '47'=>'Exhibitions',
-        '49'=>'ExhObjXrefs',
-        '50'=>'ExhVenObjXrefs',
-        '51'=>'ExhVenuesXrefs',
-        '79'=>'LoanObjXrefs',
-        '81'=>'Loans',
-        '83'=>'Locations',
-        '89'=>'ObjAccession',
-        '94'=>'ObjComponents',
-        '95'=>'Conditions',
-        '97'=>'CondLineItems',
-        '102'=>'ObjDeaccession',
-        '108'=>'Objects',
-        '116'=>'ObjInsurance',
-        '126'=>'ObjRights',
-        '143'=>'ReferenceMaster',
-        '187'=>'HistEvents',
-        '189'=>'Sites',
-        '287'=>'TermMasterThes',
-        '318'=>'MediaMaster',
-        '322'=>'MediaRenditions',
-        '345'=>'Shipments',
-        '355'=>'ShipmentSteps',
-        '631'=>'AccessionLot',
-        '632'=>'RegistrationSets',
-        '726'=>'ObjContext',
-        '790'=>'Projects',
-        '792'=>'ConservationReports'
+        "0"=>"NO TABLE WITH THIS ID BUT IT IS SOMETIMES USED",
+        "23"=>"Constituents",
+        "47"=>"Exhibitions",
+        "49"=>"ExhObjXrefs",
+        "50"=>"ExhVenObjXrefs",
+        "51"=>"ExhVenuesXrefs",
+        "79"=>"LoanObjXrefs",
+        "81"=>"Loans",
+        "83"=>"Locations",
+        "89"=>"ObjAccession",
+        "94"=>"ObjComponents",
+        "95"=>"Conditions",
+        "97"=>"CondLineItems",
+        "102"=>"ObjDeaccession",
+        "108"=>"Objects",
+        "116"=>"ObjInsurance",
+        "126"=>"ObjRights",
+        "143"=>"ReferenceMaster",
+        "187"=>"HistEvents",
+        "189"=>"Sites",
+        "287"=>"TermMasterThes",
+        "318"=>"MediaMaster",
+        "322"=>"MediaRenditions",
+        "345"=>"Shipments",
+        "355"=>"ShipmentSteps",
+        "631"=>"AccessionLot",
+        "632"=>"RegistrationSets",
+        "726"=>"ObjContext",
+        "790"=>"Projects",
+        "792"=>"ConservationReports"
       },
       reader: true
 
 
     # PROJECT SPECIFIC CONFIG
     setting :boolean_active_mapping,
-      default: {'0'=>'inactive', '1'=>'active'},
+      default: {"0"=>"inactive", "1"=>"active"},
       reader: true
     setting :cspace_profile, default: :fcart, reader: true
-    setting :boolean_yn_mapping, default: {'0'=>'n', '1'=>'y'}, reader: true
+    setting :boolean_yn_mapping, default: {"0"=>"n", "1"=>"y"}, reader: true
     # client-specific initial data cleaner, applied before processing
     setting :data_cleaner, default: nil, reader: true
     # TMS-internal fields to be deleted
@@ -131,7 +131,7 @@ module Kiba
     #   out final data for ingest)
     setting :final_data_cleaner, default: nil, reader: true
     setting :inverted_boolean_yn_mapping,
-      default: {'0'=>'y', '1'=>'n'},
+      default: {"0"=>"y", "1"=>"n"},
       reader: true
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
@@ -158,8 +158,8 @@ module Kiba
     #   from prepared lookups
     setting :no_value_type_pattern,
       default: [
-        'enter your value here', 'none assigned', 'not assigned', 'not defined',
-        'not entered', 'part of an object', 'not specified'
+        "enter your value here", "none assigned", "not assigned", "not defined",
+        "not entered", "part of an object", "not specified"
       ],
       reader: true,
       constructor: proc{ |value|

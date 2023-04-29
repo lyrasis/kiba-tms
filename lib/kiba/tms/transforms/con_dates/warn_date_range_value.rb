@@ -9,7 +9,7 @@ module Kiba
           include Warnable
           
           def initialize
-            @warning = 'date value is range'
+            @warning = "date value is range"
             @target = :warn
           end
 
@@ -17,11 +17,11 @@ module Kiba
           def process(row)
             type = row[:datedescription]
             return row if type.blank?
-            return row if type == 'active'
+            return row if type == "active"
             
             date = row[:date]
             return row if date.blank?
-            return row unless date[' - ']
+            return row unless date[" - "]
 
             add_warning(row)
             row

@@ -31,7 +31,7 @@ module Kiba
                   fli = row[:fulllocid]
                     .split(Tms.delim)
                   fli.shift
-                  fli.reject{ |val| val == 'nil' || val.blank? }
+                  fli.reject{ |val| val == "nil" || val.blank? }
                     .empty?
                 end
 
@@ -59,7 +59,7 @@ module Kiba
                 delete_field: false
               transform Merge::ConstantValue,
                 target: :term_source,
-                value: 'ObjLocations'
+                value: "ObjLocations"
             end
           end
         end

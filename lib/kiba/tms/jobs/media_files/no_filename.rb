@@ -26,7 +26,7 @@ module Kiba
                 field: :filename
               transform Merge::ConstantValue,
                 target: :unmigratable_reason,
-                value: 'no filename'
+                value: "no filename"
             end
           end
         end

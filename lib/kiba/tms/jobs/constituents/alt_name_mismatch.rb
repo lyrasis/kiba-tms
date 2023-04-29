@@ -27,7 +27,7 @@ module Kiba
               #   to the preferred name. We expect this to be 
               transform Kiba::Tms::Transforms::Constituents::MergeDefaultAltName, alt_names: prep__con_alt_names
               transform Compare::FieldValues, fields: [prefname, "alt_#{prefname}".to_sym], target: :name_alt_compare
-              transform Delete::FieldValueContainingString, fields: :name_alt_compare, match: 'same'
+              transform Delete::FieldValueContainingString, fields: :name_alt_compare, match: "same"
               transform FilterRows::FieldPopulated, action: :keep, field: :name_alt_compare
             end            
           end

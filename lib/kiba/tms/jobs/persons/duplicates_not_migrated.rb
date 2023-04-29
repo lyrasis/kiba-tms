@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :duplicates,
-                value: 'y'
+                value: "y"
               transform Delete::Fields,
                 fields: %i[duplicates]
             end

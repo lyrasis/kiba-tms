@@ -29,8 +29,8 @@ module Kiba
           def from_dir
             Dir.new(Tms.tms_table_dir_path)
               .children
-              .map{ |table| table.delete_suffix('.csv') }
-              .reject{ |table| table['~lock.'] }
+              .map{ |table| table.delete_suffix(".csv") }
+              .reject{ |table| table["~lock."] }
               .reject{ |table| table.match?(/\.(dat|hdr|txt|DS_Store)$/) }
           end
 

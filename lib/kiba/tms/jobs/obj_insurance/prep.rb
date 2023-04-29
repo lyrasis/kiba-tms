@@ -55,7 +55,7 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :value,
-                  value: '.0000'
+                  value: ".0000"
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner

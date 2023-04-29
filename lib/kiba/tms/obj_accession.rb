@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -18,7 +18,7 @@ module Kiba
       #   this and related tables. Only used when :accessionvalue_treatment
       #   = :valuation_control
       setting :accessionvalue_type,
-        default: 'Original Value',
+        default: "Original Value",
         reader: true
       setting :approval_date_treatment,
         default: :acquisitionnote,
@@ -27,13 +27,13 @@ module Kiba
         default: :combined,
         reader: true
       setting :approval_date_combined_prefix,
-        default: 'Approval date(s): ',
+        default: "Approval date(s): ",
         reader: true
       setting :approval_date_1_prefix,
-        default: 'Initial approval date: ',
+        default: "Initial approval date: ",
         reader: true
       setting :approval_date_2_prefix,
-        default: 'Subsequent approval date: ',
+        default: "Subsequent approval date: ",
         reader: true
       setting :auth_date_source_pref,
         default: %i[authdate approvalisodate1 approvalisodate2],
@@ -42,13 +42,13 @@ module Kiba
         default: :acquisitionnote,
         reader: true
       setting :authorizer_org_prefix,
-        default: 'Authorized by (organization name): ',
+        default: "Authorized by (organization name): ",
         reader: true
       setting :authorizer_note_treatment,
         default: :acquisitionnote,
         reader: true
       setting :authorizer_note_prefix,
-        default: 'Authorizer note: ',
+        default: "Authorizer note: ",
         reader: true
       setting :dog_dates_treatment,
         default: :acquisitionnote,
@@ -57,7 +57,7 @@ module Kiba
         default: :acquisitionreason,
         reader: true
       setting :initiation_prefix,
-        default: 'Initiated: ',
+        default: "Initiated: ",
         reader: true
       setting :loaned_object_treatment,
         default: :creditline_to_loanin,
@@ -66,13 +66,13 @@ module Kiba
         default: :acquisitionprovisos,
         reader: true
       setting :percentowned_prefix,
-        default: 'Percent owned: ',
+        default: "Percent owned: ",
         reader: true
       setting :valuationnote_treatment,
         default: :acquisitionnote,
         reader: true
       setting :valuationnote_prefix,
-        default: 'Valuation note: ',
+        default: "Valuation note: ",
         reader: true
 
       setting :con_ref_name_merge_rules,

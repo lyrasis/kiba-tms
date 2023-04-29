@@ -27,8 +27,8 @@ module Kiba
               transform Rename::Fields, fieldmap: {loannumber: :item2_id, objectnumber: :item1_id}
               transform Merge::ConstantValues,
                 constantmap: {
-                  item2_type: 'loansin',
-                  item1_type: 'collectionobjects'
+                  item2_type: "loansin",
+                  item1_type: "collectionobjects"
                 }
             end
           end

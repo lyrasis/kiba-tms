@@ -33,7 +33,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objectid,
-                value: '-1'
+                value: "-1"
 
               transform Tms.data_cleaner if Tms.data_cleaner
 

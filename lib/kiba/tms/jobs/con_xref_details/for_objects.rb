@@ -19,7 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: 'Objects'
+              transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: "Objects"
               if Tms::ConXrefDetails.for_objects.assoc_con_note_builder
                 transform{ |row| Tms::ConXrefDetails.for_objects.assoc_con_note_builder.process(row) }
               end

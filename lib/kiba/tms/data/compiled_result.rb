@@ -20,12 +20,12 @@ module Kiba
           failures.each do |err|
             puts err.failure.formatted
             puts err.trace
-            puts ''
+            puts ""
           end
         end
 
         def output_to(path)
-          File.open(path, 'w') do |file|
+          File.open(path, "w") do |file|
             successes.each{ |success| file.puts(success.value!.to_s) }
             return if failures.empty?
 

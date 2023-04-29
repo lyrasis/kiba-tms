@@ -35,14 +35,14 @@ module Kiba
               transform Delete::Fields, fields: :briefdescription
               transform Prepend::ToFieldValue,
                 field: :durationdays,
-                value: 'Treatment duration (days): '
+                value: "Treatment duration (days): "
               transform Rename::Fields, fieldmap: {
                 proposal: :proposedtreatment
               }
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[treatment durationdays],
                 target: :treatmentsummary,
-                sep: '%CR%',
+                sep: "%CR%",
                 delete_sources: true
 
               transform Merge::MultiRowLookup,
@@ -55,7 +55,7 @@ module Kiba
                 }
               transform Merge::ConstantValue,
                 target: :datasource,
-                value: 'CondLineItems'
+                value: "CondLineItems"
             end
           end
         end

@@ -41,7 +41,7 @@ module Kiba
 
               transform Delete::FieldValueContainingString,
                 fields: %i[defaultdisplaybioid],
-                match: '-1'
+                match: "-1"
 
               transform Tms::Transforms::Constituents::PrefFromNonPref
 
@@ -61,7 +61,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituenttype derivedcontype],
                 target: :contype,
-                sep: '',
+                sep: "",
                 delete_sources: false
               transform Copy::Field, from: :contype, to: :contype_norm
               transform Tms::Transforms::Names::NormalizeContype
@@ -96,7 +96,7 @@ module Kiba
                 sources: %i[displayname alphasort lastname firstname middlename
                             institution],
                 target: :namedata,
-                sep: '',
+                sep: "",
                 delete_sources: false
 
               if config.dates.merging
@@ -112,7 +112,7 @@ module Kiba
                   lookup: con_dates__to_merge,
                   keycolumn: :constituentid,
                   fieldmap: {datenote: :datenote},
-                  delim: '%CR%%CR%',
+                  delim: "%CR%%CR%",
                   sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
               end
 
@@ -123,7 +123,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
                   target: :combined,
-                  sep: ' ',
+                  sep: " ",
                   delete_sources: false
                 transform Deduplicate::FlagAll,
                   on_field: :combined,
@@ -149,7 +149,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Deduplicate::FlagAll,
                 on_field: :combined,

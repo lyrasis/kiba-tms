@@ -24,17 +24,17 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objlocationid,
-                value: '-1'
+                value: "-1"
               transform FilterRows::FieldMatchRegexp,
                 action: :reject,
                 field: :fingerprint,
-                match: '^locationid: -1 '
+                match: "^locationid: -1 "
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[inactive],
-                match: '^0$'
+                match: "^0$"
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[is_temp],
-                match: '^n$'
+                match: "^n$"
             end
           end
         end

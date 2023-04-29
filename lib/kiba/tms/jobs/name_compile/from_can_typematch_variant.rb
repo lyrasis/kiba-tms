@@ -20,7 +20,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :treatment, value: 'variant'
+              transform FilterRows::FieldEqualTo, action: :keep, field: :treatment, value: "variant"
               transform Tms::Transforms::NameCompile::DeriveVariantName, mode: :alt, from: :altname
             end
           end

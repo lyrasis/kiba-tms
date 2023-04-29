@@ -126,7 +126,7 @@ module Kiba
         def self.set_mappings_setting(mod)
           return if mod.respond_to?(:mappings)
 
-          mod.module_eval('setting :mappings, default: {}, reader: true')
+          mod.module_eval("setting :mappings, default: {}, reader: true")
         end
         private_class_method :set_mappings_setting
       end

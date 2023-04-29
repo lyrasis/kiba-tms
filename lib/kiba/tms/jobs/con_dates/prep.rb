@@ -32,14 +32,14 @@ module Kiba
                 fields: %i[
                            datebegsearch monthbegsearch daybegsearch
                            dateendsearch monthendsearch dayendsearch],
-                match: '^0$'
+                match: "^0$"
 
               transform Tms::Transforms::DateFromParts,
                 year: :datebegsearch, month: :monthbegsearch, day: :daybegsearch, target: :datebegin
               transform Tms::Transforms::DateFromParts,
                 year: :dateendsearch, month: :monthendsearch, day: :dayendsearch, target: :dateend
               transform CombineValues::FromFieldsWithDelimiter, sources: %i[datebegin dateend], target: :date,
-                sep: ' - ', delete_sources: true
+                sep: " - ", delete_sources: true
 
               transform Append::NilFields, fields: :warn
               
@@ -47,7 +47,7 @@ module Kiba
                 transform cleaner
               end
 
-              transform Merge::ConstantValue, target: :datasource, value: 'ConDates'
+              transform Merge::ConstantValue, target: :datasource, value: "ConDates"
             end
           end
         end

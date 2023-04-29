@@ -17,7 +17,7 @@ module Kiba
 
           def process(row)
             yield(row)
-            parent = row.fetch(:parent_location, '')
+            parent = row.fetch(:parent_location, "")
             return if parent.blank?
             return if handled.key?(parent)
 
@@ -33,7 +33,7 @@ module Kiba
             {
               location_name: arr.join(delim),
               parent_location: arr[0..-2].join(delim),
-              term_source: 'Migration.ensureHierarchy'
+              term_source: "Migration.ensureHierarchy"
             }
           end
 

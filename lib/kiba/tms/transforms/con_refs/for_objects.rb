@@ -43,7 +43,7 @@ module Kiba
             prefix = note_prefix(row)
             row[:note] = [prefix, vals].flatten
               .compact
-              .join(': ')
+              .join(": ")
           end
 
           def note_prefix(row)

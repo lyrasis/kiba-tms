@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module Kiba
   module Tms
@@ -57,7 +57,7 @@ module Kiba
 
         def gather_to_check
           result = mod.empty_candidates
-            .map{ |field| [field, [nil, '', '0', '.0000']] }
+            .map{ |field| [field, [nil, "", "0", ".0000"]] }
             .to_h
             .merge(mod.empty_fields)
         rescue StandardError => err

@@ -25,7 +25,7 @@ module Tms
           return label if date.blank?
           return date if label.blank?
 
-          [label, date].join(', ')
+          [label, date].join(", ")
         end
 
         def author(row)
@@ -35,36 +35,36 @@ module Tms
           ].reject{ |author| author.blank? }
           return nil if author_val.empty?
 
-          author_val.join(', ')
+          author_val.join(", ")
         end
 
         def combine_label_and_note(row, label)
           val = [label, row.fetch(:textentry, nil)].reject{ |part| part.blank? }
           return nil if val.empty?
 
-          val.join(': ')
+          val.join(": ")
         end
 
         def signed(row, body)
           val = [body, author(row)].reject{ |part| part.blank? }
           return nil if val.empty?
 
-          val.join(' --')
+          val.join(" --")
         end
 
         def type_and_purpose(row)
-          purpose = row.fetch(:purpose, '')
-          type = row.fetch(:texttype, '')
+          purpose = row.fetch(:purpose, "")
+          type = row.fetch(:texttype, "")
 
           return nil if purpose.blank? && type.blank?
 
-          purpose = '' if purpose.nil?
-          type = '' if type.nil?
+          purpose = "" if purpose.nil?
+          type = "" if type.nil?
 
           return purpose if purpose.downcase[type.downcase]
           return type if type.downcase[purpose.downcase]
 
-          [type, purpose].join(': ')
+          [type, purpose].join(": ")
         end
       end
     end

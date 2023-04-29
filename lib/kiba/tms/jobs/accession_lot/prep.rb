@@ -37,10 +37,10 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :lotcount,
-                find: '^0$',
-                replace: ''
+                find: "^0$",
+                replace: ""
 
-              if Tms::ConRefs.for?('AccessionLot')
+              if Tms::ConRefs.for?("AccessionLot")
                 transform Tms::Transforms::ConRefs::Merger,
                   into: config,
                   keycolumn: :acquisitionlotid

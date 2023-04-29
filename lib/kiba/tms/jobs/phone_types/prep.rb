@@ -25,16 +25,16 @@ module Kiba
               transform Tms::Transforms::DeleteNoValueTypes, field: :phonetype
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
-                find: 'Home',
-                replace: 'home' 
+                find: "Home",
+                replace: "home" 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
-                find: 'Cell',
-                replace: 'mobile'
+                find: "Cell",
+                replace: "mobile"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :phonetype,
-                find: 'Office',
-                replace: 'business'
+                find: "Office",
+                replace: "business"
             end
           end
         end

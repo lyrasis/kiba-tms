@@ -30,7 +30,7 @@ module Kiba
           end
           
           def filepath
-            File.join(Tms.datadir, 'tms', table.filename)
+            File.join(Tms.datadir, "tms", table.filename)
           end
 
           def lookup_hash

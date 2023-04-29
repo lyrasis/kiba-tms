@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module Kiba
   module Tms
@@ -16,7 +16,7 @@ module Kiba
           @table = mod.table
           @field = field
           @criteria = criteria
-          @emptyvals = [criteria, nil, ''].flatten.uniq
+          @emptyvals = [criteria, nil, ""].flatten.uniq
 
           @path = mod.table_path
           @index = set_index

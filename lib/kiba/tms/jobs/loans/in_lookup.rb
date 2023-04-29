@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :loanin,
-                value: '1'
+                value: "1"
               transform Delete::FieldsExcept,
                 fields: :loanid
             end

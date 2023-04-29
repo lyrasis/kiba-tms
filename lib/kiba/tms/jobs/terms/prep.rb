@@ -73,7 +73,7 @@ module Kiba
                 pref = row.fetch(:preferredtermid, nil)
                 id = row.fetch(:termid, nil)
 
-                row[:prefterm] = 'y' if pref == id
+                row[:prefterm] = "y" if pref == id
                 row
               end
             end

@@ -38,13 +38,13 @@ module Kiba
             o_name = ogetter.call(row)
 
             if p_name.empty? && o_name.empty?
-              'Organization?' if ochecker.call(row)
+              "Organization?" if ochecker.call(row)
             elsif !p_name.empty? && !o_name.empty?
-              'Organization?' if ochecker.call(row)
+              "Organization?" if ochecker.call(row)
             elsif !p_name.empty?
-              'Person?'
+              "Person?"
             elsif !o_name.empty?
-              'Organization?'
+              "Organization?"
             end
           end
           

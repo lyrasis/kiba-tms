@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :loantype,
-                value: 'loan out'
+                value: "loan out"
               transform Delete::FieldsExcept,
                 fields: %i[exhibitionnumber loannumber item1_type]
               transform Rename::Fields, fieldmap: {
@@ -31,7 +31,7 @@ module Kiba
               }
               transform Merge::ConstantValue,
                 target: :item2_type,
-                value: 'loansout'
+                value: "loansout"
             end
           end
         end

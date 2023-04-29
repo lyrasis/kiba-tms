@@ -72,7 +72,7 @@ module Kiba
               transform Tms::Transforms::DeleteEmptyMoney,
                 fields: moneyfields
               transform Clean::RegexpFindReplaceFieldVals,
-                fields: moneyfields, find: '^0$', replace: ''
+                fields: moneyfields, find: "^0$", replace: ""
             end
           end
         end

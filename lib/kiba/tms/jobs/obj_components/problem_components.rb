@@ -41,7 +41,7 @@ module Kiba
                 target = id.to_s.delete_suffix("id").to_sym
               transform Append::ToFieldValue,
                 field: id,
-                value: '|nil'
+                value: "|nil"
               transform Merge::MultiRowLookup,
                 lookup: locs__compiled_clean,
                 keycolumn: id,

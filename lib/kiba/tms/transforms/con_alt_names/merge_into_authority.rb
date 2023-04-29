@@ -14,7 +14,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :norm,
               delim: Tms.delim,
-              null_placeholder: '%NULLVALUE%',
+              null_placeholder: "%NULLVALUE%",
               fieldmap: fieldmap
             )
           end

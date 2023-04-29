@@ -50,15 +50,15 @@ module Kiba
               p_decode = Fingerprint::Decode.new(
                 fingerprint: :fp_not_editable,
                 source_fields: p_not_editable + config.not_editable_internal,
-                delim: '␟',
-                prefix: 'fp',
+                delim: "␟",
+                prefix: "fp",
                 delete_fp: true
               )
               o_decode = Fingerprint::Decode.new(
                 fingerprint: :fp_not_editable,
                 source_fields: o_not_editable + config.not_editable_internal,
-                delim: '␟',
-                prefix: 'fp',
+                delim: "␟",
+                prefix: "fp",
                 delete_fp: true
               )
 
@@ -68,9 +68,9 @@ module Kiba
                 source = row[:termsource]
                 reverted = {}
 
-                if source == 'clientcleanup'
+                if source == "clientcleanup"
                   row.delete(:fp_not_editable)
-                  if contype.start_with?('P')
+                  if contype.start_with?("P")
                     fields = p_not_editable
                   else
                     fields = o_not_editable
@@ -84,7 +84,7 @@ module Kiba
                     row[field] = nil
                   end
                 else
-                  if contype.start_with?('P')
+                  if contype.start_with?("P")
                     fields = p_not_editable + config.not_editable_internal
                     p_decode.process(row)
                   else
@@ -120,8 +120,8 @@ module Kiba
               decode = Fingerprint::Decode.new(
                 fingerprint: :fp_not_editable,
                 source_fields: not_editable + config.not_editable_internal,
-                delim: '␟',
-                prefix: 'fp',
+                delim: "␟",
+                prefix: "fp",
                 delete_fp: true
               )
 
@@ -130,7 +130,7 @@ module Kiba
                 source = row[:termsource]
                 reverted = {}
 
-                if source == 'clientcleanup'
+                if source == "clientcleanup"
                   row.delete(:fp_not_editable)
                   fields = not_editable
 

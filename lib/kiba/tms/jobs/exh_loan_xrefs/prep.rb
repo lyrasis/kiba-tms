@@ -63,7 +63,7 @@ module Kiba
 
               transform Merge::ConstantValue,
                 target: :item1_type,
-                value: 'exhibitions'
+                value: "exhibitions"
             end
           end
         end

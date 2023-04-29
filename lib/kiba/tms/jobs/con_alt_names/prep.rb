@@ -125,9 +125,9 @@ module Kiba
                 alt = row[:altauthtype]
 
                 if con == alt
-                  row[:typematch] = 'y'
+                  row[:typematch] = "y"
                 else
-                  row[:typematch] = 'n'
+                  row[:typematch] = "n"
                 end
                 row
               end

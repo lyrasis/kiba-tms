@@ -23,14 +23,14 @@ module Kiba
               transform Delete::FieldsExcept, fields: %i[approvedby contact requestedby]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[approvedby contact requestedby], target: :combined,
-                sep: '|||', delete_sources: false
+                sep: "|||", delete_sources: false
               transform FilterRows::FieldPopulated, action: :keep, field: :combined
               transform Delete::FieldsExcept, fields: :combined
-              transform Explode::RowsFromMultivalField, field: :combined, delim: '|||'
+              transform Explode::RowsFromMultivalField, field: :combined, delim: "|||"
               transform Deduplicate::Table, field: :combined
               transform Cspace::NormalizeForID, source: :combined, target: :norm
               transform Rename::Field, from: :combined, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS Loans'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS Loans"
             end
           end
         end

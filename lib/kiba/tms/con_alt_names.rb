@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -13,7 +13,7 @@ module Kiba
       # Alt name strings to treat as anonymous - used by
       #   ConAltNames::QualifyAnonymous transform if `:qualify_anonymous`
       #   is true. Values are downcased for matching.
-      setting :consider_anonymous, default: ['anonymous'], reader: true
+      setting :consider_anonymous, default: ["anonymous"], reader: true
       # Whether to run ConAltNames::QualifyAnonymous transform, which appends
       #   main name parenthetical to any alt name value that matches values
       #   in :consider_anonymous

@@ -32,7 +32,7 @@ module Kiba
                 src = row[:termsource]
                 next row unless srcs.any?{ |s| src.match?(s) }
 
-                row[:sourceflag] = 'y'
+                row[:sourceflag] = "y"
                 row
               end
 
@@ -52,7 +52,7 @@ module Kiba
                 extractor.process(row)
                 normer.process(row)
                 row[:constituentid] = row[:norm]
-                row[:termsource] = 'Uncontrolled'
+                row[:termsource] = "Uncontrolled"
                 row
               end
 

@@ -33,7 +33,7 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'VC',
+                prefix: "VC",
                 id_source: :idbase,
                 id_target: :valuationcontrolrefnumber,
                 omit_suffix_if_single: false

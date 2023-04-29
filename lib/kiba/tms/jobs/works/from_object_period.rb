@@ -34,11 +34,11 @@ module Kiba
               transform Rename::Field, from: :period, to: :termdisplayname
               transform Merge::ConstantValue,
                 target: :worktype,
-                value: 'Collection'
+                value: "Collection"
               if Tms::Names.set_term_source
                 transform Merge::ConstantValue,
                   target: :termsource,
-                  value: 'TMS ObjContext.period'
+                  value: "TMS ObjContext.period"
               end
             end
           end

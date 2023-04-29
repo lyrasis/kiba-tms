@@ -72,13 +72,13 @@ module Kiba
                     origname: :origname
                   },
                   conditions: ->(_r, rows){ [rows.first] },
-                  constantmap: {to_review: 'n'}
+                  constantmap: {to_review: "n"}
               end
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid origname],
                 target: :cleanupid,
-                sep: '_',
+                sep: "_",
                 delete_sources: false
 
               transform Rename::Field, from: :contype, to: :authoritytype
@@ -113,7 +113,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype name],
                   target: :corrfingerprint,
-                  sep: ' ',
+                  sep: " ",
                   delete_sources: false
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__corrected_name_lookup,
@@ -137,10 +137,10 @@ module Kiba
                 transform do |row|
                   corrname = row[:correctname]
                   corrtype = row[:correctauthoritytype]
-                  if corrname && corrname['|']
+                  if corrname && corrname["|"]
                     row[:correctname] = nil
                   end
-                  if corrtype && corrtype['|']
+                  if corrtype && corrtype["|"]
                     row[:correctauthoritytype] = nil
                   end
                   row
@@ -150,12 +150,12 @@ module Kiba
                   next row unless row[:alreadycorrected].blank?
                   next row unless row[:doneid].blank?
 
-                  row[:to_review] = 'y'
+                  row[:to_review] = "y"
                   row
                 end
 
                 transform do |row|
-                  next row unless row[:to_review] == 'y'
+                  next row unless row[:to_review] == "y"
 
                   corrname = row[:corrnameval]
                   corrtype = row[:corrtypeval]
@@ -163,12 +163,12 @@ module Kiba
 
                   row[:correctname] = corrname unless corrname.blank?
                   row[:correctauthoritytype] = corrtype unless corrtype.blank?
-                  row[:to_review] = 'n'
+                  row[:to_review] = "n"
                   row
                 end
                 transform Delete::FieldValueMatchingRegexp,
                   fields: :to_review,
-                  match: '^n$'
+                  match: "^n$"
 
                 transform Delete::Fields,
                   fields: %i[alreadycorrected doneid corrnameval corrtypeval]
@@ -179,7 +179,7 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
-                find: '%QUOT%',
+                find: "%QUOT%",
                 replace: '"'
             end
           end

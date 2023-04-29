@@ -12,7 +12,7 @@ module Tms
           ),
             keycolumn: :exhibitionid,
             fieldmap: {text_entry: :text_entry},
-            delim: '%CR%'
+            delim: "%CR%"
             )
         end
 

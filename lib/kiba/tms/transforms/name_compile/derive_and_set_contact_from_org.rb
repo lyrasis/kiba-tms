@@ -14,8 +14,8 @@ module Kiba
             @namefield = Tms::Constituents.preferred_name_field
             @personbuilder = Tms::Services::Constituents::PersonFromNameParts.new
             @contactadder = Tms::Transforms::NameCompile::AddRelatedTermAndRole.new(
-              target: 'contact_person',
-              maintype: 'Organization',
+              target: "contact_person",
+              maintype: "Organization",
               mainnamefield: mode == :alt ? :conname : namefield,
               relnamefield: person_name_from == :nameparts ? :personname : person_name_from,
               rolefield: :position

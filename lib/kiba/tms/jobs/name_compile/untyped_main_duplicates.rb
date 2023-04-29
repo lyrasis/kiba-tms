@@ -30,7 +30,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: '_main term'
+                value: "_main term"
               transform Delete::FieldsExcept, fields: %i[fingerprint norm]
               transform Deduplicate::Flag,
                 on_field: :norm,
@@ -42,10 +42,10 @@ module Kiba
                 lookup: name_compile__raw,
                 keycolumn: :norm,
                 fieldmap: {typed: :contype},
-                constantmap: {duplicate_typed: 'y'},
+                constantmap: {duplicate_typed: "y"},
                 conditions: ->(this, those) do
                   those.select do |row|
-                    !row[:contype].blank? && row[:relation_type] == '_main term'
+                    !row[:contype].blank? && row[:relation_type] == "_main term"
                   end
                 end
               transform Append::NilFields, fields: :duplicate_all
@@ -53,11 +53,11 @@ module Kiba
               transform do |row|
                 row[:duplicate] = nil
                 ds = row[:duplicate_self]
-                row[:duplicate] = 'y' if ds && ds == 'y'
+                row[:duplicate] = "y" if ds && ds == "y"
                 next row if row[:duplicate]
 
                 dt = row[:duplicate_typed]
-                row[:duplicate] = 'y' if dt && !dt.blank?
+                row[:duplicate] = "y" if dt && !dt.blank?
 
                 row
               end

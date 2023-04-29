@@ -31,15 +31,15 @@ module Kiba
                 fields: :entereddate
               transform Merge::ConstantValue,
                 target: :exitreason,
-                value: 'deaccession'
+                value: "deaccession"
               transform Prepend::ToFieldValue,
-                field: :estimatelow, value: 'Lowest estimated value: '
+                field: :estimatelow, value: "Lowest estimated value: "
               transform Prepend::ToFieldValue,
-                field: :estimatehigh, value: 'Highest estimated value: '
+                field: :estimatehigh, value: "Highest estimated value: "
               transform Prepend::ToFieldValue,
-                field: :proceedsrcvdisodate, value: 'Proceeds received: '
+                field: :proceedsrcvdisodate, value: "Proceeds received: "
               transform Prepend::ToFieldValue,
-                field: :reportisodate, value: 'Sale reported: '
+                field: :reportisodate, value: "Sale reported: "
 
               # YES, "displosal"
               # Someone made, then copy/pasted a typo when these fields were
@@ -62,7 +62,7 @@ module Kiba
                 sources: %i[estimatelow estimatehigh proceedsrcvdisodate
                             reportisodate],
                 target: :displosalnote,
-                sep: '%CR%',
+                sep: "%CR%",
                 delete_sources: true
             end
           end

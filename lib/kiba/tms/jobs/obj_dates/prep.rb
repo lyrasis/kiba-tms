@@ -37,7 +37,7 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :keep,
                   field: :active,
-                  value: '1'
+                  value: "1"
               end
               transform Delete::Fields, fields: :active
 
@@ -51,14 +51,14 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :eventtype,
                 find: '^[(\[]not entered[)\]]$',
-                replace: '',
+                replace: "",
                 casesensitive: false
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[datebegsearch dateendsearch daybegsearch dayendsearch
                            monthbegsearch monthendsearch dateeffectiveisodate],
-                find: '^0$',
-                replace: ''
+                find: "^0$",
+                replace: ""
 
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,

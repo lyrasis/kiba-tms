@@ -44,7 +44,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :active,
-                value: '0'
+                value: "0"
             end
             transform Tms.data_cleaner if Tms.data_cleaner
 

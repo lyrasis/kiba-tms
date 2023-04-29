@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: 'variant term'
+                value: "variant term"
             end
           end
         end

@@ -23,7 +23,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :tablename,
-                value: 'Objects'
+                value: "Objects"
               transform Delete::FieldsExcept, fields: :department
               transform Deduplicate::Table, field: :department
               if Tms::Objects.department_coll_prefix
@@ -36,11 +36,11 @@ module Kiba
               transform Rename::Field, from: :department, to: :termdisplayname
               transform Merge::ConstantValue,
                 target: :worktype,
-                value: 'Collection, Internal use'
+                value: "Collection, Internal use"
               if Tms::Names.set_term_source
                 transform Merge::ConstantValue,
                   target: :termsource,
-                  value: 'TMS Objects.department'
+                  value: "TMS Objects.department"
               end
             end
           end

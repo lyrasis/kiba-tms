@@ -30,7 +30,7 @@ module Kiba
                 org = row[:org]
                 if org.blank?
                   row[:termdisplayname] = row[:location_name]
-                  row[:new_org] = 'y'
+                  row[:new_org] = "y"
                 else
                   row[:termdisplayname] = row[:org]
                   row[:new_org] = nil

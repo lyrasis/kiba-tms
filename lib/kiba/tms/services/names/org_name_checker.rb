@@ -23,26 +23,26 @@ module Kiba
 
           def patterns
             [
-              ' LLC',
-              ' co$',
+              " LLC",
+              " co$",
               ' co\.',
-              ' dept$',
-              ' inc$',
+              " dept$",
+              " inc$",
               '^\w+ & \w+$',
-              'college',
-              'company',
-              'department',
+              "college",
+              "company",
+              "department",
               'dept\.',
-              'foundation',
-              'gallery',
+              "foundation",
+              "gallery",
               'inc\.',
-              'library',
-              'museum',
-              'observatory',
-              'publish',
-              'service',
-              'studio',
-              'university'
+              "library",
+              "museum",
+              "observatory",
+              "publish",
+              "service",
+              "studio",
+              "university"
             ].map{ |pattern| Regexp.new(pattern) }
           end
         end

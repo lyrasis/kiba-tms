@@ -16,14 +16,14 @@ module Kiba
         reader: true,
         constructor: ->(value){ value + date_fields }
       setting :empty_fields, default: {
-        loanclassid: '0',
-        objectlevelid: '0',
-        objectnameid: '0',
-        objectnamealtid: '0',
-        objecttypeid: '0',
-        publicaccess: '0',
-        subclassid: '0',
-        type: '0'
+        loanclassid: "0",
+        objectlevelid: "0",
+        objectnameid: "0",
+        objectnamealtid: "0",
+        objecttypeid: "0",
+        publicaccess: "0",
+        subclassid: "0",
+        type: "0"
       },
         reader: true
       extend Tms::Mixins::Tableable
@@ -36,8 +36,8 @@ module Kiba
         reader: true,
         default: %i[comment],
         constructor: ->(default) do
-          default << :alt_num_comment if Tms::AltNums.for?('Objects')
-          default << :title_comment if Tms::Table::List.include?('ObjTitles')
+          default << :alt_num_comment if Tms::AltNums.for?("Objects")
+          default << :title_comment if Tms::Table::List.include?("ObjTitles")
           default
         end
 
@@ -49,14 +49,14 @@ module Kiba
             objectproduction: {
               suffixes: %w[person organization],
               merge_role: true,
-              role_suffix: 'role',
+              role_suffix: "role",
               person_note_target: :con_refs_p_objectproductionnote,
               org_note_target: :con_refs_o_objectproductionnote
             },
             assoc: {
               suffixes: %w[person organization],
               merge_role: true,
-              role_suffix: 'type',
+              role_suffix: "type",
               person_note_target: :assocpersonnote,
               org_note_target: :assocorganizationnote
             },
@@ -75,7 +75,7 @@ module Kiba
           }
         },
         reader: true
-      setting :contentnote_delim, default: '%CR%%CR%', reader: true
+      setting :contentnote_delim, default: "%CR%%CR%", reader: true
       setting :contentnote_sources,
         default: %i[con_refs_p_contentnote con_refs_o_contentnote],
         reader: true
@@ -109,12 +109,12 @@ module Kiba
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
       setting :number_cleaner, default: nil, reader: true
-      setting :objectproductionnote_delim, default: '%CR%%CR%', reader: true
+      setting :objectproductionnote_delim, default: "%CR%%CR%", reader: true
       setting :objectproductionnote_sources,
         default: %i[con_refs_p_objectproductionnote
                     con_refs_o_objectproductionnote],
         reader: true
-      setting :objecthistorynote_delim, default: '%CR%%CR%', reader: true
+      setting :objecthistorynote_delim, default: "%CR%%CR%", reader: true
       setting :objecthistorynote_sources,
         default: %i[con_refs_p_objecthistorynote
                     con_refs_o_objecthistorynote],
@@ -148,7 +148,7 @@ module Kiba
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :creditline,
           newfield: :annotationtype,
-          value: 'Credit Line',
+          value: "Credit Line",
           sourcebecomes: :annotationnote
         ),
         reader: true
@@ -165,7 +165,7 @@ module Kiba
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :inscribed,
           newfield: :inscriptioncontenttype,
-          value: 'inscribed',
+          value: "inscribed",
           sourcebecomes: :inscriptioncontent
         ),
         reader: true
@@ -173,7 +173,7 @@ module Kiba
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :markings,
           newfield: :inscriptioncontenttype,
-          value: '',
+          value: "",
           sourcebecomes: :inscriptioncontent
         ),
         reader: true
@@ -189,7 +189,7 @@ module Kiba
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :signed,
           newfield: :inscriptioncontenttype,
-          value: 'signature',
+          value: "signature",
           sourcebecomes: :inscriptioncontent
         ),
         reader: true

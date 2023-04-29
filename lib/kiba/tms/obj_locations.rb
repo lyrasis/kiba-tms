@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -14,9 +14,9 @@ module Kiba
 
       setting :empty_fields,
         default: {
-          dateout: [nil, '', '9999-12-31 00:00:00.000'],
-          loclevel: [nil, '', '0'],
-          tempticklerdate: [nil, '', '1900-01-01 00:00:00.000']
+          dateout: [nil, "", "9999-12-31 00:00:00.000"],
+          loclevel: [nil, "", "0"],
+          tempticklerdate: [nil, "", "1900-01-01 00:00:00.000"]
         },
         reader: true
       setting :non_content_fields,
@@ -76,7 +76,7 @@ module Kiba
           value + %i[prevfp nextfp schedfp]
         }
       setting :inactive_note_string,
-        default: 'INACTIVE OBJECT LOCATION PROCEDURE',
+        default: "INACTIVE OBJECT LOCATION PROCEDURE",
         reader: true
       setting :inactive_treatment,
         default: :inventorynote,

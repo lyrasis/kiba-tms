@@ -49,7 +49,7 @@ module Kiba
 
               transform Append::ToFieldValue,
                 field: :homelocationid,
-                value: '|nil'
+                value: "|nil"
               transform Merge::MultiRowLookup,
                 lookup: locs__compiled_clean,
                 keycolumn: :homelocationid,
@@ -70,7 +70,7 @@ module Kiba
               transform Tms::Transforms::ObjLocations::LocToColumns,
                 locsrc: :location,
                 authsrc: :locauth,
-                target: 'currentlocation'
+                target: "currentlocation"
 
               config.name_fields.each do |field|
                 normfield = "#{field}norm".to_sym
@@ -92,7 +92,7 @@ module Kiba
                 lookup: obj_components__current_loc_lookup,
                 keycolumn: :fullfingerprint,
                 fieldmap: {fp: :fullfingerprint},
-                constantmap: {current: 'y'}
+                constantmap: {current: "y"}
             end
           end
         end

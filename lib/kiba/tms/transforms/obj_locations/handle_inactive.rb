@@ -10,7 +10,7 @@ module Kiba
             return if target == :ignore
 
             @action = set_action
-            @delim = target == :currentlocationnote ? ' -- ' : "\n"
+            @delim = target == :currentlocationnote ? " -- " : "\n"
             @note = Tms::ObjLocations.inactive_note_string
           end
 
@@ -31,7 +31,7 @@ module Kiba
           attr_reader :target, :action, :delim, :note
 
           def inactive?(row)
-            row[:inactive] == '1'
+            row[:inactive] == "1"
           end
 
           def process_active(row)

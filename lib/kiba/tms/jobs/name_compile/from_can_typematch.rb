@@ -21,11 +21,11 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::NameCompile::SelectCanTypematch
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.typematch'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.typematch"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid],
                 target: :constituentid,
-                sep: '.',
+                sep: ".",
                 delete_sources: true
 
               transform Tms::Transforms::NameCompile::DetermineTypematchTreatment

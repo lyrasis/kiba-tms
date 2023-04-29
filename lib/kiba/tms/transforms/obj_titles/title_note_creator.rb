@@ -49,12 +49,12 @@ module Kiba
             [
               note_label(content, contextgetter.call(row)),
               note_content(content)
-            ].join(': ')
+            ].join(": ")
           end
 
           def note_content(content)
             transform_date(content) if content.keys.any?(:dateeffectiveisodate)
-            content.values.join('; ')
+            content.values.join("; ")
           end
 
           def note_label(content, context)
@@ -62,7 +62,7 @@ module Kiba
           end
 
           def remarks_label(context)
-            intro = context.key?(:titletype) ? "Note for #{context[:titletype]} title" : 'Note for title'
+            intro = context.key?(:titletype) ? "Note for #{context[:titletype]} title" : "Note for title"
             "#{intro} #{title(context)}"
           end
 

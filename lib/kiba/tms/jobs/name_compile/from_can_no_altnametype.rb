@@ -22,11 +22,11 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::NameCompile::SelectCanNoAltnametype
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.no_altnametype'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.no_altnametype"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
-                sep: '.',
+                sep: ".",
                 delete_sources: true
 
               transform Tms::Transforms::NameCompile::DeriveVariantName, mode: :alt, from: :altname

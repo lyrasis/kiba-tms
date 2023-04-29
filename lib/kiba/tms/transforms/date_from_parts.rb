@@ -63,7 +63,7 @@ module Kiba
 
         def pad(val)
           str = val.is_a?(String) ? val : val.to_s
-          str.rjust(2, '0')
+          str.rjust(2, "0")
         end
       end
     end

@@ -29,7 +29,7 @@ module Kiba
               transform config.inventory_selector
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'INV',
+                prefix: "INV",
                 id_source: :year,
                 id_target: :movementreferencenumber,
                 sort_on: :objlocationid,

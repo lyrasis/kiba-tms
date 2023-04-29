@@ -34,14 +34,14 @@ module Kiba
             return row unless eligible?(row)
 
             case corrtype
-            when 'd'
-              val = 'DROP'
-            when 'p'
-              val = 'Person'
-            when 'o'
-              val = 'Organization'
-            when 'n'
-              val = 'Note'
+            when "d"
+              val = "DROP"
+            when "p"
+              val = "Person"
+            when "o"
+              val = "Organization"
+            when "n"
+              val = "Note"
             else
               fail(Tms::UnknownAuthorityTypeCode, corrtype)
             end

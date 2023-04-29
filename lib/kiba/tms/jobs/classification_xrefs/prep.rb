@@ -35,7 +35,7 @@ module Kiba
                 keycolumn: :classificationid,
                 lookup: prep__classifications,
                 fieldmap: Tms::Classifications.object_merge_fieldmap,
-                null_placeholder: '%NULLVALUE%',
+                null_placeholder: "%NULLVALUE%",
                 delim: Kiba::Tms.delim
               transform Delete::Fields, fields: :classificationid
               transform FilterRows::FieldPopulated,

@@ -13,7 +13,7 @@ module Kiba
           # @private
           def process(row)
             type = row.fetch(:constituenttype, nil)
-            return row unless type == 'Person'
+            return row unless type == "Person"
 
             %i[institution contact_person].each do |field|
               row[field] = nil

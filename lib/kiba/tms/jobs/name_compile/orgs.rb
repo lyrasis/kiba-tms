@@ -26,8 +26,8 @@ module Kiba
                   reltype = row[:relation_type]
                   contype &&
                     reltype &&
-                    contype.start_with?('Org') &&
-                    reltype == '_main term'
+                    contype.start_with?("Org") &&
+                    reltype == "_main term"
                 end
             end
           end

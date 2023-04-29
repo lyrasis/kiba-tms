@@ -19,7 +19,7 @@ module Kiba
         end
 
         def call
-          parts = str.split('.')
+          parts = str.split(".")
           mod = parts[0]
           check_mod(mod)
           col.new(mod: parts[0], field: parts[1])

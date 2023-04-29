@@ -9,8 +9,8 @@ module Kiba
             @source = :curatorapproved
             @target = :recordstatus
             @mapping = {
-              '1'=>'approved',
-              '0'=>nil
+              "1"=>"approved",
+              "0"=>nil
             }
           end
 

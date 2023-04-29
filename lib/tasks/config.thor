@@ -1,14 +1,14 @@
-require 'thor'
+require "thor"
 
 # Config-related tasks
 class Config < Thor
-  desc 'derive_initial', 'Write initial config to mig directory'
+  desc "derive_initial", "Write initial config to mig directory"
   def derive_initial
     configs = Kiba::Tms::Utils::InitialConfigDeriver.call
     Kiba::Tms::Utils::InitialConfigWriter.call(results: configs)
   end
 
-  desc 'derive_diff', 'Write diffed config to mig directory'
+  desc "derive_diff", "Write diffed config to mig directory"
   def derive_diff
     configs = Kiba::Tms::Utils::InitialConfigDeriver.call
     diffed = Kiba::Tms::Utils::ConfigDiffer.call(configs)
@@ -19,7 +19,7 @@ class Config < Thor
   end
 
 
-  desc 'single_init', 'Print initial config for given module to STDOUT'
+  desc "single_init", "Print initial config for given module to STDOUT"
   def single_init(mod)
     modconst = Tms.const_get(mod)
     Tms.init_config(modconst)

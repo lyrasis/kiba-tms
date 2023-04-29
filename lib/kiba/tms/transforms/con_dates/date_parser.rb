@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'emendate'
+require "emendate"
 
 module Kiba
   module Tms
@@ -11,7 +11,7 @@ module Kiba
           include Warnable
           
           def initialize
-            @warning = 'unparseable date value'
+            @warning = "unparseable date value"
             @target = :warn
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: %i[birth_foundation_date death_dissolution_date]
@@ -31,18 +31,18 @@ module Kiba
             begin
               parsed = Emendate.parse(val)
             rescue StandardError
-              add_warning(row, ' - Emendate application error')
+              add_warning(row, " - Emendate application error")
               return row
             end
 
             if parsed.errors.length > 0
-              add_warning(row, ' - Emendate parsing error')
+              add_warning(row, " - Emendate parsing error")
             elsif unparseable_warnings(parsed)
-              add_warning(row, ' - Emendate untokenizable')
+              add_warning(row, " - Emendate untokenizable")
             else
-              row[:date_parser_warnings] = parsed.warnings.join('; ') unless parsed.warnings.empty?
-              row[:parsed_date_start] = parsed.dates.map(&:date_start_full).join('|')
-              row[:parsed_date_end] = parsed.dates.map(&:date_end_full).join('|')
+              row[:date_parser_warnings] = parsed.warnings.join("; ") unless parsed.warnings.empty?
+              row[:parsed_date_start] = parsed.dates.map(&:date_start_full).join("|")
+              row[:parsed_date_end] = parsed.dates.map(&:date_end_full).join("|")
             end
 
             row
@@ -56,7 +56,7 @@ module Kiba
             warnings = parsed.warnings
             return false if warnings.empty?
 
-            unparseable = warnings.select{ |warn| warn.start_with?('Untokenizable ') }
+            unparseable = warnings.select{ |warn| warn.start_with?("Untokenizable ") }
             true unless unparseable.empty?
           end
         end

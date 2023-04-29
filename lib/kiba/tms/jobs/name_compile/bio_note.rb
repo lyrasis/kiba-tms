@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: 'bio_note'
+                value: "bio_note"
             end
           end
         end

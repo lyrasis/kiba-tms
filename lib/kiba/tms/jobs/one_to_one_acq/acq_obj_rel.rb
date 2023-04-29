@@ -53,8 +53,8 @@ module Kiba
               }
 
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'collectionobjects'
+                item1_type: "acquisitions",
+                item2_type: "collectionobjects"
               }
 
               transform Delete::Fields, fields: :combined

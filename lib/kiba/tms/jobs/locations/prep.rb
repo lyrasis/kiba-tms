@@ -56,8 +56,8 @@ module Kiba
                 transform Delete::Fields, fields: :addressid
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: :address,
-                  find: '%CR%%CR%',
-                  replace: ', '
+                  find: "%CR%%CR%",
+                  replace: ", "
                 ba_mappings = config.brief_address_mappings
                 unless ba_mappings.empty?
                   transform Replace::FieldValueWithStaticMapping,

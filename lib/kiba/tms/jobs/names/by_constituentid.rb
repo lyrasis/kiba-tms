@@ -44,7 +44,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[org person],
                 target: :prefname,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
             end
           end

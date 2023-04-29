@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -23,7 +23,7 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          'Overall'=>'overall'
+          "Overall"=>"overall"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

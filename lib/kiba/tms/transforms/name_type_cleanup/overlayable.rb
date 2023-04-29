@@ -11,7 +11,7 @@ module Kiba
             elsif target.is_a?(Hash)
               eligible_hash?(row)
             else
-              fail(TypeError, 'target must be Symbol or Hash')
+              fail(TypeError, "target must be Symbol or Hash")
             end
           end
           private :eligible?

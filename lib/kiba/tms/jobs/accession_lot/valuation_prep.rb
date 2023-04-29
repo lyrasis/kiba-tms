@@ -34,11 +34,11 @@ module Kiba
                 field: :accessionvalue
               transform Delete::FieldsExcept,
                 fields: %i[acquisitionlotid lotnumber accessionvalue entereddate]
-              transform Prepend::ToFieldValue, field: :lotnumber, value: 'VC'
+              transform Prepend::ToFieldValue, field: :lotnumber, value: "VC"
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :entereddate,
                 find: ' \d{2}.*',
-                replace: ''
+                replace: ""
               transform Rename::Fields, fieldmap: {
                 lotnumber: :valuationcontrolrefnumber,
                 accessionvalue: :valueamount,

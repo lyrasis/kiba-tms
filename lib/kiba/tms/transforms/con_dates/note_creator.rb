@@ -17,9 +17,9 @@ module Kiba
             row[target] = nil
             
             type = row[:datedescription]
-            if type == 'active'
+            if type == "active"
               add_active_note(row)
-            elsif type == 'birth' || type == 'death'
+            elsif type == "birth" || type == "death"
               add_birth_death_note(row)
             else
               add_other_note(row)
@@ -40,14 +40,14 @@ module Kiba
           
           def add_birth_death_note(row)
             duplicate = row[:duplicate_subsequent]
-            if duplicate && duplicate == 'y'
+            if duplicate && duplicate == "y"
               add_duplicate_birth_death_date_note(row)
             else
               remarks = row[:remarks]
               return if remarks.blank?
 
               type = row[:datedescription]
-              row[target] = ["#{type} note", remarks].join(': ')
+              row[target] = ["#{type} note", remarks].join(": ")
             end
           end
 
@@ -56,10 +56,10 @@ module Kiba
             return if vals.empty?
 
             if vals.key?(:remarks)
-              base = ["Additional #{vals[:datedescription]} date", vals[:date]].join(': ')
+              base = ["Additional #{vals[:datedescription]} date", vals[:date]].join(": ")
               row[target] = "#{base} (#{vals[:remarks]})"
             else
-              row[target] = ["Additional #{vals[:datedescription]} date", vals[:date]].join(': ')
+              row[target] = ["Additional #{vals[:datedescription]} date", vals[:date]].join(": ")
             end
           end
             
@@ -67,7 +67,7 @@ module Kiba
             vals = getter.call(row)
             return if vals.empty?
             
-            row[target] = [other_label(row, vals), vals[:date]].compact.join(': ')
+            row[target] = [other_label(row, vals), vals[:date]].compact.join(": ")
           end
 
           def add_complex_active_note(row, vals)
@@ -75,7 +75,7 @@ module Kiba
               base = simple_active_note(row, vals)
               noteval = "#{base} (#{vals[:remarks]})"
             else
-              noteval = ['active', vals[:remarks]].join(' ')
+              noteval = ["active", vals[:remarks]].join(" ")
             end
             row[target] = noteval
           end
@@ -85,7 +85,7 @@ module Kiba
           end
 
           def other_label(row, vals)
-            [row[:datedescription], vals[:remarks]].compact.join(', ')
+            [row[:datedescription], vals[:remarks]].compact.join(", ")
           end
           
           def simple_active?(vals)
@@ -96,7 +96,7 @@ module Kiba
           end
 
           def simple_active_note(row, vals)
-            ['active', vals[:date]].join(' ')
+            ["active", vals[:date]].join(" ")
           end
         end
       end

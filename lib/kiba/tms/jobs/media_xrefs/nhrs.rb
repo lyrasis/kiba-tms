@@ -21,15 +21,15 @@ module Kiba
 
           def sources
             base = []
-            base << :media_xrefs__accession_lot if config.for?('AccessionLot')
-            base << :media_xrefs__cond_line_items if config.for?('CondLineItems')
-            base << :media_xrefs__exhibitions if config.for?('Exhibitions')
-            if config.for?('Loans')
+            base << :media_xrefs__accession_lot if config.for?("AccessionLot")
+            base << :media_xrefs__cond_line_items if config.for?("CondLineItems")
+            base << :media_xrefs__exhibitions if config.for?("Exhibitions")
+            if config.for?("Loans")
               base << :media_xrefs__loansin
               base << :media_xrefs__loansout
             end
-            base << :media_xrefs__objects if config.for?('Objects')
-            base << :media_xrefs__obj_insurance if config.for?('ObjInsurance')
+            base << :media_xrefs__objects if config.for?("Objects")
+            base << :media_xrefs__obj_insurance if config.for?("ObjInsurance")
             base.select{ |job| Tms.job_output?(job) }
           end
 
@@ -43,7 +43,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[item1_id item2_id item1_type item2_type],
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Deduplicate::Table,
                 field: :combined,

@@ -25,15 +25,15 @@ module Kiba
 
               transform Tms::Transforms::NameCompile::SelectCanMainOrgAltPersonEstablished
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.main_org_alt_person_established'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.main_org_alt_person_established"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
-                sep: '.',
+                sep: ".",
                 delete_sources: true
 
               if treatment == :variant
-                transform Merge::ConstantValue, target: :relation_type, value: 'variant term'
+                transform Merge::ConstantValue, target: :relation_type, value: "variant term"
                 transform Delete::Fields, fields: :altname
                 transform Rename::Fields, fieldmap: {
                   conname: Tms::Constituents.preferred_name_field,
@@ -50,11 +50,11 @@ module Kiba
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil
               elsif treatment == :contact_person
                 transform Tms::Transforms::NameCompile::AddRelatedTermAndRole,
-                  target: 'contact_person',
-                  maintype: 'Organization',
+                  target: "contact_person",
+                  maintype: "Organization",
                   mainnamefield: :conname,
                   relnamefield: :altconname
-              elsif treatment.to_s.end_with?('_note')
+              elsif treatment.to_s.end_with?("_note")
                 transform Tms::Transforms::NameCompile::AddRelatedAltNameNote, target: treatment
               end
               transform Delete::Fields, fields: Tms::NameCompile.alt_nil

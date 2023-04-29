@@ -12,8 +12,8 @@ module Kiba
             @orgnamefield = mode == :main ? :institution : :altname
             @personnamefield = mode == :main ? Tms::Constituents.preferred_name_field : :conname
             @contactadder = Tms::Transforms::NameCompile::AddRelatedTermAndRole.new(
-              target: 'contact_person',
-              maintype: 'Organization',
+              target: "contact_person",
+              maintype: "Organization",
               mainnamefield: orgnamefield,
               relnamefield: personnamefield,
               rolefield: :position

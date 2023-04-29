@@ -24,7 +24,7 @@ module Kiba
             vals = getter.call(row)
             return nil if vals.empty?
 
-            vals.values.join(', ')
+            vals.values.join(", ")
           end
 
           def from_type(row)

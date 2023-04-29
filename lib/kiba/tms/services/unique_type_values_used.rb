@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'dry/monads'
-require 'dry/monads/do'
+require "csv"
+require "dry/monads"
+require "dry/monads/do"
 
 module Kiba
   module Tms
@@ -55,7 +55,7 @@ module Kiba
         attr_reader :mod, :col_obj, :failobj, :used_in, :table_getter, :matcher
 
         def actually_used_in(arr)
-          arr.map{ |tabfld| tabfld.split('.') }
+          arr.map{ |tabfld| tabfld.split(".") }
             .to_h
             .select{ |mod, _fld| Tms::Table::Obj.new(mod).used? }
             .map{ |mod, fld| "#{mod}.#{fld}" }

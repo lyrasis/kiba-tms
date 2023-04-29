@@ -15,7 +15,7 @@ module Kiba
           private
 
           def alt_type_eligible?(row)
-            row[:altauthtype] == 'Organization'
+            row[:altauthtype] == "Organization"
           end
 
           def eligible?(row)
@@ -23,7 +23,7 @@ module Kiba
           end
 
           def main_type_eligible?(row)
-            row[:conauthtype] == 'Person'
+            row[:conauthtype] == "Person"
           end
 
           def alt_name_established?(row)

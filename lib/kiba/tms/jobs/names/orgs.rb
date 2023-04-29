@@ -33,7 +33,7 @@ module Kiba
               transform FilterRows::FieldMatchRegexp,
                 action: :keep,
                 field: :contype,
-                match: '^Org'
+                match: "^Org"
             end
           end
         end

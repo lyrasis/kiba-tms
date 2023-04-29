@@ -29,7 +29,7 @@ module Kiba
               transform config.movement_selector
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'MV',
+                prefix: "MV",
                 id_source: :year,
                 id_target: :movementreferencenumber,
                 sort_on: :objlocationid,

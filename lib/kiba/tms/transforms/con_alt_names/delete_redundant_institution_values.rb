@@ -10,7 +10,7 @@ module Kiba
           end
 
           def process(row)
-            @institution = ''
+            @institution = ""
             
             return row unless eligible?(row)
             

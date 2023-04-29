@@ -23,7 +23,7 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   type = row[:contype]
-                  type && type.start_with?('Person')
+                  type && type.start_with?("Person")
                 end
             end
           end

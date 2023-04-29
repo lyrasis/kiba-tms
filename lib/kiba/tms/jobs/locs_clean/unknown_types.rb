@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldMatchRegexp,
                 action: :reject,
                 field: :storage_location_authority,
-                match: '^(Local|Offsite|Organization)$'
+                match: "^(Local|Offsite|Organization)$"
             end
           end
         end

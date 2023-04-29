@@ -24,7 +24,7 @@ module Kiba
               transform Deduplicate::Flag, on_field: :combined, in_field: :duplicate, using: {}, explicit_no: false
               transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.variants_from_duplicates'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.variants_from_duplicates"
               transform Merge::MultiRowLookup,
                 lookup: constituents__for_compile,
                 keycolumn: :combined,

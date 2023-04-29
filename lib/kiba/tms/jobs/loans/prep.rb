@@ -53,7 +53,7 @@ module Kiba
             if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
               base << :prep__loan_obj_xrefs
             end
-            if Tms::TextEntries.for?('Loans')
+            if Tms::TextEntries.for?("Loans")
               base << :text_entries_for__loans
             end
             base
@@ -129,7 +129,7 @@ module Kiba
               end
               transform Delete::Fields, fields: :departmentid
 
-              if Tms::TextEntries.for?('Loans')
+              if Tms::TextEntries.for?("Loans")
                 transform Merge::MultiRowLookup,
                   lookup: text_entries_for__loans,
                   keycolumn: :loanid,
@@ -141,7 +141,7 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :loanin,
                 target: :loantype,
-                mapping: {'1'=>'loan in', '0'=>'loan out'}
+                mapping: {"1"=>"loan in", "0"=>"loan out"}
 
               if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
                 if Tms::LoanObjXrefs.conditions_record == :loan
@@ -151,7 +151,7 @@ module Kiba
                       lookup: prep__loan_obj_xrefs,
                       keycolumn: :loanid,
                       fieldmap: {obj_loanconditions: :conditions},
-                      delim: '%CR%'
+                      delim: "%CR%"
                   end
                 end
               end

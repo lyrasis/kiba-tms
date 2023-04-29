@@ -89,17 +89,17 @@ module Kiba
               if config.fields.any?(:loclevel)
                 transform Delete::FieldValueMatchingRegexp,
                   fields: %i[loclevel],
-                  match: '^0$'
+                  match: "^0$"
               end
               if config.fields.any?(:dateout)
                 transform Delete::FieldValueMatchingRegexp,
                   fields: %i[dateout],
-                  match: '^9999-12-31'
+                  match: "^9999-12-31"
               end
               if config.fields.any?(:tempticklerdate)
                 transform Delete::FieldValueMatchingRegexp,
                   fields: %i[dateout],
-                  match: '^1900'
+                  match: "^1900"
               end
 
               transform Tms::Transforms::DeleteTimestamps,
@@ -107,7 +107,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[approver handler requestedby],
                 find: Tms.no_value_type_pattern,
-                replace: ''
+                replace: ""
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
@@ -188,7 +188,7 @@ module Kiba
                 mapping: Tms.boolean_yn_mapping
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[is_temp],
-                match: '^n$'
+                match: "^n$"
             end
           end
         end

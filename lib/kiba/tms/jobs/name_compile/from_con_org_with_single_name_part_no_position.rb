@@ -26,10 +26,10 @@ module Kiba
               transform Tms::Transforms::NameCompile::SelectConOrgsWithSingleNamePartNoPosition
 
               if treatment == :variant
-                transform Append::ToFieldValue, field: :constituentid, value: '.singlenamedetail'
-                transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_single_name_detail'
+                transform Append::ToFieldValue, field: :constituentid, value: ".singlenamedetail"
+                transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.orgs_single_name_detail"
 
-                transform Merge::ConstantValue, target: :relation_type, value: 'variant term'
+                transform Merge::ConstantValue, target: :relation_type, value: "variant term"
 
                 transform Rename::Field, from: :lastname, to: :variant_term
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil

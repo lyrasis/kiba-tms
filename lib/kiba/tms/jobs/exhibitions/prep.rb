@@ -79,7 +79,7 @@ module Kiba
               if config.fields.any?(:locationid)
                 transform Append::ToFieldValue,
                   field: :locationid,
-                  value: '|nil'
+                  value: "|nil"
                 transform Merge::MultiRowLookup,
                   lookup: locs__compiled_clean,
                   keycolumn: :locationid,
@@ -109,15 +109,15 @@ module Kiba
                   fieldmap: {insindnote: :insindnote},
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
                   null_placeholder: Tms.nullvalue,
-                  delim: '%CR%%CR%'
+                  delim: "%CR%%CR%"
                 transform Delete::EmptyFieldValues,
                   fields: :insindnote,
-                  delim: '%CR%%CR%',
+                  delim: "%CR%%CR%",
                   usenull: true
               end
 
               # populates person and org names from ConXrefs
-              if Tms::ConRefs.for?('Exhibitions')
+              if Tms::ConRefs.for?("Exhibitions")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,
@@ -125,19 +125,19 @@ module Kiba
                 end
               end
 
-              if Tms::TextEntries.for?('Exhibitions')
+              if Tms::TextEntries.for?("Exhibitions")
                 xform = Tms::TextEntries.for_exhibitions_merge
                 transform xform if xform
               end
 
               transform Merge::ConstantValue,
-                target: :pre, value: 'EXH'
+                target: :pre, value: "EXH"
               transform Tms::Transforms::IdGenerator,
                 id_source: :pre,
                 id_target: :exhibitionnumber,
                 sort_on: :exhibitionid,
                 sort_type: :i,
-                separator: '',
+                separator: "",
                 padding: 4
             end
           end

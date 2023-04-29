@@ -13,7 +13,7 @@ module Kiba
           # @private
           def process(row)
             type = row.fetch(:constituenttype, nil)
-            return row unless type == 'Organization'
+            return row unless type == "Organization"
 
             %i[lastname firstname nametitle middlename suffix salutation].each do |field|
               row[field] = nil

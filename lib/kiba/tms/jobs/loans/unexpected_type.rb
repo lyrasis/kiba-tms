@@ -19,8 +19,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :reject, field: :loantype, value: 'loan out'
-              transform FilterRows::FieldEqualTo, action: :reject, field: :loantype, value: 'loan in'
+              transform FilterRows::FieldEqualTo, action: :reject, field: :loantype, value: "loan out"
+              transform FilterRows::FieldEqualTo, action: :reject, field: :loantype, value: "loan in"
             end
           end
         end

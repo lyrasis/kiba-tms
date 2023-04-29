@@ -28,7 +28,7 @@ module Kiba
               pref_termsourcenote: Tms.nullvalue
             }
             if Tms::Names.set_term_pref_for_lang
-              constantmap[:pref_termprefforlang] = 'true'
+              constantmap[:pref_termprefforlang] = "true"
             end
             @xforms = [
               Rename::Fields.new(fieldmap: fieldmap),

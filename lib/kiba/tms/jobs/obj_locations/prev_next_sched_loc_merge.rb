@@ -53,7 +53,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[location prev_location next_location scheduled_location],
                 target: :locdata,
-                sep: '|',
+                sep: "|",
                 delete_sources: false
             end
           end

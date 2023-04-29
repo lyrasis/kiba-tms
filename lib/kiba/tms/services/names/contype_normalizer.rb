@@ -12,7 +12,7 @@ module Kiba
           def call(value)
             return value if value.blank?
 
-            value.sub(pattern, '')
+            value.sub(pattern, "")
           end
 
           private

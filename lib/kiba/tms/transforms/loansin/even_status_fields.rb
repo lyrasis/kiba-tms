@@ -9,7 +9,7 @@ module Kiba
             @delim = Tms.delim
             @notedelim = Tms::Loansin.remarks_delim
             @status = :rem_loanstatus
-            @statusval = 'Note'
+            @statusval = "Note"
             @note = :rem_loanstatusnote
             Tms::Loansin.status_sources << :rem
             Tms::Loansin.status_targets << :loanstatusnote

@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :desc_occs,
-                value: '1'
+                value: "1"
             end
           end
         end

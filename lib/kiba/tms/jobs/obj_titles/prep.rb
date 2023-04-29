@@ -32,7 +32,7 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
               unless Tms::ObjTitles.migrate_inactive
-                transform FilterRows::FieldEqualTo, action: :keep, field: :active, value: '1'
+                transform FilterRows::FieldEqualTo, action: :keep, field: :active, value: "1"
               end
               transform Delete::Fields, fields: :active
 

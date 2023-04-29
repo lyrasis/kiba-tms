@@ -22,13 +22,13 @@ module Kiba
 
           def lookups
             base = []
-            if config.target_tables.any?('Constituents')
+            if config.target_tables.any?("Constituents")
               base << :constituents__prep_clean
             end
-            if config.target_tables.any?('Objects')
+            if config.target_tables.any?("Objects")
               base << :objects__numbers_cleaned
             end
-            if config.target_tables.any?('ReferenceMaster')
+            if config.target_tables.any?("ReferenceMaster")
               base << :tms__reference_master
             end
             base
@@ -54,21 +54,21 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :description,
                 find: '\\\\n',
-                replace: ''
+                replace: ""
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
-                find: '^(%CR%%(CR|LF)%)+',
-                replace: ''
+                find: "^(%CR%%(CR|LF)%)+",
+                replace: ""
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
-                find: '(%CR%%(CR|LF)%)+$',
-                replace: ''
+                find: "(%CR%%(CR|LF)%)+$",
+                replace: ""
 
               transform config.initial_cleaner if config.initial_cleaner
 
               recnumfields = []
 
-              if config.target_tables.any?('Constituents')
+              if config.target_tables.any?("Constituents")
                 transform Merge::MultiRowLookup,
                   lookup: constituents__prep_clean,
                   keycolumn: :recordid,
@@ -77,31 +77,31 @@ module Kiba
                     authority_type: :contype
                   },
                   conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == 'Constituents'
+                    return [] unless origrow[:tablename] == "Constituents"
 
                     mergerows
                   end
                 recnumfields << :constituent
               end
-              if config.target_tables.any?('Objects')
+              if config.target_tables.any?("Objects")
                 transform Merge::MultiRowLookup,
                   lookup: objects__numbers_cleaned,
                   keycolumn: :recordid,
                   fieldmap: {object: :objectnumber},
                   conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == 'Objects'
+                    return [] unless origrow[:tablename] == "Objects"
 
                     mergerows
                   end
                 recnumfields << :object
               end
-              if config.target_tables.any?('ReferenceMaster')
+              if config.target_tables.any?("ReferenceMaster")
                 transform Merge::MultiRowLookup,
                   lookup: tms__reference_master,
                   keycolumn: :recordid,
                   fieldmap: {reference: :title},
                   conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == 'ReferenceMaster'
+                    return [] unless origrow[:tablename] == "ReferenceMaster"
 
                     mergerows
                   end
@@ -111,7 +111,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: recnumfields,
                 target: :targetrecord,
-                sep: '',
+                sep: "",
                 delete_sources: true
 
               transform config.description_cleaner if config.description_cleaner
@@ -119,7 +119,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[tablename description],
                 target: :lookupkey,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Clean::EnsureConsistentFields
             end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -19,12 +19,12 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          'Business' => 'Organization',
-          'Individual' => 'Person',
-          'Foundation' => 'Organization',
-          'Institution' => 'Organization',
-          'Organization' => 'Organization',
-          'Venue' => 'Organization'
+          "Business" => "Organization",
+          "Individual" => "Person",
+          "Foundation" => "Organization",
+          "Institution" => "Organization",
+          "Organization" => "Organization",
+          "Venue" => "Organization"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

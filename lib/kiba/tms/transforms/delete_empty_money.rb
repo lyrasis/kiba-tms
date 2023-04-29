@@ -8,7 +8,7 @@ module Kiba
 
         def initialize(fields:)
           @fields = fields
-          @value = '.0000'
+          @value = ".0000"
         end
 
         def process(row)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -37,22 +37,22 @@ module Kiba
       setting :display_date_treatment, default: :status, reader: true
       # @return [String] used as status value of begin dates if
       #   treatment == :status
-      setting :display_date_begin_status, default: 'Display begin', reader: true
+      setting :display_date_begin_status, default: "Display begin", reader: true
       # @return [String] used as status value of end dates if
       #   treatment == :status
-      setting :display_date_end_status, default: 'Display end', reader: true
+      setting :display_date_end_status, default: "Display end", reader: true
       # @return [String] prepended to display date value for concatenation into
       #   note field
-      setting :display_date_note_label, default: 'Displayed: ', reader: true
+      setting :display_date_note_label, default: "Displayed: ", reader: true
 
       # @return [:statusnote, :note] target field for remarks data
       setting :remarks_treatment, default: :statusnote, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform to split
       #   remarks field data into separate status notes
-      setting :remarks_delim, default: '%CR%%CR%', reader: true
+      setting :remarks_delim, default: "%CR%%CR%", reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform as the
       #   constant value for status on derived status notes
-      setting :remarks_status, default: 'Note', reader: true
+      setting :remarks_status, default: "Note", reader: true
 
 
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
@@ -95,7 +95,7 @@ module Kiba
           if remarks_treatment == :note
             value << :remarks
           end
-          if Tms::TextEntries.for?('Loans') && text_entries_treatment == :note
+          if Tms::TextEntries.for?("Loans") && text_entries_treatment == :note
             value << :text_entry
           end
           if Tms::LoanObjXrefs.conditions_record == :loan &&
@@ -117,7 +117,7 @@ module Kiba
           if remarks_treatment == :conditions
             value << :remarks
           end
-          if Tms::TextEntries.for?('Loans') &&
+          if Tms::TextEntries.for?("Loans") &&
               text_entries_treatment == :conditions
             value << :text_entry
           end
@@ -129,7 +129,7 @@ module Kiba
         }
 
       def status_pad_fields(fieldmap)
-        prefix = fieldmap.values.first.to_s.split('_').first
+        prefix = fieldmap.values.first.to_s.split("_").first
         present = fieldmap.values.map do |val|
           val.to_s.delete_prefix("#{prefix}_").to_sym
         end
@@ -142,14 +142,14 @@ module Kiba
         needed = status_pad_fields(fieldmap)
         return [] if needed.empty?
 
-        needed.map{ |val| val.to_s.sub('_', '').to_sym }
+        needed.map{ |val| val.to_s.sub("_", "").to_sym }
       end
 
       def status_nil_merge_fields(fieldmap)
         needed = status_pad_fields(fieldmap)
         return {} if needed.empty?
 
-        needed.map{ |val| [val.to_s.sub('_', '').to_sym, val] }.to_h
+        needed.map{ |val| [val.to_s.sub("_", "").to_sym, val] }.to_h
       end
     end
   end

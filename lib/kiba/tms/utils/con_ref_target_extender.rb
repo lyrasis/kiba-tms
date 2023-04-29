@@ -34,7 +34,7 @@ module Kiba
           Tms.configs
             .map do |config|
               config.to_s
-                .split('::')
+                .split("::")
                 .last
             end
         end

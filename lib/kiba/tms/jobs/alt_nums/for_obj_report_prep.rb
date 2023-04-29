@@ -28,7 +28,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[description remarks],
                 target: :combined,
-                sep: ' - ',
+                sep: " - ",
                 delete_sources: false
              end
           end

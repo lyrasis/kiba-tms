@@ -56,24 +56,24 @@ module Kiba
               )
               transform Fingerprint::Add,
                 fields: p_editable,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_p_ed
               transform Fingerprint::Add,
                 fields: o_editable,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_o_ed
               transform Fingerprint::Add,
                 fields: p_not_editable  + config.not_editable_internal,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_p_ned
               transform Fingerprint::Add,
                 fields: o_not_editable  + config.not_editable_internal,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_o_ned
 
               transform do |row|
                 contype = row[:contype]
-                if contype.start_with?('P')
+                if contype.start_with?("P")
                   p_not_editable.each{ |fld| row[fld] = naval }
                   row[:fp_o_ed] = nil
                   row[:fp_o_ned] = nil
@@ -87,12 +87,12 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[fp_p_ed fp_o_ed],
                 target: :fp_editable,
-                sep: '',
+                sep: "",
                 delete_sources: true
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[fp_p_ned fp_o_ned],
                 target: :fp_not_editable,
-                sep: '',
+                sep: "",
                 delete_sources: true
             end
           end
@@ -107,11 +107,11 @@ module Kiba
 
               transform Fingerprint::Add,
                 fields: editable,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_editable
               transform Fingerprint::Add,
                 fields: not_editable + config.not_editable_internal,
-                delim: '␟',
+                delim: "␟",
                 target: :fp_not_editable
 
               transform do |row|

@@ -22,7 +22,7 @@ module Kiba
             def xforms
               Kiba.job_segment do
                 transform Tms::Transforms::Names::NotKept
-                transform FilterRows::FieldEqualTo, action: :keep, field: :constituenttype, value: 'Person'
+                transform FilterRows::FieldEqualTo, action: :keep, field: :constituenttype, value: "Person"
                 transform Merge::MultiRowLookup,
                   lookup: nameclean0__persons_kept,
                   keycolumn: :norm,

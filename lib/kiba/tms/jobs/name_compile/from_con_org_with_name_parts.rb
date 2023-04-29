@@ -42,7 +42,7 @@ module Kiba
           end
 
           def termsource
-            'Constituents.orgs_name_detail'
+            "Constituents.orgs_name_detail"
           end
 
           def treatment
@@ -61,7 +61,7 @@ module Kiba
 
               transform Append::ToFieldValue,
                 field: :constituentid,
-                value: '.namedetail'
+                value: ".namedetail"
               transform Merge::ConstantValue,
                 target: :termsource,
                 value: job.send(:termsource)
@@ -83,10 +83,10 @@ module Kiba
                   # no cleanup needed
                 elsif treatment == :contact_person
                   transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                    typetarget: {'_main term'=>:contype},
+                    typetarget: {"_main term"=>:contype},
                     nametarget: {
-                      '_main term'=>prefname,
-                      'contact_person'=>:related_term
+                      "_main term"=>prefname,
+                      "contact_person"=>:related_term
                     }
                 end
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
@@ -98,8 +98,8 @@ module Kiba
                   fieldmap: {cleaned: prefname},
                   conditions: ->(row, rows) do
                     return [] unless row[:contype] &&
-                      row[:contype].start_with?('Person')
-                    rows.select{ |r| r[:contype] && r[:contype] == 'Person' }
+                      row[:contype].start_with?("Person")
+                    rows.select{ |r| r[:contype] && r[:contype] == "Person" }
                   end
                 transform do |row|
                   next row if row[:cleaned].blank?

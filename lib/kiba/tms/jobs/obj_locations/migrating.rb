@@ -37,7 +37,7 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :inactive,
-                  value: '1'
+                  value: "1"
                 transform Delete::Fields, fields: :inactive
               end
 
@@ -53,7 +53,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[currentlocationnote loc5],
                 target: :currentlocationnote,
-                sep: '',
+                sep: "",
                 delete_sources: true
               unless config.drop_inactive
                 transform Tms::Transforms::ObjLocations::HandleInactive

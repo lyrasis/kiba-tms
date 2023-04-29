@@ -41,7 +41,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype name],
                 target: :corrfingerprint,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Delete::Fields,
                 fields: %i[name authoritytype contype]

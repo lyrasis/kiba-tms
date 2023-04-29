@@ -35,7 +35,7 @@ module Kiba
           def add_status(vals, status)
             vals.transform_values!{ |val| val.split(delim) }
             vals[target] << status
-            nulltargets.each{ |field| vals[field] << '%NULLVALUE%' if vals.key?(field) }
+            nulltargets.each{ |field| vals[field] << "%NULLVALUE%" if vals.key?(field) }
             vals.transform_values{ |val| val.join(delim) }
           end
           
@@ -61,7 +61,7 @@ module Kiba
           
           def process_remarks(row, remarks)
             split_remarks(remarks).each do |remark|
-              %i[rem_loanstatusdate rem_loanindividual].each{ |field| row[field] << '%NULLVALUE%' }
+              %i[rem_loanstatusdate rem_loanindividual].each{ |field| row[field] << "%NULLVALUE%" }
               row[:rem_loanstatus] << Tms::Loansin.remarks_status
               row[:rem_loanstatusnote] << remark
             end

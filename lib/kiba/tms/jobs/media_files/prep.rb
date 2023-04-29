@@ -73,13 +73,13 @@ module Kiba
                 next row if filename.blank?
                 next row unless filename["\\"]
 
-                path = row[:path] ||= ''
-                parts = filename.split('\\')
+                path = row[:path] ||= ""
+                parts = filename.split("\\")
                 filename = parts.pop
 
                 row[:filename] = filename
                 row[:path] = [path, parts].flatten
-                  .join('\\')
+                  .join("\\")
                 row
               end
 
@@ -90,7 +90,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[path filename],
                 target: :fullpath,
-                sep: '/',
+                sep: "/",
                 delete_sources: false
               transform Deduplicate::FlagAll,
                 on_field: :fullpath,

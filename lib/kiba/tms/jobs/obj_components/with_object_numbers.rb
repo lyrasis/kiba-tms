@@ -53,7 +53,7 @@ module Kiba
 
                 istop = row[:is_top_object]
                 if istop.blank?
-                  row[:existingobject] = 'y'
+                  row[:existingobject] = "y"
                 else
                   row[:existingobject] = nil
                 end
@@ -71,7 +71,7 @@ module Kiba
                   .reject{ |val| val.blank? }
                 next row if vals.empty?
 
-                row[:problemcomponent] = 'y'
+                row[:problemcomponent] = "y"
                 row
               end
             end

@@ -27,7 +27,7 @@ module Kiba
               transform Delete::FieldsExcept, fields: @fields
               
               transform CombineValues::FromFieldsWithDelimiter, sources: @fields, target: :combined,
-                sep: ' - ', delete_sources: false
+                sep: " - ", delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
 
               transform Tms::Transforms::Constituents::KeepOrgsWithPersonNameParts
@@ -41,8 +41,8 @@ module Kiba
                 row
               end
               
-              transform Merge::ConstantValue, target: :constituenttype, value: 'Person'
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents.orgs_with_person_names'
+              transform Merge::ConstantValue, target: :constituenttype, value: "Person"
+              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents.orgs_with_person_names"
               transform Cspace::NormalizeForID, source: Tms::Constituents.preferred_name_field, target: :norm
             end
           end

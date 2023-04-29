@@ -23,7 +23,7 @@ module Kiba
 
           def source(mod)
             lkup = Tms::NameCompile.uncontrolled_name_source_tables
-            ns = lkup[mod.name.split('::').last]
+            ns = lkup[mod.name.split("::").last]
             "#{ns}__#{mod.filekey}".to_sym
           end
 

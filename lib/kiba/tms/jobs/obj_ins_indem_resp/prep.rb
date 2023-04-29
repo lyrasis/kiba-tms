@@ -48,7 +48,7 @@ module Kiba
                 sep: Tms.delim,
                 delete_sources: false
               transform Deduplicate::FieldValues, fields: :combined, sep: Tms.delim
-              transform FilterRows::FieldEqualTo, action: :reject, field: :combined, value: '0'
+              transform FilterRows::FieldEqualTo, action: :reject, field: :combined, value: "0"
               transform Delete::Fields, fields: :combined
 
               # merge in responsibility values
@@ -84,7 +84,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: ins_ind_fields,
                 target: :combined,
-                sep: '%CR%%CR%',
+                sep: "%CR%%CR%",
                 delete_sources: false
             end
           end

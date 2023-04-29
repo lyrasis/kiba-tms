@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            return unless config.for?('AccessionLot')
+            return unless config.for?("AccessionLot")
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -63,7 +63,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[item1_id_lot item1_id_set],
                 target: :item1_id,
-                sep: '',
+                sep: "",
                 delete_sources: true
 
               transform Merge::MultiRowLookup,
@@ -71,8 +71,8 @@ module Kiba
                 keycolumn: :mediamasterid,
                 fieldmap: {item2_id: :identificationnumber}
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'media'
+                item1_type: "acquisitions",
+                item2_type: "media"
               }
             end
           end

@@ -17,7 +17,7 @@ module Kiba
             chks = %i[no_match]
             chks.each do |chk|
               result = send(chk, row)
-              if result == 'y'
+              if result == "y"
                 next
               else
                 row[target] = result
@@ -25,7 +25,7 @@ module Kiba
               end
             end
             row.delete(matches_field)
-            row[target] = 'y'
+            row[target] = "y"
             row
           end
           
@@ -35,7 +35,7 @@ module Kiba
 
           def no_match(row)
             val = row[matches_field]
-            val.blank? ? 'n - associated constituent not migrating' : 'y'
+            val.blank? ? "n - associated constituent not migrating" : "y"
           end
         end
       end

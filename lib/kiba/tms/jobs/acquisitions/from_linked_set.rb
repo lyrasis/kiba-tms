@@ -26,7 +26,7 @@ module Kiba
                 fields: %i[registrationsetid objectstatus]
               transform Merge::ConstantValue,
                 target: :objaccessiontreatment,
-                value: 'linkedset'
+                value: "linkedset"
             end
           end
         end

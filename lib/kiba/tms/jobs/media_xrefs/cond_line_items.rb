@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            return unless config.for?('CondLineItems')
+            return unless config.for?("CondLineItems")
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -46,8 +46,8 @@ module Kiba
                 keycolumn: :mediamasterid,
                 fieldmap: {item2_id: :identificationnumber}
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'conditionchecks',
-                item2_type: 'media'
+                item1_type: "conditionchecks",
+                item2_type: "media"
               }
             end
           end

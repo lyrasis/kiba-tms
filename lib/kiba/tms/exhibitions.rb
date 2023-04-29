@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -23,7 +23,7 @@ module Kiba
             exhibitionperson: {
               suffixes: %w[personlocal organizationlocal],
               merge_role: true,
-              role_suffix: 'role'
+              role_suffix: "role"
             }
           }
         },

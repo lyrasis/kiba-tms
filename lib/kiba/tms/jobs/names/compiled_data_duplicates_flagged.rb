@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldPopulated, action: :keep, field: :duplicate
               transform Deduplicate::Table, field: :norm, delete_field: false
               transform Delete::FieldsExcept, fields: :norm
-              transform Merge::ConstantValue, target: :duplicate, value: 'y'
+              transform Merge::ConstantValue, target: :duplicate, value: "y"
             end
           end
         end

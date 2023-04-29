@@ -42,7 +42,7 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :active,
-                  value: '0'
+                  value: "0"
               end
 
               if config.omitting_fields?
@@ -92,8 +92,8 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[datebegin dateend],
-                find: '^0$',
-                replace: ''
+                find: "^0$",
+                replace: ""
             end
           end
         end

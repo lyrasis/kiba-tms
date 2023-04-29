@@ -115,10 +115,10 @@ module Kiba
               unless Tms::ObjAccession.dog_dates_treatment == :drop
                 transform Prepend::ToFieldValue,
                   field: :deedofgiftsentiso,
-                  value: 'Deed of gift sent: '
+                  value: "Deed of gift sent: "
                 transform Prepend::ToFieldValue,
                   field: :deedofgiftreceivediso,
-                  value: 'Deed of gift received: '
+                  value: "Deed of gift received: "
               end
 
               unless Tms::ObjAccession.percentowned_treatment == :drop
@@ -132,7 +132,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notesrcs,
                   target: :acquisitionnote,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
               provsrcs = Tms::ObjAccession.proviso_sources
@@ -140,7 +140,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: provsrcs,
                   target: :acquisitionprovisos,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
 

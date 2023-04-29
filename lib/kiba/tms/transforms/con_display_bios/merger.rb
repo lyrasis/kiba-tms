@@ -18,10 +18,10 @@ module Kiba
                 conditions: ->(_con, rows) do
                   rows.select do |row|
                     disp = row[:isdisplayed]
-                    disp && disp == '1'
+                    disp && disp == "1"
                   end
                 end,
-                delim: '%CR%'
+                delim: "%CR%"
               )
             ]
             if Tms::ConDisplayBios.migrate_non_displayed
@@ -32,10 +32,10 @@ module Kiba
                 conditions: ->(_con, rows) do
                   rows.select do |row|
                     disp = row[:isdisplayed]
-                    disp && disp == '0'
+                    disp && disp == "0"
                   end
                 end,
-                delim: '%CR%'
+                delim: "%CR%"
               )
             end
           end

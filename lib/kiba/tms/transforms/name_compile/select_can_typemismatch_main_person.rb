@@ -18,7 +18,7 @@ module Kiba
             alt = row[:altauthtype]
             return false if alt.blank?
 
-            true if alt.start_with?('Organization')
+            true if alt.start_with?("Organization")
           end
 
           def alt_unestablished?(row)
@@ -34,7 +34,7 @@ module Kiba
             main = row[:conauthtype]
             return false if main.blank?
             
-            true if main.start_with?('Person')
+            true if main.start_with?("Person")
           end
         end
       end

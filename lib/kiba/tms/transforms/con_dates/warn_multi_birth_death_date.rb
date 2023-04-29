@@ -9,7 +9,7 @@ module Kiba
           include Warnable
           
           def initialize
-            @warning = 'multiple values for birth or death date for constituent id'
+            @warning = "multiple values for birth or death date for constituent id"
             @target = :warn
           end
 

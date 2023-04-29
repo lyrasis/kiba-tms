@@ -35,11 +35,11 @@ module Kiba
                 to: :item1_id
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :item1_id,
-                find: '^VC',
-                replace: ''
+                find: "^VC",
+                replace: ""
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'valuationcontrols'
+                item1_type: "acquisitions",
+                item2_type: "valuationcontrols"
               }
             end
           end

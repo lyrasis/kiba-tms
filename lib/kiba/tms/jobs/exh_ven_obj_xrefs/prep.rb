@@ -52,7 +52,7 @@ module Kiba
                   delim: Tms.delim
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: :insindemresp,
-                  find: '%CR%',
+                  find: "%CR%",
                   replace: "\n"
               end
               transform Delete::Fields, fields: :insindemrespid

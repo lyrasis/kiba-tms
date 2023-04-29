@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :datasource,
-                value: 'CondLineItems'
+                value: "CondLineItems"
               transform Tms::Transforms::ConservationTreatments::CreateCondLineItemNhrs
             end
           end

@@ -10,9 +10,9 @@ module Kiba
             @authsrc = authsrc
             @target = target
             @suffix_map = {
-              'Local'=>'locationlocal',
-              'Offsite'=>'locationoffsite',
-              'Organization'=>'organizationlocal'
+              "Local"=>"locationlocal",
+              "Offsite"=>"locationoffsite",
+              "Organization"=>"organizationlocal"
             }
             @suffixes = suffix_map.values
           end

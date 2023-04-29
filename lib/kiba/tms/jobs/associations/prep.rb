@@ -23,10 +23,10 @@ module Kiba
           def lookups
             base = []
             base << :prep__relationships if Tms::Relationships.used?
-            if config.target_tables.any?('Constituents')
+            if config.target_tables.any?("Constituents")
               base << :names__by_constituentid
             end
-            if config.target_tables.any?('Objects')
+            if config.target_tables.any?("Objects")
               base << :objects__number_lookup
             end
             base
@@ -57,12 +57,12 @@ module Kiba
               transform Delete::Fields, fields: :relationshipid
 
               conlkup = ->(config){
-                return nil unless config.target_tables.any?('Constituents')
+                return nil unless config.target_tables.any?("Constituents")
 
                 names__by_constituentid
               }
               objlkup = ->(config){
-                return nil unless config.target_tables.any?('Objects')
+                return nil unless config.target_tables.any?("Objects")
 
                 objects__number_lookup
               }

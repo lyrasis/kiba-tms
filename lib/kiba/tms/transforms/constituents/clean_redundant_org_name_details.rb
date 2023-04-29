@@ -42,7 +42,7 @@ module Kiba
             type = row[type_field]
             return false if type.blank?
 
-            true if type == 'Organization'
+            true if type == "Organization"
           end
 
           def redundant_details(row)

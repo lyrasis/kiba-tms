@@ -30,7 +30,7 @@ module Kiba
           end
 
           def ntc_needed?
-            ntc_done? && ntc_targets.any?('ConAltNames')
+            ntc_done? && ntc_targets.any?("ConAltNames")
           end
           extend Tms::Mixins::NameTypeCleanupable
 
@@ -100,9 +100,9 @@ module Kiba
                 alt = row[:alttype]
 
                 if con == alt
-                  row[:typematch] = 'y'
+                  row[:typematch] = "y"
                 else
-                  row[:typematch] = 'n'
+                  row[:typematch] = "n"
                 end
                 row
               end

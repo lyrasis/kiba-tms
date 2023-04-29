@@ -67,7 +67,7 @@ module Kiba
           end
 
           def build_xform(field, suffix, rule)
-            source = suffix.start_with?('person') ? :person : :org
+            source = suffix.start_with?("person") ? :person : :org
             fieldmap = build_fieldmap(field, suffix, rule, source)
             values = config[field]
             conditions = ->(_orig, rows) do

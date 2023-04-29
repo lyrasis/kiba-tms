@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -32,8 +32,8 @@ module Kiba
             field: :acquisitionnumber
           transform Clean::RegexpFindReplaceFieldVals,
             fields: :acquisitionnumber,
-            find: '%PIPE%',
-            replace: '|'
+            find: "%PIPE%",
+            replace: "|"
         end
       end
     end

@@ -15,7 +15,7 @@ module Kiba
           # @private
           def process(row)
             type = row.fetch(:constituenttype, nil)
-            return unless type == 'Organization'
+            return unless type == "Organization"
             
             vals = getter.call(row)
             return if vals.empty?

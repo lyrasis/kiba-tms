@@ -41,8 +41,8 @@ module Kiba
             when :org
               list = base_fields
             end
-            list << 'termprefforlang' if Tms::Names.set_term_pref_for_lang
-            list << 'termsource' if Tms::Names.set_term_source
+            list << "termprefforlang" if Tms::Names.set_term_pref_for_lang
+            list << "termsource" if Tms::Names.set_term_source
             list
           end
 
@@ -69,7 +69,7 @@ module Kiba
           end
 
           def prefixed(field)
-            prefixes.map{ |prefix| "#{prefix}_#{field}".delete_prefix('_').to_sym }
+            prefixes.map{ |prefix| "#{prefix}_#{field}".delete_prefix("_").to_sym }
           end
         end
       end

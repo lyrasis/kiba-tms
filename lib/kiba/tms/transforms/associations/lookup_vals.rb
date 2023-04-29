@@ -39,9 +39,9 @@ module Kiba
 
           def do_lookup(id, target, row)
             case row[tablefield]
-            when 'Constituents'
+            when "Constituents"
               lookup_con(id, target, row)
-            when 'Objects'
+            when "Objects"
               lookup_obj(id, target, row)
             else
               add_single_warning("#{self.class.name}: Unhandled table")

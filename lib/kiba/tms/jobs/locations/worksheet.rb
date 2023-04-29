@@ -44,7 +44,7 @@ module Kiba
                   fieldmap: {
                     origlocname: :origlocname
                   },
-                  constantmap: {to_review: 'n'}
+                  constantmap: {to_review: "n"}
               end
 
               if config.cleanup_done
@@ -62,7 +62,7 @@ module Kiba
                   done = row[:doneid]
                   next row unless done.blank?
 
-                  row[:to_review] = 'y'
+                  row[:to_review] = "y"
                   row
                 end
                 transform Delete::Fields, fields: :doneid

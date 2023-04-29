@@ -27,7 +27,7 @@ module Kiba
             contype = row[:contype]
             return false if contype.blank?
 
-            true if contype['Person']
+            true if contype["Person"]
           end
         end
       end

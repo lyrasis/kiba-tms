@@ -30,11 +30,11 @@ module Kiba
                 base << lkup
               end
             end
-            if Tms::TextEntries.for?('Objects')
+            if Tms::TextEntries.for?("Objects")
               base << :text_entries_for__objects
             end
-            base << :alt_nums_for__objects if Tms::AltNums.for?('Objects')
-            base << :prep__status_flags if Tms::StatusFlags.for?('Objects')
+            base << :alt_nums_for__objects if Tms::AltNums.for?("Objects")
+            base << :prep__status_flags if Tms::StatusFlags.for?("Objects")
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
             base << :dim_item_elem_xrefs_for__objects if merges_dimensions?
@@ -49,7 +49,7 @@ module Kiba
           end
 
           def merges_dimensions?
-            Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?('Objects')
+            Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?("Objects")
           end
 
           def xforms
@@ -67,9 +67,9 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objectid,
-                value: '-1'
+                value: "-1"
 
-              if Tms::ConRefs.for?('Objects')
+              if Tms::ConRefs.for?("Objects")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,
@@ -217,7 +217,7 @@ module Kiba
                       nsigned_inscriptioncontent: :n_signed
                     },
                     constantmap: {
-                      nsigned_inscriptioncontenttype: 'signed'
+                      nsigned_inscriptioncontenttype: "signed"
                     },
                     delim: Tms.delim
                   contexts_merged << :n_signed
@@ -250,7 +250,7 @@ module Kiba
                   fields: %i[valuedate measurementunit value dimension]
               end
 
-              if Tms::AltNums.for?('Objects')
+              if Tms::AltNums.for?("Objects")
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: alt_nums_for__objects,
@@ -260,7 +260,7 @@ module Kiba
                   },
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
                   delim: Tms.delim,
-                  null_placeholder: '%NULLVALUE%'
+                  null_placeholder: "%NULLVALUE%"
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: alt_nums_for__objects,
@@ -269,10 +269,10 @@ module Kiba
                   delim: Tms.delim
                 transform Prepend::ToFieldValue,
                   field: :alt_num_comment,
-                  value: 'Other number note: '
+                  value: "Other number note: "
               end
 
-              if Tms::StatusFlags.for?('Objects')
+              if Tms::StatusFlags.for?("Objects")
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
                   lookup: prep__status_flags,
@@ -280,7 +280,7 @@ module Kiba
                   sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
                   delim: Tms.delim,
                   conditions: ->(_origrow, mergerows){
-                    mergerows.select{ |row| row[:tablename] == 'Objects' }
+                    mergerows.select{ |row| row[:tablename] == "Objects" }
                   }
                 transform Tms::Transforms::Objects::CombineObjectStatusAndStatusFlags
               end
@@ -329,7 +329,7 @@ module Kiba
                 unless Tms::Dimensions.migrate_secondary_unit_vals
                   transform do |row|
                     display = row[:dimensions]
-                    row[:dimensions] = display.sub(/ \(.*\)$/, '')
+                    row[:dimensions] = display.sub(/ \(.*\)$/, "")
                     row
                   end
                 end

@@ -19,7 +19,7 @@ module Kiba
             nums = getter.call(row).values.uniq.length
             return row if nums > 1
 
-            row[target] = 'y'
+            row[target] = "y"
             row
           end
 

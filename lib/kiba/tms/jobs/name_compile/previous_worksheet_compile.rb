@@ -26,7 +26,7 @@ module Kiba
                 sources: %i[authority name constituentid relation_type
                             termsource],
                 target: :cleanupid,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               )
               transform do |row|

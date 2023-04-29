@@ -22,11 +22,11 @@ module Kiba
               transform FilterRows::FieldMatchRegexp,
                 action: :keep,
                 field: :termsource,
-                match: '^TMS ConAltNames'
+                match: "^TMS ConAltNames"
 
               # extract altnameid
               transform do |row|
-                row[:altnameid] = row[:constituentid].split('.')
+                row[:altnameid] = row[:constituentid].split(".")
                   .first
                 row
               end

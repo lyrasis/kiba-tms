@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :termsource,
-                value: 'TMS Constituents.person_with_institution'
+                value: "TMS Constituents.person_with_institution"
               transform Delete::Fields, fields: :termsource
             end
           end

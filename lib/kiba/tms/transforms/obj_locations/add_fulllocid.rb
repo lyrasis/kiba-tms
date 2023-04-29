@@ -8,7 +8,7 @@ module Kiba
           def initialize(mode: :hier)
             @target = :fulllocid
             @fields = set_fields(mode)
-            @placeholder = 'nil'
+            @placeholder = "nil"
             @delim = Tms.delim
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields,
@@ -36,7 +36,7 @@ module Kiba
           def field_vals(row)
             getter.call(row)
               .values
-              .map{ |val| val.blank? ? 'nil' : val }
+              .map{ |val| val.blank? ? "nil" : val }
               .join(delim)
           end
 
@@ -58,10 +58,10 @@ module Kiba
           def tt_val(row)
             results = ttgetter.call(row)
               .values
-            return 'nil' if results.blank?
+            return "nil" if results.blank?
 
             result = results.first
-            return 'nil' if result.blank?
+            return "nil" if result.blank?
 
             result
           end

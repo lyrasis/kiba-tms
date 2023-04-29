@@ -10,7 +10,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :constituentid,
               delim: Tms.delim,
-              null_placeholder: '%NULLVALUE%',
+              null_placeholder: "%NULLVALUE%",
               fieldmap: {
                 telephonenumber: :phone,
                 telephonenumbertype: :phonetype
@@ -20,7 +20,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :constituentid,
               delim: Tms.delim,
-              null_placeholder: '%NULLVALUE%',
+              null_placeholder: "%NULLVALUE%",
               fieldmap: {
                 faxnumber: :fax,
                 faxnumbertype: :faxtype
@@ -29,7 +29,7 @@ module Kiba
             @notemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :constituentid,
-              delim: '%CR%',
+              delim: "%CR%",
               fieldmap: {
                 phone_fax_namenote: :description
               }

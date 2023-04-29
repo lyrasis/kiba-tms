@@ -24,7 +24,7 @@ module Kiba
             Kiba.job_segment do
               transform Merge::ConstantValue,
                 target: :objaccessiontreatment,
-                value: 'acqnumber'
+                value: "acqnumber"
             end
           end
         end

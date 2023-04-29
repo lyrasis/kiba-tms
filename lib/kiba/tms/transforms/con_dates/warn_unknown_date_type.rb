@@ -9,7 +9,7 @@ module Kiba
           include Warnable
           
           def initialize
-            @warning = 'unknown/unmapped date type in datedescription'
+            @warning = "unknown/unmapped date type in datedescription"
             @target = :warn
           end
 

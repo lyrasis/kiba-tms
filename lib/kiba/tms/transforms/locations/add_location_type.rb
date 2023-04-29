@@ -19,21 +19,21 @@ module Kiba
             loc = locname.split(delim)[-1].downcase
 
             if is_match?(%w[room office], loc)
-              type = 'Room'
+              type = "Room"
             elsif is_match?(%w[drawer], loc)
-              type = 'Drawer'
+              type = "Drawer"
             elsif is_match?(%w[folder], loc)
-              type = 'Folder'
+              type = "Folder"
             elsif is_match?(%w[shelf], loc)
-              type = 'Shelf'
+              type = "Shelf"
             elsif is_match?(%w[tray], loc)
-              type = 'Tray'
+              type = "Tray"
             elsif is_match?(%w[box], loc)
-              type = 'Box'
+              type = "Box"
             elsif is_match?(%w[case], loc)
-              type = 'Case'
+              type = "Case"
             elsif is_match?(%w[unit], loc)
-              type = 'Unit'
+              type = "Unit"
             end
 
             return row unless type

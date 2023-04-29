@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::Table::List.include?('ConDates')
+            return unless Tms::Table::List.include?("ConDates")
 
             Kiba::Extend::Jobs::Job.new(
               files: {

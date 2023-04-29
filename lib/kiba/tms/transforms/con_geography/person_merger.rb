@@ -11,7 +11,7 @@ module Kiba
               column: :constituentid
             )
             @id = :constituentid
-            @notedelim = '%CR%'
+            @notedelim = "%CR%"
           end
 
           def process(row)

@@ -58,7 +58,7 @@ module Kiba
                   example_values: :altnum
                 },
                 conditions: ->(_r, rows){ rows.first(3) },
-                delim: ' ||| '
+                delim: " ||| "
             end
           end
         end

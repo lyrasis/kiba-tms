@@ -27,14 +27,14 @@ module Kiba
           attr_reader :target, :builder, :getter, :parts
 
           def alphasort
-            post_comma = [parts[:firstname], parts[:middlename]].compact.join(' ')
+            post_comma = [parts[:firstname], parts[:middlename]].compact.join(" ")
             joinable = post_comma.empty? ? nil : post_comma
-            [parts[:lastname], joinable, parts[:suffix]].compact.join(', ')
+            [parts[:lastname], joinable, parts[:suffix]].compact.join(", ")
           end
           
           def displayname
-            name = [parts[:firstname], parts[:middlename], parts[:lastname]].compact.join(' ')
-            [name, parts[:suffix]].compact.join(', ')
+            name = [parts[:firstname], parts[:middlename], parts[:lastname]].compact.join(" ")
+            [name, parts[:suffix]].compact.join(", ")
           end
         end
       end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pp'
+require "pp"
 
 module Kiba
   module Tms
@@ -11,7 +11,7 @@ module Kiba
         end
 
         def initialize
-          @setting = 'Kiba::Tms.config.table_merge_status ='
+          @setting = "Kiba::Tms.config.table_merge_status ="
           @val = {}
           @exist = Tms.table_merge_status
         end
@@ -30,7 +30,7 @@ module Kiba
         def source_tables(target)
           Tms.for_merge_into(target)
             .map{ |src| [
-              src.to_s.delete_prefix('Kiba::Tms::'),
+              src.to_s.delete_prefix("Kiba::Tms::"),
               :todo
             ] }
             .to_h

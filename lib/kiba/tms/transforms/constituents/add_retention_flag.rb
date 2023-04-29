@@ -14,7 +14,7 @@ module Kiba
           # @private
           def process(row)
             val = row[matches_field]
-            result = val.blank? ? 'n - associated constituent not migrating' : 'y'
+            result = val.blank? ? "n - associated constituent not migrating" : "y"
             row.delete(matches_field)
             row[target] = result
             row

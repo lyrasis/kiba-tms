@@ -16,7 +16,7 @@ module Kiba
 
             row[target] = val.downcase
               .capitalize
-              .gsub('_', ' ')
+              .gsub("_", " ")
               .strip
             row
           end

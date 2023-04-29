@@ -36,16 +36,16 @@ module Kiba
                 id = row[:cleanupid]
                 next row unless id.blank?
 
-                row[:termsource] = 'clientcleanup'
+                row[:termsource] = "clientcleanup"
 
                 type = row[:relation_type]
-                if type == '_main term'
+                if type == "_main term"
                   row[:constituentid] = row[:name]
-                elsif type == 'variant term'
+                elsif type == "variant term"
                   row[:constituentid] = row[:variant_term]
-                elsif type == 'contact_person'
+                elsif type == "contact_person"
                   row[:constituentid] = row[:related_term]
-                elsif type == 'bio_note'
+                elsif type == "bio_note"
                   row[:constituentid] = row[:note_text]
                 end
 
@@ -68,7 +68,7 @@ module Kiba
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
                 find: Tms::NameCompile.na_in_migration_value,
-                replace: ''
+                replace: ""
               transform Rename::Field,
                 from: :authority,
                 to: :contype

@@ -14,8 +14,8 @@ module Kiba
         def process(row)
           val = row[source]
           if val.blank?
-            row[newfield] = '%NULLVALUE%'
-            row[sourcebecomes] = '%NULLVALUE%'
+            row[newfield] = "%NULLVALUE%"
+            row[sourcebecomes] = "%NULLVALUE%"
           else
             row[newfield] = value
             row[sourcebecomes] = val

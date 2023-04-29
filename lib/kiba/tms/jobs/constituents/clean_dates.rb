@@ -25,7 +25,7 @@ module Kiba
 
               transform Append::NilFields, fields: :datenote
               # we add this so that data from Constituents gets preferred over ConDates if different
-              transform Merge::ConstantValue, target: :condateid, value: '0'
+              transform Merge::ConstantValue, target: :condateid, value: "0"
               
               unless Tms::Constituents.displaydate_cleaners.empty?
                 Tms::Constituents.displaydate_cleaners.each do |cleaner|
@@ -34,7 +34,7 @@ module Kiba
                 transform Delete::Fields, fields: %i[displaydate nationality]
                 transform FilterRows::AnyFieldsPopulated, action: :keep, fields: %i[begindateiso enddateiso datenote]
                 transform Tms::Transforms::Constituents::ReshapeCleanedDates
-                transform Merge::ConstantValue, target: :datasource, value: 'Constituents.displaydate_begindateiso_enddateiso'
+                transform Merge::ConstantValue, target: :datasource, value: "Constituents.displaydate_begindateiso_enddateiso"
               end
             end
           end

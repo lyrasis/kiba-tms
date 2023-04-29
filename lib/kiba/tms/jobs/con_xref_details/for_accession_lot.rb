@@ -19,7 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: 'AccessionLot'
+              transform FilterRows::FieldEqualTo, action: :keep, field: :tablename, value: "AccessionLot"
               transform Delete::Fields, fields: :tablename
             end
           end

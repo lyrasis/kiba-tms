@@ -25,7 +25,7 @@ module Kiba
           end
 
           def process(row)
-            if row[:correctauthoritytype] == 'd'
+            if row[:correctauthoritytype] == "d"
               dropper.process(row)
             else
               typeoverlayer.process(row)

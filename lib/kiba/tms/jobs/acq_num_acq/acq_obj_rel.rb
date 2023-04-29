@@ -30,7 +30,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: combinefields,
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: true
               transform Delete::FieldsExcept,
                 fields: %i[objectnumber combined]
@@ -43,8 +43,8 @@ module Kiba
                 from: :objectnumber,
                 to: :item2_id
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'collectionobjects'
+                item1_type: "acquisitions",
+                item2_type: "collectionobjects"
               }
             end
           end

@@ -28,11 +28,11 @@ module Kiba
                   norm = row[:prefnormorig]
                   ts = row[:termsource]
                   sources = [
-                    'TMS Constituents.orgs',
-                    'TMS Constituents.persons',
-                    'Uncontrolled'
+                    "TMS Constituents.orgs",
+                    "TMS Constituents.persons",
+                    "Uncontrolled"
                   ]
-                  rt && rt == '_main term' &&
+                  rt && rt == "_main term" &&
                     ts && sources.any?(ts) &&
                     !norm.blank?
                 end

@@ -10,7 +10,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :constituentid,
               delim: Tms.delim,
-              null_placeholder: '%NULLVALUE%',
+              null_placeholder: "%NULLVALUE%",
               fieldmap: {
                 email: :email,
                 emailtype: :emailtype
@@ -20,7 +20,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :constituentid,
               delim: Tms.delim,
-              null_placeholder: '%NULLVALUE%',
+              null_placeholder: "%NULLVALUE%",
               fieldmap: {
                 webaddress: :web,
                 webaddresstype: :webtype
@@ -29,7 +29,7 @@ module Kiba
             @notemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :constituentid,
-              delim: '%CR%',
+              delim: "%CR%",
               fieldmap: {
                 email_web_namenote: :description
               }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -25,10 +25,10 @@ module Kiba
       setting :done, default: false, reader: true,
         constructor: proc{ !returned_files.empty? }
       setting :dropped_name_indicator,
-        default: 'DROPPED FROM MIGRATION',
+        default: "DROPPED FROM MIGRATION",
         reader: true
       setting :untyped_treatment,
-        default: 'Person',
+        default: "Person",
         reader: true
       # Client-specific transform to clean returned worksheet before any further
       #   processing is done
@@ -39,7 +39,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'to_client', filename)
+              File.join(Kiba::Tms.datadir, "to_client", filename)
             end
         }
       # List returned worksheets, most recent first. Assumes they are in the
@@ -48,7 +48,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'supplied', filename)
+              File.join(Kiba::Tms.datadir, "supplied", filename)
             end
         }
 

@@ -9,7 +9,7 @@ module Kiba
           include Warnable
           
           def initialize
-            @warning = 'no date type in datedescription'
+            @warning = "no date type in datedescription"
             @target = :warn
           end
 

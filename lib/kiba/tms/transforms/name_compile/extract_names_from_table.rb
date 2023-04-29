@@ -26,7 +26,7 @@ module Kiba
           end
 
           def close
-            names.transform_values!{ |vals| vals.sort.join('.') }
+            names.transform_values!{ |vals| vals.sort.join(".") }
             names.map{ |name, fields| build_name_row(name, fields) }
               .each{ |row| yield row }
           end
@@ -46,10 +46,10 @@ module Kiba
             row = {
               namefield => name,
               termsource: "TMS #{table}.#{fields}",
-              relation_type: '_main term',
+              relation_type: "_main term",
               constituentid: "#{table}.#{name}"
             }
-            row[:contype] = orgchecker.call(row) ? 'Organization?' : nil
+            row[:contype] = orgchecker.call(row) ? "Organization?" : nil
             row
           end
 

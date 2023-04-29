@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -54,7 +54,7 @@ module Kiba
       # MediaXrefs targettables that we cannot relate to MediaHandling
       #   procedures in CS
       setting :unmigratable_targets,
-        default: ['Constituents', 'ReferenceMaster'],
+        default: ["Constituents", "ReferenceMaster"],
         reader: true
       setting :bucket_name,
         default: nil,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -19,19 +19,19 @@ module Kiba
       extend Tms::Mixins::MultiTableMergeable
 
       setting :indemnity_fields,default: %i[], reader: true,
-        constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?('ind') } }
+        constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?("ind") } }
       setting :insurance_fields, default: %i[], reader: true,
-        constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?('ins') } }
+        constructor: Proc.new{ fields.select{ |f| f.to_s.start_with?("ins") } }
       setting :fieldlabels,
         default: {
-          indematvenue: 'Indemnity responsibility at venue site',
-          indemreturn: 'Indemnity responsibility for return to lender',
-          indemtovenuefromlender: 'Indemnity responsibility for transit if objects travels from lender to its first venue',
-          indemtovenuefromvenue: 'Indemnity responsibility for transit if objects travels from previous venue to venue',
-          insatvenue: 'Insurance responsibility at venue site',
-          insreturn: 'Insurance responsibility for return to lender',
-          instovenuefromlender: 'Insurance responsibility for transit if objects travels from lender to its first venue',
-          instovenuefromvenue: 'Insurance responsibility for transit if objects travels from previous venue to venue'
+          indematvenue: "Indemnity responsibility at venue site",
+          indemreturn: "Indemnity responsibility for return to lender",
+          indemtovenuefromlender: "Indemnity responsibility for transit if objects travels from lender to its first venue",
+          indemtovenuefromvenue: "Indemnity responsibility for transit if objects travels from previous venue to venue",
+          insatvenue: "Insurance responsibility at venue site",
+          insreturn: "Insurance responsibility for return to lender",
+          instovenuefromlender: "Insurance responsibility for transit if objects travels from lender to its first venue",
+          instovenuefromvenue: "Insurance responsibility for transit if objects travels from previous venue to venue"
         },
         reader: true
 

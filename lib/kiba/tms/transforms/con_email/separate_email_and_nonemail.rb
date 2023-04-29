@@ -15,7 +15,7 @@ module Kiba
             val = row[:emailaddress]
             return row if val.blank?
 
-            val['@'] ? treat_as_email(val, row) : treat_as_web(val, row)
+            val["@"] ? treat_as_email(val, row) : treat_as_web(val, row)
             row.delete(:emailaddress)
             row
           end

@@ -17,7 +17,7 @@ module Kiba
             dd = row[source]
             return row unless eligible?(dd)
 
-            val = dd.sub(/- *$/, '')
+            val = dd.sub(/- *$/, "")
             begindate = row[target]
             begindate.blank? ? add(row, val) : compare(row, val, begindate)
             row[source] = nil
@@ -34,7 +34,7 @@ module Kiba
 
           def add_note(row, val)
             note = "Birth date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, '%CR%%CR%')
+            append_value(row, :datenote, note, "%CR%%CR%")
           end
 
           def compare(row, val, begindate)

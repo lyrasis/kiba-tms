@@ -44,8 +44,8 @@ module Kiba
                   delete_sources: true
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: targetfield,
-                  find: '%PIPE%',
-                  replace: '|'
+                  find: "%PIPE%",
+                  replace: "|"
               end
             end
           end

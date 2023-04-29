@@ -142,7 +142,7 @@ module Kiba
 
         def reportable_job_hash(ns:, source:, dest:, config:)
           {
-            path: File.join(Tms.datadir, 'working', "#{dest}.csv"),
+            path: File.join(Tms.datadir, "working", "#{dest}.csv"),
             creator: {callee: Tms::Jobs::ReportableForTable,
                       args: {
                         source: source,
@@ -193,15 +193,15 @@ module Kiba
         def target_job_hash(mod, ns_name, targetobj, field, xforms)
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
-            .map{ |val| val.gsub('_', '') }
+            .map{ |val| val.gsub("_", "") }
             .map(&:to_sym)
           tabletag = tags.shift
-          [tabletag.to_s.delete_suffix('_for').to_sym, :for_table].each do |tag|
+          [tabletag.to_s.delete_suffix("_for").to_sym, :for_table].each do |tag|
             tags << tag
           end
 
           {
-            path: File.join(Tms.datadir, 'working', "#{ns_name}_#{key}.csv"),
+            path: File.join(Tms.datadir, "working", "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
                       args: {
                         source: mod.for_table_source_job_key,
@@ -280,7 +280,7 @@ module Kiba
           return if mod.respond_to?(:split_on_column)
 
           mod.module_eval(
-            'setting :split_on_column, default: :tablename, reader: true'
+            "setting :split_on_column, default: :tablename, reader: true"
           )
         end
         private_class_method :set_split_on_column_setting
@@ -288,7 +288,7 @@ module Kiba
         def self.set_target_tables_setting(mod)
           return if mod.respond_to?(:target_tables)
 
-          mod.module_eval('setting :target_tables, default: [], reader: true')
+          mod.module_eval("setting :target_tables, default: [], reader: true")
         end
         private_class_method :set_target_tables_setting
 
@@ -313,7 +313,7 @@ module Kiba
               }
             },
             reader: true
-          }.gsub("\n", ' ')
+          }.gsub("\n", " ")
 
           mod.module_eval(code)
         end

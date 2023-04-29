@@ -26,7 +26,7 @@ module Kiba
             
             row[namefield] = row[:conname] if mode == :alt
             row[:contype] = authtype
-            row[:relation_type] = 'variant term'
+            row[:relation_type] = "variant term"
             row[:variant_term] = variant_term(row)
             row[:variant_qualifier] = relbuilder.call(row)
             deletefields.each{ |field| row.delete(field) }
@@ -40,9 +40,9 @@ module Kiba
             :authtype, :rows
 
           def deletefields
-            if authtype == 'Person'
+            if authtype == "Person"
               todelete = Tms::NameCompile.person_nil
-            elsif authtype == 'Organization'
+            elsif authtype == "Organization"
               todelete = Tms::NameCompile.org_nil
             else
               todelete = []
@@ -54,7 +54,7 @@ module Kiba
           end
           
          def variant_term(row)
-            if mode == :main && authtype == 'Organization' && from == :nameparts
+            if mode == :main && authtype == "Organization" && from == :nameparts
               personbuilder.call(row)
             elsif from
               row[from]

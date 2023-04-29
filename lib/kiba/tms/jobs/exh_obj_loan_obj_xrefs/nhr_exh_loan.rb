@@ -28,9 +28,9 @@ module Kiba
               transform do |row|
                 loanin = row[:loanin]
                 if loanin.blank?
-                  row[:item2_type] = 'loansout'
+                  row[:item2_type] = "loansout"
                 else
-                  row[:item2_type] = 'loansin'
+                  row[:item2_type] = "loansin"
                 end
                 row
               end
@@ -39,7 +39,7 @@ module Kiba
                 fields: %i[exhibitionnumber loannumber item2_type]
               transform Merge::ConstantValue,
                 target: :item1_type,
-                value: 'exhibitions'
+                value: "exhibitions"
               transform Rename::Fields, fieldmap: {
                 exhibitionnumber: :item1_id,
                 loannumber: :item2_id

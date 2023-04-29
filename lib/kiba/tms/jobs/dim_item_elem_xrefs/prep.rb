@@ -50,7 +50,7 @@ module Kiba
               unless Tms::Dimensions.migrate_secondary_unit_vals
                 transform do |row|
                   display = row[:displaydimensions]
-                  row[:displaydimensions] = display.sub(/ \(.*\)$/, '')
+                  row[:displaydimensions] = display.sub(/ \(.*\)$/, "")
                   row
                 end
               end

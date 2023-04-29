@@ -27,7 +27,7 @@ module Kiba
               transform Delete::Fields, fields: :locationid
               transform Merge::ConstantValue,
                 target: :term_source,
-                value: 'Locations'
+                value: "Locations"
             end
           end
         end

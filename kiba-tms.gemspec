@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
-require_relative 'lib/kiba/tms/version'
+require_relative "lib/kiba/tms/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = 'kiba-tms'
+  spec.name          = "kiba-tms"
   spec.version       = Kiba::Tms::VERSION
-  spec.authors       = ['Kristina Spurgin']
-  spec.email         = ['kristina.spurgin@lyrasis.org']
+  spec.authors       = ["Kristina Spurgin"]
+  spec.email         = ["kristina.spurgin@lyrasis.org"]
 
-  spec.summary       = 'TMS extensions for Kiba ETL'
-  spec.homepage      = 'https://github.com/lyrasis/kiba-tms'
-  spec.license       = 'MIT'
+  spec.summary       = "TMS extensions for Kiba ETL"
+  spec.homepage      = "https://github.com/lyrasis/kiba-tms"
+  spec.license       = "MIT"
 
-  spec.required_ruby_version = '>=2.7.4'
+  spec.required_ruby_version = ">=2.7.4"
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
+    spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
-    spec.metadata['homepage_uri'] = spec.homepage
-    spec.metadata['source_code_uri'] = 'https://github.com/lyrasis/kiba-tms'
-    spec.metadata['changelog_uri'] = 'https://github.com/lyrasis/kiba-tms'
+    spec.metadata["homepage_uri"] = spec.homepage
+    spec.metadata["source_code_uri"] = "https://github.com/lyrasis/kiba-tms"
+    spec.metadata["changelog_uri"] = "https://github.com/lyrasis/kiba-tms"
   else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+    raise "RubyGems 2.0 or newer is required to protect against " \
+      "public gem pushes."
   end
 
   # Specify which files should be added to the gem when it is released.
@@ -31,13 +31,13 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
-  spec.bindir        = 'exe'
+  spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib']
+  spec.require_paths = ["lib"]
 
-  spec.add_dependency 'chronic', "~> 0.10.2"
+  spec.add_dependency "chronic", "~> 0.10.2"
   spec.add_dependency "dry-monads", "~> 1.4"
-  spec.add_dependency 'zeitwerk', '~> 2.5'
+  spec.add_dependency "zeitwerk", "~> 2.5"
 
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rake"

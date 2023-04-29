@@ -8,8 +8,8 @@ module Kiba
         # @param omit_suffix_if_single [Boolean] if true and there is only one
         #   row with a given id source value, no suffix is added to id_target
         #   value
-        def initialize(prefix: '', id_source:, id_target:, sort_on: nil,
-                       sort_type: :date, separator: '.', delete_source: true,
+        def initialize(prefix: "", id_source:, id_target:, sort_on: nil,
+                       sort_type: :date, separator: ".", delete_source: true,
                        omit_suffix_if_single: true, padding: 3)
           @prefix = prefix
           @id_source = id_source
@@ -88,7 +88,7 @@ module Kiba
           else
             rows.sort_by do |row|
               val = row[sort_on]
-              val.blank? ? '' : val
+              val.blank? ? "" : val
             end
           end
         end

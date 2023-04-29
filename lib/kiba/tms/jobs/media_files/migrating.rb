@@ -36,12 +36,12 @@ module Kiba
                 fields: %i[fileid path filename fullpath]
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'MR',
+                prefix: "MR",
                 id_source: :rend_renditionnumber,
                 id_target: :identificationnumber,
                 sort_on: :filedate,
                 sort_type: :date,
-                separator: '//'
+                separator: "//"
             end
           end
         end

@@ -30,8 +30,8 @@ module Kiba
               }
               transform Merge::ConstantValues,
                 constantmap: {
-                  item1_type: 'collectionobjects',
-                  item2_type: 'movements'
+                  item1_type: "collectionobjects",
+                  item2_type: "movements"
                 }
               transform CombineValues::FullRecord, target: :index
               transform Deduplicate::Table,

@@ -25,8 +25,8 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   row[:contype] &&
-                    row[:contype].start_with?('Person') &&
-                    row[:relation_type] == '_main term'
+                    row[:contype].start_with?("Person") &&
+                    row[:relation_type] == "_main term"
                 end
               transform Delete::FieldsExcept, fields: :name
               transform Rename::Field,

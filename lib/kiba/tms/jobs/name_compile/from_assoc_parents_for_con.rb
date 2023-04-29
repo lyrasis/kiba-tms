@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless Tms::AssocParents.used? &&
-              Tms::AssocParents.for?('Constituents')
+              Tms::AssocParents.for?("Constituents")
 
             Kiba::Extend::Jobs::MultiSourcePrepJob.new(
               files: {
@@ -25,7 +25,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::NameCompile::ExtractNamesFromTable,
-                table: 'AssocParents.for_constituents',
+                table: "AssocParents.for_constituents",
                 fields: [:childstring]
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,

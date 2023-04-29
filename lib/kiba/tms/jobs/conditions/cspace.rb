@@ -30,7 +30,7 @@ module Kiba
                 fields: Tms::Conditions.multisource_normalizer.get_fields
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'CC',
+                prefix: "CC",
                 id_source: :recordnumber,
                 id_target: :conditioncheckrefnumber,
                 sort_on: :conditionid,

@@ -44,8 +44,8 @@ module Kiba
                   fields: %i[objectid creditline]
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: :creditline,
-                  find: '(%CR%)+',
-                  replace: ' '
+                  find: "(%CR%)+",
+                  replace: " "
               end
             end
           end

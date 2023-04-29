@@ -27,7 +27,7 @@ module Kiba
           end
 
           def ntc_needed?
-            ntc_done? && ntc_targets.any?('Constituents')
+            ntc_done? && ntc_targets.any?("Constituents")
           end
           extend Tms::Mixins::NameTypeCleanupable
 
@@ -59,7 +59,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
                   target: :combined,
-                  sep: ' ',
+                  sep: " ",
                   delete_sources: false
                 transform Deduplicate::FlagAll,
                   on_field: :combined,

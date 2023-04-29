@@ -34,13 +34,13 @@ module Kiba
           end
 
           def fix(values)
-            if values.any?('unknown')
-              values.delete('unknown')
+            if values.any?("unknown")
+              values.delete("unknown")
               return values
             end
 
-            if values.any?('potential return') && values.any?('returned')
-              values.delete('potential return')
+            if values.any?("potential return") && values.any?("returned")
+              values.delete("potential return")
               return values
             end
 
@@ -49,8 +49,8 @@ module Kiba
           def fixable?(values)
             return false if values.empty?
             return false if values.length == 1
-            return true if values.any?('unknown')
-            return true if values.any?('potential return') && values.any?('returned')
+            return true if values.any?("unknown")
+            return true if values.any?("potential return") && values.any?("returned")
           end
         end
       end

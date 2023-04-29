@@ -31,7 +31,7 @@ module Kiba
 
           def merges_dimensions?
             Tms::DimItemElemXrefs.used? &&
-              Tms::DimItemElemXrefs.for?('ObjComponents')
+              Tms::DimItemElemXrefs.for?("ObjComponents")
           end
 
           def xforms
@@ -50,7 +50,7 @@ module Kiba
               }
               transform Merge::ConstantValue,
                 target: :cataloglevel,
-                value: 'component'
+                value: "component"
 
               unless config.inventorystatus_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,

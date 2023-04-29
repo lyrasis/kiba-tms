@@ -32,10 +32,10 @@ module Kiba
 
                 authtype = row[:authoritytype]
                 next row if authtype.blank?
-                next row unless authtype.end_with?(')') ||
-                  authtype.end_with?('?')
+                next row unless authtype.end_with?(")") ||
+                  authtype.end_with?("?")
 
-                row[:authtypetent] = 'y'
+                row[:authtypetent] = "y"
                 row
               end
 
@@ -54,11 +54,11 @@ module Kiba
 
                 at = row[:authoritytype]
                 if at.blank?
-                  val = config.untyped_treatment == 'Person' ? 'p' : 'o'
-                elsif at.start_with?('P')
-                  val = 'p'
+                  val = config.untyped_treatment == "Person" ? "p" : "o"
+                elsif at.start_with?("P")
+                  val = "p"
                 else
-                  val = 'o'
+                  val = "o"
                 end
                 row[:correctauthoritytype] = val
 

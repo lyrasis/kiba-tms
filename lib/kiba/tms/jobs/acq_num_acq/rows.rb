@@ -36,7 +36,7 @@ module Kiba
                 id_source: :acquisitionnumber,
                 id_target: :acquisitionreferencenumber,
                 sort_on: :combined,
-                separator: '//'
+                separator: "//"
             end
           end
         end

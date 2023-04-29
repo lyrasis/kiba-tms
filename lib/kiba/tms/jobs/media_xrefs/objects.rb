@@ -36,8 +36,8 @@ module Kiba
                 keycolumn: :mediamasterid,
                 fieldmap: {item2_id: :identificationnumber}
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'collectionobjects',
-                item2_type: 'media'
+                item1_type: "collectionobjects",
+                item2_type: "media"
               }
             end
           end

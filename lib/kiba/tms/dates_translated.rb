@@ -43,14 +43,14 @@ module Kiba
         end
       end
 
-      def merge_fieldmap(target_prefix = '')
+      def merge_fieldmap(target_prefix = "")
         cs_date_fields.map{ |field|
           prefix = target_prefix.empty? ? "" : "#{target_prefix}_"
           ["#{prefix}#{field}".to_sym, field]
         }.to_h
       end
 
-      def merge_xforms(keycolumn:, target_prefix: '')
+      def merge_xforms(keycolumn:, target_prefix: "")
         fieldmap = merge_fieldmap(target_prefix)
         date_fields = cs_date_fields
 

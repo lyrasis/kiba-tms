@@ -11,7 +11,7 @@ module Kiba
           def initialize
             @source = :displaydate
             @target = :enddateiso
-            @prefixes = Tms::Constituents.dates.datedescription_variants['death']
+            @prefixes = Tms::Constituents.dates.datedescription_variants["death"]
               .map{ |prefix| Regexp.new("^#{prefix} *", Regexp::IGNORECASE) }
           end
           
@@ -19,7 +19,7 @@ module Kiba
             dd = row[source]
             return row unless eligible?(dd)
 
-            val = dd.sub(prefix(dd), '')
+            val = dd.sub(prefix(dd), "")
             targetdate = row[target]
             targetdate.blank? ? add(row, val) : compare(row, val, targetdate)
             row[source] = nil
@@ -36,7 +36,7 @@ module Kiba
 
           def add_note(row, val)
             note = "Death date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, '%CR%%CR%')
+            append_value(row, :datenote, note, "%CR%%CR%")
           end
 
           def compare(row, val, targetdate)

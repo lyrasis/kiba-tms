@@ -11,8 +11,8 @@ module Kiba
 
           # @private
           def process(row)
-            label_and_note = [label(row), note(row)].compact.join(': ')
-            final = [label_and_note, author(row)].compact.join(' --')
+            label_and_note = [label(row), note(row)].compact.join(": ")
+            final = [label_and_note, author(row)].compact.join(" --")
             row[target] = final
             %i[purpose textdate textentry remarks texttype org_author
                person_author].each do |field|
@@ -47,7 +47,7 @@ module Kiba
           end
 
           def entry(row)
-            val = row.fetch(:textentry, '')
+            val = row.fetch(:textentry, "")
             return nil if val.blank?
 
             val
@@ -64,20 +64,20 @@ module Kiba
             val = [entry(row), remarks(row)].compact
             return nil if val.empty?
 
-            val.length == 1 ? val.first : val.join('%CR%%CR%REMARKS ON NOTE: ')
+            val.length == 1 ? val.first : val.join("%CR%%CR%REMARKS ON NOTE: ")
           end
 
           def purpose_type_for_label(row)
-            val = [row.fetch(:texttype, ''), row.fetch(:purpose, '')]
+            val = [row.fetch(:texttype, ""), row.fetch(:purpose, "")]
               .reject{ |val| val.blank? }
-              .join('/')
+              .join("/")
             return nil if val.blank?
 
             val
           end
 
           def remarks(row)
-            val = row.fetch(:remarks, '')
+            val = row.fetch(:remarks, "")
             return nil if val.blank?
 
             val

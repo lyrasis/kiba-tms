@@ -24,7 +24,7 @@ module Kiba
                 field: :location
               transform Merge::ConstantValue,
                 target: :dropreason,
-                value: 'No location value'
+                value: "No location value"
             end
           end
         end

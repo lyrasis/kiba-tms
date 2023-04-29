@@ -51,7 +51,7 @@ module Kiba
           end
 
           def filepath
-            File.join(Tms.datadir, 'prepped', "#{table.filekey}.csv")
+            File.join(Tms.datadir, "prepped", "#{table.filekey}.csv")
           end
         end
       end

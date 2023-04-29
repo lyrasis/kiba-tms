@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
-            return unless config.for?('Loans')
+            return unless config.for?("Loans")
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -40,8 +40,8 @@ module Kiba
                 keycolumn: :mediamasterid,
                 fieldmap: {item2_id: :identificationnumber}
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'loansin',
-                item2_type: 'media'
+                item1_type: "loansin",
+                item2_type: "media"
               }
             end
           end

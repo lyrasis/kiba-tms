@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -20,8 +20,8 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          'Part of an object' => 'non-separable-part',
-          'Accessory' => 'separable-part'
+          "Part of an object" => "non-separable-part",
+          "Accessory" => "separable-part"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

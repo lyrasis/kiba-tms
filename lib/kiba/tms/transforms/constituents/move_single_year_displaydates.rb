@@ -33,7 +33,7 @@ module Kiba
 
           def add_note(row, val)
             note = "Birth date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, '%CR%%CR%')
+            append_value(row, :datenote, note, "%CR%%CR%")
           end
 
           def compare(row, val, begindate)
@@ -48,7 +48,7 @@ module Kiba
           
           def eligible?(dd)
             return false if dd.blank?
-            return false if dd.split('-').length > 1
+            return false if dd.split("-").length > 1
             
             true if dd.downcase.match?(/^(\d{2,4}|ca?\.? ?\d)/)
           end

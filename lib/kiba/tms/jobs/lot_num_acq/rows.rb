@@ -48,7 +48,7 @@ module Kiba
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: :acquisitionnumber,
                   find: '\|',
-                  replace: ', '
+                  replace: ", "
               end
             end
           end

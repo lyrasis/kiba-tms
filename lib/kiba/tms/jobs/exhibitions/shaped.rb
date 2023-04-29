@@ -18,7 +18,7 @@ module Kiba
           end
 
           def publishto_true_value
-            Tms.using_public_browser ? 'CollectionSpace Public Browser' : 'None'
+            Tms.using_public_browser ? "CollectionSpace Public Browser" : "None"
           end
 
           def xforms
@@ -31,7 +31,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[exhtitle subtitle],
                 target: :title,
-                sep: ': ',
+                sep: ": ",
                 delete_sources: true
 
               # Move locationname/auth to Gallery rotation if there is a
@@ -69,9 +69,9 @@ module Kiba
               }
 
               transform Append::ToFieldValue,
-                field: :department, value: ' department'
+                field: :department, value: " department"
               transform Merge::ConstantValueConditional,
-                fieldmap: { dept_exhibitionpersonrole: 'Responsible department'},
+                fieldmap: { dept_exhibitionpersonrole: "Responsible department"},
                 condition: ->(row){ !row[:department].blank? }
               transform Rename::Field,
                 from: :department,
@@ -100,15 +100,15 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{field}_sources".to_sym),
                   target: field,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
 
               {
-                exhtravelling: {'0'=>nil, '1'=>'traveling'},
-                publishto: {'0'=>'None', '1'=>job.send(:publishto_true_value)},
-                isinhouse: {'0'=>nil, '1'=>'in-house'},
-                isvirtual: {'0'=>nil, '1'=>'virtual'}
+                exhtravelling: {"0"=>nil, "1"=>"traveling"},
+                publishto: {"0"=>"None", "1"=>job.send(:publishto_true_value)},
+                isinhouse: {"0"=>nil, "1"=>"in-house"},
+                isvirtual: {"0"=>nil, "1"=>"virtual"}
               }.each do |field, mapping|
                 transform Replace::FieldValueWithStaticMapping,
                   source: field,
@@ -118,7 +118,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[isinhouse exhtravelling isvirtual],
                 target: :type,
-                sep: ' + ',
+                sep: " + ",
                 delete_sources: true
 
               transform Delete::EmptyFields

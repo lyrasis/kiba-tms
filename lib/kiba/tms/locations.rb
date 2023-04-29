@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -29,7 +29,7 @@ module Kiba
       # Whether client wants the migration to include construction of a location
       #   hierarchy
       setting :hierarchy, default: true, reader: true
-      setting :hierarchy_delim, default: ' > ', reader: true
+      setting :hierarchy_delim, default: " > ", reader: true
       # special/client customized data cleanup of Locations table prior to any
       #   other transforms
       setting :initial_data_cleaner, default: nil, reader: true
@@ -50,7 +50,7 @@ module Kiba
       setting :provided_worksheets,
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'to_client', filename)
+              File.join(Kiba::Tms.datadir, "to_client", filename)
             end
         }
       # List returned worksheets, most recent first. Assumes they are in the
@@ -59,7 +59,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'supplied', filename)
+              File.join(Kiba::Tms.datadir, "supplied", filename)
             end
         }
       setting :multi_source_normalizer,
@@ -68,9 +68,9 @@ module Kiba
 
       def authority_vocab_mapping
         if authorities.any?(:offsite)
-          {'0'=>'Local', '1'=>'Offsite'}
+          {"0"=>"Local", "1"=>"Offsite"}
         else
-          {'0'=>'Local', '1'=>'Local'}
+          {"0"=>"Local", "1"=>"Local"}
         end
       end
 

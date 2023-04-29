@@ -64,7 +64,7 @@ module Kiba
             duplicate = row[:duplicate]
             return false if duplicate.blank?
 
-            true if duplicate == 'y'
+            true if duplicate == "y"
           end
 
           def name_appendable?(row)
@@ -78,14 +78,14 @@ module Kiba
             type = row[:contype]
             return false if type.blank?
 
-            true if type['Organization']
+            true if type["Organization"]
           end
 
           def person?(row)
             type = row[:contype]
             return false if type.blank?
 
-            true if type['Person']
+            true if type["Person"]
           end
 
           def type_appendable?(row)

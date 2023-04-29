@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'dry/monads'
-require 'dry/monads/do'
+require "csv"
+require "dry/monads"
+require "dry/monads/do"
 
 module Kiba
   module Tms

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -27,7 +27,7 @@ module Kiba
         reader: true
       setting :mappings,
         default: {
-          'US $' => 'US Dollar'
+          "US $" => "US Dollar"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

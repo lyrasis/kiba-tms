@@ -25,15 +25,15 @@ module Kiba
 
               transform Tms::Transforms::NameCompile::SelectCanTypematchEstablished
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.typematch_alt_established'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.typematch_alt_established"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
-                sep: '.',
+                sep: ".",
                 delete_sources: true
 
               if treatment == :variant
-                transform Merge::ConstantValue, target: :relation_type, value: 'variant term'
+                transform Merge::ConstantValue, target: :relation_type, value: "variant term"
                 transform Delete::Fields, fields: :altname
                 transform Rename::Fields, fieldmap: {
                   conname: Tms::Constituents.preferred_name_field,
@@ -48,7 +48,7 @@ module Kiba
                 end
 
                 transform Delete::Fields, fields: Tms::NameCompile.variant_nil
-              elsif treatment.to_s.end_with?('_note')
+              elsif treatment.to_s.end_with?("_note")
                 transform Tms::Transforms::NameCompile::AddRelatedAltNameNote, target: treatment
               end
               transform Delete::Fields, fields: Tms::NameCompile.alt_nil

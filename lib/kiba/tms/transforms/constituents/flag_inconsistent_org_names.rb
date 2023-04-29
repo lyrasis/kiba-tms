@@ -23,18 +23,18 @@ module Kiba
             row[target] = nil
             type_val = row[type]
             return row if type_val.blank?
-            return row unless type_val == 'Organization'
+            return row unless type_val == "Organization"
 
             inst_val = row[inst]
             unless inst_val.blank?
-              row[target] = 'y'
+              row[target] = "y"
               return row
             end
 
             vals = getter.call(row).values.uniq
             return row if vals.length == 1
 
-            row[target] = 'y'
+            row[target] = "y"
             row
           end
 

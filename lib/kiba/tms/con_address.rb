@@ -16,8 +16,8 @@ module Kiba
 
       setting :active_mapping,
         default: {
-          '0' => 'Inactive address',
-          '1' => 'Active address'
+          "0" => "Inactive address",
+          "1" => "Active address"
         },
         reader: true
       # ConAddress columns to include in address value
@@ -51,7 +51,7 @@ module Kiba
           value
         }
       setting :note_prefix,
-        default: 'Address note: ',
+        default: "Address note: ",
         reader: true
       setting :addressplace1_fields,
         default: %i[displayname1 displayname2],
@@ -62,8 +62,8 @@ module Kiba
       setting :addressplace2_fields,
         default: %i[streetline1 streetline2 streetline3],
         reader: true
-      setting :addressplace1_delim, default: ' -- ', reader: true
-      setting :addressplace2_delim, default: ', ', reader: true
+      setting :addressplace1_delim, default: " -- ", reader: true
+      setting :addressplace2_delim, default: ", ", reader: true
       # The next four settings are whether to generate notes about address
       #   type/status, eg. "Is default mailing address". Default to no since CS
       #   doesn't have any note field associated with a given address
@@ -84,20 +84,20 @@ module Kiba
       setting :omit_inactive_address, default: false, reader: true
       setting :shipping_mapping,
         default: {
-          '0' => nil,
-          '1' => 'Is default shipping address'
+          "0" => nil,
+          "1" => "Is default shipping address"
         },
         reader: true
       setting :billing_mapping,
         default: {
-          '0' => nil,
-          '1' => 'Is default billing address'
+          "0" => nil,
+          "1" => "Is default billing address"
         },
         reader: true
       setting :mailing_mapping,
         default: {
-          '0' => nil,
-          '1' => 'Is default mailing address'
+          "0" => nil,
+          "1" => "Is default mailing address"
         },
         reader: true
     end

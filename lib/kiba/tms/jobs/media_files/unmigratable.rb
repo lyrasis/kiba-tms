@@ -37,7 +37,7 @@ module Kiba
                 end
               transform Merge::ConstantValue,
                 target: :unmigratable_reason,
-                value: 'target table cannot be linked to media in CS'
+                value: "target table cannot be linked to media in CS"
             end
           end
         end

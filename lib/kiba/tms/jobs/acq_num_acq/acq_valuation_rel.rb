@@ -36,7 +36,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: combinefields,
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: true
 
               transform Delete::FieldsExcept,
@@ -55,8 +55,8 @@ module Kiba
                 fieldmap: {item2_id: :valuationcontrolrefnumber}
               transform Delete::Fields, fields: :objectvalueid
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'valuationcontrols'
+                item1_type: "acquisitions",
+                item2_type: "valuationcontrols"
               }
             end
           end

@@ -25,7 +25,7 @@ module Kiba
               transform Deduplicate::Table, field: :stmtresponsibility
               transform Cspace::NormalizeForID, source: :stmtresponsibility, target: :norm
               transform Rename::Field, from: :stmtresponsibility, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ReferenceMaster.stmtresponsibility'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ReferenceMaster.stmtresponsibility"
             end
           end
         end

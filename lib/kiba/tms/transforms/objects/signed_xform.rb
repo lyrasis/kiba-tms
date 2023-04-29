@@ -7,7 +7,7 @@ module Kiba
         class SignedXform < TextInscriptionXform
           def initialize
             @source = :signed
-            @typeval = 'signature'
+            @typeval = "signature"
           end
         end
       end

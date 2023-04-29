@@ -35,14 +35,14 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :isactive,
-                  value: '0'
+                  value: "0"
               end
 
               unless config.migrate_non_displayed
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: :isdisplayed,
-                  value: '0'
+                  value: "0"
               end
 
               if config.omitting_fields?

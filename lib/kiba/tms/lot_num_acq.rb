@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -12,7 +12,7 @@ module Kiba
         default: :acquisitionnote,
         reader: true
       setting :acq_number_prefix,
-        default: 'Acquisition number value(s): ',
+        default: "Acquisition number value(s): ",
         reader: true
 
       setting :source_job_key, default: :lot_num_acq__rows, reader: true

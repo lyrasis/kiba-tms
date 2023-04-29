@@ -10,7 +10,7 @@ module Kiba
               lookup: lookup,
               keycolumn: :constituentid,
               fieldmap: {text_entry: :text_entry},
-              delim: '%CR%%CR%',
+              delim: "%CR%%CR%",
               sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
               )
           end

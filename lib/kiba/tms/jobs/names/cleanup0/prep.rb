@@ -29,8 +29,8 @@ module Kiba
                 transform Fingerprint::Decode,
                   fingerprint: :fingerprint,
                   source_fields: Tms::Services::FingerprintFields.names,
-                  delim: '|||',
-                  prefix: 'fp'
+                  delim: "|||",
+                  prefix: "fp"
 
 #                transform FilterRows::FieldEqualTo, action: :reject, field: :migration_action, value: 'skip'
                 transform Cspace::NormalizeForID,

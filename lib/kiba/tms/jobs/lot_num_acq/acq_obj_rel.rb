@@ -28,8 +28,8 @@ module Kiba
                 objectnumber: :item2_id
               }
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'acquisitions',
-                item2_type: 'collectionobjects'
+                item1_type: "acquisitions",
+                item2_type: "collectionobjects"
               }
             end
           end

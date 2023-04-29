@@ -25,7 +25,7 @@ module Kiba
             base << :con_phones__to_merge if Tms::ConPhones.used
             base << :name_compile__variant_term
             base << :name_compile__bio_note
-            if Tms::TextEntries.for?('Constituents')
+            if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
             base.select{ |job| Tms.job_output?(job) }
@@ -66,16 +66,16 @@ module Kiba
                   keycolumn: :namemergenorm,
                   conditions: ->(_pref, rows) do
                     rows.select{ |row| row[:contype] &&
-                        row[:contype].start_with?('Person') }
+                        row[:contype].start_with?("Person") }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
-                  delim: '%CR%'
+                  delim: "%CR%"
               end
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: %i[pref_title var_title],
                 find: '\.',
-                replace: ''
+                replace: ""
 
               term_targets = %i[termdisplayname salutation title forename
                                 middlename surname nameadditions termflag
@@ -109,7 +109,7 @@ module Kiba
               if Tms::ConDisplayBios.used
                 transform Tms::ConDisplayBios.merger
               end
-              if Tms::TextEntries.for?('Constituents') &&
+              if Tms::TextEntries.for?("Constituents") &&
                   Tms::TextEntries.for_constituents_merge
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
@@ -125,7 +125,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.bionote_sources,
                   target: :bionote,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
               unless config.group_sources.empty?
@@ -139,7 +139,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.namenote_sources,
                   target: :namenote,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
 

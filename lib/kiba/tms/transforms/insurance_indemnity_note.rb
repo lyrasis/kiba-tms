@@ -14,14 +14,14 @@ module Kiba
             fields: sources
           )
           @prefixes = {
-            insurancefromlender: 'Insurance from lender',
-            insurancefrompreviousvenue: 'Insurance from previous venue',
-            insuranceatvenue: 'Insurance at venue',
-            insurancereturn: 'Insurance return',
-            indemnityfromlender: 'Indemnity from lender',
-            indemnityfrompreviousvenue: 'Indemnity from previous venue',
-            indemnityatvenue: 'Indemnity at venue',
-            indemnityreturn: 'Indemnity return'
+            insurancefromlender: "Insurance from lender",
+            insurancefrompreviousvenue: "Insurance from previous venue",
+            insuranceatvenue: "Insurance at venue",
+            insurancereturn: "Insurance return",
+            indemnityfromlender: "Indemnity from lender",
+            indemnityfrompreviousvenue: "Indemnity from previous venue",
+            indemnityatvenue: "Indemnity at venue",
+            indemnityreturn: "Indemnity return"
           }
         end
 
@@ -32,7 +32,7 @@ module Kiba
           return row if vals.empty?
 
           row[target] = vals.map{ |field, val| "#{prefixes[field]}: #{val}" }
-            .join('%CR%')
+            .join("%CR%")
           row
         end
 

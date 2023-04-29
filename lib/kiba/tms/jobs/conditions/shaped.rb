@@ -53,7 +53,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.conditionchecknote_sources,
                 target: :conditionchecknote,
-                sep: '%CR%',
+                sep: "%CR%",
                 delete_sources: true
 
               transform Collapse::FieldsToRepeatableFieldGroup,

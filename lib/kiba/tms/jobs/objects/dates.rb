@@ -49,7 +49,7 @@ module Kiba
               transform Delete::FieldsExcept, fields: keep
               transform Delete::FieldValueMatchingRegexp,
                 fields: config.date_fields,
-                match: '^0$'
+                match: "^0$"
 
               if lookups.any?(:obj_context__periods)
                 transform Merge::MultiRowLookup,

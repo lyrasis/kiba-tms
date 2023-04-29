@@ -40,7 +40,7 @@ module Kiba
                   transform FilterRows::FieldEqualTo,
                     action: :reject,
                     field: :active,
-                    value: '0'
+                    value: "0"
                 end
               end
               transform Tms::Transforms::DeleteTmsFields

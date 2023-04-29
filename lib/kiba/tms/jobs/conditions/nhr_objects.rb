@@ -27,7 +27,7 @@ module Kiba
               transform Replace::FieldValueWithStaticMapping,
                 source: :tablename,
                 mapping: {
-                  'Objects'=>'collectionobjects'
+                  "Objects"=>"collectionobjects"
                 }
               transform Rename::Fields, fieldmap: {
                 recordnumber: :item1_id,
@@ -36,7 +36,7 @@ module Kiba
               }
               transform Merge::ConstantValue,
                 target: :item2_type,
-                value: 'conditionchecks'
+                value: "conditionchecks"
 
               transform CombineValues::FullRecord, target: :index
               transform Deduplicate::Table,

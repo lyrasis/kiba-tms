@@ -15,9 +15,9 @@ module Kiba
             parts = getter.call(row)
             return nil if parts.empty?
 
-            post_comma = [parts[:firstname], parts[:middlename]].compact.join(' ')
+            post_comma = [parts[:firstname], parts[:middlename]].compact.join(" ")
             joinable = post_comma.empty? ? nil : post_comma
-            [parts[:lastname], joinable, parts[:suffix]].compact.join(', ')
+            [parts[:lastname], joinable, parts[:suffix]].compact.join(", ")
           end
 
           private

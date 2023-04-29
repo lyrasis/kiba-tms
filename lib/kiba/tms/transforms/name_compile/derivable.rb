@@ -7,9 +7,9 @@ module Kiba
         # Mix-in module to derive name compilation rows
         module Derivable
           def derive_main_org(row, orgnamefield, mode = :main)
-            row[:contype] = 'Organization (derived)'
+            row[:contype] = "Organization (derived)"
             row[Tms::Constituents.preferred_name_field] = row[orgnamefield]
-            row[:relation_type] = '_main term'
+            row[:relation_type] = "_main term"
             del = [Tms::NameCompile.org_nil, Tms::NameCompile.derived_nil]
             del << Tms::NameCompile.alt_nil if mode == :alt
             del.flatten.each{ |field| row.delete(field) }
@@ -17,10 +17,10 @@ module Kiba
           end
 
           def derive_main_person(row, personnamefield, mode = :main)
-            row[:contype] = 'Person (derived)'
+            row[:contype] = "Person (derived)"
             personname = row[personnamefield]
             row[Tms::Constituents.preferred_name_field] = personname
-            row[:relation_type] = '_main term'
+            row[:relation_type] = "_main term"
             del = [Tms::NameCompile.person_nil, Tms::NameCompile.derived_nil]
             del << Tms::NameCompile.alt_nil if mode == :alt
             del.flatten.each{ |field| row.delete(field) }

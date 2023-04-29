@@ -21,7 +21,7 @@ module Kiba
 
           def clean(dd, nationality)
             pattern = Regexp.new("#{nationality},? *", Regexp::IGNORECASE)
-            dd.gsub(pattern, '')
+            dd.gsub(pattern, "")
           end
         end
       end

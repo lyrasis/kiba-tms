@@ -14,15 +14,15 @@ module Kiba
           end
 
           def process(row)
-            row[target] = 'None'
+            row[target] = "None"
             return row unless publishing
 
             got = getter.call(row)
             return row if got.blank?
 
             vals = got.values
-            if vals.length == 2 && vals.uniq == ['1']
-              row[target] = 'CollectionSpace Public Browser'
+            if vals.length == 2 && vals.uniq == ["1"]
+              row[target] = "CollectionSpace Public Browser"
             end
             row
           end

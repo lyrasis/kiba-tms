@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationName do
   let(:accumulator){ [] }
@@ -14,20 +14,20 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationName do
   let(:locnames){ result.map{ |row| row[:location_name] } }
   let(:input) do
     [
-      {brief_address: 'a', site: 'b', room: 'c', unittype: 'd', unitnumber: 'e', unitposition: 'f'},
-      {brief_address: 'a', site: 'b', room: 'c', unittype: nil, unitnumber: '', unitposition: 'f'},
-      {brief_address: 'a', site: '', room: 'c', unittype: '', unitnumber: 'e', unitposition: nil},
-      {other_data: 'blah'}
+      {brief_address: "a", site: "b", room: "c", unittype: "d", unitnumber: "e", unitposition: "f"},
+      {brief_address: "a", site: "b", room: "c", unittype: nil, unitnumber: "", unitposition: "f"},
+      {brief_address: "a", site: "", room: "c", unittype: "", unitnumber: "e", unitposition: nil},
+      {other_data: "blah"}
     ]
   end
 
-  context 'when append to types = none' do
+  context "when append to types = none" do
 
-    it 'adds location_name field as expected' do
+    it "adds location_name field as expected" do
       expected = [
-        'a >> b >> c >> d e >> f',
-        'a >> b >> c >> f',
-        'a >> c >> e',
+        "a >> b >> c >> d e >> f",
+        "a >> b >> c >> f",
+        "a >> c >> e",
         nil
         ]
       expect(locnames).to eq(expected)

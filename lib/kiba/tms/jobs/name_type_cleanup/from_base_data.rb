@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: '_main term'
+                value: "_main term"
               transform Delete::Fields,
                 fields: %i[
                            sort relation_type variant_term variant_qualifier

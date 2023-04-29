@@ -18,7 +18,7 @@ module Kiba
             dd = row[source]
             return row unless eligible?(dd)
 
-            parts = dd.split('-').map(&:strip)
+            parts = dd.split("-").map(&:strip)
 
             %i[birth death].each_with_index do |type, idx|
               sourceval = parts[idx]
@@ -51,12 +51,12 @@ module Kiba
 
           def add_note(row, type, val)
             note = "#{type.to_s.capitalize} date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, '%CR%%CR%')
+            append_value(row, :datenote, note, "%CR%%CR%")
           end
           
           def eligible?(dd)
             return false if dd.blank?
-            parts = dd.split('-')
+            parts = dd.split("-")
             return false unless parts.length == 2
 
             true if parts.select{ |part| part.match?(/(\d{4}|\d ?b\.?c\.?)/i) }.length == 2

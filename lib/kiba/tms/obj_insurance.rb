@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -41,11 +41,11 @@ module Kiba
         }
       setting :systemvaluetype_mapping,
         default: {
-          '0'=>'object insurance value',
-          '1'=>'loan object insurance value',
-          '2'=>'loan object 3rd party appraisal value',
-          '3'=>'shipment insurance value',
-          '4'=>'object accession value'
+          "0"=>"object insurance value",
+          "1"=>"loan object insurance value",
+          "2"=>"loan object 3rd party appraisal value",
+          "3"=>"shipment insurance value",
+          "4"=>"object accession value"
         },
         reader: true
       # What to do with row if :value = 0

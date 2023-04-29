@@ -29,7 +29,7 @@ module Kiba
                 fieldmap: {normnew: :norm},
                 lookup: names__flagged_duplicates,
                 keycolumn: :norm,
-                constantmap: {duplicate: 'y'}
+                constantmap: {duplicate: "y"}
               transform Delete::Fields, fields: %i[normnew constituentid]
 
               transform Rename::Field, from: Kiba::Tms::Constituents.preferred_name_field, to: :preferred_name_form

@@ -26,7 +26,7 @@ module Kiba
             base << :name_compile__variant_term
             base << :name_compile__bio_note
             base << :name_compile__contact_person
-            if Tms::TextEntries.for?('Constituents')
+            if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
             base.select{ |job| Tms.job_output?(job) }
@@ -73,10 +73,10 @@ module Kiba
                   keycolumn: :namemergenorm,
                   conditions: ->(_pref, rows) do
                     rows.select{ |row| row[:contype] &&
-                        row[:contype].start_with?('Person') }
+                        row[:contype].start_with?("Person") }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
-                  delim: '%CR%'
+                  delim: "%CR%"
               end
 
               term_targets = %i[termdisplayname termflag termsourcenote]
@@ -109,7 +109,7 @@ module Kiba
               if Tms::ConDisplayBios.used?
                 transform Tms::ConDisplayBios.merger
               end
-              if Tms::TextEntries.for?('Constituents') &&
+              if Tms::TextEntries.for?("Constituents") &&
                   Tms::TextEntries.for_constituents_merge
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
@@ -137,7 +137,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.historynote_sources,
                   target: :historynote,
-                  sep: '%CR%',
+                  sep: "%CR%",
                   delete_sources: true
               end
               unless config.group_sources.empty?

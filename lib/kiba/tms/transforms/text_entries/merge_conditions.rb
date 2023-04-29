@@ -9,7 +9,7 @@ module Tms
             jobkey: :text_entries_for__conditions,
             column: :recordid
           )
-          prefix = 'te'
+          prefix = "te"
           datetarget = "#{prefix}_conditiondate".to_sym
           notetarget = "#{prefix}_conditionnote".to_sym
           @merger = Merge::MultiRowLookup.new(

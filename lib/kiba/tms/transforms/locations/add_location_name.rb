@@ -45,7 +45,7 @@ module Kiba
               .compact
             return nil if result.empty?
 
-            result.join(' ')
+            result.join(" ")
           end
         end
       end

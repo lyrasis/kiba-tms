@@ -7,7 +7,7 @@ module Kiba
         class MoveActiveDisplaydateToDatenote
           def initialize
             @source = :displaydate
-            @prefix = 'active'
+            @prefix = "active"
             @target = :datenote
           end
           

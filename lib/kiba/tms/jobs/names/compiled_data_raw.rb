@@ -26,7 +26,7 @@ module Kiba
             base << :names__from_loans if Tms::Loans.used?
             base << :names__from_obj_accession if Tms::ObjAccession.used?
             base << :names__from_obj_locations if Tms::ObjLocations.used?
-            if Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?('Constituents')
+            if Tms::AssocParents.used? && Tms::AssocParents.target_tables.any?("Constituents")
               base << :names__from_assoc_parents_for_con
             end
             base << :names__from_loc_approvers if Tms::LocApprovers.used?
@@ -41,7 +41,7 @@ module Kiba
 
               transform Fingerprint::Add,
                 fields: Tms::Services::FingerprintFields.names,
-                delim: '␟', # Unicode Character 'SYMBOL FOR UNIT SEPARATOR' (U+241F)
+                delim: "␟", # Unicode Character 'SYMBOL FOR UNIT SEPARATOR' (U+241F)
                 target: :fingerprint,
                 override_app_delim_check: false
               transform Deduplicate::Flag, on_field: :norm, in_field: :duplicate, using: @deduper,

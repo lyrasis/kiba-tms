@@ -62,7 +62,7 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :insindemresp,
-                find: '%CR%',
+                find: "%CR%",
                 replace: "\n"
 
               if Tms::LoanObjStatuses.used?
@@ -96,10 +96,10 @@ module Kiba
                   next row if cond.blank?
 
                   label = conditions_label.sub(
-                    '{objectnumber}',
+                    "{objectnumber}",
                     row[:objectnumber]
                   ).sub(
-                    '{loannumber}',
+                    "{loannumber}",
                     row[:loannumber]
                   )
                   row[:conditions] = "#{label}: #{cond}"
@@ -109,7 +109,7 @@ module Kiba
                 warn("Unknown value for Tms::LoanObjXrefs.conditions_label")
               end
 
-              if Tms::TextEntries.for?('LoanObjXrefs')
+              if Tms::TextEntries.for?("LoanObjXrefs")
                 xform = Tms::TextEntries.for_loan_obj_xrefs_merge
                 transform xform if xform
               end

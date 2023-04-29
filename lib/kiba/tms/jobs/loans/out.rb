@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :loantype,
-                value: 'loan out'
+                value: "loan out"
               transform Delete::Fields, fields: :loantype
             end
           end

@@ -28,7 +28,7 @@ module Kiba
                 end
               transform Merge::ConstantValue,
                 target: :unmigratable_reason,
-                value: 'not linked to any object or procedure'
+                value: "not linked to any object or procedure"
             end
           end
         end

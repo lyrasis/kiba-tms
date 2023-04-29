@@ -70,7 +70,7 @@ module Kiba
                     Tms::Loansout.status_nil_merge_fields(app_map)
                   ),
                   constant_target: :app_loanstatus,
-                  constant_value: 'Approved'
+                  constant_value: "Approved"
               end
 
               req_map = Tms::Loansout.delete_omitted_fields({
@@ -87,7 +87,7 @@ module Kiba
                     Tms::Loansout.status_nil_merge_fields(req_map)
                   ),
                   constant_target: :req_loanstatus,
-                  constant_value: 'Requested'
+                  constant_value: "Requested"
               end
 
               agsent_map = Tms::Loansout.delete_omitted_fields({
@@ -103,7 +103,7 @@ module Kiba
                     Tms::Loansout.status_nil_merge_fields(agsent_map)
                   ),
                   constant_target: :agsent_loanstatus,
-                  constant_value: 'Agreement sent',
+                  constant_value: "Agreement sent",
                   replace_empty: false
               end
 
@@ -120,7 +120,7 @@ module Kiba
                     Tms::Loansout.status_nil_merge_fields(agrec_map)
                   ),
                   constant_target: :agrec_loanstatus,
-                  constant_value: 'Agreement received',
+                  constant_value: "Agreement received",
                   replace_empty: false
               end
 
@@ -139,7 +139,7 @@ module Kiba
                     Tms::Loansout.status_nil_merge_fields(origloanend_map)
                   ),
                   constant_target: :origloanend_loanstatus,
-                  constant_value: 'Original loan end',
+                  constant_value: "Original loan end",
                   replace_empty: false
               end
 
@@ -201,7 +201,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notefields,
                   target: :loanoutnote,
-                  sep: '%CR%%CR%',
+                  sep: "%CR%%CR%",
                   delete_sources: true
               end
 
@@ -212,7 +212,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: conditionsfields,
                   target: :specialconditionsofloan,
-                  sep: '%CR%%CR%',
+                  sep: "%CR%%CR%",
                   delete_sources: true
               end
 
@@ -222,7 +222,7 @@ module Kiba
                 source: :contact_person,
                 newfield: :borrowerscontact
 
-              if Tms::ConRefs.for?('Loansout')
+              if Tms::ConRefs.for?("Loansout")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,

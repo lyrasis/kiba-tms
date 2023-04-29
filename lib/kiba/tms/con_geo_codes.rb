@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -14,7 +14,7 @@ module Kiba
       setting :type_field, default: :congeocode, reader: true
       setting :used_in,
         default: [
-          'ConGeography.geocodeid'
+          "ConGeography.geocodeid"
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable

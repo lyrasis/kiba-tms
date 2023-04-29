@@ -13,7 +13,7 @@ module Kiba
           def initialize
             @eligiblematch = Tms::Constituents.dates.active_remark_match
             @cleanmatch = Tms::Constituents.dates.active_remark_clean_match
-            @warntext = 'active date in remarks, some other date value in date'
+            @warntext = "active date in remarks, some other date value in date"
           end
 
           # @private
@@ -21,7 +21,7 @@ module Kiba
             remarks = row[:remarks]
             return row unless eligible?(remarks)
 
-            row[:datedescription] = 'Active Dates'
+            row[:datedescription] = "Active Dates"
             date = row[:date]
             date.blank? ? set_active(row, remarks) : row[:warn] = warntext
             row
@@ -32,7 +32,7 @@ module Kiba
           attr_reader :eligiblematch, :cleanmatch, :warntext
 
           def cleaned(remarks)
-            remarks.sub(cleanmatch, '')
+            remarks.sub(cleanmatch, "")
           end
           
           def eligible?(remarks)

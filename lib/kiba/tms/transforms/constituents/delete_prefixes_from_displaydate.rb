@@ -11,7 +11,7 @@ module Kiba
               Clean::RegexpFindReplaceFieldVals.new(
                 fields: :displaydate,
                 find: "^#{prefix},? *",
-                replace: '',
+                replace: "",
                 casesensitive: false
                 )
             end

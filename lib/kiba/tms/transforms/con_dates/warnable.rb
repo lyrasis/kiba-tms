@@ -15,14 +15,14 @@ module Kiba
         module Warnable
           def add_warning(row, appended = nil)
             warns = appended ? warnings(row) << "#{warning}#{appended}" : warnings(row) << warning
-            row[target] = warns.join('; ')
+            row[target] = warns.join("; ")
           end
 
           def warnings(row)
             val = row[target]
             return [] if val.blank?
 
-            val.split('; ')
+            val.split("; ")
           end
         end
       end

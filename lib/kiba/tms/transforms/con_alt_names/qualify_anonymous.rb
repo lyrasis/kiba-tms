@@ -14,7 +14,7 @@ module Kiba
           end
 
           def process(row)
-            @altname = ''
+            @altname = ""
             return row unless eligible?(row)
 
             qualify(row)

@@ -42,7 +42,7 @@ module Kiba
 
           def process_remarks(row, remarks)
             split_remarks(remarks).each do |remark|
-              %i[rem_loanstatusdate rem_loanindividual].each{ |field| row[field] << '%NULLVALUE%' }
+              %i[rem_loanstatusdate rem_loanindividual].each{ |field| row[field] << "%NULLVALUE%" }
               row[:rem_loanstatus] << Tms::Loansin.remarks_status
               row[:rem_loanstatusnote] << remark
             end

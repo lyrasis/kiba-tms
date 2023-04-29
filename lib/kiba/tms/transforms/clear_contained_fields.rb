@@ -77,7 +77,7 @@ module Kiba
           return lval unless normalized
 
           val = lval.unicode_normalized?(:nfkc) ? lval : lval.unicode_normalize(:nfkc)
-          ActiveSupport::Inflector.transliterate(val).gsub(/[^a-zA-Z0-9]/, '')
+          ActiveSupport::Inflector.transliterate(val).gsub(/[^a-zA-Z0-9]/, "")
         end
 
         def norm(arr)

@@ -23,7 +23,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: 'contact_person'
+                value: "contact_person"
               transform Delete::FieldsExcept,
                 fields: %i[related_term related_role constituentid termsource
                            namemergenorm]

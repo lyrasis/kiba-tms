@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module Kiba
   module Tms
@@ -66,9 +66,9 @@ module Kiba
           return [] unless empty_fields
 
           case empty_fields.class.to_s
-          when 'Array'
+          when "Array"
             empty_fields
-          when 'Hash'
+          when "Hash"
             empty_fields.keys
           end
         end
@@ -104,7 +104,7 @@ module Kiba
         end
 
         def supplied?
-          return false if table.tablename == 'UnknownTable'
+          return false if table.tablename == "UnknownTable"
 
           true if table.type == :tms
         end
@@ -119,12 +119,12 @@ module Kiba
           elsif self.respond_to?(:source_job_key)
             Tms::Table::Obj.new(source_job_key)
           else
-            Tms::Table::Obj.new('UnknownTable')
+            Tms::Table::Obj.new("UnknownTable")
           end
         end
 
         def table_name
-          name.split('::').last
+          name.split("::").last
         end
 
         # whether or not table is used in client migration project
@@ -160,20 +160,20 @@ module Kiba
         def self.set_delete_fields_setting(mod)
           return if mod.respond_to?(:delete_fields)
 
-          mod.module_eval('setting :delete_fields, default: [], reader: true')
+          mod.module_eval("setting :delete_fields, default: [], reader: true")
         end
         private_class_method :set_delete_fields_setting
 
         def self.set_empty_fields_setting(mod)
           return if mod.respond_to?(:empty_fields)
 
-          mod.module_eval('setting :empty_fields, default: {}, reader: true')
+          mod.module_eval("setting :empty_fields, default: {}, reader: true")
         end
 
         def self.set_non_content_fields_setting(mod)
           return if mod.respond_to?(:non_content_fields)
 
-          str = 'setting :non_content_fields, default: [], reader: true'
+          str = "setting :non_content_fields, default: [], reader: true"
           mod.module_eval(str)
         end
       end

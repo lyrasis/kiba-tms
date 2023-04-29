@@ -11,7 +11,7 @@ module Kiba
             @combiner = CombineValues::FromFieldsWithDelimiter.new(
               sources: fields,
               target: target,
-              sep: ' ',
+              sep: " ",
               delete_sources: false,
               prepend_source_field_name: true
             )

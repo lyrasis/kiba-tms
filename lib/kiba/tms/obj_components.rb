@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -19,7 +19,7 @@ module Kiba
       setting :actual_components, default: false, reader: true
 
       setting :inactive_mapping,
-        default: {'0'=>'active', '1'=>'inactive'},
+        default: {"0"=>"active", "1"=>"inactive"},
         reader: true
       setting :text_entries_merge_xform, default: nil, reader: true
       setting :inventorystatus_fields,
@@ -37,7 +37,7 @@ module Kiba
         reader: true
 
       def merging_text_entries?
-        Tms::TextEntries.for?('ObjComponents') && text_entries_merge_xform
+        Tms::TextEntries.for?("ObjComponents") && text_entries_merge_xform
       end
     end
   end

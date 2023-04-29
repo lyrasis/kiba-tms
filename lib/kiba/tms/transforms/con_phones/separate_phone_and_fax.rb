@@ -50,7 +50,7 @@ module Kiba
             if desc.match(/^#{fax_pattern}$/i)
               row[:description] = nil
             else
-              row[:description] = desc.gsub(/#{fax_pattern}/i, '')
+              row[:description] = desc.gsub(/#{fax_pattern}/i, "")
                 .strip
             end
             row[:fax] = number

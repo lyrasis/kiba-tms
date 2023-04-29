@@ -42,7 +42,7 @@ module Kiba
           def ntc_needed?
             return false unless ntc_done?
 
-            ntc_targets.any?('Uncontrolled')
+            ntc_targets.any?("Uncontrolled")
           end
           extend Tms::Mixins::NameTypeCleanupable
 
@@ -81,7 +81,7 @@ module Kiba
               transform Deduplicate::Table, field: :constituentid
               transform Merge::ConstantValue,
                 target: :termsource,
-                value: 'Uncontrolled'
+                value: "Uncontrolled"
 
               [constituents__by_nonpref_norm,
                constituents__by_norm].each do |lkup|
@@ -153,7 +153,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype conpref_contype conorig_contype],
                   target: :contype,
-                  sep: '',
+                  sep: "",
                   delete_sources: true
                 transform do |row|
                   contype = row[:contype]

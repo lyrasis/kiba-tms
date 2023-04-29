@@ -62,7 +62,7 @@ module Kiba
                   config.status_nil_merge_fields(req_map)
                 ),
                 constant_target: :req_loanstatus,
-                constant_value: 'Requested'
+                constant_value: "Requested"
 
               app_map = {
                 approveddate: :app_loanstatusdate,
@@ -75,7 +75,7 @@ module Kiba
                   config.status_nil_merge_fields(app_map)
                 ),
                 constant_target: :app_loanstatus,
-                constant_value: 'Approved'
+                constant_value: "Approved"
 
               agsent_map = {
                 agreementsentisodate: :agsent_loanstatusdate
@@ -87,7 +87,7 @@ module Kiba
                   config.status_nil_merge_fields(agsent_map)
                 ),
                 constant_target: :agsent_loanstatus,
-                constant_value: 'Agreement sent',
+                constant_value: "Agreement sent",
                 replace_empty: false
 
               agrec_map = {
@@ -100,7 +100,7 @@ module Kiba
                   config.status_nil_merge_fields(agrec_map)
                 ),
                 constant_target: :agrec_loanstatus,
-                constant_value: 'Agreement received',
+                constant_value: "Agreement received",
                 replace_empty: false
 
               origloanend_map = {
@@ -115,7 +115,7 @@ module Kiba
                   config.status_nil_merge_fields(origloanend_map)
                 ),
                 constant_target: :origloanend_loanstatus,
-                constant_value: 'Original loan end',
+                constant_value: "Original loan end",
                 replace_empty: false
 
               if %i[note conditions].any?(dd_treatment)
@@ -158,7 +158,7 @@ module Kiba
                   keycolumn: :loanid,
                   fieldmap: {cl_loanstatusnote: :creditline},
                   constantmap: {
-                    cl_loanstatus: 'Credit line',
+                    cl_loanstatus: "Credit line",
                     cl_loanindividual: Tms.nullvalue,
                     cl_loanstatusdate: Tms.nullvalue
                   },
@@ -182,7 +182,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_source_fields,
                 target: :loaninnote,
-                sep: '%CR%%CR%',
+                sep: "%CR%%CR%",
                 delete_sources: true
 
               transform Tms::Transforms::InsuranceIndemnityNote
@@ -190,10 +190,10 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.conditions_source_fields,
                 target: :loaninconditions,
-                sep: '%CR%%CR%',
+                sep: "%CR%%CR%",
                 delete_sources: true
 
-              if Tms::ConRefs.for?('Loansin')
+              if Tms::ConRefs.for?("Loansin")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,

@@ -27,7 +27,7 @@ module Kiba
                 lambda: ->(row) do
                   contype = row[:contype]
                   contype &&
-                    contype.start_with?('Org')
+                    contype.start_with?("Org")
                 end
 
               transform Rename::Field,

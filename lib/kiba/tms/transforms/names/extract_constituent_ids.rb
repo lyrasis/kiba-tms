@@ -36,11 +36,11 @@ module Kiba
           end
           
           def org?(row)
-            type(row) == 'Organization'
+            type(row) == "Organization"
           end
           
           def person?(row)
-            type(row) == 'Person'
+            type(row) == "Person"
           end
 
           def type(row)

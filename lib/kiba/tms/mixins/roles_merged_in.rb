@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module Kiba
   module Tms
@@ -80,7 +80,7 @@ module Kiba
           Success(Tms::Data::ConfigSetting.new(
             mod:"#{name}.#{__callee__}",
             name: :unmapped_role_terms,
-            value: unmapped.join(', ')
+            value: unmapped.join(", ")
             ))
         end
 
@@ -126,7 +126,7 @@ module Kiba
         def self.set_con_ref_name_merge_rules(mod)
           unless mod.respond_to?(:con_ref_name_merge_rules)
             mod.module_eval(
-              'setting :con_ref_name_merge_rules, default: {}, reader: true'
+              "setting :con_ref_name_merge_rules, default: {}, reader: true"
             )
           end
 
@@ -141,9 +141,9 @@ module Kiba
         def self.set_con_ref_name_merge_rules_override(mod)
           unless mod.respond_to?(:con_ref_name_merge_rules_override)
             mod.module_eval(
-              'setting :con_ref_name_merge_rules_override, '\
-                'default: {}, '\
-                'reader: true'
+              "setting :con_ref_name_merge_rules_override, "\
+                "default: {}, "\
+                "reader: true"
             )
           end
         end

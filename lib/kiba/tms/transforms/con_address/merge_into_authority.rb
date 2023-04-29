@@ -11,7 +11,7 @@ module Kiba
                 lookup: lookup,
                 keycolumn: :constituentid,
                 delim: Tms.delim,
-                null_placeholder: '%NULLVALUE%',
+                null_placeholder: "%NULLVALUE%",
                 fieldmap: {
                   addressplace1: :addressplace1,
                   addressplace2: :addressplace2,
@@ -25,7 +25,7 @@ module Kiba
               Merge::MultiRowLookup.new(
                 lookup: lookup,
                 keycolumn: :constituentid,
-                delim: '%CR%',
+                delim: "%CR%",
                 fieldmap: {
                   address_namenote: :address_notes
                 },

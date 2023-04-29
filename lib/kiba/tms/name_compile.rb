@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -17,12 +17,12 @@ module Kiba
       #   key to be used as source
       setting :uncontrolled_name_source_tables,
         default: {
-          'Loans' => 'tms',
-          'LocApprovers' => 'prep',
-          'LocHandlers' => 'prep',
-          'ObjAccession' => 'tms',
-          'ObjIncoming' => 'tms',
-          'ObjLocations' => 'tms'
+          "Loans" => "tms",
+          "LocApprovers" => "prep",
+          "LocHandlers" => "prep",
+          "ObjAccession" => "tms",
+          "ObjIncoming" => "tms",
+          "ObjLocations" => "tms"
         },
         reader: true,
         constructor: proc{ |value|
@@ -127,8 +127,8 @@ module Kiba
       # Used by Services::NameCompile::RelatedNameNoteText
       # Controls values added at beginning/end of parenthethical relator in notes added to names
       #   derived as main names from entries in altname table
-      setting :related_name_note_role_prefix_for_alt, default: '', reader: true
-      setting :related_name_note_role_suffix_for_alt, default: ' of', reader: true
+      setting :related_name_note_role_prefix_for_alt, default: "", reader: true
+      setting :related_name_note_role_suffix_for_alt, default: " of", reader: true
 
       # What categories of terms will be deduplicated in name compilation
       # :main is always deduplicated: contype_norm + normalized form of name
@@ -150,7 +150,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'to_client', filename)
+              File.join(Kiba::Tms.datadir, "to_client", filename)
             end
         }
       # List returned worksheets, most recent first. Assumes they are in the
@@ -159,7 +159,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: proc{ |value| value.map do |filename|
-              File.join(Kiba::Tms.datadir, 'supplied', filename)
+              File.join(Kiba::Tms.datadir, "supplied", filename)
             end
         }
       def provided_worksheet_jobs
@@ -191,7 +191,7 @@ module Kiba
       # String value used to populate fields in name compiled worksheet that
       #   can't be edited/included in migration for a given relation_type
       setting :na_in_migration_value,
-        default: '~NA~',
+        default: "~NA~",
         reader: true
       setting :person_name_detail_fields,
         default: %i[salutation nametitle firstname middlename lastname suffix],
@@ -277,7 +277,7 @@ module Kiba
       def target_job_hash(compilemod, ns_name, tablemod)
         {
           path: File.join(Tms.datadir,
-                          'working',
+                          "working",
                           "#{ns_name}_#{tablemod.filekey}.csv"
                          ),
           creator: {callee: Tms::Jobs::NameCompile::ForUncontrolledNameTable,

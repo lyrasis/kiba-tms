@@ -15,9 +15,9 @@ module Kiba
 
         def call
           tablename
-            .sub(/X[Rr]ef/, '_xref')
-            .sub('EMail', 'Email')
-            .sub(/^DD/, 'Dd')
+            .sub(/X[Rr]ef/, "_xref")
+            .sub("EMail", "Email")
+            .sub(/^DD/, "Dd")
             .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
             .gsub(/([a-z\d])([A-Z])/,'\1_\2')
             .tr("-", "_")

@@ -19,7 +19,7 @@ module Kiba
 
           def sources
             base = [:constituents__clean_dates]
-            base << :prep__con_dates if Tms::Table::List.include?('ConDates')
+            base << :prep__con_dates if Tms::Table::List.include?("ConDates")
             base
           end
           
@@ -30,14 +30,14 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription date],
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription],
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
 
               transform Tms::Transforms::ConDates::ReducePartialDuplicates

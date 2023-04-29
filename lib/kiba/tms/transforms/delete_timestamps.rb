@@ -25,7 +25,7 @@ module Kiba
           return if val.blank?
           return unless val.match?(pattern)
 
-          row[field] = val.sub(pattern, '')
+          row[field] = val.sub(pattern, "")
         end
       end
     end

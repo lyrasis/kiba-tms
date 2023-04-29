@@ -8,15 +8,15 @@ module Kiba
           def initialize
             @source = :objectnumber
             @target = :acqrefnum
-            @delim = '.'
+            @delim = "."
           end
 
           def process(row)
             objnum = row[source]
 
             if objnum[delim]
-              acqnum = objnum.split('.')[0..-2]
-                .join('.')
+              acqnum = objnum.split(".")[0..-2]
+                .join(".")
 
               row[target] = acqnum
             else

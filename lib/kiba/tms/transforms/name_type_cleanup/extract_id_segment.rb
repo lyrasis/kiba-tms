@@ -20,7 +20,7 @@ module Kiba
             orig = row[source]
             return row if orig.blank?
 
-            segments = orig.split('.')
+            segments = orig.split(".")
             result = extract_id(segments)
             row[target] = result
             row
@@ -35,7 +35,7 @@ module Kiba
               segments[segment]
             else
               segments.shift
-              segments.join('.')
+              segments.join(".")
             end
           end
         end

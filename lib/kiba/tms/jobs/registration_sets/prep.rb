@@ -74,12 +74,12 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :objcount,
-                value: '0'
+                value: "0"
 
               transform Delete::Fields,
                 fields: %i[accessionmethodid objectstatusid]
 
-              if Tms::ConRefs.for?('RegistrationSets')
+              if Tms::ConRefs.for?("RegistrationSets")
                 transform Tms::Transforms::ConRefs::Merger,
                   into: config,
                   keycolumn: :registrationsetid

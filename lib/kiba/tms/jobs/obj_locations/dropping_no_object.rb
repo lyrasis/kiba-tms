@@ -24,7 +24,7 @@ module Kiba
                 field: :objectnumber
               transform Merge::ConstantValue,
                 target: :dropreason,
-                value: 'No linked object'
+                value: "No linked object"
             end
           end
         end

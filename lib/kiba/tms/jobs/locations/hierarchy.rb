@@ -8,8 +8,8 @@ module Kiba
           module_function
 
           AUTH_SUBTYPE = {
-            'Local'=>'location',
-            'Offsite'=>'offsite_sla'
+            "Local"=>"location",
+            "Offsite"=>"offsite_sla"
           }
           def job
             Kiba::Extend::Jobs::Job.new(
@@ -26,7 +26,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :storage_location_authority,
-                value: 'Organization'
+                value: "Organization"
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :parent_location
@@ -36,11 +36,11 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[location_name parent_location],
                 target: :combined,
-                sep: ' - ',
+                sep: " - ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
               transform Merge::ConstantValues, constantmap: {
-                term_type: 'locationauthorities'
+                term_type: "locationauthorities"
               }
               transform do |row|
                 auth = row[:storage_location_authority]

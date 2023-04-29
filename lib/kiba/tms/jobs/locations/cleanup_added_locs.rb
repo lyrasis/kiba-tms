@@ -39,7 +39,7 @@ module Kiba
                 fields: :usage_ct
               transform Merge::ConstantValue,
                 target: :term_source,
-                value: 'client-added'
+                value: "client-added"
             end
           end
         end

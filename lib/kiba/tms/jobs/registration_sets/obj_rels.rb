@@ -39,8 +39,8 @@ module Kiba
                 fieldmap: {item2_id: :objectnumber}
               transform Merge::ConstantValues,
                 constantmap: {
-                  item1_type: 'acquisitions',
-                  item2_type: 'collectionobjects'
+                  item1_type: "acquisitions",
+                  item2_type: "collectionobjects"
                 }
               transform Delete::Fields,
                 fields: %i[registrationsetid objectid]

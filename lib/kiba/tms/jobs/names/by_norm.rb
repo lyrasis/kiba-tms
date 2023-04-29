@@ -40,7 +40,7 @@ module Kiba
                 keycolumn: :norm,
                 fieldmap: {note: :name},
                 conditions: ->(_r, rows) do
-                  res = rows.select{ |row| row[:contype] == 'Note' }
+                  res = rows.select{ |row| row[:contype] == "Note" }
                   res.empty? ? res :  [res.first]
                 end
             end

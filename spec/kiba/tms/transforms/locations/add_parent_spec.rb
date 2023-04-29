@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
   let(:accumulator){ [] }
@@ -13,23 +13,23 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
   end
   let(:input) do
     [
-      {location_name: ''},
+      {location_name: ""},
       {location_name: nil},
-      {other_data: 'blah'},
-      {location_name: 'a'},
-      {location_name: 'a >> b'},
-      {location_name: 'a >> b >> c'}
+      {other_data: "blah"},
+      {location_name: "a"},
+      {location_name: "a >> b"},
+      {location_name: "a >> b >> c"}
     ]
   end
 
-  it 'adds parent location as expected' do
+  it "adds parent location as expected" do
     expected = [
       nil,
       nil,
       nil,
       nil,
-      'a',
-      'a >> b'
+      "a",
+      "a >> b"
       ]
     expect(result).to eq(expected)
   end

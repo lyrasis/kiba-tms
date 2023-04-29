@@ -21,9 +21,9 @@ module Kiba
 
         def formatted
           context = [mod, name].compact
-            .join('.')
+            .join(".")
           with_msg = [context, msg].reject(&:blank?)
-            .join(': ')
+            .join(": ")
           [with_msg, backtrace].reject(&:blank?)
             .join("\n")
         end
@@ -41,7 +41,7 @@ module Kiba
 
         def msg
           [sym, err].compact
-            .join(': ')
+            .join(": ")
         end
       end
     end

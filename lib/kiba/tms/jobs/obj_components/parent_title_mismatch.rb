@@ -55,11 +55,11 @@ module Kiba
                 comptitle = row[:componenttitle].downcase
                 pname = row[:parentobjectname]
                 unless pname.blank?
-                  row[:inname] = 'n' unless pname.downcase[comptitle]
+                  row[:inname] = "n" unless pname.downcase[comptitle]
                 end
                 ptitle = row[:parenttitle]
                 unless ptitle.blank?
-                  row[:intitle] = 'n' unless ptitle.downcase[comptitle]
+                  row[:intitle] = "n" unless ptitle.downcase[comptitle]
                 end
                 row
               end

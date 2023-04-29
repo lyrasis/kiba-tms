@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'dry/monads'
+require "csv"
+require "dry/monads"
 
 module Kiba
   module Tms
@@ -25,7 +25,7 @@ module Kiba
             @job_key = mod
             @path = Tms::Table::Obj.new(mod).filename
           else
-            fail(TypeError, 'mod must be Module or Symbol')
+            fail(TypeError, "mod must be Module or Symbol")
           end
         end
 

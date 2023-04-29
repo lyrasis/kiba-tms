@@ -38,15 +38,15 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :keeping,
-                value: 'y'
+                value: "y"
               transform Delete::Fields,
                 fields: :keeping
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: config.address_fields,
-                find: '^n\/a$', replace: ''
+                find: '^n\/a$', replace: ""
 
               contentfields = config.address_fields
-                .reject{ |field| field.to_s.start_with?('display') }
+                .reject{ |field| field.to_s.start_with?("display") }
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: contentfields
@@ -78,7 +78,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[init_addresscountry remappedcountrycode],
                   target: :addresscountry,
-                  sep: '',
+                  sep: "",
                   delete_sources: false
               end
               transform Delete::Fields, fields: :countryid
@@ -118,22 +118,22 @@ module Kiba
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :displayaddress,
-                find: '%CR%%CR%',
-                replace: ', '
+                find: "%CR%%CR%",
+                replace: ", "
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :displayaddress,
-                find: '%CR%',
-                replace: ', '
+                find: "%CR%",
+                replace: ", "
 
               # prepare shortname for use in differentiating addresses
               transform do |row|
                 val = row[:shortname]
                 next row if val.blank?
 
-                if val.end_with?('(')
-                  edit = val.delete_suffix(' (')
-                elsif val['()']
-                  edit = val.delete_suffix(' ()')
+                if val.end_with?("(")
+                  edit = val.delete_suffix(" (")
+                elsif val["()"]
+                  edit = val.delete_suffix(" ()")
                 else
                   match = val.match(/\((.*)\)/)
                   if match
@@ -155,13 +155,13 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_fields,
                 target: :address_notes,
-                sep: '; ',
+                sep: "; ",
                 delete_sources: true
               if config.address_remarks_handling == :specific
                 transform Prepend::FieldToFieldValue,
                   target_field: :address_notes,
                   prepended_field: :shortname,
-                  sep: ': '
+                  sep: ": "
               end
               transform Prepend::ToFieldValue,
                 field: :address_notes,
@@ -171,7 +171,7 @@ module Kiba
                 sources: %i[constituentid addressplace1 addressplace2 city state
                             zipcode addresscountry],
                 target: :combined,
-                sep: ' - ',
+                sep: " - ",
                 delete_sources: false
               transform Deduplicate::Flag,
                 on_field: :combined,

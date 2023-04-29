@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -69,14 +69,14 @@ module Kiba
         # String that will separate the two dates. Will be appended to start
         #   date if there is no end date. Will be prepended to end date if there
         #   is no start date.
-        setting :date_sep, default: ' - ', reader: true
+        setting :date_sep, default: " - ", reader: true
         # String that will be inserted between name and prepared date value. Any
         #   punctuation that should open the wrapping of the date value should
         #   be included here.
-        setting :name_date_sep, default: ', (', reader: true
+        setting :name_date_sep, default: ", (", reader: true
         # String that will be appended to the end of result, closing the date
         #   value
-        setting :date_suffix, default: ')', reader: true
+        setting :date_suffix, default: ")", reader: true
       end
 
       # ## :constituents__clean_dates options
@@ -114,8 +114,8 @@ module Kiba
         # used by DateFromRemarkStartingWithYr transform
         setting :yr_remark_start, default: '^(\d{4}|\d{1,2}(\/|-))', reader: true
         # used by ActiveDateFromRemarks transform
-        setting :active_remark_match, default: Regexp.new('^active', Regexp::IGNORECASE), reader: true
-        setting :active_remark_clean_match, default: Regexp.new('^active ', Regexp::IGNORECASE), reader: true
+        setting :active_remark_match, default: Regexp.new("^active", Regexp::IGNORECASE), reader: true
+        setting :active_remark_clean_match, default: Regexp.new("^active ", Regexp::IGNORECASE), reader: true
         # used by DateFromRemarkStartWithPartialInd transform
         setting :partial_date_indicators,
           default: %w[after approximately around before c. ca. circa],
@@ -125,9 +125,9 @@ module Kiba
         # value should be array of variants (including the expected term)
         setting :datedescription_variants,
           default: {
-            'active' => ['active', 'active dates', 'fl.', 'flourished'],
-            'birth' => ['b.', 'birth', 'birth date', 'birth year', 'birthdate', 'birthday', 'birthplace', 'born', 'founded'],
-            'death' => ['d.', 'dead', 'death', 'death date', 'death day', 'death year', 'deathdate', 'deathday', 'died']
+            "active" => ["active", "active dates", "fl.", "flourished"],
+            "birth" => ["b.", "birth", "birth date", "birth year", "birthdate", "birthday", "birthplace", "born", "founded"],
+            "death" => ["d.", "dead", "death", "death date", "death day", "death year", "deathdate", "deathday", "died"]
           },
           reader: true
         # Transform that creates a date-related note (in :datenote field) mergeable into Person/Org record

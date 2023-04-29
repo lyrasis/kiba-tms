@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :keeping,
-                value: 'y'
+                value: "y"
               transform Delete::Fields, fields: :keeping
             end
           end

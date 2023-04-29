@@ -22,7 +22,7 @@ module Kiba
               transform Delete::FieldsExcept, fields: :primarycnid
               @deduper = {}
               transform Deduplicate::Flag, on_field: :primarycnid, in_field: :duplicate, using: @deduper
-              transform FilterRows::FieldEqualTo, action: :keep, field: :duplicate, value: 'n'
+              transform FilterRows::FieldEqualTo, action: :keep, field: :duplicate, value: "n"
               transform Delete::Fields, fields: :duplicate
             end
           end

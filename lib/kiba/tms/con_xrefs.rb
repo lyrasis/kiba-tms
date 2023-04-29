@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -13,7 +13,7 @@ module Kiba
         reader: true
       setting :empty_fields,
         default: {
-          conxrefsetid: [nil, '', '-1', '0']
+          conxrefsetid: [nil, "", "-1", "0"]
         },
         reader: true
       extend Tms::Mixins::Tableable

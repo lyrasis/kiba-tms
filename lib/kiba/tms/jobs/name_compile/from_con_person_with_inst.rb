@@ -39,7 +39,7 @@ module Kiba
           end
 
           def termsource
-            'Constituents.person_with_institution'
+            "Constituents.person_with_institution"
           end
 
           def treatment
@@ -54,15 +54,15 @@ module Kiba
 
               transform Append::ToFieldValue,
                 field: :constituentid,
-                value: '.institution'
+                value: ".institution"
               transform Merge::ConstantValue,
                 target: :termsource,
-                value: 'TMS Constituents.person_with_institution'
+                value: "TMS Constituents.person_with_institution"
 
               treatment = bind.receiver.send(:treatment)
               if treatment == :variant
                 transform Merge::ConstantValue,
-                  target: :relation_type, value: 'variant term'
+                  target: :relation_type, value: "variant term"
 
                 transform Rename::Fields, fieldmap: {
                   institution: :variant_term,
@@ -78,7 +78,7 @@ module Kiba
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   lookup: name_type_cleanup__for_con_person_with_inst
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
-                  typetarget: {'_main term'=>:contype},
+                  typetarget: {"_main term"=>:contype},
                   nametarget: Tms::Constituents.preferred_name_field
               end
             end

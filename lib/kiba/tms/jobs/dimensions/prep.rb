@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bigdecimal'
+require "bigdecimal"
 
 module Kiba
   module Tms
@@ -54,7 +54,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :dimension,
-                value: '.0000000000'
+                value: ".0000000000"
 
               if Tms::DimensionUnits.used?
                 transform Merge::MultiRowLookup,

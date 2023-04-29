@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -40,11 +40,11 @@ module Kiba
         reader: true
       setting :prepend_label_map,
         default: {
-          :reportisodate=>'Report date: ',
-          :durationdays=>'Assessment duration (days): ',
-          :project=>'Related project: ',
-          :requestdate=>'Request date: ',
-          :duedate=>'Due date: '
+          :reportisodate=>"Report date: ",
+          :durationdays=>"Assessment duration (days): ",
+          :project=>"Related project: ",
+          :requestdate=>"Request date: ",
+          :duedate=>"Due date: "
         },
         reader: true,
         constructor: proc{ |value| delete_omitted_fields(value) }

@@ -28,20 +28,20 @@ module Kiba
                 to: :objectnumber
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :objectnumber,
-                find: '^EX',
-                replace: ''
+                find: "^EX",
+                replace: ""
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :objectnumber,
                 find: '\/\/\d{3}$',
-                replace: ''
+                replace: ""
               transform Rename::Fields, fieldmap: {
                 objectnumber: :item1_id,
                 exitnumber: :item2_id
               }
               transform Merge::ConstantValues,
                 constantmap: {
-                  item1_type: 'collectionobjects',
-                  item2_type: 'objectexit'
+                  item1_type: "collectionobjects",
+                  item2_type: "objectexit"
                 }
             end
           end

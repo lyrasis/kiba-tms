@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module Kiba
   module Tms
@@ -74,7 +74,7 @@ module Kiba
           result = {}
 
           cols.each do |col|
-            val = col.split('.')
+            val = col.split(".")
             path = Tms::Table::Obj.new(val[0]).supplied_data_path
             field = val[1].to_sym
             result[col] = [path, field]

@@ -25,7 +25,7 @@ module Kiba
           attr_reader :config
 
           def cleaned_remark(row)
-            row[:remarks].sub(Regexp.new("^#{to_delete(row)} +", Regexp::IGNORECASE), '')
+            row[:remarks].sub(Regexp.new("^#{to_delete(row)} +", Regexp::IGNORECASE), "")
           end
           
           def eligible?(row)

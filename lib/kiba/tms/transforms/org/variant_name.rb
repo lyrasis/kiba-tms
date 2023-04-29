@@ -20,7 +20,7 @@ module Kiba
               var_termsourcenote: Tms.nullvalue
             }
             if Tms::Names.set_term_pref_for_lang
-              constantmap[:var_termprefforlang] = 'false'
+              constantmap[:var_termprefforlang] = "false"
             end
             @xforms = [
               Merge::MultiRowLookup.new(
@@ -30,7 +30,7 @@ module Kiba
                 constantmap: constantmap,
                 conditions: ->(_pref, rows) do
                   rows.select{ |row| row[:contype] &&
-                      row[:contype].start_with?('Org') }
+                      row[:contype].start_with?("Org") }
                 end,
                 delim: Tms.delim,
                 null_placeholder: Tms.nullvalue

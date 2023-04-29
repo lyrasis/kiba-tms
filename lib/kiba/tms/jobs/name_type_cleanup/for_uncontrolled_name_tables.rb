@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :termsource,
-                value: 'Uncontrolled'
+                value: "Uncontrolled"
               transform Delete::Fields, fields: :termsource
             end
           end

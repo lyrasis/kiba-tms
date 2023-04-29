@@ -25,11 +25,11 @@ module Kiba
 
               transform Tms::Transforms::NameCompile::SelectCanTypemismatchMainPerson
 
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS ConAltNames.typemismatch_main_person'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS ConAltNames.typemismatch_main_person"
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
-                sep: '.',
+                sep: ".",
                 delete_sources: true
 
               if treatment == :variant

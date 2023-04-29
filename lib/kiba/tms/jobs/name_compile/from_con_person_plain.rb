@@ -24,13 +24,13 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   type = row[:contype]
-                  type && type.start_with?('Person')
+                  type && type.start_with?("Person")
                 end
               transform Delete::Fields, fields: Tms::NameCompile.person_nil
               transform Merge::ConstantValues,
                 constantmap: {
-                  relation_type: '_main term',
-                  termsource: 'TMS Constituents.persons'
+                  relation_type: "_main term",
+                  termsource: "TMS Constituents.persons"
                 }
             end
           end

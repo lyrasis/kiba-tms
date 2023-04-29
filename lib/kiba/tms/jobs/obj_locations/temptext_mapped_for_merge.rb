@@ -29,7 +29,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[temptext loc3 loc5],
                 target: :lookup,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false,
                 prepend_source_field_name: true
             end

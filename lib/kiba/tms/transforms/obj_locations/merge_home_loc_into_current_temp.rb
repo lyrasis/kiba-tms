@@ -5,7 +5,7 @@ module Kiba
     module Transforms
       module ObjLocations
         class MergeHomeLocIntoCurrentTemp
-          def initialize(homelocprefix: 'normallocation')
+          def initialize(homelocprefix: "normallocation")
             @targets = %w[locationlocal locationoffsite
                           organizationlocal].map{ |target|
               ["#{homelocprefix}#{target}".to_sym, nil]
@@ -31,7 +31,7 @@ module Kiba
           attr_reader :targets, :merger
 
           def current?(row)
-            row[:current] && row[:current] == 'y'
+            row[:current] && row[:current] == "y"
           end
 
           def current_temp?(row)
@@ -39,7 +39,7 @@ module Kiba
           end
 
           def temp?(row)
-            row[:is_temp] && row[:is_temp] == 'y'
+            row[:is_temp] && row[:is_temp] == "y"
           end
         end
       end

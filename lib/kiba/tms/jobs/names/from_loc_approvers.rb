@@ -23,8 +23,8 @@ module Kiba
               transform Delete::FieldsExcept, fields: :approver
               transform Deduplicate::Table, field: :approver
               transform Rename::Field, from: :approver, to: Tms::Constituents.preferred_name_field
-              transform Merge::ConstantValue, target: :constituenttype, value: 'Person'
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS LocApprovers'
+              transform Merge::ConstantValue, target: :constituenttype, value: "Person"
+              transform Merge::ConstantValue, target: :termsource, value: "TMS LocApprovers"
               transform Cspace::NormalizeForID, source: Tms::Constituents.preferred_name_field, target: :norm
             end
           end

@@ -33,7 +33,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[datenote datenote_created],
                 target: :datenote,
-                sep: '%CR%%CR%',
+                sep: "%CR%%CR%",
                 delete_sources: true
 
               transform do |row|
@@ -44,12 +44,12 @@ module Kiba
                 
                 type = row[:datedescription]
                 next row if type.blank?
-                next row unless type == 'birth' || type == 'death'
+                next row unless type == "birth" || type == "death"
 
                 date = row[:date]
                 next row if date.blank?
 
-                type == 'birth' ? row[:birth_foundation_date] = date : row[:death_dissolution_date] = date
+                type == "birth" ? row[:birth_foundation_date] = date : row[:death_dissolution_date] = date
                 row
               end
 

@@ -17,12 +17,12 @@ module Kiba
             row[target] = nil
             type_val = row.fetch(type, nil)
             return row if type_val.blank?
-            return row unless type_val == 'Person'
+            return row unless type_val == "Person"
 
             val = row.fetch(:lastname, nil)
             return row unless val.blank?
 
-            row[target] = 'y'
+            row[target] = "y"
             row
           end
 

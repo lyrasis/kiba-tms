@@ -44,7 +44,7 @@ module Kiba
               end
               transform Tms.data_cleaner if Tms.data_cleaner
 
-              if Tms::ConRefs.for?('ExhVenuesXrefs')
+              if Tms::ConRefs.for?("ExhVenuesXrefs")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,
@@ -102,13 +102,13 @@ module Kiba
                 row[:prefix] = row[:venueorg]
                 row
               end
-              warn('WARNING: Transformation to create prefix for :insind has '\
-                   'only been verified for mmm')
+              warn("WARNING: Transformation to create prefix for :insind has "\
+                   "only been verified for mmm")
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[prefix insind],
                 target: :insindnote,
-                sep: ':%CR%',
+                sep: ":%CR%",
                 delete_sources: true
             end
           end

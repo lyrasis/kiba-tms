@@ -74,15 +74,15 @@ module Kiba
 
         def array_elements
           value.inspect
-            .delete_prefix('[')
-            .delete_suffix(']')
+            .delete_prefix("[")
+            .delete_suffix("]")
         end
 
         def formatted_array
           [
             "#{setter} [",
             array_elements,
-            ']'
+            "]"
           ].join("\n")
         end
 
@@ -90,7 +90,7 @@ module Kiba
           [
             "#{setter} {",
             hash_lines,
-            '}'
+            "}"
           ].join("\n")
         end
 

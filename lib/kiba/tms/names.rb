@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-configurable'
+require "dry-configurable"
 
 module Kiba
   module Tms
@@ -17,7 +17,7 @@ module Kiba
         constructor: ->(value){ true if Tms.migration_status == :dev }
       # Authority type (:contype) assigned to names with no type (if client does
       #   not provide one)
-      setting :untyped_default, default: 'Person', reader: true
+      setting :untyped_default, default: "Person", reader: true
 
       setting :cleanup0, reader: true do
         setting :multi_source_normalizer, default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true

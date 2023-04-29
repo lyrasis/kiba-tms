@@ -25,7 +25,7 @@ module Kiba
               transform Cspace::NormalizeForID,
                 source: Tms::Constituents.preferred_name_field,
                 target: :norm
-              transform Merge::ConstantValue, target: :termsource, value: 'TMS Constituents'
+              transform Merge::ConstantValue, target: :termsource, value: "TMS Constituents"
             end
           end
         end

@@ -43,8 +43,8 @@ module Kiba
                 keycolumn: :objectid,
                 fieldmap: {item1_id: :objectnumber}
               transform Merge::ConstantValues, constantmap: {
-                item1_type: 'collectionobjects',
-                item2_type: 'valuationcontrols'
+                item1_type: "collectionobjects",
+                item2_type: "valuationcontrols"
               }
               transform Delete::Fields,
                 fields: %i[objectid acquisitionlotid]

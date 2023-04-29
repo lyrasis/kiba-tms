@@ -10,13 +10,13 @@ module Kiba
           
           def initialize
             @target = :warn
-            @warning = 'no date value'
+            @warning = "no date value"
           end
 
           # @private
           def process(row)
             source = row[:datasource]
-            return row unless source == 'ConDates'
+            return row unless source == "ConDates"
             
             date = row[:date]
             return row unless date.blank?

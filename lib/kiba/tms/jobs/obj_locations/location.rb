@@ -29,7 +29,7 @@ module Kiba
               transform config.location_selector
 
               transform Tms::Transforms::IdGenerator,
-                prefix: 'LOC',
+                prefix: "LOC",
                 id_source: :year,
                 id_target: :movementreferencenumber,
                 sort_on: :objlocationid,

@@ -35,7 +35,7 @@ module Kiba
           end
 
           def merges_paths?
-            Tms::MediaPaths.used? && config.fields.any?{ |f| f.to_s['pathid'] }
+            Tms::MediaPaths.used? && config.fields.any?{ |f| f.to_s["pathid"] }
           end
 
           def merges_statuses?
@@ -81,7 +81,7 @@ module Kiba
               transform Delete::Fields,
                 fields: %i[thumbpathid mediastatusid mediatypeid]
 
-              if Tms::ConRefs.for?('MediaRenditions')
+              if Tms::ConRefs.for?("MediaRenditions")
                 transform Tms::Transforms::ConRefs::Merger,
                   into: config,
                   keycolumn: :renditionid

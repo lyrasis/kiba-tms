@@ -18,7 +18,7 @@ module Kiba
             correct = row[correctsrc]
             [mappingsrc, correctsrc, :lookupid].each{ |fld| row.delete(fld) }
             return row if mapping.blank?
-            return row if mapping == 'drop'
+            return row if mapping == "drop"
 
             mapsym = mapping.to_sym
             if targets.none?(mapsym)

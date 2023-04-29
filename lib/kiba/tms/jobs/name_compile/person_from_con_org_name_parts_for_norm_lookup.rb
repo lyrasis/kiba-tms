@@ -36,7 +36,7 @@ module Kiba
                 action: :keep,
                 lambda: ->(row) do
                   contype = row[:contype]
-                  contype && contype.start_with?('Person')
+                  contype && contype.start_with?("Person")
                 end
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                 source: prefname,

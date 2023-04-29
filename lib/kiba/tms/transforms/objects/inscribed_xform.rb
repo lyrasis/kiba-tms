@@ -7,7 +7,7 @@ module Kiba
         class InscribedXform < TextInscriptionXform
           def initialize
             @source = :inscribed
-            @typeval = 'inscribed'
+            @typeval = "inscribed"
           end
         end
       end

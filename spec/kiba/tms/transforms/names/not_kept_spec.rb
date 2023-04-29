@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Names::NotKept do
   let(:accumulator){ [] }
@@ -13,26 +13,26 @@ RSpec.describe Kiba::Tms::Transforms::Names::NotKept do
   end
   let(:input) do
     [
-      {migration_action: ''},
+      {migration_action: ""},
       {migration_action: nil},
-      {something_else: 'foo'},
-      {migration_action: 'add_contact'},
-      {migration_action: 'main'},
-      {migration_action: 'merge_variant'},
-      {migration_action: 'ok'},
-      {migration_action: 'use_name'},
+      {something_else: "foo"},
+      {migration_action: "add_contact"},
+      {migration_action: "main"},
+      {migration_action: "merge_variant"},
+      {migration_action: "ok"},
+      {migration_action: "use_name"},
     ]
   end
 
   let(:expected) do
     [
-      {migration_action: 'add_contact'},
-      {migration_action: 'merge_variant'},
-      {migration_action: 'use_name'},
+      {migration_action: "add_contact"},
+      {migration_action: "merge_variant"},
+      {migration_action: "use_name"},
     ]
   end
   
-  it 'transforms as expected' do
+  it "transforms as expected" do
     expect(result).to eq(expected)
   end
 end

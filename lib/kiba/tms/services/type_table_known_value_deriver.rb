@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'dry/monads'
-require 'dry/monads/do'
+require "csv"
+require "dry/monads"
+require "dry/monads/do"
 
 module Kiba
   module Tms
@@ -74,7 +74,7 @@ module Kiba
           when :downcase
             value.downcase
           when :todo
-            'TODO: provide mapping'
+            "TODO: provide mapping"
           end
         end
 

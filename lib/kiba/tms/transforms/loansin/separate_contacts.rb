@@ -43,9 +43,9 @@ module Kiba
           
           def contact?(val)
             if val.is_a?(Array)
-              val.any?{ |v| v.downcase == 'contact' }
+              val.any?{ |v| v.downcase == "contact" }
             elsif val.is_a?(String)
-              val.downcase == 'contact'
+              val.downcase == "contact"
             end
           end
           

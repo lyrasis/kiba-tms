@@ -29,7 +29,7 @@ module Kiba
         def resolved
           Kiba::Extend.registry.resolve(job_key)
         rescue Dry::Container::KeyError
-          culprit = caller.reject{ |line| line['tms/services/row_counter'] }.first
+          culprit = caller.reject{ |line| line["tms/services/row_counter"] }.first
           puts "#{self.class.name}: No job with key: #{job_key}\n#{culprit}"
           nil
         end

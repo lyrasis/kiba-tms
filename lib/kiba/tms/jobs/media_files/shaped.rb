@@ -52,7 +52,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.description_sources,
                 target: :description,
-                sep: '%CR%',
+                sep: "%CR%",
                 delete_sources: true
 
               if config.mediafileuri_generator

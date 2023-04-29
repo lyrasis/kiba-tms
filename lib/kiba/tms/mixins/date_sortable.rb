@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'chronic'
+require "chronic"
 
 module Kiba
   module Tms

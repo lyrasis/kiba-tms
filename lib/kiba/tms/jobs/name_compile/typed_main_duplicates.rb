@@ -22,7 +22,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
-                value: '_main term'
+                value: "_main term"
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :contype
@@ -32,7 +32,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
                 target: :combined,
-                sep: ' ',
+                sep: " ",
                 delete_sources: false
               transform Deduplicate::FlagAll,
                 on_field: :combined,

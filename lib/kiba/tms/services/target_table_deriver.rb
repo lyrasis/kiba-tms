@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module Kiba
   module Tms
@@ -61,7 +61,7 @@ module Kiba
 
         def lookup_table_name(val)
           return nil if val.blank?
-          return nil if val == '0'
+          return nil if val == "0"
 
           result = lookup[val]
           return result if result
