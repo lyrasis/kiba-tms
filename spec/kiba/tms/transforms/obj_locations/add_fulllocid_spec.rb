@@ -2,10 +2,11 @@
 
 require "spec_helper"
 
+module Tms::ObjLocations
+  enable_test_interface
+end
+
 RSpec.describe Kiba::Tms::Transforms::ObjLocations::AddFulllocid do
-  module Tms::ObjLocations
-    enable_test_interface
-  end
   after(:each) { Tms::ObjLocations.reset_config }
 
   subject(:xform) { described_class.new }
@@ -15,6 +16,7 @@ RSpec.describe Kiba::Tms::Transforms::ObjLocations::AddFulllocid do
     before(:each) do
       Kiba::Tms::ObjLocations.config.temptext_mapping_done = false
       Kiba::Tms::ObjLocations.config.fulllocid_fields = %i[temptext sublevel]
+      Kiba::Tms::ObjLocations.config.sublevel_lvl = :sublevel
     end
     let(:input) do
       [

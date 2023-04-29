@@ -27,7 +27,6 @@ module Kiba
               if targetdate.blank?
                 add(row, targetfield, sourceval)
               else
-                binding.pry if sourceval.nil?
                 fuller = select_fuller_date(sourceval, targetdate)
                 if fuller
                   add(row, targetfield, fuller)

@@ -36,7 +36,8 @@ module Kiba
                 delim: Tms.delim
               # y if :componentnumber = :parentobjectnumber in same row
               transform Tms::Transforms::ObjComponents::FlagTopObjects
-              # merge in temp field if :componentnumber = any existing :objectnumber
+              # merge in temp field if :componentnumber = any existing
+              #   :objectnumber
               transform Merge::MultiRowLookup,
                 lookup: objects__by_number,
                 keycolumn: :componentnumber,
@@ -44,9 +45,10 @@ module Kiba
                   existingobject: :objectnumber
                 },
                 delim: Tms.delim
-              # Removes :existingobject value altogether if row is for a top object, where it is expected to exist in
-              #   Objects table
-              # Changes remaining populated :existingobject values to 'y' to simplify
+              # Removes :existingobject value altogether if row is for a top
+              #   object, where it is expected to exist in Objects table
+              # Changes remaining populated :existingobject values to 'y' to
+              #   simplify
               transform do |row|
                 exobj = row[:existingobject]
                 next row if exobj.blank?

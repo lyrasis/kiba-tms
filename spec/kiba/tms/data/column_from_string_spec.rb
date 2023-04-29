@@ -2,35 +2,33 @@
 
 require "spec_helper"
 
+module Tms
+  module UsedMod
+    module_function
+
+    def used?
+      true
+    end
+  end
+end
+
 RSpec.describe Kiba::Tms::Data::ColumnFromString do
   subject(:klass) { described_class }
 
-  module Tms
-    module UnusedMod
-      module_function
-
-      def used?
-        false
-      end
-    end
-
-    module UsedMod
-      module_function
-
-      def used?
-        true
-      end
-    end
-  end
-
   describe ".call" do
-    let(:result) { klass.call(str: str) }
+    let(:col) { double("col") }
+    let(:result) { klass.call(str: str, col: col) }
 
     context "with column in defined, used Module" do
       let(:str) { "UsedMod.title" }
 
       it "returns Data::Column" do
-        expect(result).to be_a(Tms::Data::Column)
+        allow(Tms).to receive(:configs).and_return([Tms::UsedMod])
+        expect(col).to receive(:new) do |args|
+          expect(args[:mod]).to eq("UsedMod")
+          expect(args[:field]).to eq("title")
+        end
+        result
       end
     end
   end

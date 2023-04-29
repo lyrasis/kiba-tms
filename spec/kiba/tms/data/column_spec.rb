@@ -2,8 +2,6 @@
 
 require "spec_helper"
 
-RSpec.describe Kiba::Tms::Data::Column do
-  subject(:klass) { described_class }
   module Tms
     module UnusedMod
       module_function
@@ -34,6 +32,9 @@ RSpec.describe Kiba::Tms::Data::Column do
       ].to_enum)
     end
   end
+
+RSpec.describe Kiba::Tms::Data::Column do
+  subject(:klass) { described_class }
 
   describe ".initialize" do
     let(:result) { klass.new(**params) }
