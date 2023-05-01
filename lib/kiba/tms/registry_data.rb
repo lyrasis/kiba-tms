@@ -63,7 +63,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::AccessionLot::ValuationPrep,
             path: File.join(Kiba::Tms.datadir, "working",
               "accession_lot_valuation_prep.csv"),
-            desc: "Valuation Control procedures created from AccessionLot data. Still with ID for creating relationships",
+            desc: "Valuation Control procedures created from AccessionLot "\
+              "data. Still with ID for creating relationships",
             tags: %i[valuation acquisitions],
             lookup_on: :acquisitionlotid
           }
