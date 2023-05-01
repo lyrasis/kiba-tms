@@ -13,25 +13,10 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__alt_nums,
-                destination: :prep__alt_nums,
-                lookup: lookups
+                destination: :prep__alt_nums
               },
               transformer: xforms
             )
-          end
-
-          def lookups
-            base = []
-            if config.target_tables.any?("Constituents")
-              base << :constituents__prep_clean
-            end
-            if config.target_tables.any?("Objects")
-              base << :objects__numbers_cleaned
-            end
-            if config.target_tables.any?("ReferenceMaster")
-              base << :tms__reference_master
-            end
-            base
           end
 
           def xforms
@@ -66,60 +51,12 @@ module Kiba
 
               transform config.initial_cleaner if config.initial_cleaner
 
-              recnumfields = []
-
-              if config.target_tables.any?("Constituents")
-                transform Merge::MultiRowLookup,
-                  lookup: constituents__prep_clean,
-                  keycolumn: :recordid,
-                  fieldmap: {
-                    constituent: Tms::Constituents.preferred_name_field,
-                    authority_type: :contype
-                  },
-                  conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == "Constituents"
-
-                    mergerows
-                  end
-                recnumfields << :constituent
-              end
-              if config.target_tables.any?("Objects")
-                transform Merge::MultiRowLookup,
-                  lookup: objects__numbers_cleaned,
-                  keycolumn: :recordid,
-                  fieldmap: {object: :objectnumber},
-                  conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == "Objects"
-
-                    mergerows
-                  end
-                recnumfields << :object
-              end
-              if config.target_tables.any?("ReferenceMaster")
-                transform Merge::MultiRowLookup,
-                  lookup: tms__reference_master,
-                  keycolumn: :recordid,
-                  fieldmap: {reference: :title},
-                  conditions: ->(origrow, mergerows) do
-                    return [] unless origrow[:tablename] == "ReferenceMaster"
-
-                    mergerows
-                  end
-                recnumfields << :reference
-              end
-
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: recnumfields,
-                target: :targetrecord,
-                sep: "",
-                delete_sources: true
-
               transform config.description_cleaner if config.description_cleaner
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[tablename description],
                 target: :lookupkey,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Clean::EnsureConsistentFields
             end

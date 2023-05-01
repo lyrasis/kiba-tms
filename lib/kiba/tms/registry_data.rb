@@ -191,6 +191,13 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("alt_nums") do
+          register :occ_merge, {
+            creator: Kiba::Tms::Jobs::AltNums::OccMerge,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "alt_nums_occ_merge.csv"),
+            desc: "Merge in object number or other id from target tables",
+            tags: %i[altnums]
+          }
           register :description_single_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
             path: File.join(Kiba::Tms.datadir, "reports",

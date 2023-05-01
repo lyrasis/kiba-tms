@@ -10,9 +10,9 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__alt_nums,
+                source: :alt_nums__merge_occs,
                 destination: :alt_nums__description_occs,
-                lookup: :prep__alt_nums
+                lookup: :alt_nums__merge_occs
               },
               transformer: xforms
             )
@@ -26,32 +26,32 @@ module Kiba
               transform Deduplicate::Table,
                 field: :lookupkey
               transform Count::MatchingRowsInLookup,
-                lookup: prep__alt_nums,
+                lookup: alt_nums__merge_occs,
                 keycolumn: :lookupkey,
                 targetfield: :desc_occs
               transform Count::MatchingRowsInLookup,
-                lookup: prep__alt_nums,
+                lookup: alt_nums__merge_occs,
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_remarks,
                 conditions: ->(_r, rows) do
                   rows.reject { |row| row[:remarks].blank? }
                 end
               transform Count::MatchingRowsInLookup,
-                lookup: prep__alt_nums,
+                lookup: alt_nums__merge_occs,
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_begindate,
                 conditions: ->(_r, rows) do
                   rows.reject { |row| row[:beginisodate].blank? }
                 end
               transform Count::MatchingRowsInLookup,
-                lookup: prep__alt_nums,
+                lookup: alt_nums__merge_occs,
                 keycolumn: :lookupkey,
                 targetfield: :occs_with_enddate,
                 conditions: ->(_r, rows) do
                   rows.reject { |row| row[:endisodate].blank? }
                 end
               transform Merge::MultiRowLookup,
-                lookup: prep__alt_nums,
+                lookup: alt_nums__merge_occs,
                 keycolumn: :lookupkey,
                 fieldmap: {
                   example_rec_nums: :targetrecord,

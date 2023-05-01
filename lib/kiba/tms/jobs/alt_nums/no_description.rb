@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__alt_nums,
+                source: :alt_nums__merge_occs,
                 destination: :alt_nums__no_description
               },
               transformer: xforms

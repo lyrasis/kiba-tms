@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__alt_nums,
+                source: :alt_nums__merge_occs,
                 destination: :alt_nums__for_obj_report_prep
               },
               transformer: xforms
@@ -20,11 +20,7 @@ module Kiba
           end
 
           def xforms
-            bind = binding
-
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[description remarks],
                 target: :combined,
