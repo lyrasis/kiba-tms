@@ -48,13 +48,6 @@ module Kiba
       private_class_method :register_supplied_files
 
       def register_files
-        # register :object_numbers, {
-        #   path: File.join(Kiba::Tms.datadir, 'prepped', 'object_numbers.csv'),
-        #   creator: Kiba::Tms::Jobs::Objects.method(:object_numbers),
-        #   lookup_on: :objectnumber,
-        #   tags: %i[objects lookup prep]
-        # }
-
         Kiba::Tms.registry.namespace("report") do
           register :terms_in_mig, {
             creator: Kiba::Tms::Jobs::Terms::Reports.method(:in_mig),
