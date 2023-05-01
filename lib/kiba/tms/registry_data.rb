@@ -1569,6 +1569,21 @@ module Kiba
               ":media_files__unmigratable_report",
             tags: %i[mediafiles media]
           }
+          register :migratable_files, {
+            creator: Kiba::Tms::Jobs::MediaFiles::MigratableFiles,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "reports",
+              "media_files_migratable.csv"
+            ),
+            desc: "List of unique media files (deduplicated on :fullpath "\
+              "value), with :filesize, :memorysize. Give to client so they "\
+              "can location and transfer media files to S3 for ingest.",
+            tags: %i[mediafiles media reports],
+            dest_special_opts: {
+              initial_headers: %i[fullpath filename filesize memorysize]
+            }
+          }
           register :shaped, {
             creator: Kiba::Tms::Jobs::MediaFiles::Shaped,
             path: File.join(
