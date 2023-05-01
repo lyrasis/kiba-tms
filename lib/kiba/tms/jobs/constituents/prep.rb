@@ -60,7 +60,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituenttype derivedcontype],
                 target: :contype,
-                sep: "",
+                delim: "",
                 delete_sources: false
               transform Copy::Field, from: :contype, to: :contype_norm
               transform Tms::Transforms::Names::NormalizeContype
@@ -95,7 +95,7 @@ module Kiba
                 sources: %i[displayname alphasort lastname firstname middlename
                   institution],
                 target: :namedata,
-                sep: "",
+                delim: "",
                 delete_sources: false
 
               if config.dates.merging
@@ -122,7 +122,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
                   target: :combined,
-                  sep: " ",
+                  delim: " ",
                   delete_sources: false
                 transform Deduplicate::FlagAll,
                   on_field: :combined,
@@ -147,7 +147,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::FlagAll,
                 on_field: :combined,

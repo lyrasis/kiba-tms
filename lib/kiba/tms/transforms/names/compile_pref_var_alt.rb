@@ -51,7 +51,7 @@ module Kiba
               CombineValues::FromFieldsWithDelimiter.new(
                 sources: prefixed(field),
                 target: field.to_sym,
-                sep: Tms.delim,
+                delim: Tms.delim,
                 delete_sources: true
               )
             end

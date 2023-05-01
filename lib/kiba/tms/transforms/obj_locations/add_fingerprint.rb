@@ -9,7 +9,7 @@ module Kiba
             @xform = CombineValues::FromFieldsWithDelimiter.new(
               sources: sources,
               target: target,
-              sep: " ",
+              delim: " ",
               prepend_source_field_name: true,
               delete_sources: delete_sources
             )

@@ -35,7 +35,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[datenote datenote_created],
                 target: :datenote,
-                sep: "%CR%%CR%",
+                delim: "%CR%%CR%",
                 delete_sources: true
 
               transform do |row|

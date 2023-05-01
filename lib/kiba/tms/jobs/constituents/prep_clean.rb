@@ -59,7 +59,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype_norm norm],
                   target: :combined,
-                  sep: " ",
+                  delim: " ",
                   delete_sources: false
                 transform Deduplicate::FlagAll,
                   on_field: :combined,
