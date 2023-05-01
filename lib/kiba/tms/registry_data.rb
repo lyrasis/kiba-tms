@@ -1617,6 +1617,29 @@ module Kiba
               "media file in S3",
             tags: %i[mediafiles media]
           }
+          register :duplicate_files, {
+            creator: Kiba::Tms::Jobs::MediaFiles::DuplicateFiles,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "reports",
+              "media_files_duplicate_files.csv"
+            ),
+            desc: "Records where the same filepath is used in more than one "\
+              "MediaFiles record. Typically we create one Media Handling "\
+              "procedure in CS from each MediaFiles record. We want to "\
+              "only ingest each file once in CS, and there is no way to "\
+              "have multiple Media Handling records describing the same file "\
+              "in CS. Where there are multiple TMS records for the same file, "\
+              "we can't know what descriptive data the client wants to retain "\
+              "in the migration for that file. We provide this report for "\
+              "initial decision-making on how to handle these.",
+            tags: %i[mediafiles media reports],
+            dest_special_opts: {
+              initial_headers:
+              %i[fullpath rend_renditionnumber file_entered_date filedate
+                 rend_renditiondate rend_mediatype rend_quality rend_remarks]
+            }
+          }
           register :cspace, {
             creator: Kiba::Tms::Jobs::MediaFiles::Cspace,
             path: File.join(

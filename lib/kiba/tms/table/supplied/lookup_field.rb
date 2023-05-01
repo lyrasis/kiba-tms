@@ -33,6 +33,7 @@ module Kiba
             loans: :loanid,
             loc_purposes: :locpurposeid,
             locations: :locationid,
+            media_files: :fileid,
             obj_comp_statuses: :objcompstatusid,
             obj_comp_types: :objcomptypeid,
             obj_components: :componentid,
