@@ -63,7 +63,7 @@ A list of the following types of packages will be provided to the client, for de
 * Packages in folders with folder type = "Public" (if not also in one of the omitted folders)
 * Packages in "Conservation Project" folder types (if not also in one of the omitted folders)
 
-== Client review/decision
+== Client review/decision worksheet
 
 A report is given to the client that includes:
 
@@ -74,6 +74,12 @@ A report is given to the client that includes:
 ** **n** when package is omitted for non-negotiable reason
 ** **y** when package will migrate by default
 ** **blank** client should provide decision (y, n). Any left blank will not migrate
+
+=== Instructions
+
+For rows where `migrating` is blank or `y`, change `migrating` to `y` or `n` to indicate whether each package should be migrated.
+
+Do not change values in columns other than `migrating`.
 
 [TIP]
 ====
@@ -87,7 +93,7 @@ Changing `migrating` = "y" to "n" may make sense if you want to do something lik
 It may be easier to take the following approach:
 
 * Sort, filter, whatever to mark categories of packages as `migrating` "y" or "n", while ignoring `omit`.
-* **At the end, sort by `omit` and change all rows with values in that field to `migrating` = "n"
+* **At the end, sort by `omit` and change all rows with values in that field to `migrating` = "n"**
 ====
 
 [WARNING]
