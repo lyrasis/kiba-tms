@@ -1,0 +1,63 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Packages mapping options
+
+This page covers broad options for handling migration of "packages" data from TMS. This includes data from the tables:
+
+* Packages
+* PackageList
+* PackageFolders
+* FolderTypes
+* PackageFolderXrefs
+
+toc::[]
+
+== Data model/functionality differences
+
+TMS packages map roughly to the CS group procedure. However, TMS has a lot more functionality built around packages than CS currently does around group procedures.
+
+* CS does not allow you to organize group procedures into categories/folders like TMS allows you to organize packages
+* CS does not have the concept of a personal or shared group procedure. If you create a group procedure in CS, all users of CS will be able to see (and edit) that group
+* CS does not have alert queues that can automatically populate group procedures
+* CS does not have an in-app "quick moves" function that interacts with group procedures (though you certainly can use group procedures in several different workflows for updating the location for groups of items) (see CS Trainer for details)
+* CS does not let you specify/change the order of items in a group
+* CS allows you to assign an object or procedure to a group, but it does not allow you to enter `MainData` or `Notes` about the item's inclusion in the group
+* CS does not require you to associate a group procedure with a specific record type. For instance, if you have added 20 objects to a group, you can still add 2 exhibitions to the group as well.
+* CS does not have "WebAccess" groups (though you can create online stories/exhibits via the Exhibition procedure if you use the public browswer -- ask CS Trainer for details)
+* CS does not have package locking
+* I am not entirely clear on the functionality related to the data in `Packages.TemplateRecID` (described in TMS data dictionary as "ID of the item in package (ObjectID in case of tableid=108) to use as template to populate condition line items"), but CS does not have this functionality
+* CS does not allow you to designate a display record for a group procedure
+
+== Packages that will be omitted from the migration
+
+* Packages in Recycle Bin, since we do not migrate data flagged/stored for deletion
+* Packages in `_` folder (created based on alert queues available for user), since CS does not have alert queues and a group like this would become instantly outdated
+* Packages in Move Assistant folder(s)
+* Packages only in Favorites folder
+* Packages with `PackageType` = 2 (e.g. "a special package that stores the list of records last used by a user in a module, maintained by system. Used by the 'Restore Last Session' feature.")
+
+A report of these packages will be provided for review.
+
+== Client decision packages
+
+A list of the following types of packages will be provided to the client, for decisions on whether to migrate each package as a group:
+
+* Packages in folders with folder type = "Personal" (if not also in a folder with type "Public")
+* Packages in folders with folder type = "Shared" (if not also in a folder with type "Public")
+* Packages in folders with folder type = "WebAccess" (if not also in a folder with type "Public")
+
+== Packages that will migrate by default
+
+* Packages in folders with folder type = "Public" (if not also in one of the omitted folders)
+* Packages in "Conservation Project" folder types (if not also in one of the omitted folders)
