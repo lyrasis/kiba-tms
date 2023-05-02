@@ -111,11 +111,12 @@ You will be asked to decide how to handle the data. Options include:
 
 1. Drop the data from the migration
 2. Move the report to post-migration cleanup tasks to be handled manually once migration is complete
-3. Merge the data into a note in the object/procedure included in the group
+3. Merge the data into a note in the object/procedure included in the group - data can be seen when looking at object, but not when looking at group
+4. **Recommended if you want to migrate this data**: Merge the data into the group record - data can be seen when looking at group, but not when looking at object
 
 You may propose other options, and we can discuss the feasibility of implementing them in the migration process.
 
-Example of option 3:
+=== Example of option 3:
 
 Object 81.3 is assigned to package "2023 Objects". In TMS the `MainData` field for this relationship = "81.3", and the `Notes` field = "Not found in Box D"
 
@@ -129,3 +130,8 @@ Because the `MainData` value exactly matches the object number, we did not repea
 If the `MainData` value was "81.3A" and the object number was "81.3" the note could be: "2023 Objects: 81.3A: Not found in Box D"
 
 The Annotation date comes from the `DateEntered` field of the TMS PackageList table, which contains the info on which items are in which packages.
+
+=== Example of option 4:
+
+image::package_rel_data_2.png[1652]
++++&nbsp;+++
