@@ -63,7 +63,7 @@ A list of the following types of packages will be provided to the client, for de
 * Packages in folders with folder type = "Public" (if not also in one of the omitted folders)
 * Packages in "Conservation Project" folder types (if not also in one of the omitted folders)
 
-== Client review/decision worksheet
+== Client review/decision worksheet: whether to include packages in migration or not
 
 A report is given to the client that includes:
 
@@ -100,3 +100,32 @@ It may be easier to take the following approach:
 ====
 Any rows having a value in `omit` will be switched back to `migrating` = "n" if client changes `migrating` to "y".
 ====
+
+== Client review/decision worksheet: handling of inclusion-in-package details
+
+The CS data model does not allow you to enter `MainData` or `Notes` about an item's inclusion in the group.
+
+Once you have indicated what packages should be included in the migration, your migration specialist will prepare a report of all data in these fields for packages that are included in the migration.
+
+You will be asked to decide how to handle the data. Options include:
+
+1. Drop the data from the migration
+2. Move the report to post-migration cleanup tasks to be handled manually once migration is complete
+3. Merge the data into a note in the object/procedure included in the group
+
+You may propose other options, and we can discuss the feasibility of implementing them in the migration process.
+
+Example of option 3:
+
+Object 81.3 is assigned to package "2023 Objects". In TMS the `MainData` field for this relationship = "81.3", and the `Notes` field = "Not found in Box D"
+
+Here is a potential mapping into the object record:
+
+image::package_rel_data_1.png[1800]
++++&nbsp;+++
+
+Because the `MainData` value exactly matches the object number, we did not repeat it in the annotation note.
+
+If the `MainData` value was "81.3A" and the object number was "81.3" the note could be: "2023 Objects: 81.3A: Not found in Box D"
+
+The Annotation date comes from the `DateEntered` field of the TMS PackageList table, which contains the info on which items are in which packages.
