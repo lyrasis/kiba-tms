@@ -109,6 +109,7 @@ module Kiba
         "322" => "MediaRenditions",
         "345" => "Shipments",
         "355" => "ShipmentSteps",
+        "461"=>"InsurancePolicies",
         "631" => "AccessionLot",
         "632" => "RegistrationSets",
         "726" => "ObjContext",

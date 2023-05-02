@@ -41,7 +41,8 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: tms__package_folder_xrefs,
                 keycolumn: :packageid,
-                fieldmap: {folderid: :folderid}
+                fieldmap: {folderid: :folderid},
+                delim: Tms.delim
               transform Merge::MultiRowLookup,
                 lookup: prep__package_folders,
                 keycolumn: :folderid,
@@ -49,7 +50,9 @@ module Kiba
                   foldername: :foldername,
                   folderdesc: :folderdesc,
                   foldertype: :foldertype
-                }
+                },
+                delim: Tms.delim,
+                multikey: true
             end
           end
         end

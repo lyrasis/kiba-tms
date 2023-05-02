@@ -38,16 +38,16 @@ TMS packages map roughly to the CS group procedure. However, TMS has a lot more 
 * CS does not have package locking
 * I am not entirely clear on the functionality related to the data in `Packages.TemplateRecID` (described in TMS data dictionary as "ID of the item in package (ObjectID in case of tableid=108) to use as template to populate condition line items"), but CS does not have this functionality
 * CS does not allow you to designate a display record for a group procedure
+* CS allows you to add objects and procedures to a group, but not authority terms.
 
 == Packages that will be omitted from the migration
 
+* Packages with `PackageType` = 2 (e.g. "a special package that stores the list of records last used by a user in a module, maintained by system. Used by the 'Restore Last Session' feature.")
+* Packages with `itemcount` = 0
+* Packages with associated with TMS tables whose data maps to CS authority records (Constituents, HistEvents, ReferenceMaster, etc.)
 * Packages in Recycle Bin, since we do not migrate data flagged/stored for deletion
 * Packages in `_` folder (created based on alert queues available for user), since CS does not have alert queues and a group like this would become instantly outdated
 * Packages in Move Assistant folder(s)
-* Packages only in Favorites folder
-* Packages with `PackageType` = 2 (e.g. "a special package that stores the list of records last used by a user in a module, maintained by system. Used by the 'Restore Last Session' feature.")
-
-A report of these packages will be provided for review.
 
 == Client decision packages
 
@@ -56,8 +56,41 @@ A list of the following types of packages will be provided to the client, for de
 * Packages in folders with folder type = "Personal" (if not also in a folder with type "Public")
 * Packages in folders with folder type = "Shared" (if not also in a folder with type "Public")
 * Packages in folders with folder type = "WebAccess" (if not also in a folder with type "Public")
+* Packages not assigned to any folder
 
 == Packages that will migrate by default
 
 * Packages in folders with folder type = "Public" (if not also in one of the omitted folders)
 * Packages in "Conservation Project" folder types (if not also in one of the omitted folders)
+
+== Client review/decision
+
+A report is given to the client that includes:
+
+* Migrateable data on all packages (name, notes, etc)
+* Non-migrateable data that may help with decision-making (lastuseddate, etc.)
+* `omit` column - gives reason package is omitted from migration, if applicable. Client does not have the option of including these in the migration.
+* `migrating` column - Initial values are as follows:
+** **n** when package is omitted for non-negotiable reason
+** **y** when package will migrate by default
+** **blank** client should provide decision (y, n). Any left blank will not migrate
+
+[TIP]
+====
+Client may change "y" to "n" in `migrating` if desired, but should not edit rows having a value in `omit`.
+
+Changing `migrating` = "y" to "n" may make sense if you want to do something like:
+
+* not migrate packages owned by staff no longer at your institution (sort/filter on `owner`);
+* not migrate packages that haven't been used in the past 2 years (sort/filter on `lastuseddate`)
+
+It may be easier to take the following approach:
+
+* Sort, filter, whatever to mark categories of packages as `migrating` "y" or "n", while ignoring `omit`.
+* **At the end, sort by `omit` and change all rows with values in that field to `migrating` = "n"
+====
+
+[WARNING]
+====
+Any rows having a value in `omit` will be switched back to `migrating` = "n" if client changes `migrating` to "y".
+====

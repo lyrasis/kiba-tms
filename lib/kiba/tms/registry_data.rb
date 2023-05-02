@@ -3408,6 +3408,39 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("packages") do
+          register :flag_omitting, {
+            creator: Kiba::Tms::Jobs::Packages::FlagOmitting,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "packages_flag_omitting.csv"),
+            tags: %i[packages],
+            desc: "Flags packages that are omitted from the migration with "\
+              "no option for inclusion. Reason for omission is in :omit"
+          }
+          register :flag_migrating, {
+            creator: Kiba::Tms::Jobs::Packages::FlagMigrating,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "packages_flag_migrating.csv"),
+            tags: %i[packages],
+            desc: "Removes omitted packages. Flags (in :migrating) remaining "\
+              "packages that are to be migrated (y) and those that need "\
+              "client decision (blank)"
+          }
+          register :client_decision_worksheet, {
+            creator: Kiba::Tms::Jobs::Packages::ClientDecisionWorksheet,
+            path: File.join(Kiba::Tms.datadir, "to_client",
+              "packages_decision_worksheet.csv"),
+            tags: %i[packages],
+            desc: "Removes :packagetype, :tablename, :folderid, :folderdesc "\
+              "fields from :packages__flag_migrating",
+            dest_special_opts: {
+              initial_headers: %i[
+                migrating omit name notes owner
+              ]
+            }
+          }
+        end
+
         Kiba::Tms.registry.namespace("persons") do
           register :flagged, {
             creator: Kiba::Tms::Jobs::Persons::Flagged,
