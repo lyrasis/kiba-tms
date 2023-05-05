@@ -25,10 +25,10 @@ module Kiba
       #   client-specific changes to TMS source data
       setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
-      setting :preferred_name_field, default: :displayname, reader: true
+      setting :preferred_name_field, default: :alphasort, reader: true
       # Field to use as variant form of name (if :include_flipped_as_variant
       #   is true
-      setting :var_name_field, default: :alphasort, reader: true
+      setting :var_name_field, default: :displayname, reader: true
       # Whether to retain value in :var_name_field as a variant name in CS
       #   person/org record
       setting :include_flipped_as_variant, default: false, reader: true

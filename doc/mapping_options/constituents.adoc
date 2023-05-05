@@ -30,9 +30,9 @@ These are set in https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/cons
 See https://github.com/lyrasis/collectionspace-migration-explainers/blob/main/docs/choosing_preferred_name_form_for_persons.adoc[Choosing preferred form of name for Person authorities].
 
 Setting name:: `:preferred_name_field`
-Default option:: `:displayname` (direct form)
+Default option:: `:alphasort` (inverted form)
 
-There is also a `:var_name_field` (i.e. non-preferred name field) setting. This is set to `:alphasort` if `:displayname` is the preferred name form. The values are swapped if inverted form of name is preferred.
+There is also a `:var_name_field` (i.e. non-preferred name field) setting. This is set to `:displayname` if `:alphasort` is the preferred name form. The values are swapped if inverted form of name is preferred.
 
 === Include non-preferred name form as variant name?
 
