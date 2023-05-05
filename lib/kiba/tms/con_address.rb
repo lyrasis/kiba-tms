@@ -22,6 +22,14 @@ module Kiba
       #   appears to be a way of fake-deleting a value from use in the system,
       #   without removing record of the value in the database.
       setting :migrate_inactive, default: false, reader: true
+
+      # Whether to include the value of `:active_mapping` for each row
+      #   in a note about the address. This has no effect (i.e. no note
+      #   is ever created) if `:migrate_inactive` = false.
+      setting :active_note, default: true, reader: true
+
+      # Provides the value of the active note, if included. Only relevant if
+      #   `:migrate_inactive` = true AND `:include_active_note` = true
       setting :active_mapping,
         default: {
           "0" => "Inactive address",
@@ -53,7 +61,8 @@ module Kiba
         constructor: ->(value) {
           value << :addresstype if Tms::AddressTypes.used?
           value << :addressdates if dates_note
-          %w[active billing mailing shipping].each do |type|
+          value << :active if migrate_inactive && active_note
+          %w[billing mailing shipping].each do |type|
             value << type.to_sym if send("#{type}_note".to_sym)
           end
           value

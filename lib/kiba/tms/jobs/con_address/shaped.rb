@@ -41,6 +41,16 @@ module Kiba
                 value: "y"
               transform Delete::Fields,
                 fields: :keeping
+
+              if config.migrate_inactive &&
+                  config.active_note
+                transform Replace::FieldValueWithStaticMapping,
+                  source: :active,
+                  mapping: config.active_mapping
+              else
+                transform Delete::Fields, fields: :active
+              end
+
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: config.address_fields,
                 find: '^n\/a$', replace: ""
@@ -92,7 +102,6 @@ module Kiba
               transform Delete::Fields, fields: :addresstypeid
 
               {
-                active: :active,
                 shipping: :defaultshipping,
                 billing: :defaultbilling,
                 mailing: :defaultmailing
