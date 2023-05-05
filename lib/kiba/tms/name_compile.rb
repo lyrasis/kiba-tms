@@ -12,17 +12,18 @@ module Kiba
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
         reader: true
       # Used to auto generate transform jobs for these tables. Key is the config
-      #   module for the table, which must implement a :name_fields method.
-      #   Value is 'tms' or 'prep', which is the prefix of the job destination
-      #   key to be used as source
+      #   module for the table, which must implement a :name_fields method and
+      #   extend `UncontrolledNameCompilable`. Value is the job key of the
+      #   source from which names will be compiled
       setting :uncontrolled_name_source_tables,
         default: {
-          "Loans" => "tms",
-          "LocApprovers" => "prep",
-          "LocHandlers" => "prep",
-          "ObjAccession" => "tms",
-          "ObjIncoming" => "tms",
-          "ObjLocations" => "tms"
+          "Loans" => :tms__loans,
+          "LocApprovers" => :prep__loc_approvers,
+          "LocHandlers" => :prep__loc_handlers,
+          "ObjAccession" => :tms__obj_accession,
+          "ObjIncoming" => :tms__obj_incoming,
+          "ObjLocations" => :tms__obj_locations,
+          "Packages" => :packages__migrating
         },
         reader: true,
         constructor: proc { |value|

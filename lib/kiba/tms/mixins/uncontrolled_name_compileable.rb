@@ -22,8 +22,7 @@ module Kiba
         end
 
         def name_compile_source_job_key
-          lkup = Tms::NameCompile.uncontrolled_name_source_tables
-          "#{lkup[table_name]}__#{filekey}".to_sym
+          Tms::NameCompile.uncontrolled_name_source_tables[table_name]
         end
 
         def self.check_name_fields(mod)

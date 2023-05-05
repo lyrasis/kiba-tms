@@ -23,8 +23,7 @@ module Kiba
 
           def source(mod)
             lkup = Tms::NameCompile.uncontrolled_name_source_tables
-            ns = lkup[mod.name.split("::").last]
-            "#{ns}__#{mod.filekey}".to_sym
+            lkup[mod.name.split("::").last]
           end
 
           def xforms(mod)
