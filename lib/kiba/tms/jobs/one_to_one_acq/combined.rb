@@ -49,7 +49,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: combinefields,
                   target: :combined,
-                  sep: " - ",
+                  delim: " - ",
                   prepend_source_field_name: true,
                   delete_sources: false
               end

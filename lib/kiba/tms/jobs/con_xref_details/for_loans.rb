@@ -25,7 +25,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[recordid role person org],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
               if Tms::ConXrefDetails.for_loans.con_note_builder

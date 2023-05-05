@@ -90,7 +90,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[path filename],
                 target: :fullpath,
-                sep: "/",
+                delim: "/",
                 delete_sources: false
               transform Deduplicate::FlagAll,
                 on_field: :fullpath,

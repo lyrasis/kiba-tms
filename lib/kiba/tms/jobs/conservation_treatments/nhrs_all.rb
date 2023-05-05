@@ -31,7 +31,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[item1_id item1_type item2_id item2_type],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
 
               transform Deduplicate::Table,

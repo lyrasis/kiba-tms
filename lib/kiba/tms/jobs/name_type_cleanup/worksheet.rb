@@ -78,7 +78,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid origname],
                 target: :cleanupid,
-                sep: "_",
+                delim: "_",
                 delete_sources: false
 
               transform Rename::Field, from: :contype, to: :authoritytype
@@ -113,7 +113,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype name],
                   target: :corrfingerprint,
-                  sep: " ",
+                  delim: " ",
                   delete_sources: false
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__corrected_name_lookup,

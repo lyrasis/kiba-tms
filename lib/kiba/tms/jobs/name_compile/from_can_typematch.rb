@@ -26,7 +26,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid],
                 target: :constituentid,
-                sep: ".",
+                delim: ".",
                 delete_sources: true
 
               transform Tms::Transforms::NameCompile::DetermineTypematchTreatment

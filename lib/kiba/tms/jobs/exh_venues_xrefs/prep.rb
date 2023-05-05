@@ -108,7 +108,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[prefix insind],
                 target: :insindnote,
-                sep: ":%CR%",
+                delim: ":%CR%",
                 delete_sources: true
             end
           end

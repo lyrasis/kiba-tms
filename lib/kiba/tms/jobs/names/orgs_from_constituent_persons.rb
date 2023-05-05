@@ -34,7 +34,7 @@ module Kiba
                 source: prefname,
                 target: :norm
               transform CombineValues::FromFieldsWithDelimiter, sources: %i[norm contact_person contact_role], target: :combined,
-                sep: " - ", delete_sources: false
+                delim: " - ", delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
               transform Merge::ConstantValue, target: :constituenttype,
                 value: "Organization"

@@ -63,7 +63,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[item1_id_lot item1_id_set],
                 target: :item1_id,
-                sep: "",
+                delim: "",
                 delete_sources: true
 
               transform Merge::MultiRowLookup,

@@ -56,7 +56,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.inventorystatus_fields,
                   target: :inventorystatus,
-                  sep: Tms.delim,
+                  delim: Tms.delim,
                   delete_sources: true
               end
 
@@ -64,7 +64,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.comment_fields,
                   target: :comment,
-                  sep: Tms.delim,
+                  delim: Tms.delim,
                   delete_sources: true
               end
 

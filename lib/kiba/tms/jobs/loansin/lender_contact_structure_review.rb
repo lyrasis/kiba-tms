@@ -25,7 +25,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[lenderpersonlocal lenderorganizationlocal],
                 target: :combined,
-                sep: Tms.delim,
+                delim: Tms.delim,
                 delete_sources: false
               %i[combined lenderscontact].each do |field|
                 transform do |row|

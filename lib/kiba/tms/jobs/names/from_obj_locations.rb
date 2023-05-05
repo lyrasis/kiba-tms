@@ -24,7 +24,7 @@ module Kiba
                 fields: %i[approver handler requestedby]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[approver handler requestedby], target: :combined,
-                sep: "|||", delete_sources: false
+                delim: "|||", delete_sources: false
               transform FilterRows::FieldPopulated, action: :keep,
                 field: :combined
               transform Delete::FieldsExcept, fields: :combined

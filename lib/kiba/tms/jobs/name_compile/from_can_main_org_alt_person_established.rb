@@ -30,7 +30,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[altnameid mainconid altnameconid],
                 target: :constituentid,
-                sep: ".",
+                delim: ".",
                 delete_sources: true
 
               if treatment == :variant

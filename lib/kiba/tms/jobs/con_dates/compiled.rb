@@ -31,14 +31,14 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription date],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
 
               transform Tms::Transforms::ConDates::ReducePartialDuplicates

@@ -160,7 +160,7 @@ module Kiba
                     transform CombineValues::FromFieldsWithDelimiter,
                       sources: %i[approvalisodate1 approvalisodate2],
                       target: :approvaldate_note,
-                      sep: ", ",
+                      delim: ", ",
                       delete_sources: true
                     transform Prepend::ToFieldValue,
                       field: :approvaldate_note,
@@ -207,21 +207,21 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.proviso_sources,
                   target: :acquisitionprovisos,
-                  sep: "\n",
+                  delim: "\n",
                   delete_sources: true
               end
               unless config.note_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.note_sources,
                   target: :acquisitionnote,
-                  sep: "\n",
+                  delim: "\n",
                   delete_sources: true
               end
               unless config.reason_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.reason_sources,
                   target: :acquisitionreason,
-                  sep: "\n",
+                  delim: "\n",
                   delete_sources: true
               end
 

@@ -23,7 +23,7 @@ module Kiba
               transform Delete::FieldsExcept, fields: %i[authorizer initiator]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[authorizer initiator], target: :combined,
-                sep: "|||", delete_sources: false
+                delim: "|||", delete_sources: false
               transform FilterRows::FieldPopulated, action: :keep,
                 field: :combined
               transform Delete::FieldsExcept, fields: :combined

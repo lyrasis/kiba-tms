@@ -49,7 +49,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: locsrc,
                 target: :location_name,
-                sep: Tms::Locations.hierarchy_delim,
+                delim: Tms::Locations.hierarchy_delim,
                 delete_sources: false
               transform Delete::FieldsExcept,
                 fields: %i[fulllocid location_name parent_location

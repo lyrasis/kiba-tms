@@ -40,7 +40,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: [targetfield, :acquisitionnumber],
                   target: targetfield,
-                  sep: "\n",
+                  delim: "\n",
                   delete_sources: true
                 transform Clean::RegexpFindReplaceFieldVals,
                   fields: targetfield,

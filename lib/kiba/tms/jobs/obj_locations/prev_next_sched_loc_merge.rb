@@ -56,7 +56,7 @@ module Kiba
                 sources: %i[location prev_location next_location
                   scheduled_location],
                 target: :locdata,
-                sep: "|",
+                delim: "|",
                 delete_sources: false
             end
           end

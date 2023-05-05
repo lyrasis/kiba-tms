@@ -74,7 +74,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.content_fields,
                 target: :index,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform FilterRows::WithLambda,
                 action: :reject,

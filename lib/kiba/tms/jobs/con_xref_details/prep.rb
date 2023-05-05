@@ -48,7 +48,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.fields - [:conxrefdetailid],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
               transform Delete::Fields, fields: rt.id_field

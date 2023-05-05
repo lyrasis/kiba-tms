@@ -36,7 +36,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: combinefields,
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: true
 
               transform Delete::FieldsExcept,

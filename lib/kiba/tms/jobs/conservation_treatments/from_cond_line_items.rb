@@ -42,7 +42,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[treatment durationdays],
                 target: :treatmentsummary,
-                sep: "%CR%",
+                delim: "%CR%",
                 delete_sources: true
 
               transform Merge::MultiRowLookup,

@@ -131,7 +131,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notesrcs,
                   target: :acquisitionnote,
-                  sep: "%CR%",
+                  delim: "%CR%",
                   delete_sources: true
               end
               provsrcs = Tms::ObjAccession.proviso_sources
@@ -139,7 +139,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: provsrcs,
                   target: :acquisitionprovisos,
-                  sep: "%CR%",
+                  delim: "%CR%",
                   delete_sources: true
               end
 

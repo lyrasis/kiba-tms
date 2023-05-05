@@ -83,7 +83,7 @@ module Kiba
                   transform CombineValues::FromFieldsWithDelimiter,
                     sources: %i[objectnumber text_entry],
                     target: :planningnote,
-                    sep: ": ",
+                    delim: ": ",
                     delete_sources: false
                 end
               end

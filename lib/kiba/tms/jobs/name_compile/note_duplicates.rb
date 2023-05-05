@@ -28,7 +28,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm relation_type note_text],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::FlagAll, on_field: :combined,
                 in_field: :duplicate_all, explicit_no: false

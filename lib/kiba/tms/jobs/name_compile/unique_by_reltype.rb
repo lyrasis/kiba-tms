@@ -87,12 +87,12 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[fp_p_ed fp_o_ed],
                 target: :fp_editable,
-                sep: "",
+                delim: "",
                 delete_sources: true
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[fp_p_ned fp_o_ned],
                 target: :fp_not_editable,
-                sep: "",
+                delim: "",
                 delete_sources: true
             end
           end

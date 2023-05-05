@@ -150,7 +150,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: statusfields,
                   target: :objectstatus,
-                  sep: Tms.delim,
+                  delim: Tms.delim,
                   delete_sources: true
                 transform Deduplicate::FieldValues,
                   fields: :objectstatus,
@@ -364,14 +364,14 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: Tms::Objects.comment_fields,
                 target: :comment,
-                sep: Tms.delim,
+                delim: Tms.delim,
                 delete_sources: true
 
               unless Tms::Objects.named_coll_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: Tms::Objects.named_coll_fields,
                   target: :namedcollection,
-                  sep: Tms.delim,
+                  delim: Tms.delim,
                   delete_sources: true
               end
 
@@ -382,7 +382,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
                   target: target,
-                  sep: config.send("#{target}_delim".to_sym),
+                  delim: config.send("#{target}_delim".to_sym),
                   delete_sources: true
               end
             end

@@ -45,7 +45,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: ins_ind_fields,
                 target: :combined,
-                sep: Tms.delim,
+                delim: Tms.delim,
                 delete_sources: false
               transform Deduplicate::FieldValues, fields: :combined,
                 sep: Tms.delim
@@ -87,7 +87,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: ins_ind_fields,
                 target: :combined,
-                sep: "%CR%%CR%",
+                delim: "%CR%%CR%",
                 delete_sources: false
             end
           end

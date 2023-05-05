@@ -51,7 +51,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.description_sources,
                 target: :description,
-                sep: "%CR%",
+                delim: "%CR%",
                 delete_sources: true
 
               if config.mediafileuri_generator

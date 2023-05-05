@@ -89,7 +89,7 @@ module Kiba
                 sources: %i[tablename recordid role person org datebegin dateend prefix remarks
                   constatement suffix amount displaydate],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
             end

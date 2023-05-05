@@ -182,7 +182,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_source_fields,
                 target: :loaninnote,
-                sep: "%CR%%CR%",
+                delim: "%CR%%CR%",
                 delete_sources: true
 
               transform Tms::Transforms::InsuranceIndemnityNote
@@ -190,7 +190,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.conditions_source_fields,
                 target: :loaninconditions,
-                sep: "%CR%%CR%",
+                delim: "%CR%%CR%",
                 delete_sources: true
 
               if Tms::ConRefs.for?("Loansin")
@@ -206,7 +206,7 @@ module Kiba
                       "contact_#{type}", "con_contact#{type}"
                     ].map(&:to_sym),
                     target: "contact_#{type}".to_sym,
-                    sep: Tms.delim,
+                    delim: Tms.delim,
                     delete_sources: true
                   transform Deduplicate::FieldValues,
                     fields: "contact_#{type}".to_sym,

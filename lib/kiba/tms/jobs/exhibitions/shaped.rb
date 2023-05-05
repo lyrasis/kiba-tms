@@ -31,7 +31,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[exhtitle subtitle],
                 target: :title,
-                sep: ": ",
+                delim: ": ",
                 delete_sources: true
 
               # Move locationname/auth to Gallery rotation if there is a
@@ -82,7 +82,7 @@ module Kiba
                   dept_exhibitionpersonorganizationlocal
                 ],
                 target: :exhibitionpersonorganizationlocal,
-                sep: Tms.sgdelim,
+                delim: Tms.sgdelim,
                 delete_sources: true
 
               transform CombineValues::FromFieldsWithDelimiter,
@@ -92,7 +92,7 @@ module Kiba
                   dept_exhibitionpersonrole
                 ],
                 target: :exhibitionpersonrole,
-                sep: Tms.sgdelim,
+                delim: Tms.sgdelim,
                 delete_sources: true
 
               %i[boilerplatetext curatorialnote generalnote
@@ -100,7 +100,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{field}_sources".to_sym),
                   target: field,
-                  sep: "%CR%",
+                  delim: "%CR%",
                   delete_sources: true
               end
 
@@ -119,7 +119,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[isinhouse exhtravelling isvirtual],
                 target: :type,
-                sep: " + ",
+                delim: " + ",
                 delete_sources: true
 
               transform Delete::EmptyFields

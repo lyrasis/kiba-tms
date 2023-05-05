@@ -97,7 +97,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype_norm norm relation_type],
                 target: :sort,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Delete::Fields,
                 fields: %i[fingerprint contype_norm norm]

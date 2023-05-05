@@ -24,7 +24,7 @@ module Kiba
                 fields: %i[approvedby contact requestedby]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[approvedby contact requestedby], target: :combined,
-                sep: "|||", delete_sources: false
+                delim: "|||", delete_sources: false
               transform FilterRows::FieldPopulated, action: :keep,
                 field: :combined
               transform Delete::FieldsExcept, fields: :combined

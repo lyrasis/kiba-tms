@@ -40,7 +40,7 @@ module Kiba
                 sources: %i[constituentid contype name relation_type
                   termsource],
                 target: :fingerprint,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Cspace::NormalizeForID, source: :name, target: :norm
             end

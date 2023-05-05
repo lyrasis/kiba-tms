@@ -83,7 +83,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: recnumfields,
                 target: :targetrecord,
-                sep: "",
+                delim: "",
                 delete_sources: true
             end
           end

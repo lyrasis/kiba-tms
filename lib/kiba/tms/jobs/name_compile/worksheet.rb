@@ -39,7 +39,7 @@ module Kiba
                 sources: %i[authority name constituentid relation_type
                   termsource],
                 target: :cleanupid,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
 
               if config.done

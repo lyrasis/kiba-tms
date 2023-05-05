@@ -26,7 +26,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: namefields,
                 target: :combined,
-                sep: "|||",
+                delim: "|||",
                 delete_sources: true
               transform FilterRows::FieldPopulated, action: :keep,
                 field: :combined

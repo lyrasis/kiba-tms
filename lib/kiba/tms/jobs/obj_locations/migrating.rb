@@ -53,7 +53,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[currentlocationnote loc5],
                 target: :currentlocationnote,
-                sep: "",
+                delim: "",
                 delete_sources: true
               unless config.drop_inactive
                 transform Tms::Transforms::ObjLocations::HandleInactive

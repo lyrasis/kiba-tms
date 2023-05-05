@@ -30,7 +30,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[location_name parent_location],
                 target: :combined,
-                sep: " - ",
+                delim: " - ",
                 delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
               transform Merge::ConstantValues, constantmap: {

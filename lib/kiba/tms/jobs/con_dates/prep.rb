@@ -40,7 +40,7 @@ module Kiba
               transform Tms::Transforms::DateFromParts,
                 year: :dateendsearch, month: :monthendsearch, day: :dayendsearch, target: :dateend
               transform CombineValues::FromFieldsWithDelimiter, sources: %i[datebegin dateend], target: :date,
-                sep: " - ", delete_sources: true
+                delim: " - ", delete_sources: true
 
               transform Append::NilFields, fields: :warn
 

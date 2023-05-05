@@ -78,7 +78,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[planningnote te_planningnote],
                 target: :planningnote,
-                sep: "%CR%",
+                delim: "%CR%",
                 delete_sources: true
             end
           end

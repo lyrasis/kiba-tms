@@ -153,7 +153,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[contype conpref_contype conorig_contype],
                   target: :contype,
-                  sep: "",
+                  delim: "",
                   delete_sources: true
                 transform do |row|
                   contype = row[:contype]

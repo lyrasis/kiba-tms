@@ -127,21 +127,21 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.bionote_sources,
                   target: :bionote,
-                  sep: "%CR%",
+                  delim: "%CR%",
                   delete_sources: true
               end
               unless config.group_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.group_sources,
                   target: :group,
-                  sep: Tms.delim,
+                  delim: Tms.delim,
                   delete_sources: true
               end
               unless config.namenote_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.namenote_sources,
                   target: :namenote,
-                  sep: "%CR%",
+                  delim: "%CR%",
                   delete_sources: true
               end
 

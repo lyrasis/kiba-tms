@@ -28,7 +28,7 @@ module Kiba
               transform Delete::FieldsExcept, fields: @fields
 
               transform CombineValues::FromFieldsWithDelimiter, sources: @fields, target: :combined,
-                sep: " - ", delete_sources: false
+                delim: " - ", delete_sources: false
               transform Deduplicate::Table, field: :combined, delete_field: true
 
               transform Tms::Transforms::Constituents::KeepOrgsWithPersonNameParts

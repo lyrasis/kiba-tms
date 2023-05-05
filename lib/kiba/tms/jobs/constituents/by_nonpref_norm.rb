@@ -34,7 +34,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[contype norm],
                 target: :combined,
-                sep: " ",
+                delim: " ",
                 delete_sources: false
               transform Delete::FieldsExcept,
                 fields: config.lookup_job_fields

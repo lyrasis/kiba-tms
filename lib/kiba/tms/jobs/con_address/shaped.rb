@@ -78,7 +78,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: %i[init_addresscountry remappedcountrycode],
                   target: :addresscountry,
-                  sep: "",
+                  delim: "",
                   delete_sources: false
               end
               transform Delete::Fields, fields: :countryid
@@ -155,7 +155,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_fields,
                 target: :address_notes,
-                sep: "; ",
+                delim: "; ",
                 delete_sources: true
               if config.address_remarks_handling == :specific
                 transform Prepend::FieldToFieldValue,
@@ -171,7 +171,7 @@ module Kiba
                 sources: %i[constituentid addressplace1 addressplace2 city state
                   zipcode addresscountry],
                 target: :combined,
-                sep: " - ",
+                delim: " - ",
                 delete_sources: false
               transform Deduplicate::Flag,
                 on_field: :combined,

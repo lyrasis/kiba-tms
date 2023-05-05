@@ -62,7 +62,7 @@ module Kiba
                 sources: %i[estimatelow estimatehigh proceedsrcvdisodate
                   reportisodate],
                 target: :displosalnote,
-                sep: "%CR%",
+                delim: "%CR%",
                 delete_sources: true
             end
           end
