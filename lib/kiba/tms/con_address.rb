@@ -15,6 +15,13 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      # Whether inactive addresses are included in migration
+      #
+      # Defaults to `false` because TMS tends to use "inactive" to code values
+      #   that were mistakenly entered or no longer used. Setting to inactive
+      #   appears to be a way of fake-deleting a value from use in the system,
+      #   without removing record of the value in the database.
+      setting :migrate_inactive, default: false, reader: true
       setting :active_mapping,
         default: {
           "0" => "Inactive address",

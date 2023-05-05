@@ -11,10 +11,10 @@ module Kiba
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: Tms::ConAddress.address_fields
             )
-            @chks = if Tms::ConAddress.omit_inactive_address
-              %i[no_match inactive data]
-            else
+            @chks = if Tms::ConAddress.migrate_inactive
               %i[no_match data]
+            else
+              %i[no_match inactive data]
             end
           end
 
