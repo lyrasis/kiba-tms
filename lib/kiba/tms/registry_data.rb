@@ -3417,6 +3417,14 @@ module Kiba
             desc: "Flags packages that are omitted from the migration with "\
               "no option for inclusion. Reason for omission is in :omit"
           }
+          register :omitted, {
+            creator: Kiba::Tms::Jobs::Packages::Omitted,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "packages_omitted.csv"),
+            tags: %i[packages],
+            desc: "Omitted packages lookup. :omit and :packageid only",
+            lookup_on: :packageid
+          }
           register :flag_migrating, {
             creator: Kiba::Tms::Jobs::Packages::FlagMigrating,
             path: File.join(Kiba::Tms.datadir, "working",
@@ -3439,6 +3447,73 @@ module Kiba
               ]
             }
           }
+          register :migrating, {
+            creator: Kiba::Tms::Jobs::Packages::Migrating,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "packages_migrating.csv"),
+            tags: %i[packages],
+            desc: "Removes :omitting. If client decisions are done, merges "\
+              "those in. If not, blank are dropped"
+          }
+          register :shaped, {
+            creator: Kiba::Tms::Jobs::Packages::Shaped,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "packages_shaped.csv"),
+            tags: %i[packages],
+            desc: "Prepares for CS, but retains additional fields needed "\
+            "for linkage"
+          }
+          if Tms::Packages.selection_done
+            Tms::Packages.provided_worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("packages__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::Packages.provided_worksheets[idx],
+                  desc: "Package decision worksheet provided to client",
+                  tags: %i[packages cleanup],
+                  supplied: true
+                }
+              end
+            register :previous_worksheet_compile, {
+              creator:
+              Kiba::Tms::Jobs::Packages::PreviousWorksheetCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "packages_previous_worksheet_compile.csv"
+              ),
+              tags: %i[packages cleanup],
+              desc: "Joins completed supplied worksheets and deduplicates on "\
+                ":packageid",
+              lookup_on: :packageid
+            }
+            Tms::Packages.returned_file_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("packages__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::Packages.returned_files[idx],
+                  desc: "Completed package decision worksheet",
+                  tags: %i[packages cleanup],
+                  supplied: true
+                }
+              end
+            register :returned_compile, {
+              creator: Kiba::Tms::Jobs::Packages::ReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "packages_returned_compile.csv"
+              ),
+              tags: %i[packages cleanup],
+              desc: "Joins completed decision worksheets and deduplicates on "\
+                ":packageid",
+              lookup_on: :packageid
+            }
+          end
         end
 
         Kiba::Tms.registry.namespace("persons") do
