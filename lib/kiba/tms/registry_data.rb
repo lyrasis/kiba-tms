@@ -2568,28 +2568,28 @@ module Kiba
           register :for_con_alt_names, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConAltNames,
             path: File.join(Kiba::Tms.datadir, "working",
-              "name_type_cleanup_for_con_alt_names.csv"),
+                            "name_type_cleanup_for_con_alt_names.csv"),
             tags: %i[names cleanup],
             lookup_on: :altnameid
           }
           register :for_constituents, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConstituents,
             path: File.join(Kiba::Tms.datadir, "working",
-              "name_type_cleanup_for_constituents.csv"),
+                            "name_type_cleanup_for_constituents.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
           register :for_con_org_with_name_parts, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConOrgWithNameParts,
             path: File.join(Kiba::Tms.datadir, "working",
-              "name_type_cleanup_for_con_org_with_name_parts.csv"),
+                            "name_type_cleanup_for_con_org_with_name_parts.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
           register :for_con_person_with_inst, {
             creator: Kiba::Tms::Jobs::NameTypeCleanup::ForConPersonWithInst,
             path: File.join(Kiba::Tms.datadir, "working",
-              "name_type_cleanup_for_con_person_with_inst.csv"),
+                            "name_type_cleanup_for_con_person_with_inst.csv"),
             tags: %i[names cleanup],
             lookup_on: :constituentid
           }
@@ -2797,14 +2797,14 @@ module Kiba
           register :linked_lot, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_accession_linked_lot.csv"),
+                            "obj_accession_linked_lot.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using LinkedLot approach"
           }
           register :linked_set, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedSet,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_accession_linked_set.csv"),
+                            "obj_accession_linked_set.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using LinkedSet approach"
           }
@@ -2833,7 +2833,7 @@ module Kiba
           register :one_to_one, {
             creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_accession_one_to_one.csv"),
+                            "obj_accession_one_to_one.csv"),
             tags: %i[objaccession setup],
             desc: "Rows from which acquisitions will be created using OneToOne approach"
           }
@@ -2857,13 +2857,13 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                parentobjectnumber componentnumber is_top_object
-                problemcomponent existingobject duplicate
-                componentname parentname parenttitle
-                physdesc parentdesc
-                component_type objcompstatus active
-                physdesc
-              ]
+                 parentobjectnumber componentnumber is_top_object
+                 problemcomponent existingobject duplicate
+                 componentname parentname parenttitle
+                 physdesc parentdesc
+                 component_type objcompstatus active
+                 physdesc
+                ]
             },
             lookup_on: :objectid
           }
@@ -2879,54 +2879,54 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[
-                parentobjectnumber componentnumber is_top_object
-                problemcomponent existingobject duplicate
-                componentname parentname parenttitle
-                physdesc parentdesc
-                component_type objcompstatus active
-                physdesc
-              ]
+                 parentobjectnumber componentnumber is_top_object
+                 problemcomponent existingobject duplicate
+                 componentname parentname parenttitle
+                 physdesc parentdesc
+                 component_type objcompstatus active
+                 physdesc
+                ]
             },
             lookup_on: :componentid
           }
           register :actual_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ActualComponents,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_components_actual.csv"),
+                            "obj_components_actual.csv"),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :problem_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponents,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_components_problem.csv"),
+                            "obj_components_problem.csv"),
             tags: %i[obj_components postmigcleanup],
             lookup_on: :componentid
           }
           register :problem_component_lmi, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_components_problem_lmi.csv"),
+                            "obj_components_problem_lmi.csv"),
             tags: %i[obj_components postmigcleanup]
           }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_components_parent_objects.csv"),
+                            "obj_components_parent_objects.csv"),
             tags: %i[obj_components],
             lookup_on: :componentid
           }
           register :objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::Objects,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_components_objects.csv"),
+                            "obj_components_objects.csv"),
             tags: %i[obj_components objects],
             desc: "Converts rows from :actual_components to object records"
           }
           register :current_loc_lookup, {
             creator: Kiba::Tms::Jobs::ObjComponents::CurrentLocLookup,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_components_current_loc_lookup.csv"),
+                            "obj_components_current_loc_lookup.csv"),
             tags: %i[obj_components obj_locations],
             desc: "Lookup via :fullfingerprint. Only field: :fullfingerprint. "\
               "Use to identify which clumped ObjLocations rows are for "\
@@ -2936,7 +2936,7 @@ module Kiba
           register :parent_title_mismatch, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentTitleMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_components_parent_title_mismatch.csv"),
+                            "obj_components_parent_title_mismatch.csv"),
             tags: %i[obj_components postmigcleanup],
             desc: "Components that have a title, but where that title does "\
               "appear in the parent object's title or objectname fields"
@@ -2944,7 +2944,7 @@ module Kiba
           register :parent_desc_mismatch, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentDescMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_components_parent_desc_mismatch.csv"),
+                            "obj_components_parent_desc_mismatch.csv"),
             tags: %i[obj_components postmigcleanup],
             desc: "Components that have a physdesc field value, and where "\
               "the parent object's record does not contain that description"
@@ -2955,7 +2955,7 @@ module Kiba
           register :periods, {
             creator: Kiba::Tms::Jobs::ObjContext::Periods,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_context_periods.csv"),
+                            "obj_context_periods.csv"),
             tags: %i[obj_context dates objects],
             desc: "Only populated :period values, looked up by objectid",
             lookup_on: :objectid
@@ -2966,7 +2966,7 @@ module Kiba
           register :shaped, {
             creator: Kiba::Tms::Jobs::ObjDeaccession::Shaped,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_deaccession_shaped.csv"),
+                            "obj_deaccession_shaped.csv"),
             tags: %i[obj_deaccession],
             desc: "Renames fields and reshapes data into CS Object Exit",
             dest_special_opts: {
@@ -2976,7 +2976,7 @@ module Kiba
           register :obj_rel, {
             creator: Kiba::Tms::Jobs::ObjDeaccession::ObjRel,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_deaccession_obj_rel.csv"),
+                            "obj_deaccession_obj_rel.csv"),
             tags: %i[obj_deaccession objects nhr]
           }
         end
@@ -2985,7 +2985,7 @@ module Kiba
           register :for_initial_review, {
             creator: Kiba::Tms::Jobs::ObjIncoming::ForInitialReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_incoming_initial_review.csv"),
+                            "obj_incoming_initial_review.csv"),
             tags: %i[obj_incoming reports],
             desc: "Merges object number from object table into prepped obj_incoming table",
             dest_special_opts: {
@@ -2998,7 +2998,7 @@ module Kiba
           register :migrating, {
             creator: Kiba::Tms::Jobs::ObjLocations::Migrating,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_migrating.csv"),
+                            "obj_locations_migrating.csv"),
             tags: %i[obj_locations],
             desc: "- Removes rows where :objlocationid = -1\n"\
               "- Removes rows where :locationid = -1\n"\
@@ -3008,15 +3008,15 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
-                location_purpose transport_type transport_status
-                location prevobjlocid nextobjlocid]
+                 location_purpose transport_type transport_status
+                 location prevobjlocid nextobjlocid]
             },
             lookup_on: :objlocationid
           }
           register :migrating_custom, {
             creator: Kiba::Tms::Jobs::ObjLocations::MigratingCustom,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_migrating_custom.csv"),
+                            "obj_locations_migrating_custom.csv"),
             tags: %i[obj_locations],
             desc: "- Removes project-specific omission rows",
             lookup_on: :objlocationid
@@ -3024,7 +3024,7 @@ module Kiba
           register :unique, {
             creator: Kiba::Tms::Jobs::ObjLocations::Unique,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_unique.csv"),
+                            "obj_locations_unique.csv"),
             tags: %i[obj_locations],
             desc: "- Deduplicates on :fullfingerprint\n"\
               "- Merge in related objectnumbers\n"\
@@ -3034,61 +3034,61 @@ module Kiba
             dest_special_opts: {
               initial_headers:
               %i[objectnumber objlocationid is_temp transdate
-                location_purpose transport_type transport_status
-                location homelocationname prevobjlocid nextobjlocid]
+                 location_purpose transport_type transport_status
+                 location homelocationname prevobjlocid nextobjlocid]
             }
           }
           register :inventory, {
             creator: Kiba::Tms::Jobs::ObjLocations::Inventory,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_inventory.csv"),
+                            "obj_locations_inventory.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Inventory LMI"
           }
           register :lmi, {
             creator: Kiba::Tms::Jobs::ObjLocations::Lmi,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_lmi.csv"),
+                            "obj_locations_lmi.csv"),
             tags: %i[obj_locations],
             desc: "Compile inventory, location, and movement LMIs"
           }
           register :nhr_lmi_obj, {
             creator: Kiba::Tms::Jobs::ObjLocations::NhrLmiObj,
             path: File.join(Kiba::Tms.datadir, "working",
-              "nhr_lmi_obj.csv"),
+                            "nhr_lmi_obj.csv"),
             tags: %i[movement objects nhr]
           }
           register :location, {
             creator: Kiba::Tms::Jobs::ObjLocations::Location,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_location.csv"),
+                            "obj_locations_location.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Location LMI"
           }
           register :movement, {
             creator: Kiba::Tms::Jobs::ObjLocations::Movement,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_movement.csv"),
+                            "obj_locations_movement.csv"),
             tags: %i[obj_locations],
             desc: "Filter to only rows treated as Movement LMI"
           }
           register :inactive_review, {
             creator: Kiba::Tms::Jobs::ObjLocations::InactiveReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_locations_inactive_review.csv"),
+                            "obj_locations_inactive_review.csv"),
             tags: %i[obj_locations reports],
             dest_special_opts: {
               initial_headers:
               %i[objectnumber transdate location currentlocationnote is_temp
-                inactive location_purpose transport_type transport_status
-                objlocationid prevobjlocid nextobjlocid
-                prev_location next_location]
+                 inactive location_purpose transport_type transport_status
+                 objlocationid prevobjlocid nextobjlocid
+                 prev_location next_location]
             }
           }
           register :dropping, {
             creator: Kiba::Tms::Jobs::ObjLocations::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_locations_dropping_from_migration.csv"),
+                            "obj_locations_dropping_from_migration.csv"),
             tags: %i[obj_locations reports],
             desc: "ObjLocation rows that will be omitted from the migration. "\
               "The reason for omission is stated in the :dropreason column. "\
@@ -3105,7 +3105,7 @@ module Kiba
           register :dropping_no_location, {
             creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoLocation,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_dropping_no_location.csv"),
+                            "obj_locations_dropping_no_location.csv"),
             tags: %i[obj_locations],
             desc: "ObjLocation rows having no linked Storage Location value. "\
               "Adds :dropreason column"
@@ -3113,7 +3113,7 @@ module Kiba
           register :dropping_no_object, {
             creator: Kiba::Tms::Jobs::ObjLocations::DroppingNoObject,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_dropping_no_object.csv"),
+                            "obj_locations_dropping_no_object.csv"),
             tags: %i[obj_locations],
             desc: "ObjLocation rows having no linked Object value. "\
               "Adds :dropreason column"
@@ -3121,7 +3121,7 @@ module Kiba
           register :location_names_merged, {
             creator: Kiba::Tms::Jobs::ObjLocations::LocationNamesMerged,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_location_names_merged.csv"),
+                            "obj_locations_location_names_merged.csv"),
             tags: %i[obj_locations],
             desc: "Merges location names (using fulllocid) into location, "\
               "prevloc, nextloc, and scheduled loc fields",
@@ -3139,8 +3139,8 @@ module Kiba
               "categorize/map into sublocations or notes",
             dest_special_opts: {
               initial_headers: %i[temptext mapping corrected_value
-                loc1 loc3 loc5
-                objectnumber transdate dateout]
+                                  loc1 loc3 loc5
+                                  objectnumber transdate dateout]
             }
           }
           register :mappable_temptext_support, {
@@ -3156,7 +3156,7 @@ module Kiba
               "support completing mappable_temptext worksheet",
             dest_special_opts: {
               initial_headers: %i[temptext loc1 loc3 loc5
-                objectnumber transdate dateout]
+                                  objectnumber transdate dateout]
             }
           }
           if Tms::ObjLocations.temptext_mapping_done
@@ -3184,7 +3184,7 @@ module Kiba
           register :fulllocid_lookup, {
             creator: Kiba::Tms::Jobs::ObjLocations::FulllocidLookup,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_by_fulllocid.csv"),
+                            "obj_locations_by_fulllocid.csv"),
             tags: %i[obj_locations],
             desc: "Deletes everything else. Used to get counts of location usages",
             lookup_on: :fulllocid
@@ -3192,7 +3192,7 @@ module Kiba
           register :prev_next_sched_loc_merge, {
             creator: Kiba::Tms::Jobs::ObjLocations::PrevNextSchedLocMerge,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_locations_prev_next_sched_merged.csv"),
+                            "obj_locations_prev_next_sched_merged.csv"),
             tags: %i[obj_locations obj_components reports]
           }
         end
@@ -3201,7 +3201,7 @@ module Kiba
           register :note_review, {
             creator: Kiba::Tms::Jobs::ObjTitles::NoteReview,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "obj_titles_note_review.csv"),
+                            "obj_titles_note_review.csv"),
             desc: "Object title notes for client review/cleanup",
             tags: %i[obj_titles objects postmigcleanup]
           }
@@ -3211,7 +3211,7 @@ module Kiba
           register :from_obj_components, {
             creator: Kiba::Tms::Jobs::Objecthierarchy::FromObjComponents,
             path: File.join(Kiba::Tms.datadir, "working",
-              "objecthierarchy_from_obj_components.csv"),
+                            "objecthierarchy_from_obj_components.csv"),
             tags: %i[objecthierarchy obj_components]
           }
         end
@@ -3243,7 +3243,7 @@ module Kiba
           register :by_number, {
             creator: Kiba::Tms::Jobs::Objects::ByNumber,
             path: File.join(Kiba::Tms.datadir, "working",
-              "objects_by_number.csv"),
+                            "objects_by_number.csv"),
             desc: "Original TMS Objects table rows, lookedup by :objectnumber",
             lookup_on: :objectnumber,
             tags: %i[objects]
@@ -3370,7 +3370,7 @@ module Kiba
           register :cspace, {
             creator: Kiba::Tms::Jobs::Orgs::Cspace,
             path: File.join(Kiba::Tms.datadir, "working",
-              "orgs_for_cspace.csv"),
+                            "orgs_for_cspace.csv"),
             tags: %i[orgs cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]}
           }
@@ -3388,21 +3388,21 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::OrgContacts::Prep,
             path: File.join(Kiba::Tms.datadir, "working",
-              "org_contacts_prepped.csv"),
+                            "org_contacts_prepped.csv"),
             tags: %i[orgs cspace],
             dest_special_opts: {initial_headers: %i[norm contact_person
-              contact_norm merge_contact contact_role]}
+                                                    contact_norm merge_contact contact_role]}
           }
           register :without_person, {
             creator: Kiba::Tms::Jobs::OrgContacts::WithoutPerson,
             path: File.join(Kiba::Tms.datadir, "reports",
-              "org_contacts_without_person.csv"),
+                            "org_contacts_without_person.csv"),
             tags: %i[orgs cspace reports]
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::OrgContacts::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
-              "org_contacts_to_merge.csv"),
+                            "org_contacts_to_merge.csv"),
             tags: %i[orgs cspace],
             lookup_on: :norm
           }
@@ -3412,7 +3412,7 @@ module Kiba
           register :flag_omitting, {
             creator: Kiba::Tms::Jobs::Packages::FlagOmitting,
             path: File.join(Kiba::Tms.datadir, "working",
-              "packages_flag_omitting.csv"),
+                            "packages_flag_omitting.csv"),
             tags: %i[packages],
             desc: "Flags packages that are omitted from the migration with "\
               "no option for inclusion. Reason for omission is in :omit"
@@ -3420,11 +3420,11 @@ module Kiba
           register :flag_migrating, {
             creator: Kiba::Tms::Jobs::Packages::FlagMigrating,
             path: File.join(Kiba::Tms.datadir, "working",
-              "packages_flag_migrating.csv"),
+                            "packages_flag_migrating.csv"),
             tags: %i[packages],
-            desc: "Removes omitted packages. Flags (in :migrating) remaining "\
-              "packages that are to be migrated (y) and those that need "\
-              "client decision (blank)"
+            desc: "Flag omitted packages not migrating. Flags (in :migrating) "\
+              "remaining packages that are to be migrated (y) and those that "\
+              "need client decision (blank)"
           }
           register :client_decision_worksheet, {
             creator: Kiba::Tms::Jobs::Packages::ClientDecisionWorksheet,
