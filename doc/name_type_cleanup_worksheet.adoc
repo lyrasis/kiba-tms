@@ -58,6 +58,12 @@ CAUTION: Avoid using color coding/other formatting or formulas to indicate anyth
 
 == Suggested steps
 
+=== If this is a subsequent round of name type cleanup
+
+Filter to `to_review` = "y". This will show you only names that were not in the name type cleanup you already completed and returned.
+
+You can also review other rows if you like, but they will have been included in a previous iteration of this worksheet.
+
 === Review `termsources`
 
 Many name fields throughout the TMS database are populated by linking to an established Constituent value.
