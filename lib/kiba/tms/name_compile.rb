@@ -8,9 +8,6 @@ module Kiba
       module_function
 
       extend Dry::Configurable
-      setting :multi_source_normalizer,
-        default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
-        reader: true
       # Used to auto generate transform jobs for these tables. Key is the config
       #   module for the table, which must implement a :name_fields method and
       #   extend `UncontrolledNameCompilable`. Value is the job key of the
@@ -259,8 +256,6 @@ module Kiba
                          variant_person_not_editable
                      }
 
-      setting :multi_source_normalizer,
-        default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
       # fields to delete from name compilation report
       setting :delete_fields, default: [], reader: true
 

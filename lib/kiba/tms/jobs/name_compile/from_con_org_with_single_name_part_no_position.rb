@@ -8,13 +8,12 @@ module Kiba
           module_function
 
           def job
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__for_compile,
                 destination: :name_compile__from_con_org_with_single_name_part_no_position
               },
-              transformer: xforms,
-              helper: Kiba::Tms::NameCompile.multi_source_normalizer
+              transformer: xforms
             )
           end
 

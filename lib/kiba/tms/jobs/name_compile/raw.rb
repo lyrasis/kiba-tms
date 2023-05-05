@@ -31,8 +31,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Append::NilFields,
-                fields: Tms::NameCompile.multi_source_normalizer.get_fields
               transform Rename::Field,
                 from: Tms::Constituents.preferred_name_field,
                 to: :name
@@ -43,6 +41,7 @@ module Kiba
                 delim: " ",
                 delete_sources: false
               transform Cspace::NormalizeForID, source: :name, target: :norm
+              transform Clean::EnsureConsistentFields
             end
           end
         end

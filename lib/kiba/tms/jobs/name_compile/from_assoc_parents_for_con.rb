@@ -11,14 +11,13 @@ module Kiba
             return unless Tms::AssocParents.used? &&
               Tms::AssocParents.for?("Constituents")
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :assoc_parents_for__constituents,
                 destination: :name_compile__from_assoc_parents_for_con,
                 lookup: :constituents__by_all_norms
               },
-              transformer: xforms,
-              helper: Kiba::Tms::NameCompile.multi_source_normalizer
+              transformer: xforms
             )
           end
 

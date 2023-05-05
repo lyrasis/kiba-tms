@@ -10,14 +10,13 @@ module Kiba
           def job
             return unless Tms::NameCompile.used?
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
                 destination: :name_compile__from_uncontrolled_name_tables,
                 lookup: lookups
               },
-              transformer: xforms,
-              helper: Kiba::Tms::NameCompile.multi_source_normalizer
+              transformer: xforms
             )
           end
 

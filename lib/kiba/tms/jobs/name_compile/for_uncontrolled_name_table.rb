@@ -11,13 +11,12 @@ module Kiba
             return unless Tms::NameCompile.used?
             return unless mod.used?
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: source(mod),
                 destination: "name_compile_from__#{mod.filekey}".to_sym
               },
-              transformer: xforms(mod),
-              helper: Kiba::Tms::NameCompile.multi_source_normalizer
+              transformer: xforms(mod)
             )
           end
 
