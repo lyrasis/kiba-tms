@@ -41,7 +41,7 @@ module Kiba
             if lookup_eligible?(:note)
               base << :name_compile__note_duplicates
             end
-            base
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def lookup_eligible?(type)
@@ -53,6 +53,9 @@ module Kiba
             bind = binding
 
             Kiba.job_segment do
+              if bind.receiver.send(:lookups).any?(
+                :name_compile__main_duplicates
+              )
               transform Merge::MultiRowLookup,
                 lookup: name_compile__main_duplicates,
                 keycolumn: :fingerprint,
@@ -60,6 +63,7 @@ module Kiba
                   name_duplicate_all: :duplicate_all,
                   name_duplicate: :duplicate
                 }
+              end
 
               if bind.receiver.send(:lookup_eligible?, :variant)
                 transform Merge::MultiRowLookup,
