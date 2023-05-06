@@ -32,16 +32,21 @@ module Kiba
                 sorter: Lookup::RowSorter.new(on: :rank)
               )
             ]
+            @prepender = Prepend::ToFieldValue.new(
+              field: :address_namenote,
+              value: Tms::ConAddress.note_prefix
+            )
           end
 
           def process(row)
             mergers.each { |merger| merger.process(row) }
+            prepender.process(row)
             row
           end
 
           private
 
-          attr_reader :mergers
+          attr_reader :mergers, :prepender
         end
       end
     end
