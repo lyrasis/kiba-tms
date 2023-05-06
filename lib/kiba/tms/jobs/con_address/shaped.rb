@@ -94,10 +94,15 @@ module Kiba
               transform Delete::Fields, fields: :countryid
 
               if Tms::AddressTypes.used
+                if config.address_type_handling == :note
+                  address_type_target = :addresstypenote
+                else
+                  address_type_target = :addresstype
+                end
                 transform Merge::MultiRowLookup,
                   lookup: prep__address_types,
                   keycolumn: :addresstypeid,
-                  fieldmap: {addresstype: :addresstype}
+                  fieldmap: {address_type_target=>:addresstype}
               end
               transform Delete::Fields, fields: :addresstypeid
 
@@ -161,20 +166,20 @@ module Kiba
 
               transform Tms::Transforms::ConAddress::ReshapeAddressData
 
+              unless config.migrate_remarks
+                transform Delete::Fields, fields: :remarks
+              end
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_fields,
                 target: :address_notes,
                 delim: "; ",
                 delete_sources: true
-              if config.address_remarks_handling == :specific
+              if config.address_note_handling == :specific
                 transform Prepend::FieldToFieldValue,
                   target_field: :address_notes,
                   prepended_field: :shortname,
                   sep: ": "
               end
-              transform Prepend::ToFieldValue,
-                field: :address_notes,
-                value: config.note_prefix
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid addressplace1 addressplace2 city state
