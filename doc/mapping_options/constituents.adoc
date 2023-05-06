@@ -122,16 +122,6 @@ Default option:: `:duplicates` - during processing, we check for duplicate name 
 
 
 == ConAddress table
+Please see https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/con_address.rb[our default settings for migrating ConAddress data]. Apologies for making you look at (sort of) code, but there are plain text descriptions of each setting and what it does.
 
-=== Omit inactive addresses?
-
-Default option:: `:false` - All addresses for a constituent will be included in the migration
-
-.Alternate option(s)
-`:true`:: Addresses marked as inactive will not migrate
-
-=== Deriving address values
-
-TMS provides more address fields than does the CS data model, and every TMS user seems to enter address data differently
-
-(to be continued)
+Let your migration specialist know if you want to change any of these settings.
