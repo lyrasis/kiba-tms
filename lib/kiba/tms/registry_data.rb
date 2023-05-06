@@ -399,7 +399,7 @@ module Kiba
               "con_address_countries_clean_review.csv"),
             desc: "Addresses with country values that cannot be exactly or "\
               "cleanly mapped to CS countries vocabulary.",
-            tags: %i[con con_address postmigcleanup]
+            tags: %i[con con_address reports postmigcleanup]
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
@@ -417,7 +417,7 @@ module Kiba
               "constituents that are not migrating; (2) they are marked "\
               "inactive and the migration is set to omit inactive addresses; "\
               "or there was no address data in the row",
-            tags: %i[con con_address postmigcleanup]
+            tags: %i[con con_address reports postmigcleanup]
           }
           register :duplicates, {
             creator: Kiba::Tms::Jobs::ConAddress::Duplicates,
@@ -427,7 +427,7 @@ module Kiba
               "processed/shaped, the address duplicated another address for "\
               "the same constituent. Remarks/notes for the address were NOT "\
               "included in deduplication process, so this report is given in "\
-              "any important info was dropped from those fields.",
+              "case any important info was dropped from those fields.",
             tags: %i[con con_address postmigcleanup]
           }
           register :add_counts, {
