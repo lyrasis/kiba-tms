@@ -140,6 +140,7 @@ module Kiba
                   delim: "%CR%",
                   delete_sources: true
               end
+
               unless config.group_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.group_sources,

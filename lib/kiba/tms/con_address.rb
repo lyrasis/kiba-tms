@@ -76,7 +76,6 @@ module Kiba
       #   this string is used to separate the values
       setting :addressplace2_delim, default: ", ", reader: true
 
-
       # ---------------------------------
       # A bunch of settings to control how the very detailed data in TMS
       #   ConAddress might be smooshed into a text string that gets mapped
