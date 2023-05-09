@@ -428,7 +428,7 @@ module Kiba
               "the same constituent. Remarks/notes for the address were NOT "\
               "included in deduplication process, so this report is given in "\
               "case any important info was dropped from those fields.",
-            tags: %i[con con_address postmigcleanup]
+            tags: %i[con con_address reports postmigcleanup]
           }
           register :add_counts, {
             creator: Kiba::Tms::Jobs::ConAddress::AddCounts,
