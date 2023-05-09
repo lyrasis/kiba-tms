@@ -61,9 +61,9 @@ module Kiba
                 desc = row[:description]
                 next row if desc.blank?
 
-                if desc =~ /^email$/i
+                if /^email$/i.match?(desc)
                   row[:description] = nil
-                elsif desc =~ /^web$/i
+                elsif /^web$/i.match?(desc)
                   row[:description] = nil
                 end
                 row

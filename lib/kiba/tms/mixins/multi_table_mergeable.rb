@@ -192,7 +192,7 @@ module Kiba
         def target_job_hash(mod, ns_name, targetobj, field, xforms)
           key = targetobj.filekey
           tags = [ns_name, key].map(&:to_s)
-            .map { |val| val.gsub("_", "") }
+            .map { |val| val.delete("_") }
             .map(&:to_sym)
           tabletag = tags.shift
           [tabletag.to_s.delete_suffix("_for").to_sym, :for_table].each do |tag|
@@ -312,7 +312,7 @@ module Kiba
               }
             },
             reader: true
-          ).gsub("\n", " ")
+          ).tr("\n", " ")
 
           mod.module_eval(code)
         end

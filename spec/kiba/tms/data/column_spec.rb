@@ -2,36 +2,36 @@
 
 require "spec_helper"
 
-  module Tms
-    module UnusedMod
-      module_function
+module Tms
+  module UnusedMod
+    module_function
 
-      def used?
-        false
-      end
-    end
-
-    module UsedMod
-      module_function
-
-      def used?
-        true
-      end
+    def used?
+      false
     end
   end
 
-  class TableGetter
-    def self.call(mod)
-      Dry::Monads::Success([
-        {title: "a"},
-        {title: "b"},
-        {title: "c"},
-        {title: "a"},
-        {title: "b"},
-        {title: "d"}
-      ].to_enum)
+  module UsedMod
+    module_function
+
+    def used?
+      true
     end
   end
+end
+
+class TableGetter
+  def self.call(mod)
+    Dry::Monads::Success([
+      {title: "a"},
+      {title: "b"},
+      {title: "c"},
+      {title: "a"},
+      {title: "b"},
+      {title: "d"}
+    ].to_enum)
+  end
+end
 
 RSpec.describe Kiba::Tms::Data::Column do
   subject(:klass) { described_class }

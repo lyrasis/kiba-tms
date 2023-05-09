@@ -94,15 +94,15 @@ module Kiba
               transform Delete::Fields, fields: :countryid
 
               if Tms::AddressTypes.used
-                if config.address_type_handling == :note
-                  address_type_target = :addresstypenote
+                address_type_target = if config.address_type_handling == :note
+                  :addresstypenote
                 else
-                  address_type_target = :addresstype
+                  :addresstype
                 end
                 transform Merge::MultiRowLookup,
                   lookup: prep__address_types,
                   keycolumn: :addresstypeid,
-                  fieldmap: {address_type_target=>:addresstype}
+                  fieldmap: {address_type_target => :addresstype}
               end
               transform Delete::Fields, fields: :addresstypeid
 

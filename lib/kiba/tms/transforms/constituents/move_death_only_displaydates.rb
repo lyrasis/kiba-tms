@@ -54,8 +54,7 @@ module Kiba
           def prefix(dd)
             prefixes.select { |prefix| dd.match?(prefix) }
               .sort_by { |prefix| prefix.to_s.length }
-              .reverse
-              .first
+              .last
           end
 
           def eligible?(dd)

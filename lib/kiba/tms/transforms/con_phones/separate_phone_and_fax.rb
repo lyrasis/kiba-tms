@@ -24,11 +24,11 @@ module Kiba
             if desc.blank?
               treat_as_phone(number, row)
             # This keeps "Telephone/fax" numbers as phone numbers
-            elsif desc.match(/phone/i)
+            elsif /phone/i.match?(desc)
               treat_as_phone(number, row)
-            elsif desc =~ /^fax/i
+            elsif /^fax/i.match?(desc)
               treat_as_fax(number, row, desc)
-            elsif desc =~ / #{fax_pattern}$/i
+            elsif / #{fax_pattern}$/i.match?(desc)
               treat_as_fax(number, row, desc)
             else
               treat_as_phone(number, row)
@@ -47,7 +47,7 @@ module Kiba
           end
 
           def treat_as_fax(number, row, desc)
-            row[:description] = if desc.match(/^#{fax_pattern}$/i)
+            row[:description] = if /^#{fax_pattern}$/i.match?(desc)
               nil
             else
               desc.gsub(/#{fax_pattern}/i, "")

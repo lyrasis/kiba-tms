@@ -38,7 +38,7 @@ module Kiba
 
             val.downcase
               .delete_prefix("\\\\")
-              .gsub("\\", "/")
+              .tr("\\", "/")
           end
         end
       end

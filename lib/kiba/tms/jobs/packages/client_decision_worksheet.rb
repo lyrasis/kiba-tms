@@ -29,7 +29,6 @@ module Kiba
             base.select { |jobkey| Tms.job_output?(jobkey) }
           end
 
-
           def xforms
             bind = binding
 
@@ -45,7 +44,7 @@ module Kiba
                   },
                   conditions: ->(_r, rows) { [rows.first] },
                   constantmap: {to_review: "n"}
-              transform Delete::Fields, fields: :inprev
+                transform Delete::Fields, fields: :inprev
               end
 
               if config.selection_done
@@ -63,16 +62,16 @@ module Kiba
                   row
                 end
                 transform Delete::Fields, fields: :decision
-              transform do |row|
-                next row unless row[:to_review].blank?
+                transform do |row|
+                  next row unless row[:to_review].blank?
 
-                omit = row[:omit]
-                row[:to_review] = omit.blank? ? "y" : "n"
-                row
-              end
-              transform Delete::FieldValueMatchingRegexp,
-                fields: :to_review,
-                match: "^n$"
+                  omit = row[:omit]
+                  row[:to_review] = omit.blank? ? "y" : "n"
+                  row
+                end
+                transform Delete::FieldValueMatchingRegexp,
+                  fields: :to_review,
+                  match: "^n$"
               end
 
               transform Delete::Fields,

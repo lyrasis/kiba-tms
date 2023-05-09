@@ -9,7 +9,7 @@ module Kiba
 
       setting :delete_fields,
         default: %i[shortcut rbhistoryfolderid templaterecid displayrecid
-                    bitmapname global locked packagepurposeid],
+          bitmapname global locked packagepurposeid],
         reader: true
       extend Tms::Mixins::Tableable
 
@@ -60,7 +60,6 @@ module Kiba
           "packages__worksheet_completed_#{idx}".to_sym
         end
       end
-
     end
   end
 end

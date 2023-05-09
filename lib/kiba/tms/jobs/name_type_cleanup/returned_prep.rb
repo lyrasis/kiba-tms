@@ -32,8 +32,7 @@ module Kiba
 
                 authtype = row[:authoritytype]
                 next row if authtype.blank?
-                next row unless authtype.end_with?(")") ||
-                  authtype.end_with?("?")
+                next row unless authtype.end_with?(")", "?")
 
                 row[:authtypetent] = "y"
                 row

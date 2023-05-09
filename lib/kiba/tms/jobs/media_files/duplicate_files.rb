@@ -31,8 +31,8 @@ module Kiba
                 field: :duplicatefp
               transform Delete::Fields,
                 fields: %i[path filename filesize memorysize duplicatefp
-                           duplicate_filename duplicate_fullpath checksum
-                           rend_thumbpath rend_thumbfilename ms_publishto]
+                  duplicate_filename duplicate_fullpath checksum
+                  rend_thumbpath rend_thumbfilename ms_publishto]
               transform Delete::EmptyFields
 
               transform Merge::MultiRowLookup,

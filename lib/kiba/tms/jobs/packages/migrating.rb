@@ -23,7 +23,7 @@ module Kiba
             if config.selection_done
               base << :packages__returned_compile
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -55,9 +55,9 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[omit migrating packagetype modifieddate
-                           modifiedloginid lastuseddate lastusedloginid
-                           itemcount tablename folderid foldername
-                           folderdesc foldertype]
+                  modifiedloginid lastuseddate lastusedloginid
+                  itemcount tablename folderid foldername
+                  folderdesc foldertype]
             end
           end
         end

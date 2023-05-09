@@ -23,7 +23,7 @@ module Kiba
             if Tms::AddressTypes.used
               base << :tms__address_types
             end
-            base.select{ |job| Tms.job_output?(job) }
+            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

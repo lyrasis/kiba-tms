@@ -17,14 +17,11 @@ module Kiba
             )
           end
 
-
-
           def xforms
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-
             end
           end
         end
