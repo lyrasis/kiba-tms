@@ -23,6 +23,7 @@ module Kiba
           attr_reader :table_key
 
           FIELDS = {
+            address_types: :addresstypeid,
             con_alt_names: :altnameid,
             cond_line_items: :conditionid,
             conditions: :conditionid,

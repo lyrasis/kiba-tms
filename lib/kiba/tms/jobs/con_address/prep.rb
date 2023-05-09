@@ -12,10 +12,18 @@ module Kiba
               files: {
                 source: :tms__con_address,
                 destination: :prep__con_address,
-                lookup: :names__by_constituentid
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            base = [:names__by_constituentid]
+            if Tms::AddressTypes.used
+              base << :tms__address_types
+            end
+            base.select{ |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -35,6 +43,14 @@ module Kiba
                 lookup: names__by_constituentid,
                 keycolumn: :constituentid,
                 fieldmap: {matches_constituent: :constituentid}
+
+              if Tms::AddressTypes.used
+                transform Merge::MultiRowLookup,
+                  lookup: tms__address_types,
+                  keycolumn: :addresstypeid,
+                  fieldmap: {addresstype: :addresstype}
+              end
+
               transform Tms::Transforms::ConAddress::AddRetentionFlag
             end
           end
