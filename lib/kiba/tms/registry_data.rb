@@ -3369,7 +3369,7 @@ module Kiba
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Orgs::Brief,
-            path: File.join(Kiba::Tms.datadir, "cspace", "orgs_brief.csv"),
+            path: File.join(Kiba::Tms.datadir, "working", "orgs_brief.csv"),
             tags: %i[orgs cspace],
             desc: "Only termdisplayname values, for bootstrap ingests, and "\
               "looking up final controlled name values by normalized form",
@@ -3570,7 +3570,7 @@ module Kiba
           }
           register :brief, {
             creator: Kiba::Tms::Jobs::Persons::Brief,
-            path: File.join(Kiba::Tms.datadir, "cspace", "persons_brief.csv"),
+            path: File.join(Kiba::Tms.datadir, "working", "persons_brief.csv"),
             tags: %i[persons cspace],
             desc: "Only termdisplayname values, for bootstrap ingests, and "\
               "looking up final controlled name values by normalized form",
