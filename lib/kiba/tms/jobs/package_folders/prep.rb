@@ -14,10 +14,18 @@ module Kiba
               files: {
                 source: :tms__package_folders,
                 destination: :prep__package_folders,
-                lookup: :tms__folder_types
+                lookup: lookups
               },
               transformer: xforms
             )
+          end
+
+          def lookups
+            if Tms::FolderTypes.used?
+              [:tms__folder_types]
+            else
+              []
+            end
           end
 
           def xforms
@@ -35,10 +43,12 @@ module Kiba
 
               transform Tms::Transforms::TmsTableNames
 
-              transform Merge::MultiRowLookup,
-                lookup: tms__folder_types,
-                keycolumn: :foldertypeid,
-                fieldmap: {foldertype: :foldertype}
+              if Tms::FolderTypes.used?
+                transform Merge::MultiRowLookup,
+                  lookup: tms__folder_types,
+                  keycolumn: :foldertypeid,
+                  fieldmap: {foldertype: :foldertype}
+              end
               transform Delete::Fields, fields: :foldertypeid
             end
           end
