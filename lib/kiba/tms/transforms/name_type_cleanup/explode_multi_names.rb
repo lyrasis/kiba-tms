@@ -44,11 +44,13 @@ module Kiba
             corrtypes = corrtype.blank? ? [] : corrtype.split(delim)
             row[:correctname] = nil
             row[:correctauthoritytype] = nil
+            conid = row[:constituentid]
 
             corrnames.each_with_index do |corrname, idx|
               newrow = row.dup
               newrow[target] = corrname
               newrow[:correctauthoritytype] = corrtypes[idx]
+              newrow[:constituentid] = "#{conid}_exploded#{idx}"
               rows << newrow
             end
 
