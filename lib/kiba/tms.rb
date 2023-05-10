@@ -57,20 +57,10 @@ module Kiba
       setting :empty_table_list_path,
         default: "#{__dir__}/empty_tables.txt",
         reader: true
-      setting :tms_table_dir_path,
-        default: __dir__,
-        reader: true,
-        constructor: proc { |value|
-          if value["kiba-tms/lib"]
-            base = value.split("/")
-            2.times { base.pop }
-            dir = base.join("/")
-            File.join(dir, "data", "tms")
-          else
-            value
-          end
-        }
       setting :datadir, default: "#{__dir__}/data", reader: true
+      # Name of directory containing TMS tables in CSV format. Expected to be
+      #   found in `:datadir`
+      setting :tmsdir, default: "tms", reader: true
       setting :delim, default: Kiba::Extend.delim, reader: true
       setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
       setting :nullvalue, default: "%NULLVALUE%", reader: true
@@ -80,6 +70,10 @@ module Kiba
       #   These should be tables that are not literally empty. Empty tables are
       #   listed in the file found at Tms.empty_table_list_path
       setting :excluded_tables, default: [], reader: true
+    end
+
+    def tms_table_dir_path
+      File.join(datadir, tmsdir)
     end
 
     setting :table_lookup,
