@@ -74,8 +74,9 @@ module Kiba
               end
 
               if bind.receiver.send(:ntc_needed?)
-                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_con_person_with_inst
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   typetarget: {"_main term" => :contype},
                   nametarget: Tms::Constituents.preferred_name_field

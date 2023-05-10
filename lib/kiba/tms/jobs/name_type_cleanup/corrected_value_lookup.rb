@@ -26,9 +26,10 @@ module Kiba
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[correctname correctauthoritytype]
-              transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+              transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                 lookup: name_type_cleanup__returned_compile,
-                keycolumn: :cleanupid,
+                keycolumn: :cleanupid
+              transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                 target: :correctname
               transform Delete::Fields,
                 fields: %i[cleanupid]

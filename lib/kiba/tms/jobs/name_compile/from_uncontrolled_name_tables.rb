@@ -109,9 +109,9 @@ module Kiba
               end
 
               if cleanable
-                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_uncontrolled_name_tables
-
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll
 
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,

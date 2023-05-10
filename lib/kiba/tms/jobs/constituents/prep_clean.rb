@@ -44,8 +44,9 @@ module Kiba
                   nonprefnorm: :nonprefnormorig
                 }
 
-                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_constituents
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames
 
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   typetarget: :constituenttype

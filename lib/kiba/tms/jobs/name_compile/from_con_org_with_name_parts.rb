@@ -76,8 +76,9 @@ module Kiba
               end
 
               if job.send(:ntc_needed?)
-                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_con_org_with_name_parts
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames
                 if treatment == :variant
                   # no cleanup needed
                 elsif treatment == :contact_person

@@ -42,9 +42,10 @@ module Kiba
               prefname = Tms::Constituents.preferred_name_field
 
               if bind.receiver.send(:ntc_needed?)
-                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_con_alt_names,
-                  keycolumn: :altnameid,
+                  keycolumn: :altnameid
+                transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                   target: :altname
                 transform Tms::Transforms::NameTypeCleanup::OverlayAll,
                   typetarget: :altauthtype,

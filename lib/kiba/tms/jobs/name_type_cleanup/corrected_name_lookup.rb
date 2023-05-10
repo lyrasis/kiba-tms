@@ -22,10 +22,11 @@ module Kiba
             Kiba.job_segment do
               transform Delete::FieldsExcept,
                 fields: %i[name correctname authoritytype correctauthoritytype
-                  cleanupid]
-              transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
+                           cleanupid]
+              transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                 lookup: name_type_cleanup__returned_compile,
-                keycolumn: :cleanupid,
+                keycolumn: :cleanupid
+              transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames,
                 target: :correctname
               transform Tms::Transforms::NameTypeCleanup::OverlayType,
                 target: :authoritytype

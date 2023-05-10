@@ -6,45 +6,20 @@ module Kiba
       module NameTypeCleanup
         class ExplodeMultiNames
           def initialize(
-            lookup:,
             delim: Tms.delim,
-            target: Tms::Constituents.preferred_name_field,
-            keycolumn: :constituentid
+            target: Tms::Constituents.preferred_name_field
           )
             @delim = delim
             @target = target
-            @merger = Merge::MultiRowLookup.new(
-              lookup: lookup,
-              keycolumn: keycolumn,
-              fieldmap: {
-                correctname: :correctname,
-                correctauthoritytype: :correctauthoritytype
-              }
-            )
             @rows = []
           end
 
           def process(row)
-            merger.process(row)
-
-            unless eligible?(row)
+            if eligible?(row)
+              explode(row)
+            else
               rows << row
-              return nil
             end
-
-            corrnames = row[:correctname].split(delim)
-            corrtype = row[:correctauthoritytype]
-            corrtypes = corrtype.blank? ? [] : corrtype.split(delim)
-            row[:correctname] = nil
-            row[:correctauthoritytype] = nil
-
-            corrnames.each_with_index do |corrname, idx|
-              newrow = row.dup
-              newrow[target] = corrname
-              newrow[:correctauthoritytype] = corrtypes[idx]
-              rows << newrow
-            end
-
             nil
           end
 
@@ -61,6 +36,23 @@ module Kiba
             return false if val.blank?
 
             val.include?(delim)
+          end
+
+          def explode(row)
+            corrnames = row[:correctname].split(delim)
+            corrtype = row[:correctauthoritytype]
+            corrtypes = corrtype.blank? ? [] : corrtype.split(delim)
+            row[:correctname] = nil
+            row[:correctauthoritytype] = nil
+
+            corrnames.each_with_index do |corrname, idx|
+              newrow = row.dup
+              newrow[target] = corrname
+              newrow[:correctauthoritytype] = corrtypes[idx]
+              rows << newrow
+            end
+
+            nil
           end
         end
       end
