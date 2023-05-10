@@ -68,8 +68,11 @@ module Kiba
                 end
                 row
               end
+
+              # rubocop:disable Layout/LineLength
               transform Tms::Transforms::Constituents::PrefixMergeTableDescription,
                 fields: %i[email web]
+              # rubocop:enable Layout/LineLength
               transform Delete::Fields,
                 fields: %i[conemailid emailtypeid]
             end

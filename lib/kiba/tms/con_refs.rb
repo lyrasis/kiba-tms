@@ -63,11 +63,12 @@ module Kiba
       setting :for_shipment_steps_merge, default: nil, reader: true
       setting :for_shipments_merge, default: nil, reader: true
 
-      setting :configurable, default: {
-                               target_tables: proc {
-                                                Tms::Services::ConRefs::TargetTableDeriver.call
-                                              }
-                             },
+      setting :configurable,
+        default: {
+          target_tables: proc {
+            Tms::Services::ConRefs::TargetTableDeriver.call
+          }
+        },
         reader: true
     end
   end

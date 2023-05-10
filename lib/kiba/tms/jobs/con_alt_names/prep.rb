@@ -140,7 +140,9 @@ module Kiba
                 :altnorm => :prefnormorig
               }
 
+              # rubocop:disable Layout/LineLength
               transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
+              # rubocop:enable Layout/LineLength
 
               # remove non-preferred form of name if not including flipped as
               #   variant

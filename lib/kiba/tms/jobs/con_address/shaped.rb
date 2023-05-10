@@ -161,8 +161,10 @@ module Kiba
                 row
               end
 
+              # rubocop:disable Layout/LineLength
               transform Tms::Transforms::ConAddress::RemoveRedundantAddressLines,
                 lookup: names__by_constituentid
+              # rubocop:enable Layout/LineLength
 
               transform Tms::Transforms::ConAddress::ReshapeAddressData
 

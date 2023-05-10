@@ -122,9 +122,9 @@ module Kiba
         setting :partial_date_indicators,
           default: %w[after approximately around before c. ca. circa],
           reader: true
-        # used by MakeDatedescriptionConsistent and DateFromDatedescRemarkCombo transforms
-        # should have one key per :known_types element
-        # value should be array of variants (including the expected term)
+        # used by MakeDatedescriptionConsistent and DateFromDatedescRemarkCombo
+        #   transforms should have one key per :known_types element
+        #   value should be array of variants (including the expected term)
         setting :datedescription_variants,
           default: {
             "active" => ["active", "active dates", "fl.", "flourished"],
@@ -134,10 +134,12 @@ module Kiba
               "death year", "deathdate", "deathday", "died"]
           },
           reader: true
-        # Transform that creates a date-related note (in :datenote field) mergeable into Person/Org record
+        # Transform that creates a date-related note (in :datenote field)
+        #   mergeable into Person/Org record
         setting :note_creator, default: Tms::Transforms::ConDates::NoteCreator,
           reader: true
-        # Transform that adds parsed date columns and warnings about date values that cannot be parsed
+        # Transform that adds parsed date columns and warnings about date values
+        #   that cannot be parsed
         setting :date_parser, default: Tms::Transforms::ConDates::DateParser,
           reader: true
       end
@@ -146,8 +148,9 @@ module Kiba
         base = [:constituentid, :constituenttype, :derivedcontype, :contype,
           preferred_name_field]
         base << var_name_field if Tms::Constituents.include_flipped_as_variant
-        %i[nametitle firstname middlename lastname suffix birth_foundation_date death_dissolution_date datenote
-          institution position inconsistent_org_names].each do |field|
+        %i[nametitle firstname middlename lastname suffix birth_foundation_date
+           death_dissolution_date datenote institution position
+           inconsistent_org_names].each do |field|
           base << field
         end
         base

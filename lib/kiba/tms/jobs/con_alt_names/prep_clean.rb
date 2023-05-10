@@ -107,7 +107,10 @@ module Kiba
                   end
                   row
                 end
+                # rubocop:disable Layout/LineLength
                 transform Tms::Transforms::ConAltNames::DeleteRedundantInstitutionValues
+                # rubocop:enable Layout/LineLength
+
                 transform FilterRows::FieldPopulated,
                   action: :keep,
                   field: :altname

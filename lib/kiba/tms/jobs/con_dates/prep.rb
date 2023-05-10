@@ -36,10 +36,18 @@ module Kiba
                 match: "^0$"
 
               transform Tms::Transforms::DateFromParts,
-                year: :datebegsearch, month: :monthbegsearch, day: :daybegsearch, target: :datebegin
+                year: :datebegsearch,
+                month: :monthbegsearch,
+                day: :daybegsearch,
+                target: :datebegin
               transform Tms::Transforms::DateFromParts,
-                year: :dateendsearch, month: :monthendsearch, day: :dayendsearch, target: :dateend
-              transform CombineValues::FromFieldsWithDelimiter, sources: %i[datebegin dateend], target: :date,
+                year: :dateendsearch,
+                month: :monthendsearch,
+                day: :dayendsearch,
+                target: :dateend
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[datebegin dateend],
+                target: :date,
                 delim: " - ", delete_sources: true
 
               transform Append::NilFields, fields: :warn
