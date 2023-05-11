@@ -25,6 +25,13 @@ module Kiba
               transform Deduplicate::Table,
                 field: :cleanupid,
                 delete_field: false
+              transform do |row|
+                orig = row[:origname]
+                next row unless orig.blank?
+
+                row[:origname] = row[:name]
+                row
+              end
               transform Clean::EnsureConsistentFields
             end
           end
