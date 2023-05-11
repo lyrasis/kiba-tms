@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
-
 module Kiba
   module Tms
     # config settings for handling data from the following tables:
