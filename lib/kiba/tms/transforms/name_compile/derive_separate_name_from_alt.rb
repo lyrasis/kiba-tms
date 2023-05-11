@@ -14,7 +14,14 @@ module Kiba
 
           def process(row)
             type = row[:altauthtype]
-            type.start_with?("Person") ? person_row(row) : org_row(row)
+            if type.blank?
+              case Tms::Names.untyped_default
+              when "Person" then person_row(row)
+              when "Organization" then org_row(row)
+              end
+            else
+              type.start_with?("Person") ? person_row(row) : org_row(row)
+            end
             nil
           end
 
