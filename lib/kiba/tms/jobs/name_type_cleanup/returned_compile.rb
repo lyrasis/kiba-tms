@@ -25,6 +25,9 @@ module Kiba
 
               transform config.returned_cleaner if config.returned_cleaner
 
+              transform FilterRows::AnyFieldsPopulated,
+                action: :keep,
+                fields: %i[correctname correctauthoritytype]
 
               # this can be taken out if we ever do a TMS migration where this
               #   process isn't changing any more during the migration!
