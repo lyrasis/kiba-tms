@@ -65,14 +65,49 @@ module Kiba
               transform Copy::Field, from: :name, to: :origname
 
               if config.done
+                transform Copy::Field,
+                  from: :constituentid,
+                  to: :nconid
+                transform Tms::Transforms::Names::CleanExplodedId,
+                  target: :nconid
                 transform Merge::MultiRowLookup,
                   lookup: name_type_cleanup__previous_worksheet_compile,
                   keycolumn: :constituentid,
                   fieldmap: {
-                    origname: :origname
+                    e_origname: :origname
                   },
-                  conditions: ->(_r, rows) { [rows.first] },
-                  constantmap: {to_review: "n"}
+                  conditions: ->(_r, rows) { [rows.first] }
+                transform Merge::MultiRowLookup,
+                  lookup: name_type_cleanup__previous_worksheet_compile,
+                  keycolumn: :nconid,
+                  fieldmap: {
+                    n_origname: :origname
+                  },
+                  conditions: ->(_r, rows) { [rows.first] }
+                transform Append::NilFields,
+                  fields: %i[to_review prevwrksheetmatchid]
+                transform do |row|
+                  origs = {
+                    nconid: row[:n_origname],
+                    constituentid: row[:e_origname]
+                  }
+                    .reject{ |_k, val| val.blank? }
+                  unless origs.empty?
+                    case origs.length
+                    when 1
+                      row[:origname] = origs.values.first
+                      idfield = origs.keys.first
+                    else
+                      row[:origname] = origs.values[1]
+                      idfield = origs.keys[1]
+                    end
+                    row[:to_review] = "n"
+                    row[:prevwrksheetmatchid] = idfield
+                  end
+                  row
+                end
+                transform Delete::Fields,
+                  fields: %i[nconid e_origname n_origname]
               end
 
               transform CombineValues::FromFieldsWithDelimiter,
@@ -147,10 +182,13 @@ module Kiba
                 end
 
                 transform do |row|
-                  next row unless row[:alreadycorrected].blank?
-                  next row unless row[:doneid].blank?
+                  next row unless row[:to_review].blank?
 
-                  row[:to_review] = "y"
+                  if !row[:alreadycorrected].blank? || !row[:doneid].blank?
+                    row[:to_review] = "n"
+                  else
+                    row[:to_review] = "y"
+                  end
                   row
                 end
 
@@ -175,7 +213,7 @@ module Kiba
               else
                 transform Append::NilFields,
                   fields: %i[correctauthoritytype correctname]
-              end
+               end
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,
