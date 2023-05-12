@@ -405,7 +405,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConAddress::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_address_to_merge.csv"),
-            desc: "Removes rows with no address data, merges in coded values, shapes for CS",
+            desc: "Removes rows with no address data, merges in coded values,"\
+              "shapes for CS",
             tags: %i[con con_address],
             lookup_on: :constituentid
           }
