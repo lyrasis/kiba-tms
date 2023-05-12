@@ -2202,7 +2202,8 @@ module Kiba
               "working",
               "names_compiled_orgs.csv"
             ),
-            tags: %i[names]
+            tags: %i[names],
+            desc: "Main terms tagged as orgs from :name_compile__unique"
           }
           register :persons, {
             creator: Kiba::Tms::Jobs::NameCompile::Persons,
@@ -2211,7 +2212,8 @@ module Kiba
               "working",
               "names_compiled_persons.csv"
             ),
-            tags: %i[names]
+            tags: %i[names],
+            desc: "Main terms tagged as persons from :name_compile__unique"
           }
           register :bio_note, {
             creator: Kiba::Tms::Jobs::NameCompile::BioNote,
