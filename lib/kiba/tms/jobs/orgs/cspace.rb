@@ -51,6 +51,7 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Tms::Transforms::Names::RemoveDropped
+              transform Tms::Transforms::Names::CleanExplodedId
               transform Delete::Fields,
                 fields: %i[sort contype relation_type variant_term
                   variant_qualifier related_term related_role

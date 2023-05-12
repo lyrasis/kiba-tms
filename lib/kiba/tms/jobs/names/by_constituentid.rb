@@ -32,7 +32,7 @@ module Kiba
                 prefname => :cleanedprefname,
                 nonprefname => :nonprefname
               }
-
+              transform Tms::Transforms::Names::CleanExplodedId
               transform Merge::MultiRowLookup,
                 lookup: orgs__by_constituentid,
                 keycolumn: :constituentid,
@@ -46,6 +46,9 @@ module Kiba
                 target: :prefname,
                 delim: " ",
                 delete_sources: false
+              transform Deduplicate::Table,
+                field: :constituentid,
+                delete_field: false
             end
           end
         end

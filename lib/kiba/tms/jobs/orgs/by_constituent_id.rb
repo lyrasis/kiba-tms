@@ -26,6 +26,7 @@ module Kiba
                 lookup: orgs__brief,
                 keycolumn: :norm,
                 fieldmap: {name: :termdisplayname}
+              transform Tms::Transforms::Names::CleanExplodedId
             end
           end
         end
