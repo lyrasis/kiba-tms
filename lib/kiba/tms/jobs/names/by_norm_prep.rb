@@ -33,9 +33,9 @@ module Kiba
               end
 
               if Tms.job_output?(
-                :name_compile__notes_uncontrolled_for_norm_lookup
+                :name_compile__non_name_notes
               )
-                base << :name_compile__notes_uncontrolled_for_norm_lookup
+                base << :name_compile__non_name_notes
               end
             end
             base

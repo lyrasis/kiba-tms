@@ -2215,6 +2215,16 @@ module Kiba
             tags: %i[names],
             desc: "Main terms tagged as persons from :name_compile__unique"
           }
+          register :non_name_notes, {
+            creator: Kiba::Tms::Jobs::NameCompile::NonNameNotes,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "names_compiled_non_name_notes.csv"
+            ),
+            tags: %i[names],
+            desc: "Main terms tagged as notes from :name_compile__unique"
+          }
           register :bio_note, {
             creator: Kiba::Tms::Jobs::NameCompile::BioNote,
             path: File.join(

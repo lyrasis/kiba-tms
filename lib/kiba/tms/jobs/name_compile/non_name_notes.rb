@@ -4,16 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module NameCompile
-        module NotesUncontrolledForNormLookup
+        module NonNameNotes
           module_function
 
           def job
-            return unless Tms::NameCompile.used?
-
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :name_compile__from_uncontrolled_name_tables,
-                destination: :name_compile__notes_uncontrolled_for_norm_lookup
+                source: :name_compile__unique,
+                destination: :name_compile__non_name_notes
               },
               transformer: xforms
             )
@@ -21,18 +19,16 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Tms::Transforms::Names::AddDefaultContype
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: ->(row) do
                   contype = row[:contype]
+                  reltype = row[:relation_type]
                   contype &&
-                    contype.start_with?("Note")
+                    reltype &&
+                    contype.start_with?("Note") &&
+                    reltype == "_main term"
                 end
-
-              transform Rename::Field,
-                from: Tms::Constituents.preferred_name_field,
-                to: :name
               transform Delete::FieldsExcept,
                 fields: %i[name prefnormorig contype]
             end
