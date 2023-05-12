@@ -30,7 +30,7 @@ module Kiba
                     reltype == "_main term"
                 end
               transform Delete::FieldsExcept,
-                fields: %i[name prefnormorig contype]
+                fields: %i[name prefnormorig contype termsource constituentid]
             end
           end
         end

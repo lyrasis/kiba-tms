@@ -2223,7 +2223,19 @@ module Kiba
               "names_compiled_non_name_notes.csv"
             ),
             tags: %i[names],
-            desc: "Main terms tagged as notes from :name_compile__unique"
+            desc: "Main terms tagged as notes from :name_compile__unique",
+            lookup_on: :constituentid
+          }
+          register :non_name_notes_uncontrolled, {
+            creator: Kiba::Tms::Jobs::NameCompile::NonNameNotesUncontrolled,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "names_compiled_non_name_notes_uncontrolled.csv"
+            ),
+            tags: %i[names],
+            desc: "Main terms tagged as notes from :name_compile__unique "\
+              "with termsource = uncontrolled"
           }
           register :bio_note, {
             creator: Kiba::Tms::Jobs::NameCompile::BioNote,
