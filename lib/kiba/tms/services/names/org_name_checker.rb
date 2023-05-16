@@ -4,9 +4,10 @@ module Kiba
   module Tms
     module Services
       module Names
-        # Indicates whether value of field contains terms indicating
-        #   organization-ness
+        # Indicates (true/false) whether value of field matches any pattern
+        #   strongly suggesting organization-ness
         class OrgNameChecker
+          # @param [Symbol] fieldname containing value to check
           def initialize(field:)
             @field = field
             @checker = Kiba::Extend::Transforms::Helpers::OrgNameChecker.new(
