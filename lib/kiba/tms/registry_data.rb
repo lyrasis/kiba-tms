@@ -719,9 +719,13 @@ module Kiba
               "working",
               "constituents_duplicates.csv"
             ),
-            desc: "Duplicate constituent data for creating variant name entries",
-            tags: %i[con],
-            lookup_on: :combined
+            desc: "Duplicate constituent data for creating variant name "\
+              "entries",
+            tags: %i[con reports postmigcleanup],
+            lookup_on: :combined,
+            dest_special_opts: {
+              initial_headers: %i[constituentid combined dropping]
+            }
           }
           register :persons, {
             creator: Kiba::Tms::Jobs::Constituents::Persons,

@@ -19,8 +19,19 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep,
+              transform FilterRows::FieldPopulated,
+                action: :keep,
                 field: :duplicate
+              transform Delete::Fields, fields: :duplicate
+
+              if Tms.migration_status == :dev
+                transform FilterRows::FieldEqualTo,
+                  action: :reject,
+                  field: Tms::Constituents.preferred_name_field,
+                  value: Tms::NameTypeCleanup.dropped_name_indicator
+              end
+
+              transform Sort::ByFieldValue, field: :combined
             end
           end
         end

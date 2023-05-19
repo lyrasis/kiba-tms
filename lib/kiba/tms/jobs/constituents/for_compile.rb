@@ -29,11 +29,28 @@ module Kiba
               transform Delete::Fields,
                 fields: %i[constituenttype derivedcontype inconsistent_org_names
                   defaultnameid defaultdisplaybioid namedata norm]
-              # remove non-preferred form of name if not including flipped as
-              #   variant
               unless config.include_flipped_as_variant
                 transform Delete::Fields,
                   fields: config.var_name_field
+                transform Deduplicate::Flag,
+                  on_field: :combined,
+                  in_field: :dropping,
+                  using: {}
+
+                # Avoid confusion by marking manually dropped names as such
+                if Tms.migration_status == :dev
+                  pref = Tms::Constituents.preferred_name_field
+                  transform do |row|
+                    name = row[pref]
+                    next row if name.blank?
+                    next row unless name ==
+                      Tms::NameTypeCleanup.dropped_name_indicator
+                    next row unless row[:dropping] == "n"
+
+                    row[:dropping] = "y"
+                    row
+                  end
+                end
               end
             end
           end

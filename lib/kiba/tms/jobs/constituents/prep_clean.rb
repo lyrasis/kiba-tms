@@ -57,8 +57,13 @@ module Kiba
                   source: prefname,
                   target: :norm
                 transform Tms::Transforms::Names::NormalizeContype
+                transform do |row|
+                  id = row[:constituentid]
+                  row[:exploded] = id["_exploded"] ? "exp" : nil
+                  row
+                end
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: %i[contype_norm norm],
+                  sources: %i[contype_norm norm exploded],
                   target: :combined,
                   delim: " ",
                   delete_sources: false
@@ -66,10 +71,11 @@ module Kiba
                   on_field: :combined,
                   in_field: :duplicate,
                   explicit_no: false
-                transform Delete::Fields, fields: %i[contype_norm]
+                transform Delete::Fields, fields: %i[contype_norm exploded]
                 transform FilterRows::FieldPopulated,
                   action: :keep,
                   field: prefname
+                transform Sort::ByFieldValue, field: :constituentid
               else
                 transform Copy::Field, from: :norm, to: :prefnormorig
                 transform Copy::Field, from: :nonprefnorm, to: :nonprefnormorig
