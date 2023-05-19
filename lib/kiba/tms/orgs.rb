@@ -19,6 +19,14 @@ module Kiba
       setting :group_sources,
         default: [:culturegroup],
         reader: true
+      setting :term_targets,
+        default: %i[termdisplayname termflag termsourcenote],
+        reader: true,
+        constructor: ->(value) do
+          value << :termsource if Tms::Names.set_term_source
+          value << :termprefforlang if Tms::Names.set_term_pref_for_lang
+          value
+        end
     end
   end
 end

@@ -81,18 +81,15 @@ module Kiba
                   delim: "%CR%"
               end
 
-              term_targets = %i[termdisplayname termflag termsourcenote]
-              if Tms::Names.set_term_source
-                term_targets << :termsource
-              else
+              end
+
+              unless Tms::Names.set_term_source
                 transform Delete::Fields, fields: :termsource
               end
-              if Tms::Names.set_term_pref_for_lang
-                term_targets << :termprefforlang
-              end
+
               transform Collapse::FieldsToRepeatableFieldGroup,
                 sources: %i[pref var],
-                targets: term_targets,
+                targets: config.term_targets,
                 delim: Tms.delim,
                 enforce_evenness: false
 

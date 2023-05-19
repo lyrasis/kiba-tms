@@ -20,6 +20,16 @@ module Kiba
         default: %i[remarks address_namenote email_web_namenote
           phone_fax_namenote text_entry],
         reader: true
+      setting :term_targets,
+        default: %i[termdisplayname salutation title forename
+                    middlename surname nameadditions termflag
+                    termsourcenote],
+        reader: true,
+        constructor: ->(value) do
+          value << :termsource if Tms::Names.set_term_source
+          value << :termprefforlang if Tms::Names.set_term_pref_for_lang
+          value
+        end
     end
   end
 end
