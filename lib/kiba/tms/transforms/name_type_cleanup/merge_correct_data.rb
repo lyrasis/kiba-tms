@@ -16,8 +16,8 @@ module Kiba
               lookup: lookup,
               keycolumn: keycolumn,
               fieldmap: {
-                nametarget=>:correctname,
-                typetarget=>:correctauthoritytype
+                nametarget => :correctname,
+                typetarget => :correctauthoritytype
               },
               delim: delim
             )

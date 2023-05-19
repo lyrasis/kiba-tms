@@ -27,8 +27,8 @@ module Kiba
             Kiba.job_segment do
               transform Append::NilFields,
                 fields: Tms::Constituents.dates
-                .multisource_normalizer
-                .get_fields
+                  .multisource_normalizer
+                  .get_fields
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription date],

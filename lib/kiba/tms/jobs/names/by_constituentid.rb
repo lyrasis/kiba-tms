@@ -20,10 +20,10 @@ module Kiba
 
           def lookups
             %i[
-               orgs__by_constituentid
-               persons__by_constituentid
-               name_compile__non_name_notes
-              ].select{ |job| Tms.job_output?(job) }
+              orgs__by_constituentid
+              persons__by_constituentid
+              name_compile__non_name_notes
+            ].select { |job| Tms.job_output?(job) }
           end
 
           def xforms

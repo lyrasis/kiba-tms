@@ -91,7 +91,7 @@ module Kiba
                     nconid: row[:n_origname],
                     constituentid: row[:e_origname]
                   }
-                    .reject{ |_k, val| val.blank? }
+                    .reject { |_k, val| val.blank? }
                   unless origs.empty?
                     case origs.length
                     when 1
@@ -213,7 +213,7 @@ module Kiba
               else
                 transform Append::NilFields,
                   fields: %i[correctauthoritytype correctname]
-               end
+              end
 
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :all,

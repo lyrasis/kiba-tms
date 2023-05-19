@@ -15,12 +15,12 @@ module Kiba
             case auth
             when :person
               @fields = %i[birthplace geo_birthnote deathplace geo_deathnote
-                           geo_note]
+                geo_note]
             when :org
               @fields = %i[foundingplace geo_foundingnote
-                           dissolutionplace geo_dissolutionnote
-                           geo_note]
-              end
+                dissolutionplace geo_dissolutionnote
+                geo_note]
+            end
           end
 
           def process(row)
