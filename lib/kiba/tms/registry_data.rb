@@ -417,7 +417,8 @@ module Kiba
             desc: "Addresses dropped from migration because (1) they are for "\
               "constituents that are not migrating; (2) they are marked "\
               "inactive and the migration is set to omit inactive addresses; "\
-              "or there was no address data in the row",
+              "or (3) there was no address data in the row. The :keeping "\
+              "field will include an indication of reason for drop.",
             tags: %i[con con_address reports postmigcleanup]
           }
           register :duplicates, {
@@ -450,7 +451,10 @@ module Kiba
                 addresscount type termdisplayname rank address_notes
                 addressplace1 addressplace2 city state zipcode addresscountry
               ]
-            }
+            },
+            desc: "Address data for names that will have more than one "\
+              "address merged in the migration. Clients may want to review "\
+              "and clean these up post migration."
           }
         end
 
@@ -719,8 +723,21 @@ module Kiba
               "working",
               "constituents_duplicates.csv"
             ),
-            desc: "Duplicate constituent data for creating variant name "\
-              "entries",
+            desc: "Duplicate constituent rows. Normalized preferred name "\
+              "value is not unique within the target authority (person/org). "\
+              "One authority term will be created in CS for each group of "\
+              "names identified here, using the row with :dropping = n.\n"\
+              "The preferred name will be merged into any field where any of "\
+              "the :constituentid values in the group is "\
+              "referenced in other records. However, name details, notes, "\
+              "and any other values in rows with :dropping = y will not "\
+              "migrate into the name's authority record.\n"\
+              "*If client wants to disambiguate the preferred names "\
+              "in any of these rows, so they are not treated as duplicates, "\
+              "they must request a new name_type_cleanup worksheet.*\n"\
+              "Client may opt to manually add name details or other values "\
+              "from dropped rows to the appropriate CS name records after the "\
+              "migration is complete.",
             tags: %i[con reports postmigcleanup],
             lookup_on: :combined,
             dest_special_opts: {
