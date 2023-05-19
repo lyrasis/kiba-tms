@@ -16,6 +16,8 @@ module Kiba
           eventtype: [nil, "", "(not entered)", "[not entered]"]
         },
         reader: true
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[objdateid objectid],
         reader: true

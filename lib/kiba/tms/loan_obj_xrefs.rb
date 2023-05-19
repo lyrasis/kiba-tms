@@ -9,8 +9,11 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
-        default: %i[loanobjxrefid loanid objectid loannumber objectnumber],
+        default: %i[loanobjxrefid loanid objectid loannumber
+          objectnumber],
         reader: true
       extend Tms::Mixins::Tableable
 

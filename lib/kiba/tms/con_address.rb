@@ -11,6 +11,8 @@ module Kiba
       setting :delete_fields,
         default: %i[lastsalestaxid addressformatid islocation],
         reader: true
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: [:conaddressid],
         reader: true

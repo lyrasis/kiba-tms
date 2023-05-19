@@ -9,6 +9,8 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[objincomingid objectid],
         reader: true

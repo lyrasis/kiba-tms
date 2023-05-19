@@ -14,6 +14,8 @@ module Kiba
         default: %i[displayorder],
         reader: true,
         constructor: proc { |value| set_deletes(value) }
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[registrationsetid],
         reader: true

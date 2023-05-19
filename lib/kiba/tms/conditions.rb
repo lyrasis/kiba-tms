@@ -37,6 +37,8 @@ module Kiba
       setting :multisource_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
         reader: true
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[conditionid tableid id condlineitem_ct],
         reader: true

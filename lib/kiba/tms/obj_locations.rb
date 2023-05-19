@@ -20,6 +20,8 @@ module Kiba
           tempticklerdate: [nil, "", "1900-01-01 00:00:00.000"]
         },
         reader: true
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[objlocationid componentid],
         reader: true

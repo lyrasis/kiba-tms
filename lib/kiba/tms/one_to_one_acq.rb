@@ -20,6 +20,8 @@ module Kiba
           value << Tms.tms_fields
           value.flatten
         }
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[objectnumber objectvalueid],
         reader: true

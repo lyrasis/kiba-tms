@@ -11,6 +11,8 @@ module Kiba
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true
+      # @return [Array<Symbol>] ID and other always-unique fields not treated as
+      #   content for reporting, etc.
       setting :non_content_fields,
         default: %i[congeographyid constituentid geocodeid geocode],
         reader: true
