@@ -27,8 +27,11 @@ module Kiba
         default: nil,
         reader: true
 
-      setting :person_merger,
-        default: Tms::Transforms::ConGeography::PersonMerger,
+      # Transform class that merges ConGeography table values into person
+      #   and organization records derived from Constituents table. If
+      #   needed, a project-specific transform can be defined
+      setting :merger,
+        default: Tms::Transforms::ConGeography::Merger,
         reader: true
     end
   end

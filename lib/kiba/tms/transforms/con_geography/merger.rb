@@ -4,19 +4,27 @@ module Kiba
   module Tms
     module Transforms
       module ConGeography
-        class PersonMerger
-          def initialize
-            @lookup = Tms.get_lookup(
-              jobkey: :prep__con_geography,
-              column: :constituentid
-            )
+        class Merger
+          # @param auth [:person, :org]
+          # @param lookup [Hash]
+          def initialize(auth:, lookup:)
+            @auth = auth
+            @lookup = lookup
             @id = :constituentid
             @notedelim = "%CR%"
+            case auth
+            when :person
+              @fields = %i[birthplace geo_birthnote deathplace geo_deathnote
+                           geo_note]
+            when :org
+              @fields = %i[foundingplace geo_foundingnote
+                           dissolutionplace geo_dissolutionnote
+                           geo_note]
+              end
           end
 
           def process(row)
-            %i[birthplace geo_birthnote deathplace geo_deathnote
-              geo_note].each do |field|
+            fields.each do |field|
               row[field] = nil
             end
             return row if lookup.empty?
@@ -31,22 +39,23 @@ module Kiba
 
           private
 
-          attr_reader :lookup, :id, :notedelim
-
-          def handle_bd_place_type(row, type, mergerows)
-            matches = mergerows.select { |row| row[:type] == type }
-            return if matches.empty?
-
-            set_bd_place(row, type, matches)
-            return if matches.length == 1
-
-            set_bd_place_notes(row, type, matches)
-          end
+          attr_reader :auth, :fields, :lookup, :id, :notedelim
 
           def handle_bd_place_types(row, mergerows)
             %w[birth death].each do |type|
               handle_bd_place_type(row, type, mergerows)
             end
+          end
+
+          def handle_bd_place_type(row, type, mergerows)
+            matches = mergerows.select { |row| row[:type] == type }
+            return if matches.empty?
+
+            type = org_type_lookup(type) if auth == :org
+            set_bd_place(row, type, matches)
+            return if matches.length == 1
+
+            set_bd_place_notes(row, type, matches)
           end
 
           def handle_place_notes(row, mergerows)
@@ -71,6 +80,14 @@ module Kiba
               .map { |row| "#{prefix}#{row[:mergeable]}" }
             row[target] = values.join(notedelim)
             row
+          end
+
+          def org_type_lookup(type)
+            lkp = {
+              "birth"=>"founding",
+              "death"=>"dissolution"
+            }
+            lkp[type]
           end
         end
       end

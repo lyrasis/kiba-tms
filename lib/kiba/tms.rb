@@ -55,9 +55,12 @@ module Kiba
       # you will want to override the following in any application using this
       # extension
       setting :empty_table_list_path,
-        default: "#{__dir__}/empty_tables.txt",
+        default: "#{Gem.loaded_specs['kiba-tms'].full_gem_path}/"\
+        "empty_tables.txt",
         reader: true
-      setting :datadir, default: "#{__dir__}/data", reader: true
+      setting :datadir,
+        default: "#{Gem.loaded_specs['kiba-tms'].full_gem_path}/data",
+        reader: true
       # Name of directory containing TMS tables in CSV format. Expected to be
       #   found in `:datadir`
       setting :tmsdir, default: "tms", reader: true

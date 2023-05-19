@@ -26,6 +26,7 @@ module Kiba
             base << :name_compile__variant_term
             base << :name_compile__bio_note
             base << :name_compile__contact_person
+            base << :prep__con_geography if Tms::ConGeography.used?
             if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
@@ -105,10 +106,11 @@ module Kiba
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
               end
-              if Tms::ConGeography.used?
-                transform Tms::ConGeography.person_merger
+              if lookups.any?(:prep__con_geography)
+                transform Tms::ConGeography.merger,
+                  auth: :org,
+                  lookup: prep__con_geography
               end
-
 
               transform Rename::Fields, fieldmap: {
                 birth_foundation_date: :foundingdategroup,
