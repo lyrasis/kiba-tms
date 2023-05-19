@@ -7,11 +7,28 @@ module Kiba
 
       extend Dry::Configurable
 
-      # whether to add "variant form" to name term flag field
-      setting :flag_variant_form, default: false, reader: true
+      # Whether to check the termPrefForLang field/box in the term field
+      #   group for the preferred form of name.
       setting :set_term_pref_for_lang, default: true, reader: true
+
+      # Whether to populate the CS name term flag field with "variant form"
+      #   in the term field group for variant names.
+      #
+      # This defaults to false because, in general it is assumed that any
+      #   term field group without termPrefForLang set is a variant term
+      setting :flag_variant_form, default: false, reader: true
+
+      # Whether the term source field is populated for each term field group.
+      #
+      # By default, while the migration is being developed (on the
+      #   staging/training instance), this is set to true. The TMS table/field
+      #   from which a name came is used. This is used for debugging the
+      #   migration.
+      #
+      # By default, this is set to false when we do the production migration.
       setting :set_term_source, default: false, reader: true,
         constructor: ->(value) { true if Tms.migration_status == :dev }
+
       # Authority type (:contype) assigned to names with no type (if client does
       #   not provide one)
       setting :untyped_default, default: "Person", reader: true

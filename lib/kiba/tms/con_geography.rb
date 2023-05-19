@@ -18,8 +18,8 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # Project-specific transforms to prepare ConGeography data for merge
-      #   into person and org records, as necessary.
+      # Optional transform class to clean up table data
+      #   and prepare it for merging into person and org records
       #
       # To be compatible with the default mergers, the cleaner should add the
       #   following fields to each row:
@@ -33,6 +33,23 @@ module Kiba
       # Transform class that merges ConGeography table values into person
       #   and organization records derived from Constituents table. If
       #   needed, a project-specific transform can be defined
+      #
+      # Behavior of default merger:
+      # - First birth place value is mapped to birthplace (person) or
+      #   foundingplace (org)
+      # - "Additional birth/founding place: " prepended to each subsequent birth
+      #   place value. (Exact label different for person vs. org). These notes
+      #   get combined with other field values into bionote (person) or
+      #   historynote (org)
+      # - First death place value is mapped to deathplace (person) or
+      #   dissolutionplace (org)
+      # - "Additional death/dissolution place: " prepended to each subsequent
+      #   death place value. (Exact label different for person vs. org). These
+      #   notes get combined with other field values into bionote (person) or
+      #   historynote (org)
+      # - All ConGeography values without a birth/death type assigned are
+      #   combined (no prefix added) with other field values into bionote
+      #   (person) or historynote (org)
       setting :merger,
         default: Tms::Transforms::ConGeography::Merger,
         reader: true

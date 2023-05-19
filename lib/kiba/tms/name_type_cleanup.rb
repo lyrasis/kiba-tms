@@ -19,21 +19,26 @@ module Kiba
         true
       end
 
-      # Indicates whether any cleanup has been returned. If not, we run
-      #   everything on base data. If yes, we merge in/overlay cleanup on the
-      #   affected base data tables
+      # @return [true] if any name_type_cleanup worksheet has been returned. If
+      #   true, we merge/overlay cleaned values onto the base data.
+      # @return [false] if no name_type_cleanup worksheet has been returned. If
+      #   false, we use the base TMS data.
+      # Automatically set based on `:returned_files`
       setting :done, default: false, reader: true,
         constructor: proc { !returned_files.empty? }
+
+      # @return [String] Value substituted in for any names marked to be dropped
+      #   from migration, while the migration is run in :dev mode. In :prod
+      #   mode, the names are dropped
       setting :dropped_name_indicator,
         default: "DROPPED FROM MIGRATION",
         reader: true
-      setting :untyped_treatment,
-        default: "Person",
-        reader: true
-      # Client-specific transform to clean returned worksheet before any further
-      #   processing is done
+
+      # Optional client-specific transform to clean returned worksheet before
+      #   any further processing is done
       setting :returned_cleaner, default: nil, reader: true
-      # List provided worksheets, most recent first. Assumes they are in the
+
+      # List of provided worksheets, most recent first. Assumes they are in the
       #   client project directory/to_client subdir
       setting :provided_worksheets,
         default: [],
@@ -43,7 +48,8 @@ module Kiba
             File.join(Kiba::Tms.datadir, "to_client", filename)
           end
         }
-      # List returned worksheets, most recent first. Assumes they are in the
+
+      # List of returned worksheets, most recent first. Assumes they are in the
       #   client project directory/supplied subdir
       setting :returned_files,
         default: [],
@@ -54,13 +60,14 @@ module Kiba
           end
         }
 
+      # Auto-generated setting indicating which TMS base data needs to have
+      #   name type cleanup merged in
       setting :targets, default: [], reader: true
 
-      setting :configurable, default: {
-                               targets: proc {
-                                          Tms::Services::NameTypeCleanup::TargetsDeriver.call
-                                        }
-                             },
+      setting :configurable,
+        default: {
+          targets: proc { Tms::Services::NameTypeCleanup::TargetsDeriver.call }
+        },
         reader: true
 
       def initial_headers
