@@ -28,7 +28,13 @@ module Kiba
                   org: :org,
                   termdisplayname: :cleanedprefname,
                   addresscount: :addresscount
+                },
+                conditions: ->(_r, rows){
+                  rows.reject{ |r| r[:addresscount] == "1" }
                 }
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :addresscount
 
               transform do |row|
                 person = row[:person]
