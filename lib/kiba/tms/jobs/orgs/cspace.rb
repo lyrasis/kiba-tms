@@ -64,7 +64,7 @@ module Kiba
                   conditions: ->(_pref, rows) do
                     rows.select { |row|
                       row[:contype] &&
-                        row[:contype].start_with?("Person")
+                        row[:contype].start_with?("Org")
                     }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
