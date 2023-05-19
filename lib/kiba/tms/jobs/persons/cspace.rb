@@ -46,9 +46,9 @@ module Kiba
                   variant_qualifier related_term related_role
                   note_text prefnormorig nonprefnormorig
                   altnorm alttype mainnorm]
-              transform Deduplicate::Table,
-                field: :namemergenorm,
-                delete_field: false
+              # transform Deduplicate::Table,
+              #   field: :namemergenorm,
+              #   delete_field: false
 
               transform Tms::Transforms::Person::PrefName
 
@@ -113,7 +113,7 @@ module Kiba
               end
 
               transform Delete::Fields,
-                fields: %i[constituentid namemergenorm]
+                fields: %i[constituentid]
 
               unless config.bionote_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,

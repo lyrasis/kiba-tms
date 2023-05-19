@@ -47,9 +47,9 @@ module Kiba
                   variant_qualifier related_term related_role
                   note_text prefnormorig nonprefnormorig
                   altnorm alttype mainnorm]
-              transform Deduplicate::Table,
-                field: :namemergenorm,
-                delete_field: false
+              # transform Deduplicate::Table,
+              #   field: :namemergenorm,
+              #   delete_field: false
 
               transform Tms::Transforms::Org::PrefName
               if lookups.any?(:name_compile__variant_term)
@@ -138,7 +138,7 @@ module Kiba
               end
 
               transform Delete::Fields,
-                fields: [Tms::NameCompile.org_nil, :namemergenorm].flatten
+                fields: Tms::NameCompile.org_nil
 
               transform Delete::DelimiterOnlyFieldValues,
                 treat_as_null: Tms.nullvalue
