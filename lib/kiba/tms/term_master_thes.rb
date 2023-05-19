@@ -9,8 +9,10 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
-        default: %i[dateentered datemodified termclassid displaydescriptorid],
+        default: %i[dateentered datemodified termclassid
+          displaydescriptorid],
         reader: true
       extend Tms::Mixins::Tableable
     end

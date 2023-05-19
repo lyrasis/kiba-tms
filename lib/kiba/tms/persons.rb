@@ -22,8 +22,8 @@ module Kiba
         reader: true
       setting :term_targets,
         default: %i[termdisplayname salutation title forename
-                    middlename surname nameadditions termflag
-                    termsourcenote],
+          middlename surname nameadditions termflag
+          termsourcenote],
         reader: true,
         constructor: ->(value) do
           value << :termsource if Tms::Names.set_term_source

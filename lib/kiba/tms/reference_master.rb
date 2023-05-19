@@ -9,8 +9,10 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
-        default: %i[alphaheading sortnumber publicaccess conservationentityid],
+        default: %i[alphaheading sortnumber publicaccess
+          conservationentityid],
         reader: true
       extend Tms::Mixins::Tableable
 

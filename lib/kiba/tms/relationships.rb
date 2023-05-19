@@ -9,6 +9,7 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[movecolocated rel1prep rel2prep relation1plural
           relation2plural transitive],

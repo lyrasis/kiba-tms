@@ -91,6 +91,7 @@ module Kiba
         },
         reader: true
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[currencyamount currencyrate localamount
           accessionminutes1 accessionminutes2 budget capitalprogram

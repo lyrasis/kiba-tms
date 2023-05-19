@@ -10,8 +10,10 @@ module Kiba
       module_function
 
       setting :source_job_key, default: :tms__term_master_thes, reader: true
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
-        default: %i[dateentered datemodified termclassid displaydescriptorid],
+        default: %i[dateentered datemodified termclassid
+          displaydescriptorid],
         reader: true
       extend Tms::Mixins::Tableable
     end

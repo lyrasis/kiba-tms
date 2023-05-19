@@ -17,6 +17,7 @@ module Kiba
         reader: true
 
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid
           objectid objectnumber

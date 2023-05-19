@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module Names
       module_function
+
       extend Dry::Configurable
 
       # whether to add "variant form" to name term flag field
@@ -23,6 +24,7 @@ module Kiba
         setting :multi_source_normalizer,
           default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # fields to delete from name compilation report
+        # @return [Array<Symbol>] unmigratable fields removed by default
         setting :delete_fields, default: [], reader: true
       end
     end

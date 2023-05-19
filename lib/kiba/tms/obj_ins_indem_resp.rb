@@ -15,6 +15,7 @@ module Kiba
         },
         reader: true
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields, default: %i[tableid], reader: true
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable

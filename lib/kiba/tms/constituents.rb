@@ -11,6 +11,7 @@ module Kiba
 
       # the final 3 date fields are deleted because they are handled in the
       #   Constituents::CleanDates job (a dependency of ConDates::ToMerge job)
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[lastsoundex firstsoundex institutionsoundex n_displayname
           n_displaydate begindate enddate systemflag internalstatus
@@ -147,8 +148,8 @@ module Kiba
           preferred_name_field]
         base << var_name_field if Tms::Constituents.include_flipped_as_variant
         %i[nametitle firstname middlename lastname suffix birth_foundation_date
-           death_dissolution_date datenote institution position
-           inconsistent_org_names].each do |field|
+          death_dissolution_date datenote institution position
+          inconsistent_org_names].each do |field|
           base << field
         end
         base

@@ -9,7 +9,9 @@ module Kiba
 
       module_function
 
-      setting :delete_fields, default: %i[displayed isexhtitle], reader: true
+      # @return [Array<Symbol>] unmigratable fields removed by default
+      setting :delete_fields, default: %i[displayed isexhtitle],
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :migrate_inactive, default: false, reader: true

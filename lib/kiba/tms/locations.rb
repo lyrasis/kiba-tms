@@ -9,6 +9,7 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[publicaccess unitmaxlevels bitmapname xcoord ycoord],
         reader: true,

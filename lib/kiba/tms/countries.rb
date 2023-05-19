@@ -9,7 +9,9 @@ module Kiba
 
       module_function
 
-      setting :delete_fields, default: %i[defaultaddrformatid], reader: true
+      # @return [Array<Symbol>] unmigratable fields removed by default
+      setting :delete_fields, default: %i[defaultaddrformatid],
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :id_field, default: :countryid, reader: true

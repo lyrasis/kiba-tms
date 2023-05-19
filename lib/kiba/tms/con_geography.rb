@@ -7,6 +7,7 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true
@@ -16,7 +17,7 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       # Project-specific transforms to prepare ConGeography data for merge
-      #   into person and org records.
+      #   into person and org records, as necessary.
       #
       # To be compatible with the default mergers, the cleaner should add the
       #   following fields to each row:

@@ -54,6 +54,7 @@ module Kiba
       setting :zero_value_treatment,
         default: :drop,
         reader: true
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[currencyrate2 currencyrateisodate currencyvalue
           iscurrent isratelocked

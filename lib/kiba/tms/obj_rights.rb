@@ -12,6 +12,7 @@ module Kiba
       def non_content_fields
         %i[objectid]
       end
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[objrightsid],
         reader: true

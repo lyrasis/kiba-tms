@@ -257,6 +257,7 @@ module Kiba
                      }
 
       # fields to delete from name compilation report
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields, default: [], reader: true
 
       def used?

@@ -14,7 +14,8 @@ module Kiba
         default: %i[biography displayed_bio remarks
           textentry_public datenote geo_note
           address_namenote email_web_namenote phone_fax_namenote
-          textentry_internal],
+          textentry_internal
+          name_rel_bio_note],
         reader: true
       setting :group_sources,
         default: [:culturegroup],

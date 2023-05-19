@@ -13,6 +13,7 @@ module Kiba
         },
         reader: true
 
+      # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[identifier sortidentifier displayidentifier],
         reader: true
