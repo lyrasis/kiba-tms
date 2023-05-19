@@ -32,23 +32,12 @@ module Kiba
             base.select { |job| Tms.job_output?(job) }
           end
 
-          def merge_name_bio_notes?
-            lookups.any?(:name_compile__bio_note)
-          end
-
-          def merge_name_contact_persons?
-            lookups.any?(:name_compile__contact_person)
-          end
-
-          def merge_variants?
-            lookups.any?(:name_compile__variant_term)
-          end
-
           def xforms
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              lookups = bind.receiver.send(:lookups)
 
               transform Tms::Transforms::Names::RemoveDropped
               transform Tms::Transforms::Names::CleanExplodedId
@@ -62,12 +51,12 @@ module Kiba
                 delete_field: false
 
               transform Tms::Transforms::Org::PrefName
-              if bind.receiver.send(:merge_variants?)
+              if lookups.any?(:name_compile__variant_term)
                 transform Tms::Transforms::Org::VariantName,
                   lookup: name_compile__variant_term
               end
 
-              if bind.receiver.send(:merge_name_bio_notes?)
+              if lookups.any?(:name_compile__bio_note)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__bio_note,
                   keycolumn: :namemergenorm,
@@ -81,6 +70,9 @@ module Kiba
                   delim: "%CR%"
               end
 
+              if lookups.any?(:name_compile__contact_person)
+                transform Tms::Transforms::Org::ContactName,
+                  lookup: name_compile__contact_person
               end
 
               unless Tms::Names.set_term_source
@@ -117,10 +109,6 @@ module Kiba
                 transform Tms::ConGeography.person_merger
               end
 
-              if bind.receiver.send(:merge_name_contact_persons?)
-                transform Tms::Transforms::Org::ContactName,
-                  lookup: name_compile__contact_person
-              end
 
               transform Rename::Fields, fieldmap: {
                 birth_foundation_date: :foundingdategroup,

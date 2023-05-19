@@ -31,19 +31,12 @@ module Kiba
             base.select { |job| Tms.job_output?(job) }
           end
 
-          def merge_name_bio_notes?
-            lookups.any?(:name_compile__bio_note)
-          end
-
-          def merge_variants?
-            lookups.any?(:name_compile__variant_term)
-          end
-
           def xforms
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              lookups = bind.receiver.send(:lookups)
 
               transform Tms::Transforms::Names::RemoveDropped
               transform Tms::Transforms::Names::CleanExplodedId
@@ -57,11 +50,13 @@ module Kiba
                 delete_field: false
 
               transform Tms::Transforms::Person::PrefName
-              if bind.receiver.send(:merge_variants?)
+
+              if lookups.any?(:name_compile__variant_term)
                 transform Tms::Transforms::Person::VariantName,
                   lookup: name_compile__variant_term
               end
-              if bind.receiver.send(:merge_name_bio_notes?)
+
+              if lookups.any?(:name_compile__bio_note)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__bio_note,
                   keycolumn: :namemergenorm,
