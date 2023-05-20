@@ -29,8 +29,8 @@ module Kiba
                   termdisplayname: :cleanedprefname,
                   addresscount: :addresscount
                 },
-                conditions: ->(_r, rows){
-                  rows.reject{ |r| r[:addresscount] == "1" }
+                conditions: ->(_r, rows) {
+                  rows.reject { |r| r[:addresscount] == "1" }
                 }
               transform FilterRows::FieldPopulated,
                 action: :keep,

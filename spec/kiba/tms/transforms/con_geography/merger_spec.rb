@@ -4,14 +4,13 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
   subject(:xform) { described_class.new(**params) }
   let(:params) { {auth: auth, lookup: lookup} }
   let(:lookup_single) do
-    {"1"=>[
+    {"1" => [
       {constituentid: "1", type: "birth", mergeable: "London"},
       {constituentid: "1", type: "death", mergeable: "Paris"}
-    ]
-    }
+    ]}
   end
   let(:lookup_multi) do
-    {"1"=>[
+    {"1" => [
       {constituentid: "1", type: "birth", mergeable: "London"},
       {constituentid: "1", type: "birth", mergeable: "Londre"},
       {constituentid: "1", type: "birth", mergeable: "Londontown"},
@@ -20,19 +19,18 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
       {constituentid: "1", type: "death", mergeable: "Montmartre"},
       {constituentid: "1", type: "death", mergeable: "Madrid"},
       {constituentid: "1", type: nil, mergeable: "Disputed deathplaces"},
-    ]
-    }
+    ]}
   end
-  let(:row){ {constituentid: "1"} }
+  let(:row) { {constituentid: "1"} }
 
   describe "#process" do
-    let(:result){ xform.process(row) }
+    let(:result) { xform.process(row) }
 
     context "with person" do
-      let(:auth){ :person }
+      let(:auth) { :person }
 
       context "with one lookup value per type" do
-        let(:lookup){ lookup_single }
+        let(:lookup) { lookup_single }
 
         it "produces expected row" do
           expected = {
@@ -48,7 +46,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
       end
 
       context "with multiple lookup values per type" do
-        let(:lookup){ lookup_multi }
+        let(:lookup) { lookup_multi }
 
         it "produces expected row" do
           expected = {
@@ -67,10 +65,10 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
     end
 
     context "with org" do
-      let(:auth){ :org }
+      let(:auth) { :org }
 
       context "with one lookup value per type" do
-        let(:lookup){ lookup_single }
+        let(:lookup) { lookup_single }
 
         it "produces expected row" do
           expected = {
@@ -86,7 +84,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
       end
 
       context "with multiple lookup values per type" do
-        let(:lookup){ lookup_multi }
+        let(:lookup) { lookup_multi }
 
         it "produces expected row" do
           expected = {

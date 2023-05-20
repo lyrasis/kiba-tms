@@ -84,8 +84,8 @@ module Kiba
 
           def org_type_lookup(type)
             lkp = {
-              "birth"=>"founding",
-              "death"=>"dissolution"
+              "birth" => "founding",
+              "death" => "dissolution"
             }
             lkp[type]
           end
