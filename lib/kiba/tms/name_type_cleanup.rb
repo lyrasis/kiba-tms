@@ -27,13 +27,6 @@ module Kiba
       setting :done, default: false, reader: true,
         constructor: proc { !returned_files.empty? }
 
-      # @return [String] Value substituted in for any names marked to be dropped
-      #   from migration, while the migration is run in :dev mode. In :prod
-      #   mode, the names are dropped
-      setting :dropped_name_indicator,
-        default: "DROPPED FROM MIGRATION",
-        reader: true
-
       # Optional client-specific transform to clean returned worksheet before
       #   any further processing is done
       setting :returned_cleaner, default: nil, reader: true

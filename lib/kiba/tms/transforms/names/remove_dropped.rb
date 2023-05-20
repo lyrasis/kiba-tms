@@ -10,7 +10,7 @@ module Kiba
               FilterRows::FieldEqualTo.new(
                 action: :reject,
                 field: :name,
-                value: Tms::NameTypeCleanup.dropped_name_indicator
+                value: Tms::Names.dropped_name_indicator
               )
             else
               FilterRows::FieldPopulated.new(

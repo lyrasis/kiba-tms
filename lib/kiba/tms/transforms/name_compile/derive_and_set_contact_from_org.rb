@@ -26,7 +26,7 @@ module Kiba
           def process(row)
             return nil if row[namefield].blank?
             return nil if row[namefield] ==
-              Tms::NameTypeCleanup.dropped_name_indicator
+              Tms::Names.dropped_name_indicator
 
             row[:personname] = personbuilder.call(row)
             build_rows(row).each { |row| yield row }

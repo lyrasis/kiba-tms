@@ -33,6 +33,13 @@ module Kiba
       #   not provide one)
       setting :untyped_default, default: "Person", reader: true
 
+      # @return [String] Value substituted in for any names marked to be dropped
+      #   from migration, while the migration is run in :dev mode. In :prod
+      #   mode, the names are dropped
+      setting :dropped_name_indicator,
+        default: "DROPPED FROM MIGRATION",
+        reader: true
+
       setting :compilation, reader: true do
         # Whether to compile :stmtresponsibility field from ReferenceMaster in names list
         # You probably only want to set this to true if ConXrefDetails target tables do not include

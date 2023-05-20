@@ -44,7 +44,7 @@ module Kiba
                     name = row[pref]
                     next row if name.blank?
                     next row unless name ==
-                      Tms::NameTypeCleanup.dropped_name_indicator
+                      Tms::Names.dropped_name_indicator
                     next row unless row[:dropping] == "n"
 
                     row[:dropping] = "y"

@@ -37,7 +37,7 @@ module Kiba
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :name,
-                value: Tms::NameTypeCleanup.dropped_name_indicator
+                value: Tms::Names.dropped_name_indicator
             end
           end
 

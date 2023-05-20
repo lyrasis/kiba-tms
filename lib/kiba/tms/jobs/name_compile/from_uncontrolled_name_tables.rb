@@ -118,7 +118,7 @@ module Kiba
                   source: prefname,
                   target: :corrnorm
 
-                dropped = Tms::NameTypeCleanup.dropped_name_indicator
+                dropped = Tms::Names.dropped_name_indicator
                 transform Merge::MultiRowLookup,
                   lookup: Tms.get_lookup(
                     jobkey: :constituents__prep_clean,

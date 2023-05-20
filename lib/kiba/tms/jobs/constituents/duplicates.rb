@@ -28,7 +28,7 @@ module Kiba
                 transform FilterRows::FieldEqualTo,
                   action: :reject,
                   field: Tms::Constituents.preferred_name_field,
-                  value: Tms::NameTypeCleanup.dropped_name_indicator
+                  value: Tms::Names.dropped_name_indicator
               end
 
               transform Sort::ByFieldValue, field: :combined
