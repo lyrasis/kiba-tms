@@ -22,6 +22,7 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :multi_set_lots, default: false, reader: true
+      # Defines how auto-generated config settings are populated
       setting :configurable, default: {
                                multi_set_lots: proc {
                                  Tms::Services::RegistrationSets::MultiSetLotChecker.call

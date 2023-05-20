@@ -64,6 +64,7 @@ module Kiba
       setting :for_shipment_steps_merge, default: nil, reader: true
       setting :for_shipments_merge, default: nil, reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable,
         default: {
           target_tables: proc {

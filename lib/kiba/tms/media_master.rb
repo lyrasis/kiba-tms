@@ -21,6 +21,7 @@ module Kiba
       #   developing handling of the different renditions
       setting :display_is_primary, default: true, reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable,
         default: {
           display_is_primary: proc {

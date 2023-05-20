@@ -57,9 +57,12 @@ module Kiba
       #   name type cleanup merged in
       setting :targets, default: [], reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable,
         default: {
-          targets: proc { Tms::Services::NameTypeCleanup::TargetsDeriver.call }
+          targets: proc {
+                     Tms::Services::NameTypeCleanup::TargetsDeriver.call
+                   }
         },
         reader: true
 

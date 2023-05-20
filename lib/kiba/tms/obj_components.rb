@@ -31,6 +31,7 @@ module Kiba
         default: %i[storagecomments installcomments],
         reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable, default: {
                                actual_components: proc {
                                  Tms::Services::ObjComponents::ActualComponentDeterminer.call

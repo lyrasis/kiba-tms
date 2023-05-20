@@ -118,6 +118,7 @@ module Kiba
       #   see: https://github.com/lyrasis/kiba-tms/blob/main/doc/data_preparation_details/acquisitions.adoc
       setting :processing_approaches, default: %i[one_to_one], reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable,
         default: {
           processing_approaches: proc {

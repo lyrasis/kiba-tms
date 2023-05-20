@@ -37,6 +37,7 @@ module Kiba
           numberfield: :loannumber
         }, reader: true
 
+      # Defines how auto-generated config settings are populated
       setting :configurable,
         default: {
           con_link_field: proc {
