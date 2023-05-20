@@ -158,7 +158,7 @@ module Kiba
                   contype = row[:contype]
                   next row unless contype.blank?
 
-                  row[:contype] = Tms::NameTypeCleanup.untyped_treatment
+                  row[:contype] = Tms::Names.untyped_default
                   row
                 end
               end

@@ -22,6 +22,7 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+              default_type = Tms::Names.untyped_default
 
               transform config.returned_cleaner if config.returned_cleaner
 
@@ -53,7 +54,7 @@ module Kiba
 
                 at = row[:authoritytype]
                 val = if at.blank?
-                  (config.untyped_treatment == "Person") ? "p" : "o"
+                  (default_type == "Person") ? "p" : "o"
                 elsif at.start_with?("P")
                   "p"
                 else
