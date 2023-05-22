@@ -75,8 +75,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             constituentid: "1",
             foundingplace: "London",
             geo_foundingnote: nil,
-            dissolutionplace: "Paris",
-            geo_dissolutionnote: nil,
+            geo_dissolutionnote: "Dissolution place: Paris",
             geo_note: nil
           }
           expect(result).to eq(expected)
@@ -92,8 +91,8 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             foundingplace: "London",
             geo_foundingnote: "Additional founding place: Londre%CR%"\
               "Additional founding place: Londontown",
-            dissolutionplace: "Paris",
-            geo_dissolutionnote: "Additional dissolution place: Montmartre%CR%"\
+            geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+              "Additional dissolution place: Montmartre%CR%"\
               "Additional dissolution place: Madrid",
             geo_note: "Variant birthplaces%CR%Disputed deathplaces"
           }

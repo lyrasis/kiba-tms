@@ -15,11 +15,11 @@ module Kiba
             case auth
             when :person
               @fields = %i[birthplace geo_birthnote deathplace geo_deathnote
-                geo_note]
+                           geo_note]
             when :org
               @fields = %i[foundingplace geo_foundingnote
-                dissolutionplace geo_dissolutionnote
-                geo_note]
+                           geo_dissolutionnote
+                           geo_note]
             end
           end
 
@@ -34,6 +34,9 @@ module Kiba
 
             handle_bd_place_types(row, mergerows)
             handle_place_notes(row, mergerows)
+            return row if auth == :person
+
+            combine_diss_notes(row)
             row
           end
 
@@ -52,10 +55,19 @@ module Kiba
             return if matches.empty?
 
             type = org_type_lookup(type) if auth == :org
-            set_bd_place(row, type, matches)
+            if type == "dissolution"
+              set_initial_dissolution_note(row, matches)
+            else
+              set_bd_place(row, type, matches)
+            end
             return if matches.length == 1
 
             set_bd_place_notes(row, type, matches)
+          end
+
+          def set_initial_dissolution_note(row, matches)
+            val = matches.first[:mergeable]
+            row[:dissnote] = "Dissolution place: #{val}"
           end
 
           def handle_place_notes(row, mergerows)
@@ -80,6 +92,14 @@ module Kiba
               .map { |row| "#{prefix}#{row[:mergeable]}" }
             row[target] = values.join(notedelim)
             row
+          end
+
+          def combine_diss_notes(row)
+            val = [row[:dissnote], row[:geo_dissolutionnote]]
+              .compact
+              .join(notedelim)
+            row[:geo_dissolutionnote] = val
+            row.delete(:dissnote)
           end
 
           def org_type_lookup(type)
