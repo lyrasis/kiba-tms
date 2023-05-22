@@ -20,6 +20,23 @@ module Kiba
       setting :group_sources,
         default: [:culturegroup],
         reader: true
+
+      # Preferred source for the single valued Foundation place field.
+      # Options:
+      #
+      # - :congeo_nationality - If a value tagged Place of Birth (or equivalent)
+      #   exists for the name in the ConGeography, use the first such value.
+      #   Other ConGeography values and any :nationality value present are
+      #   mapped into the History note. This is the default because ConGeography
+      #   actually includes place values, whereas :nationality is not a place.
+      # - :congeo_only - As above, but never map :nationality field value as
+      #   :foundingplace
+      # - :nationality_only - Map :nationality values to :foundingplace, and
+      #   treat all ConGeography values as notes.
+      setting :foundingplace_handling,
+        default: :congeo_nationality,
+        reader: true
+
       setting :term_targets,
         default: %i[termdisplayname termflag termsourcenote],
         reader: true,

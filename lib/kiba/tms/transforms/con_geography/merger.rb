@@ -27,10 +27,8 @@ module Kiba
             fields.each do |field|
               row[field] = nil
             end
-            return row if lookup.empty?
 
-            mergerows = lookup[row[id]]
-            return row if mergerows.blank?
+            mergerows = lookup.empty? ? [] : lookup[row[id]]
 
             handle_bd_place_types(row, mergerows)
             handle_place_notes(row, mergerows)
@@ -45,17 +43,26 @@ module Kiba
           attr_reader :auth, :fields, :lookup, :id, :notedelim
 
           def handle_bd_place_types(row, mergerows)
+            return if mergerows.blank? && auth == :person
+
             %w[birth death].each do |type|
               handle_bd_place_type(row, type, mergerows)
             end
           end
 
           def handle_bd_place_type(row, type, mergerows)
-            matches = mergerows.select { |row| row[:type] == type }
-            return if matches.empty?
-
+            matches = if mergerows.blank?
+                        []
+                      else
+                        mergerows.select { |row| row[:type] == type }
+                      end
             type = org_type_lookup(type) if auth == :org
-            if type == "dissolution"
+            return if matches.empty? unless type == "founding"
+
+            if type == "founding"
+              handle_founding_and_nationality(row, matches)
+              return
+            elsif type == "dissolution"
               set_initial_dissolution_note(row, matches)
             else
               set_bd_place(row, type, matches)
@@ -65,12 +72,76 @@ module Kiba
             set_bd_place_notes(row, type, matches)
           end
 
+          def handle_founding_and_nationality(row, matches)
+            nationality = row[:nationality]
+            row.delete(:nationality)
+            case Tms::Orgs.foundingplace_handling
+            when :congeo_nationality
+              founding_congeo_nationality(row, matches, nationality)
+            when :congeo_only
+              founding_congeo_only(row, matches, nationality)
+            when :nationality_only
+              founding_nationality_only(row, matches, nationality)
+            end
+          end
+
+          def founding_congeo_nationality(row, matches, nationality)
+            if matches.empty?
+              row[:foundingplace] = nationality unless nationality.blank?
+            else
+              set_bd_place(row, "founding", matches)
+              set_bd_place_notes(row, "founding", matches) if matches.length > 1
+              add_nationality_note(row, nationality)
+            end
+            row
+          end
+
+          def founding_congeo_only(row, matches, nationality)
+            unless matches.empty?
+              set_bd_place(row, "founding", matches)
+              set_bd_place_notes(row, "founding", matches) if matches.length > 1
+            end
+            add_nationality_note(row, nationality)
+            row
+          end
+
+          def founding_nationality_only(row, matches, nationality)
+            row[:foundingplace] = nationality unless nationality.blank?
+            unless matches.empty?
+              matches.unshift(nil)
+              set_bd_place_notes(row, "founding", matches)
+              fix_founding_note(row)
+            end
+            row
+          end
+
+          def fix_founding_note(row)
+            note = row[:geo_foundingnote]
+            fixed = note.sub(/^Additional f/, "F")
+            row[:geo_foundingnote] = fixed
+          end
+
+          def add_nationality_note(row, nationality)
+            return row if nationality.blank?
+
+            existing = row[:geo_foundingnote]
+            natnote = "Nationality: #{nationality}"
+            if existing.nil?
+              row[:geo_foundingnote] = natnote
+            else
+              row[:geo_foundingnote] << "%CR%#{natnote}"
+            end
+            row
+          end
+
           def set_initial_dissolution_note(row, matches)
             val = matches.first[:mergeable]
             row[:dissnote] = "Dissolution place: #{val}"
           end
 
           def handle_place_notes(row, mergerows)
+            return if mergerows.blank?
+
             matches = mergerows.select { |row| row[:type].blank? }
             return if matches.empty?
 
@@ -86,6 +157,8 @@ module Kiba
           end
 
           def set_bd_place_notes(row, type, matches)
+            return if matches.empty?
+
             target = "geo_#{type}note".to_sym
             prefix = "Additional #{type} place: "
             values = matches[1..-1]
@@ -96,9 +169,9 @@ module Kiba
 
           def combine_diss_notes(row)
             val = [row[:dissnote], row[:geo_dissolutionnote]]
-              .compact
+              .reject{ |element| element.blank? }
               .join(notedelim)
-            row[:geo_dissolutionnote] = val
+            row[:geo_dissolutionnote] = val.empty? ? nil : val
             row.delete(:dissnote)
           end
 

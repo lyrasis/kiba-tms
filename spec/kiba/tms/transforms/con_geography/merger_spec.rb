@@ -5,7 +5,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
   let(:params) { {auth: auth, lookup: lookup} }
   let(:lookup_single) do
     {"1" => [
-      {constituentid: "1", type: "birth", mergeable: "London"},
+      {constituentid: "1", type: "birth", mergeable: "London",},
       {constituentid: "1", type: "death", mergeable: "Paris"}
     ]}
   end
@@ -21,7 +21,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
       {constituentid: "1", type: nil, mergeable: "Disputed deathplaces"},
     ]}
   end
-  let(:row) { {constituentid: "1"} }
+  let(:row) { {constituentid: "1", nationality: "English"} }
 
   describe "#process" do
     let(:result) { xform.process(row) }
@@ -39,7 +39,8 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             geo_birthnote: nil,
             deathplace: "Paris",
             geo_deathnote: nil,
-            geo_note: nil
+            geo_note: nil,
+            nationality: "English"
           }
           expect(result).to eq(expected)
         end
@@ -57,7 +58,8 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             deathplace: "Paris",
             geo_deathnote: "Additional death place: Montmartre%CR%"\
               "Additional death place: Madrid",
-            geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            geo_note: "Variant birthplaces%CR%Disputed deathplaces",
+            nationality: "English"
           }
           expect(result).to eq(expected)
         end
@@ -67,6 +69,53 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
     context "with org" do
       let(:auth) { :org }
 
+      context "with no lookup values" do
+        let(:lookup) { [] }
+
+        it "produces expected row" do
+          expected = {
+            constituentid: "1",
+            foundingplace: "English",
+            geo_foundingnote: nil,
+            geo_dissolutionnote: nil,
+            geo_note: nil
+          }
+          expect(result).to eq(expected)
+        end
+
+        context "with :foundingplace_handling = congeo_only" do
+          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
+          after{ Kiba::Tms::Orgs.reset_config }
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: nil,
+              geo_foundingnote: "Nationality: English",
+              geo_dissolutionnote: nil,
+              geo_note: nil
+            }
+            expect(result).to eq(expected)
+          end
+        end
+
+        context "with :foundingplace_handling = nationality_only" do
+          before do
+            Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
+          end
+          after{ Kiba::Tms::Orgs.reset_config }
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "English",
+              geo_foundingnote: nil,
+              geo_dissolutionnote: nil,
+              geo_note: nil
+            }
+            expect(result).to eq(expected)
+          end
+        end
+      end
+
       context "with one lookup value per type" do
         let(:lookup) { lookup_single }
 
@@ -74,15 +123,109 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           expected = {
             constituentid: "1",
             foundingplace: "London",
-            geo_foundingnote: nil,
+            geo_foundingnote: "Nationality: English",
             geo_dissolutionnote: "Dissolution place: Paris",
             geo_note: nil
           }
           expect(result).to eq(expected)
         end
+
+        context "with :foundingplace_handling = congeo_only" do
+          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
+          after{ Kiba::Tms::Orgs.reset_config }
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "London",
+              geo_foundingnote: "Nationality: English",
+              geo_dissolutionnote: "Dissolution place: Paris",
+              geo_note: nil
+            }
+            expect(result).to eq(expected)
+          end
+        end
+
+        context "with :foundingplace_handling = nationality_only" do
+          before do
+            Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
+          end
+          after{ Kiba::Tms::Orgs.reset_config }
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "English",
+              geo_foundingnote: "Founding place: London",
+              geo_dissolutionnote: "Dissolution place: Paris",
+              geo_note: nil
+            }
+            expect(result).to eq(expected)
+          end
+        end
       end
 
       context "with multiple lookup values per type" do
+        let(:lookup) { lookup_multi }
+
+        it "produces expected row" do
+          expected = {
+            constituentid: "1",
+            foundingplace: "London",
+            geo_foundingnote: "Additional founding place: Londre%CR%"\
+              "Additional founding place: Londontown%CR%"\
+              "Nationality: English",
+            geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+              "Additional dissolution place: Montmartre%CR%"\
+              "Additional dissolution place: Madrid",
+            geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+          }
+          expect(result).to eq(expected)
+        end
+
+        context "with :foundingplace_handling = congeo_only" do
+          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
+          after{ Kiba::Tms::Orgs.reset_config }
+
+ it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "London",
+              geo_foundingnote: "Additional founding place: Londre%CR%"\
+                "Additional founding place: Londontown%CR%"\
+                "Nationality: English",
+              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+                "Additional dissolution place: Montmartre%CR%"\
+                "Additional dissolution place: Madrid",
+              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            }
+            expect(result).to eq(expected)
+          end
+        end
+
+        context "with :foundingplace_handling = nationality_only" do
+          before do
+            Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
+          end
+          after{ Kiba::Tms::Orgs.reset_config }
+
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "English",
+              geo_foundingnote: "Founding place: London%CR%"\
+                "Additional founding place: Londre%CR%"\
+                "Additional founding place: Londontown",
+              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+                "Additional dissolution place: Montmartre%CR%"\
+                "Additional dissolution place: Madrid",
+              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            }
+            expect(result).to eq(expected)
+          end
+        end
+      end
+
+      context "with no nationality value and multiple lookup values per type" do
+        let(:row) { {constituentid: "1", nationality: nil} }
         let(:lookup) { lookup_multi }
 
         it "produces expected row" do
@@ -97,6 +240,47 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             geo_note: "Variant birthplaces%CR%Disputed deathplaces"
           }
           expect(result).to eq(expected)
+        end
+
+        context "with :foundingplace_handling = congeo_only" do
+          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
+          after{ Kiba::Tms::Orgs.reset_config }
+
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: "London",
+              geo_foundingnote: "Additional founding place: Londre%CR%"\
+                "Additional founding place: Londontown",
+              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+                "Additional dissolution place: Montmartre%CR%"\
+                "Additional dissolution place: Madrid",
+              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            }
+            expect(result).to eq(expected)
+          end
+        end
+
+        context "with :foundingplace_handling = nationality_only" do
+          before do
+            Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
+          end
+          after{ Kiba::Tms::Orgs.reset_config }
+
+          it "produces expected row" do
+            expected = {
+              constituentid: "1",
+              foundingplace: nil,
+              geo_foundingnote: "Founding place: London%CR%"\
+                "Additional founding place: Londre%CR%"\
+                "Additional founding place: Londontown",
+              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
+                "Additional dissolution place: Montmartre%CR%"\
+                "Additional dissolution place: Madrid",
+              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            }
+            expect(result).to eq(expected)
+          end
         end
       end
     end

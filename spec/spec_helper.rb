@@ -18,6 +18,9 @@ module Tms
   module Constituents
     enable_test_interface
   end
+  module Orgs
+    enable_test_interface
+  end
 end
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing methods for setting up and running
