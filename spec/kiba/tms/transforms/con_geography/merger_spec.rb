@@ -84,8 +84,10 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
         end
 
         context "with :foundingplace_handling = congeo_only" do
-          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
-          after{ Kiba::Tms::Orgs.reset_config }
+          before {
+            Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only
+          }
+          after { Kiba::Tms::Orgs.reset_config }
           it "produces expected row" do
             expected = {
               constituentid: "1",
@@ -102,7 +104,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           before do
             Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
           end
-          after{ Kiba::Tms::Orgs.reset_config }
+          after { Kiba::Tms::Orgs.reset_config }
           it "produces expected row" do
             expected = {
               constituentid: "1",
@@ -131,8 +133,10 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
         end
 
         context "with :foundingplace_handling = congeo_only" do
-          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
-          after{ Kiba::Tms::Orgs.reset_config }
+          before {
+            Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only
+          }
+          after { Kiba::Tms::Orgs.reset_config }
           it "produces expected row" do
             expected = {
               constituentid: "1",
@@ -149,7 +153,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           before do
             Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
           end
-          after{ Kiba::Tms::Orgs.reset_config }
+          after { Kiba::Tms::Orgs.reset_config }
           it "produces expected row" do
             expected = {
               constituentid: "1",
@@ -182,10 +186,12 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
         end
 
         context "with :foundingplace_handling = congeo_only" do
-          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
-          after{ Kiba::Tms::Orgs.reset_config }
+          before {
+            Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only
+          }
+          after { Kiba::Tms::Orgs.reset_config }
 
- it "produces expected row" do
+          it "produces expected row" do
             expected = {
               constituentid: "1",
               foundingplace: "London",
@@ -205,7 +211,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           before do
             Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
           end
-          after{ Kiba::Tms::Orgs.reset_config }
+          after { Kiba::Tms::Orgs.reset_config }
 
           it "produces expected row" do
             expected = {
@@ -243,8 +249,10 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
         end
 
         context "with :foundingplace_handling = congeo_only" do
-          before{ Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only }
-          after{ Kiba::Tms::Orgs.reset_config }
+          before {
+            Kiba::Tms::Orgs.config.foundingplace_handling = :congeo_only
+          }
+          after { Kiba::Tms::Orgs.reset_config }
 
           it "produces expected row" do
             expected = {
@@ -265,7 +273,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           before do
             Kiba::Tms::Orgs.config.foundingplace_handling = :nationality_only
           end
-          after{ Kiba::Tms::Orgs.reset_config }
+          after { Kiba::Tms::Orgs.reset_config }
 
           it "produces expected row" do
             expected = {

@@ -3260,7 +3260,7 @@ module Kiba
           register :flagged, {
             creator: Kiba::Tms::Jobs::Orgs::Flagged,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "orgs_flagged.csv"),
+              "orgs_flagged.csv"),
             tags: %i[orgs],
             desc: "Flags duplicates (on normalized final name value)."
           }

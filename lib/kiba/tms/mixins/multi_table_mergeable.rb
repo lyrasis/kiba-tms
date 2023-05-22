@@ -235,19 +235,21 @@ module Kiba
           jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
 
           moddef = <<~MODDEF
-            module #{for_table_module_name(jobkey)}
-              extend Dry::Configurable
-              module_function
-
-              setting :source_job_key, default: :#{jobkey}, reader: true
-              setting :delete_fields, default: [], reader: true
-              setting :empty_fields, default: {}, reader: true
-              extend Tms::Mixins::Tableable
-
-              def used?
-                true
-              end
-            end
+                        module #{for_table_module_name(jobkey)}
+                          extend Dry::Configurable
+                          module_function
+            
+                          # Indicates what job output to use as the base for non-TMS-table-sourced
+            #   modules
+            setting :source_job_key, default: :#{jobkey}, reader: true
+                          setting :delete_fields, default: [], reader: true
+                          setting :empty_fields, default: {}, reader: true
+                          extend Tms::Mixins::Tableable
+            
+                          def used?
+                            true
+                          end
+                        end
           MODDEF
           Tms.module_eval(moddef)
         end

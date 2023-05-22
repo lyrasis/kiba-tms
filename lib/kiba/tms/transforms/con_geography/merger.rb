@@ -15,11 +15,11 @@ module Kiba
             case auth
             when :person
               @fields = %i[birthplace geo_birthnote deathplace geo_deathnote
-                           geo_note]
+                geo_note]
             when :org
               @fields = %i[foundingplace geo_foundingnote
-                           geo_dissolutionnote
-                           geo_note]
+                geo_dissolutionnote
+                geo_note]
             end
           end
 
@@ -52,10 +52,10 @@ module Kiba
 
           def handle_bd_place_type(row, type, mergerows)
             matches = if mergerows.blank?
-                        []
-                      else
-                        mergerows.select { |row| row[:type] == type }
-                      end
+              []
+            else
+              mergerows.select { |row| row[:type] == type }
+            end
             type = org_type_lookup(type) if auth == :org
             return if matches.empty? unless type == "founding"
 
@@ -169,7 +169,7 @@ module Kiba
 
           def combine_diss_notes(row)
             val = [row[:dissnote], row[:geo_dissolutionnote]]
-              .reject{ |element| element.blank? }
+              .reject { |element| element.blank? }
               .join(notedelim)
             row[:geo_dissolutionnote] = val.empty? ? nil : val
             row.delete(:dissnote)
