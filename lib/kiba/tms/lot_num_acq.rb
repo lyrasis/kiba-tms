@@ -16,6 +16,8 @@ module Kiba
         default: "Acquisition number value(s): ",
         reader: true
 
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,

@@ -7,7 +7,10 @@ module Kiba
 
       module_function
 
-      setting :source_job_key, default: :name_compile__persons, reader: true
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
+      setting :source_job_key, default: :name_compile__persons,
+        reader: true
       extend Tms::Mixins::Tableable
 
       setting :bionote_sources,

@@ -9,6 +9,8 @@ module Kiba
 
       module_function
 
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key, default: :con_refs__create, reader: true
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,

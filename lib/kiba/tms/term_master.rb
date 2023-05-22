@@ -9,7 +9,10 @@ module Kiba
 
       module_function
 
-      setting :source_job_key, default: :tms__term_master_thes, reader: true
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
+      setting :source_job_key, default: :tms__term_master_thes,
+        reader: true
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[dateentered datemodified termclassid

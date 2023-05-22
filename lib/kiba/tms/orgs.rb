@@ -7,9 +7,22 @@ module Kiba
 
       module_function
 
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key, default: :name_compile__orgs, reader: true
       extend Tms::Mixins::Tableable
 
+      # Fields to combine into the history note field in the CS organization
+      #   record. Fields are combined in the order given here. Sources for
+      #   merged in notes are:
+      #
+      # - textentry_public, textentry_internal - TextEntries table
+      # - geo_note - ConGeography table
+      # - address_namenote - ConAddress table
+      # - email_web_namenote - ConEmail table
+      # - phone_fax_namenote - ConPhone table
+      # - name_rel_bio_note - related names from compiled name data, set to
+      #   map as notes
       setting :historynote_sources,
         default: %i[biography displayed_bio remarks
           textentry_public datenote geo_note
@@ -17,6 +30,8 @@ module Kiba
           textentry_internal
           name_rel_bio_note],
         reader: true
+
+      # Field(s) to map to the CS Organization Group field
       setting :group_sources,
         default: [:culturegroup],
         reader: true
@@ -37,6 +52,8 @@ module Kiba
         default: :congeo_nationality,
         reader: true
 
+      # Fields to be include in repeatable Term field group for
+      #   organizations
       setting :term_targets,
         default: %i[termdisplayname termflag termsourcenote],
         reader: true,

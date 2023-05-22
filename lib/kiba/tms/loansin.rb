@@ -9,6 +9,8 @@ module Kiba
 
       module_function
 
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key, default: :loans__in, reader: true
       extend Tms::Mixins::Tableable
 

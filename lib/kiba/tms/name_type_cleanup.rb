@@ -9,6 +9,8 @@ module Kiba
 
       extend Dry::Configurable
 
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key,
         default: :name_type_cleanup__from_base_data,
         reader: true

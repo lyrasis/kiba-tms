@@ -13,6 +13,8 @@ module Kiba
       setting :delete_fields,
         default: %i[objectid objectvalueid objectnumber],
         reader: true
+      # Indicates what job output to use as the base for non-TMS-table-sourced
+      #   modules
       setting :source_job_key,
         default: :linked_set_acq__rows,
         reader: true
