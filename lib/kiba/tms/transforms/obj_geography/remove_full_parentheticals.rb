@@ -6,6 +6,9 @@ module Kiba
   module Tms
     module Transforms
       module ObjGeography
+        # When a whole field value is wrapped in parentheses, the outer
+        #   parentheses are removed. "(This)" becomes "This", while
+        #   "New York (NY)" would be left the same.
         class RemoveFullParentheticals
           include Kiba::Extend::Transforms::Helpers
 
