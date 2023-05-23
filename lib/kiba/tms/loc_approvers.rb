@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
-
 module Kiba
   module Tms
     # Looks like a type lookup table, but nothing looks up from it

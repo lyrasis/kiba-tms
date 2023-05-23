@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
-
 module Kiba
   module Tms
     # For the clients whose data I'm working with when developing this, the

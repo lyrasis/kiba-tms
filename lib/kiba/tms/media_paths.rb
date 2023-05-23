@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
-
 module Kiba
   module Tms
     module MediaPaths
