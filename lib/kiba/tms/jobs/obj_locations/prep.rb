@@ -58,15 +58,20 @@ module Kiba
           end
 
           def remove_problem_component_locs
+            bind = binding
+
             Kiba.job_segment do
-              transform Merge::MultiRowLookup,
-                lookup: obj_components__problem_components,
-                keycolumn: :componentid,
-                fieldmap: {problem: :componentnumber}
-              transform FilterRows::FieldPopulated,
-                action: :reject,
-                field: :problem
-              transform Delete::Fields, fields: :problem
+              lookups = bind.receiver.send(:lookups)
+              if lookups.any?(:obj_components__problem_components)
+                transform Merge::MultiRowLookup,
+                  lookup: obj_components__problem_components,
+                  keycolumn: :componentid,
+                  fieldmap: {problem: :componentnumber}
+                transform FilterRows::FieldPopulated,
+                  action: :reject,
+                  field: :problem
+                transform Delete::Fields, fields: :problem
+              end
             end
           end
 
