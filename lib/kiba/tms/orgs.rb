@@ -21,14 +21,14 @@ module Kiba
       # - address_namenote - ConAddress table
       # - email_web_namenote - ConEmail table
       # - phone_fax_namenote - ConPhone table
-      # - name_rel_bio_note - related names from compiled name data, set to
+      # - rel_name_bio_note - related names from compiled name data, set to
       #   map as notes
       setting :historynote_sources,
         default: %i[biography displayed_bio remarks
           textentry_public datenote geo_note
           address_namenote email_web_namenote phone_fax_namenote
           textentry_internal
-          name_rel_bio_note],
+          rel_name_bio_note],
         reader: true
 
       # Field(s) to map to the CS Organization Group field
