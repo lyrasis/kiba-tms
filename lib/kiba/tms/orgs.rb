@@ -36,6 +36,12 @@ module Kiba
         default: [:culturegroup],
         reader: true
 
+      # TMS or intermediate field values to be mapped into CS' multi-
+      #   valued, controlled organization type field
+      setting :organizationrecordtype_sources,
+        default: [],
+        reader: true
+
       # Preferred source for the single valued Foundation place field.
       # Options:
       #

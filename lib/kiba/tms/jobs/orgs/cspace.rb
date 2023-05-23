@@ -136,6 +136,14 @@ module Kiba
                   delete_sources: true
               end
 
+              unless config.organizationrecordtype_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.organizationrecordtype_sources,
+                  target: :organizationrecordtype,
+                  delim: Tms.delim,
+                  delete_sources: true
+              end
+
               transform Delete::Fields,
                 fields: Tms::NameCompile.org_nil
 
