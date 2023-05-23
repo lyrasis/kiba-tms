@@ -9,3 +9,4 @@ data/backup
 **/*.csv#
 .DS_Store
 .rubocop-https*
+.bundle/config
