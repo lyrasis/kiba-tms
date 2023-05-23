@@ -2810,14 +2810,14 @@ module Kiba
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponents,
             path: File.join(Kiba::Tms.datadir, "reports",
               "obj_components_problem.csv"),
-            tags: %i[obj_components postmigcleanup],
+            tags: %i[obj_components reports postmigcleanup],
             lookup_on: :componentid
           }
           register :problem_component_lmi, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
             path: File.join(Kiba::Tms.datadir, "reports",
               "obj_components_problem_lmi.csv"),
-            tags: %i[obj_components postmigcleanup]
+            tags: %i[obj_components reports postmigcleanup]
           }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,
@@ -2847,7 +2847,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ObjComponents::ParentTitleMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
               "obj_components_parent_title_mismatch.csv"),
-            tags: %i[obj_components postmigcleanup],
+            tags: %i[obj_components reports postmigcleanup],
             desc: "Components that have a title, but where that title does "\
               "appear in the parent object's title or objectname fields"
           }
@@ -2855,7 +2855,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ObjComponents::ParentDescMismatch,
             path: File.join(Kiba::Tms.datadir, "reports",
               "obj_components_parent_desc_mismatch.csv"),
-            tags: %i[obj_components postmigcleanup],
+            tags: %i[obj_components reports postmigcleanup],
             desc: "Components that have a physdesc field value, and where "\
               "the parent object's record does not contain that description"
           }
