@@ -58,6 +58,7 @@ module Kiba
             exh_obj_xrefs: :exhobjxrefid,
             exh_venues_xrefs: :exhibitionid,
             flag_labels: :flagid,
+            geo_codes: Tms::GeoCodes.id_field,
             indemnity_responsibilities: :responsibilityid,
             insurance_responsibilities: :responsibilityid,
             loan_obj_statuses: :loanobjectstatusid,

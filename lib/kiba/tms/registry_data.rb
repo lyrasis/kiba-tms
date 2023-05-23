@@ -2891,6 +2891,31 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("obj_geography") do
+          register :mapping_review, {
+            creator: Kiba::Tms::Jobs::ObjGeography::MappingReview,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_geography_mapping_review.csv"),
+            tags: %i[obj_geography reports],
+            desc: "Merges in object number, title, and description so these "\
+              "can be reviewed to determine where to map each geocode type",
+            dest_special_opts: {
+              initial_headers: %i[objectnumber objecttitle objectdesc geocode
+                                 combined]
+            }
+          }
+          register :for_cleanup, {
+            creator: Kiba::Tms::Jobs::ObjGeography::ForCleanup,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_for_cleanup.csv"),
+            tags: %i[obj_geography],
+            desc: "",
+            dest_special_opts: {
+              initial_headers: %i[combined]
+            }
+          }
+        end
+
         Kiba::Tms.registry.namespace("obj_incoming") do
           register :for_initial_review, {
             creator: Kiba::Tms::Jobs::ObjIncoming::ForInitialReview,
