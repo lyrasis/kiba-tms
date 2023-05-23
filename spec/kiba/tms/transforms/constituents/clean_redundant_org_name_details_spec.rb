@@ -54,6 +54,29 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
     end
   end
 
+  context "when Organization and single name part is redundant" do
+    let(:row) do
+      {
+        constituenttype: "Organization",
+        displayname: "The Captain & Tennille",
+        firstname: "The Captain & Tennille",
+        lastname: nil
+      }
+    end
+    let(:expected) do
+      {
+        constituenttype: "Organization",
+        displayname: "The Captain & Tennille",
+        firstname: nil,
+        lastname: nil
+      }
+    end
+
+    it "returns cleaned row" do
+      expect(result).to eq(expected)
+    end
+  end
+
   context "when Organization and only some name parts are redundant" do
     let(:row) do
       {

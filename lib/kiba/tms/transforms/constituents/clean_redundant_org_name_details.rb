@@ -10,7 +10,9 @@ module Kiba
             @name_field = Tms::Constituents.preferred_name_field
             @core_name_detail_fields = %i[firstname lastname middlename suffix]
             @addl_name_detail_fields = %i[nametitle salutation]
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(fields: core_name_detail_fields)
+            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+              fields: core_name_detail_fields
+            )
           end
 
           # @private
@@ -53,9 +55,10 @@ module Kiba
             details = getter.call(row)
             return false if details.empty?
 
-            details.values.map(&:downcase).map { |dval|
-              nameval.downcase[dval]
-            }.none?(nil)
+            details.values
+              .map(&:downcase)
+              .reject { |val| nameval.downcase.match?(val) }
+              .empty?
           end
         end
       end

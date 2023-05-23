@@ -57,6 +57,7 @@ module Kiba
                   source: prefname,
                   target: :norm
                 transform Tms::Transforms::Names::NormalizeContype
+                transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
                 transform do |row|
                   id = row[:constituentid]
                   row[:exploded] = id["_exploded"] ? "exp" : nil
