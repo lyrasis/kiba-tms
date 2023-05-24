@@ -93,7 +93,7 @@ module Kiba
             overall_conditions: :overallconditionid,
             package_folders: :folderid,
             phone_types: :phonetypeid,
-            ref_formats: :formatid,
+            ref_formats: Tms::RefFormats.id_field,
             registration_sets: :registrationsetid,
             relationships: :relationshipid,
             role_types: :roletypeid,

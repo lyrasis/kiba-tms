@@ -32,7 +32,13 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              job = bind.receiver
+              config = job.send(:config)
+              lookups = job.send(:lookups)
+
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
@@ -40,11 +46,14 @@ module Kiba
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
+              if lookups.any?(:prep__ref_formats)
               transform Merge::MultiRowLookup,
                 lookup: prep__ref_formats,
                 keycolumn: :formatid,
                 fieldmap: {format: :format}
+              end
               transform Delete::Fields, fields: :formatid
+
               transform Merge::MultiRowLookup,
                 lookup: prep__dd_languages,
                 keycolumn: :languageid,
