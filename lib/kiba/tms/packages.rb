@@ -24,6 +24,7 @@ module Kiba
       setting :omit_tables,
         default: %w[Constituents HistEvents ReferenceMaster],
         reader: true
+
       # List provided worksheets, most recent first. Assumes they are in the
       #   client project directory/to_client subdir
       setting :provided_worksheets,
