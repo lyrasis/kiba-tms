@@ -26,7 +26,7 @@ module Kiba
             base << :prep__ref_formats if Tms::RefFormats.used?
             base << :prep__dd_languages if Tms::DDLanguages.used?
             if Tms::TextEntries.for?("ReferenceMaster")
-              base << :text_entries__for_reference_master
+              base << :text_entries_for__reference_master
             end
             base
           end
@@ -61,9 +61,9 @@ module Kiba
               transform Delete::Fields, fields: :languageid
 
               if Tms::TextEntries.for?("ReferenceMaster")
-                if Tms::ReferenceMaster.text_entry_merger
-                  Tms::ReferenceMaster.config.text_entry_lookup = text_entries_for__reference_master
-                  transform Tms::ReferenceMaster.text_entry_merger
+                if Tms::TextEntries.for_reference_master_merge
+                  transform Tms::TextEntries.for_reference_master_merge,
+                    lookup: text_entries_for__reference_master
                 else
                   transform Merge::MultiRowLookup,
                     lookup: text_entries_for__reference_master,

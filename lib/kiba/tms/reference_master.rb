@@ -14,10 +14,6 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # Used to pass text entry lookup to text_entry_merger if applicable
-      setting :text_entry_lookup, default: {}, reader: true
-      # Custom transform to merge in text entries
-      setting :text_entry_merger, default: nil, reader: true
     end
   end
 end
