@@ -60,6 +60,15 @@ module Kiba
                 fieldmap: {language: :language}
               transform Delete::Fields, fields: :languageid
 
+              # populates person and org names from ConXrefs
+              if Tms::ConRefs.for?("ReferenceMaster")
+                if config.con_ref_name_merge_rules
+                  transform Tms::Transforms::ConRefs::Merger,
+                    into: config,
+                    keycolumn: :referenceid
+                end
+              end
+
               if Tms::TextEntries.for?("ReferenceMaster")
                 if Tms::TextEntries.for_reference_master_merge
                   transform Tms::TextEntries.for_reference_master_merge,

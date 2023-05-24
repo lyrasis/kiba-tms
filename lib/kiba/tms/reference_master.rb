@@ -14,6 +14,21 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      setting :con_ref_name_merge_rules,
+        default: {
+          fcart: {
+            agent: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: true,
+              role_suffix: "role"
+            },
+            publisher: {
+              suffixes: %w[organizationlocal],
+              merge_role: false
+            }
+          }
+        },
+        reader: true
     end
   end
 end
