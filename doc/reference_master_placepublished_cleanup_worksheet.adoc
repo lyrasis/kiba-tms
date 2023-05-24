@@ -1,0 +1,253 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Placepublished worksheet (for TMS ReferenceMaster/CS Citation authority)
+
+toc::[]
+
+== Background/rationale
+
+The TMS ReferenceMaster.placepublished field will map into the CS Citation.publicationplace field. This CS field is controlled by the Place authority. All values from TMS fields expected to migrate into CS Place authority-controlled fields will be compiled for client cleanup. But first we want to remove any non-place values from this field.
+
+Further, for ingest into CS, we need to make sure any publisher and publication place values are aligned properly:
+
+image::citation_publisher_place.png[994]
++++&nbsp;+++
+
+It is unclear from the data side if or how TMS manages this, since most publisher names are merged in from Constituents table via the ConXRefs table, and the place is stored in the placepublished field in ReferenceMaster.
+
+== Completing the worksheet
+
+[IMPORTANT]
+====
+Only make changes to the following columns:
+
+* `placepublished`
+* `publisher`
+
+If you change values in the `:merge_fingerprint` field, we will not be able to merge your changes back into the migration.
+====
+
+=== Understanding the worksheet
+
+* `placepublished` initially contains the value from TMS ReferenceMaster.placepublished field
+* `publisher` initially contains any publisher values merged in from TMS Constituents via ConXrefs. This name will already be in the form we are using for the authority record. If blank, there is no publisher value merged in.
+
+There is one row per unique `placepublished`/`publisher` combined value.
+
+=== Form of publisher name
+
+[IMPORTANT]
+====
+Your migration specialist will provide you with a fresh name type cleanup worksheet with task. The name type cleanup worksheet will show you the forms of name we are already creating authority records for.
+
+The `publisher` field can only be populated with *Organization* names.
+
+If moving or adding new values to the `publisher` field, please:
+
+* Use the already-established form of name for any publisher names that already exist.
+* If there is no existing organization name for a publisher you need to move out of the `placepublished` field, add a new line to the name type cleanup worksheet. Fill in only the `correctname` and `correctauthoritytype` columns. Put "o" in the `correctauthoritytype` column to indicate the name is an organization.
+
+If you have added new rows to the name type authority worksheet during this task, please upload a new version of that worksheet to the Basecamp file page when you are done with this task.
+====
+
+=== Multi-value delimiter character
+
+Add "|" to delimit between multiple values in a field.
+
+*This is the PIPE character, typed as Shift-\*
+
+
+=== Examples for different situations
+
+TIP: If you have a situation not shown below, please ask how to handle it and we'll add an example!
+
+==== `placepublished` contains a single place; `publisher` blank
+
+.Original
+....
+| placepublished | publisher |
+|----------------+-----------|
+| Boston         |           |
+....
+
+*This is good. Make no changes.*
+
+==== `placepublished` contains a single place; `publisher` contains single name
+
+.Original
+....
+| placepublished | publisher |
+|----------------+-----------|
+| Boston         | Fly Press |
+....
+
+*Easiest path:*
+
+Assume this is good. Make no changes.
+
+*If you know Fly Press is not located in Boston, but don't want to do research on who was the publisher in Boston, and where Fly Press published it:*
+
+.Corrected
+....
+| placepublished     | publisher             |
+|--------------------+-----------------------|
+| Boston|%NULLVALUE% | %NULLVALUE%|Fly Press |
+....
+
+This will put Boston as publication place on a row with no publisher. It will add a second row, with Fly Press as publisher with no place.
+
+*If you know where Fly Press published, and who the Boston Publisher was:*
+
+.Corrected
+....
+| placepublished   | publisher        |
+|------------------+------------------|
+| Boston|Baltimore | Beacon|Fly Press |
+....
+
+==== `placepublished` contains publisher; `publisher` blank
+
+.Original
+....
+| placepublished  | publisher |
+|-----------------+-----------|
+| Acme Publishers |           |
+....
+
+.Corrected
+....
+| placepublished | publisher       |
+|----------------+-----------------|
+|                | Acme Publishers |
+....
+
+==== `placepublished` contains publisher; `publisher` contains same publisher (with possible variant name form)
+
+.Original
+....
+| placepublished  | publisher |
+|-----------------+-----------|
+| Acme Publishers | Acme Pub. |
+....
+
+.Corrected
+....
+| placepublished | publisher |
+|----------------+-----------|
+|                | Acme Pub. |
+....
+
+==== `placepublished` contains publisher and place; `publisher` blank
+
+.Original
+....
+| placepublished  | publisher |
+|-----------------+-----------|
+| New York: Knoph |           |
+....
+
+.Corrected
+....
+| placepublished | publisher |
+|----------------+-----------|
+| New York       | Knoph     |
+....
+
+
+==== `placepublished` contains multiple places; `publisher` blank
+
+.Original
+....
+| placepublished      | publisher |
+|---------------------+-----------|
+| New York and Boston |           |
+....
+
+Separate values with multi-value delimiter. Remove any text that is not part of individual place names.
+
+.Corrected
+....
+| placepublished   | publisher |
+|------------------+-----------|
+| New York|Boston  |           |
+....
+
+
+==== `placepublished` contains multiple places; `publisher` contains one name
+
+.Original
+....
+| placepublished      | publisher |
+|---------------------+-----------|
+| New York and Boston | Acme      |
+....
+
+
+.Corrected, assuming a traditional data entry pattern where you recorded multiple publication places for the one publisher
+....
+| placepublished  | publisher |
+|-----------------+-----------|
+| New York|Boston | Acme|Acme |
+....
+
+.Corrected, assuming you know Acme published in Boston (and not New York), but do not know New York publisher
+....
+| placepublished  | publisher        |
+|-----------------+------------------|
+| New York|Boston | %NULLVALUE%|Acme |
+....
+
+
+==== `placepublished` contains place, publisher, and date value; `publisher` blank
+
+.Original
+....
+| placepublished       | publisher |
+|----------------------+-----------|
+| Seattle : Acme, 2002 |           |
+....
+
+Unfortunately there is a separate TMS RefDates table with its own separate processing to merge it into what will become Citation authorities in CS. It is not currently feasible to also merge cleaned up data from this process into that date handling process.
+
+Move the publisher value to `publisher` and remove the date information.
+
+Optionally:
+
+* Move the date info to the proper place in TMS; or
+* Make a note to search for citations with this place/publisher combination after the migration and add the date manually
+
+.Corrected
+....
+| placepublished | publisher |
+|----------------+-----------|
+| Seattle        | Acme      |
+....
+
+==== `placepublished` contains erroneous value that should be dropped; `publisher` blank
+
+.Original
+....
+| placepublished | publisher |
+|----------------+-----------|
+| teh            |           |
+....
+
+
+.Corrected
+....
+| placepublished | publisher |
+|----------------+-----------|
+|                |           |
+....
