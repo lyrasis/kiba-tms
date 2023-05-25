@@ -6,9 +6,10 @@ module Kiba
       class SetNoteFromPattern
         include Kiba::Extend::Transforms::Helpers
 
-        def initialize(fields:, patterns:, target:)
+        def initialize(fields:, patterns:, target:, conditions: nil)
           @patterns = patterns
           @target = target
+          @conditions = conditions
           @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
             fields: fields
           )
@@ -16,6 +17,20 @@ module Kiba
 
         def process(row)
           row[target] = nil
+          if conditions
+            set_note(row) if conditions.call(row)
+          else
+            set_note(row)
+          end
+
+          row
+        end
+
+        private
+
+        attr_reader :patterns, :getter, :target, :conditions
+
+        def set_note(row)
           eligible = getter.call(row).map{ |field, val|
             matching = patterns.select{ |pattern| pattern.match?(val) }
             if matching.empty?
@@ -25,16 +40,10 @@ module Kiba
             end
           }.compact
             .to_h
-          return row if eligible.empty?
+          return if eligible.empty?
 
           row[target] = eligible.to_s
-
-          row
         end
-
-        private
-
-        attr_reader :patterns, :getter, :target
 
         def get_terms(matching, val)
           matching.map{ |pattern, term|

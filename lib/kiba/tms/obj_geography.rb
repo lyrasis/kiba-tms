@@ -20,9 +20,25 @@ module Kiba
 
       # TMS GeoCode values that will be mapped to place authority-controlled
       #   fields in CS
+      # May be a list of selected GeoCode values, :all, or :none
       setting :controlled_types,
         default: [],
         reader: true
+
+      # Lambda function passed to transforms in order to conditionally extract
+      #   info to separate note fields and delete note data strings from values
+      #   to be included in authority term values
+      # The effect is that a row will not be normalized for authority extraction
+      #   if it isn't mapping to a place authority-controlled field
+      def controlled_type_condition
+        ->(row) do
+          types = Tms::ObjGeography.controlled_types
+          return true if types == :all
+          return false if types == :none
+
+          types.any?(row[:geocode])
+        end
+      end
 
       # Content fields whose values will be treated hierarchically. Should be
       #   be ordered narrow-to-broad. For example, with the default values,

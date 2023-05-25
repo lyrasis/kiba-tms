@@ -66,19 +66,22 @@ module Kiba
                 transform Tms::Transforms::SetNoteFromPattern,
                   fields: config.content_fields,
                   patterns: config.proximity_patterns,
-                  target: :proximity
+                  target: :proximity,
+                  conditions: config.controlled_type_condition
               end
               if config.uncertainty_as_note
                 transform Tms::Transforms::SetNoteFromPattern,
                   fields: config.content_fields,
                   patterns: config.uncertainty_patterns,
-                  target: :uncertainty
+                  target: :uncertainty,
+                  conditions: config.controlled_type_condition
               end
               unless config.misc_note_patterns.empty?
                 transform Tms::Transforms::SetNoteFromPattern,
                   fields: config.content_fields,
                   patterns: config.misc_note_patterns,
-                  target: :misc_note
+                  target: :misc_note,
+                  conditions: config.controlled_type_condition
               end
 
               if config.delete_patterns.empty?
@@ -90,7 +93,8 @@ module Kiba
               else
                 transform Tms::Transforms::DeletePatterns,
                   fields: config.content_fields,
-                  patterns: config.delete_patterns
+                  patterns: config.delete_patterns,
+                  conditions: config.controlled_type_condition
                 transform Clean::StripFields,
                   fields: config.content_fields
                 transform CombineValues::FromFieldsWithDelimiter,

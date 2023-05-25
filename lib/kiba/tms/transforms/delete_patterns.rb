@@ -6,22 +6,27 @@ module Kiba
       class DeletePatterns
         include Kiba::Extend::Transforms::Helpers
 
-        def initialize(fields:, patterns:)
+        def initialize(fields:, patterns:, conditions: nil)
           @fields = fields
           @patterns = patterns
+          @conditions = conditions
           @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
             fields: fields
           )
         end
 
         def process(row)
-          delete_patterns_from(row)
+          if conditions
+            delete_patterns_from(row) if conditions.call(row)
+          else
+            delete_patterns_from(row)
+          end
           row
         end
 
         private
 
-        attr_reader :fields, :patterns, :getter
+        attr_reader :fields, :patterns, :conditions, :getter
 
         def delete_patterns_from(row)
           getter.call(row).each do |field, val|
