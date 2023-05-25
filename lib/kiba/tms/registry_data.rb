@@ -2914,6 +2914,70 @@ module Kiba
               initial_headers: %i[combined]
             }
           }
+          register :unique_orig, {
+            creator: Kiba::Tms::Jobs::ObjGeography::UniqueOrig,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_unique_orig.csv"),
+            tags: %i[obj_geography],
+            desc: "Unique content rows from prepped ObjGeography table."
+          }
+          register :unique_norm, {
+            creator: Kiba::Tms::Jobs::ObjGeography::UniqueNorm,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_unique_norm.csv"),
+            tags: %i[obj_geography],
+            desc: "Unique normalized content rows from prepped ObjGeography "\
+              "table. Depending on settings, proximity, uncertainty and "\
+              "misc notes fields may have been removed from the content "\
+              "fields. Authority extraction proceeds using this output as "\
+              "its base."
+          }
+          register :norm_exploded, {
+            creator: Kiba::Tms::Jobs::ObjGeography::NormExploded,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_norm_exploded.csv"),
+            tags: %i[obj_geography],
+            desc: "All unique norm values, exploded to one row per field"\
+              "value, with the source field recorded in :fieldname column. "\
+              "Deduplicated on field value + field name combination.",
+            dest_special_opts: {
+              initial_headers: %i[value fieldname norm_combined]
+            }
+
+          }
+          register :norm_hier_string, {
+            creator: Kiba::Tms::Jobs::ObjGeography::NormHierString,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_norm_hier_string.csv"),
+            tags: %i[obj_geography],
+            desc: "Values from :hierarchy_fields setting fields, concatenated "\
+              "into a single field value",
+            dest_special_opts: {
+              initial_headers: %i[value fieldname norm_combined]
+            }
+
+          }
+          register :norm_non_hier_exploded, {
+            creator: Kiba::Tms::Jobs::ObjGeography::NormNonHierExploded,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_norm_non_hier_exploded.csv"),
+            tags: %i[obj_geography],
+            desc: "Values from content fields not included in "\
+              ":hierarchy_fields setting fields, exploded to one row per "\
+              "field value, with source field recorded in :fieldname column. "\
+              "Deduplicated on field value + field name combination",
+            dest_special_opts: {
+              initial_headers: %i[value fieldname norm_combined]
+            }
+          }
+          register :hier_exploded_combo, {
+            creator: Kiba::Tms::Jobs::ObjGeography::HierExplodedCombo,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_hier_exploded_combo.csv"),
+            tags: %i[obj_geography],
+            desc: "Results of :norm_hier_string and :norm_non_hier_exploded "\
+              "combined into one spreadsheet"
+          }
         end
 
         Kiba::Tms.registry.namespace("obj_incoming") do

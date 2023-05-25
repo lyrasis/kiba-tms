@@ -9,29 +9,33 @@ module Kiba
         class ExplodeValues
           include Kiba::Extend::Transforms::Helpers
 
-          def initialize
+          def initialize(referencefield:)
+            @referencefield = referencefield
             @fields = Tms::ObjGeography.content_fields
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields
             )
-            @rows = Set[]
+            @rows = {}
           end
 
           def process(row)
             getter.call(row)
               .each do |fieldname, value|
-                rows << {fieldname: fieldname, value: value}
+                rows[{fieldname: fieldname, value: value}] = row[referencefield]
               end
             nil
           end
 
           def close
-            rows.each{ |row| yield row }
+            rows.each do |base, combined|
+              base[referencefield] = combined
+              yield base
+            end
           end
 
           private
 
-          attr_reader :fields, :getter, :rows
+          attr_reader :referencefield, :fields, :getter, :rows
         end
       end
     end
