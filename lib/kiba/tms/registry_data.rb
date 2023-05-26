@@ -2901,45 +2901,94 @@ module Kiba
               "can be reviewed to determine where to map each geocode type",
             dest_special_opts: {
               initial_headers: %i[objectnumber objecttitle objectdesc geocode
-                                 combined]
+                                 orig_combined]
             }
           }
-          register :for_cleanup, {
-            creator: Kiba::Tms::Jobs::ObjGeography::ForCleanup,
+          register :for_authority, {
+            creator: Kiba::Tms::Jobs::ObjGeography::ForAuthority,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_for_cleanup.csv"),
+                            "obj_geography_for_authority.csv"),
             tags: %i[obj_geography],
-            desc: "",
+            desc: "Removes rows with :geocode values that are not mapping to "\
+              "CS place authority-controlled fields",
+          }
+          register :auth_unique_orig, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueOrig,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_auth_unique_orig.csv"),
+            tags: %i[obj_geography],
+            desc: "Unique content rows from prepped ObjGeography table, that "\
+              "will be mapped to CS place authority-controlled fields"
+          }
+          register :auth_unique_orig_normalized, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueOrigNormalized,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_auth_unique_orig_norm.csv"),
+            tags: %i[obj_geography],
+            desc: "Normalizes result of :auth_unique_orig job and adds "\
+              ":norm_combined field\n"\
+              "The output of this job is the connector between all unique "\
+              ":orig_combined values (for merging authority forms with their "\
+              "associated notes into object records) and norm/corrected "\
+              "authority terms.\n"\
+              "Depending on project settings, normalization may include "\
+              "setting the value of separate :proximity, :uncertainty, and/or "\
+              ":misc_note fields based on the presence of patterns in the "\
+              "content field values. When a separate field is set based on a "\
+              "pattern, the string segment matching the pattern is also "\
+              "deleted from the original content field.",
+            lookup_on: :orig_combined
+          }
+          register :auth_unique_norm, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueNorm,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_auth_unique_norm.csv"),
+            tags: %i[obj_geography],
+            desc: "Deduplicates the output of :auth_unique_orig_normalized "\
+              "and removes extracted/normalized out note fields, so we are "\
+              "just working with data for authority terms."
+          }
+          register :auth_norm_exploded, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExploded,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "obj_geography_auth_norm_exploded.csv"),
+            tags: %i[obj_geography],
+            desc: "All unique authority norm values, exploded to one row per "\
+              "field value, with the source field recorded in :fieldname "\
+              "column. :key field is added, containing concatenation of "\
+              ":value and :fieldname\n"\
+              "This table is important to keep separately because, once we "\
+              "deduplicate on the :key field, we do not know if "\
+              "value=Portland, fieldname=city was always Portland, Oregon, "\
+              "or was sometimes Portland, Maine.",
             dest_special_opts: {
-              initial_headers: %i[combined]
+              initial_headers: %i[value fieldname norm_combined]
             }
+
           }
-          register :unique_orig, {
-            creator: Kiba::Tms::Jobs::ObjGeography::UniqueOrig,
+          register :auth_norm_exploded_report, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedReport,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_unique_orig.csv"),
+                            "obj_geography_auth_norm_exploded_report.csv"),
             tags: %i[obj_geography],
-            desc: "Unique content rows from prepped ObjGeography table."
+            desc: ""
           }
-          register :unique_norm, {
-            creator: Kiba::Tms::Jobs::ObjGeography::UniqueNorm,
+          register :auth_norm_exploded_broader, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedBroader,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_unique_norm.csv"),
+                            "obj_geography_auth_norm_exploded_broader.csv"),
             tags: %i[obj_geography],
-            desc: "Unique normalized content rows from prepped ObjGeography "\
-              "table. Depending on settings, proximity, uncertainty and "\
-              "misc notes fields may have been removed from the content "\
-              "fields. Authority extraction proceeds using this output as "\
-              "its base."
+            desc: ""
           }
-          register :norm_exploded, {
-            creator: Kiba::Tms::Jobs::ObjGeography::NormExploded,
+          register :auth_norm_exploded_uniq, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedUniq,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_norm_exploded.csv"),
+                            "obj_geography_auth_norm_exploded_uniq.csv"),
             tags: %i[obj_geography],
-            desc: "All unique norm values, exploded to one row per field"\
-              "value, with the source field recorded in :fieldname column. "\
-              "Deduplicated on field value + field name combination.",
+            desc: "All unique authority norm values, exploded to one row per "\
+              "field value, with the source field recorded in :fieldname "\
+              "column. Deduplicated on field value + field name combination.\n"\
+              ":norm_combined",
             dest_special_opts: {
               initial_headers: %i[value fieldname norm_combined]
             }

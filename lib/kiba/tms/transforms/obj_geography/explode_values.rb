@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module Kiba
   module Tms
     module Transforms
@@ -15,22 +13,24 @@ module Kiba
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields
             )
-            @rows = {}
+            @rows = []
           end
 
           def process(row)
             getter.call(row)
               .each do |fieldname, value|
-                rows[{fieldname: fieldname, value: value}] = row[referencefield]
+                rows << {
+                  fieldname: fieldname,
+                  value: value,
+                  referencefield=>row[referencefield],
+                  key: "#{value}|||#{fieldname}"
+                }
               end
             nil
           end
 
           def close
-            rows.each do |base, combined|
-              base[referencefield] = combined
-              yield base
-            end
+            rows.each{ |row| yield row }
           end
 
           private

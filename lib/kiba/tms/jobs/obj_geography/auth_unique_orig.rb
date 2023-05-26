@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ObjGeography
-        module UniqueNorm
+        module AuthUniqueOrig
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__unique_orig,
-                destination: :obj_geography__unique_norm
+                source: :obj_geography__for_authority,
+                destination: :obj_geography__auth_unique_orig
               },
               transformer: xforms
             )
@@ -26,13 +26,22 @@ module Kiba
               config = bind.receiver.send(:config)
 
              transform Delete::Fields,
-               fields: config.derived_note_fields
+               fields: config.non_content_fields
              transform Deduplicate::Table,
-               field: :norm_combined,
+               field: :orig_combined,
                delete_field: false
              transform Sort::ByFieldValue,
-               field: :norm_combined,
+               field: :orig_combined,
                mode: :string
+             # Add count of content fields populated per row
+             getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
+               fields: config.content_fields
+             )
+             transform do |row|
+               vals = getter.call(row)
+               row[:popfieldct] = vals.length
+               row
+             end
             end
           end
         end

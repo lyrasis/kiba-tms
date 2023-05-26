@@ -40,6 +40,13 @@ module Kiba
         end
       end
 
+      # Hierarchical order of the :country and :nation fields, ordered
+      #   narrow-to-broad. To omit one or both from the overall hierarchy,
+      #   remove from this setting.
+      setting :country_nation_order,
+        default: %i[country nation],
+        reader: true
+
       # Content fields whose values will be treated hierarchically. Should be
       #   be ordered narrow-to-broad. For example, with the default values,
       #   you may get a hierarchical authority term like:
@@ -47,9 +54,24 @@ module Kiba
       #
       # We can optionally build a Place authority hierarchy involving values
       #   in these fields
+      #
+      # :subregion is omitted because, based on client data reviews, this field
+      #   is used to describe various levels of subregion, such that it is
+      #   impossible to place the values at any one place in the hierarchy. For
+      #   example, "Appalachia, Southern" would be a subregion of Appalachia,
+      #   while being broader than individual state. Conversely, "Piedmont" or
+      #   "Sand Hills" might be assigned as subregions of North Carolina, thus
+      #   narrower than state.
+      # :culturalregion is omitted for the same reasons as :subregion
       setting :hierarchy_fields,
-        default: %i[city county state country continent],
-        reader: true
+        default: %i[locus building locale township city county
+                    state river politicalregion region],
+        reader: true,
+        constructor: ->(value) do
+          value << country_nation_order
+          value << :continent
+          value.flatten
+        end
 
       # Whether to remove parts of terms indicating proximity (near, or close
       #   to) from the values that will become authority terms, moving these
@@ -173,7 +195,8 @@ module Kiba
           /\(\?\)/=>"uncertain",
           /\? *$/=>"uncertain",
           / \? /=>"uncertain",
-          / *\(probably\) */=>"probable"
+          / *\(probably\) */=>"probable",
+          /^probably /=>"probable"
         },
         reader: true
 

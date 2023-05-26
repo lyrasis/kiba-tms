@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ObjGeography
-        module NormExploded
+        module AuthUniqueNorm
           module_function
 
           def job
@@ -12,21 +12,27 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__unique_norm,
-                destination: :obj_geography__norm_exploded
+                source: :obj_geography__auth_unique_orig_normalized,
+                destination: :obj_geography__auth_unique_norm
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              transform Tms::Transforms::ObjGeography::ExplodeValues,
-                referencefield: :norm_combined
+              config = bind.receiver.send(:config)
+
+              transform Delete::Fields,
+                fields: config.derived_note_fields
+             transform Deduplicate::Table,
+               field: :norm_combined,
+               delete_field: false
              transform Sort::ByFieldValue,
-               field: :value,
+               field: :norm_combined,
                mode: :string
-             transform Tms.final_data_cleaner if Tms.final_data_cleaner
             end
           end
         end

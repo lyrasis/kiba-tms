@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ObjGeography
-        module UniqueOrig
+        module ForAuthority
           module_function
 
           def job
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__obj_geography,
-                destination: :obj_geography__unique_orig
+                destination: :obj_geography__for_authority
               },
               transformer: xforms
             )
@@ -25,14 +25,9 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-             transform Delete::Fields,
-               fields: config.non_content_fields
-             transform Deduplicate::Table,
-               field: :orig_combined,
-               delete_field: false
-             transform Sort::ByFieldValue,
-               field: :orig_combined,
-               mode: :string
+              transform FilterRows::WithLambda,
+                action: :keep,
+                lambda: config.controlled_type_condition
             end
           end
         end
