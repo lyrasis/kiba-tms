@@ -2992,12 +2992,11 @@ module Kiba
             dest_special_opts: {
               initial_headers: %i[value fieldname norm_combined]
             }
-
           }
-          register :norm_hier_string, {
-            creator: Kiba::Tms::Jobs::ObjGeography::NormHierString,
+          register :auth_norm_hier_string, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormHierString,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_norm_hier_string.csv"),
+                            "obj_geography_auth_norm_hier_string.csv"),
             tags: %i[obj_geography],
             desc: "Values from :hierarchy_fields setting fields, concatenated "\
               "into a single field value",
@@ -3006,10 +3005,10 @@ module Kiba
             }
 
           }
-          register :norm_non_hier_exploded, {
-            creator: Kiba::Tms::Jobs::ObjGeography::NormNonHierExploded,
+          register :auth_norm_non_hier_exploded, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormNonHierExploded,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_norm_non_hier_exploded.csv"),
+                            "obj_geography_auth_norm_non_hier_exploded.csv"),
             tags: %i[obj_geography],
             desc: "Values from content fields not included in "\
               ":hierarchy_fields setting fields, exploded to one row per "\
@@ -3019,10 +3018,10 @@ module Kiba
               initial_headers: %i[value fieldname norm_combined]
             }
           }
-          register :hier_exploded_combo, {
-            creator: Kiba::Tms::Jobs::ObjGeography::HierExplodedCombo,
+          register :auth_hier_exploded_combo, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthHierExplodedCombo,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_hier_exploded_combo.csv"),
+                            "obj_geography_auth_hier_exploded_combo.csv"),
             tags: %i[obj_geography],
             desc: "Results of :norm_hier_string and :norm_non_hier_exploded "\
               "combined into one spreadsheet"

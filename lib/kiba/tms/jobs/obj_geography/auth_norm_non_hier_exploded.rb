@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module ObjGeography
-        module NormNonHierExploded
+        module AuthNormNonHierExploded
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__unique_norm,
-                destination: :obj_geography__norm_non_hier_exploded
+                source: :obj_geography__auth_unique_norm,
+                destination: :obj_geography__auth_norm_non_hier_exploded
               },
               transformer: xforms
             )
