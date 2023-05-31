@@ -18,7 +18,6 @@ module Kiba
               transformer: nil,
               mode: :setup
             )
-            info.handle_requirements
             srcpath = info.files[:source][0].path
             destpath = info.files[:destination][0].path
             build_report(srcpath, destpath)
