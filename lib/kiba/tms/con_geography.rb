@@ -11,6 +11,7 @@ module Kiba
       setting :delete_fields,
         default: %i[keyfieldssearchvalue primarydisplay],
         reader: true
+
       # @return [Array<Symbol>] ID and other always-unique fields not treated as
       #   content for reporting, etc.
       setting :non_content_fields,
@@ -18,21 +19,55 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # Optional transform class to clean up table data
-      #   and prepare it for merging into person and org records
-      #
-      # To be compatible with the default mergers, the cleaner should add the
-      #   following fields to each row:
-      #
-      # - :type - allowed values: birth, death, blank
-      # - :mergeable - the value (with any necessary prefix) to merge
-      setting :cleaner,
+      # ------------------------------------------------------------------------
+      # FCART PROFILE NOTE: Birth/founding and death/dissolution place in person
+      #   and organization are not controlled values, so this table is not
+      #   included in place authority
+      # ------------------------------------------------------------------------
+
+      # Name of field in which value types (some of which may map to controlled
+      #   fields, and some of which may not) are indicated. Used by the
+      #   `ControllableByType` mixin.
+      setting :controlled_type_field,
+        default: :congeocode,
+        reader: true
+
+      # See the following for description of settings and options:
+      # https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/mixins/controllable_by_type.rb
+      extend Tms::Mixins::ControllableByType
+
+      # Optional transform class to clean up table data mapped to authority
+      #   controlled fields, and prepare it for merging into person and org
+      #   records
+      setting :auth_cleaner,
         default: nil,
         reader: true
 
-      # Transform class that merges ConGeography table values into person
-      #   and organization records derived from Constituents table. If
-      #   needed, a project-specific transform can be defined
+      # Transform class that merges ConGeography table values being mapped into
+      #   authority controlled fields into person and organization records
+      #   derived from Constituents table. If needed, a project-specific
+      #   transform can be defined
+      setting :auth_merger,
+        default: nil,
+        reader: true
+
+      # Optional transform class to clean up table data mapped to non-authority
+      #   controlled fields, and prepare it for merging into person and org
+      #   records
+      #
+      # IMPLEMENTATION NOTE: To be compatible with the default merger, the
+      #   cleaner should add the following fields to each row:
+      #
+      # - :type - allowed values: birth, death, blank
+      # - :mergeable - the value (with any necessary prefix) to merge
+      setting :non_auth_cleaner,
+        default: nil,
+        reader: true
+
+      # Transform class that merges ConGeography table values being mapped into
+      #   non-authority controlled fields into person and organization records
+      #   derived from Constituents table. If needed, a project-specific
+      #   transform can be defined
       #
       # Behavior of default merger:
       # - First birth place value is mapped to birthplace (person) or
@@ -50,7 +85,7 @@ module Kiba
       # - All ConGeography values without a birth/death type assigned are
       #   combined (no prefix added) with other field values into bionote
       #   (person) or historynote (org)
-      setting :merger,
+      setting :non_auth_merger,
         default: Tms::Transforms::ConGeography::Merger,
         reader: true
     end

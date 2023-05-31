@@ -26,11 +26,14 @@ module Kiba
             base << :name_compile__variant_term
             base << :name_compile__bio_note
             base << :name_compile__contact_person
-            base << :prep__con_geography if Tms::ConGeography.used?
+            if Tms::ConGeography.used?
+              base << :con_geography__for_authority
+              base << :con_geography__for_non_authority
+            end
             if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
-            base.select { |job| Tms.job_output?(job) }
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -106,10 +109,17 @@ module Kiba
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
               end
-              if lookups.any?(:prep__con_geography)
-                transform Tms::ConGeography.merger,
+              if lookups.any?(:con_geography__for_authority) &&
+                  Tms::ConGeography.auth_merger
+                transform Tms::ConGeography.auth_merger,
                   auth: :org,
-                  lookup: prep__con_geography
+                  lookup: con_geography__for_authority
+              end
+              if lookups.any?(:con_geography__for_non_authority) &&
+                  Tms::ConGeography.non_auth_merger
+                transform Tms::ConGeography.non_auth_merger,
+                  auth: :org,
+                  lookup: con_geography__for_non_authority
               end
 
               transform Rename::Fields, fieldmap: {

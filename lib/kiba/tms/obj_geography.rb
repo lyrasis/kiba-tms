@@ -18,27 +18,16 @@ module Kiba
       end
       extend Tms::Mixins::Tableable
 
-      # TMS GeoCode values that will be mapped to place authority-controlled
-      #   fields in CS
-      # May be a list of selected GeoCode values, :all, or :none
-      setting :controlled_types,
-        default: [],
+      # Name of field in which value types (some of which may map to controlled
+      #   fields, and some of which may not) are indicated. Used by the
+      #   `ControllableByType` mixin.
+      setting :controlled_type_field,
+        default: :geocode,
         reader: true
 
-      # Lambda function passed to transforms in order to conditionally extract
-      #   info to separate note fields and delete note data strings from values
-      #   to be included in authority term values
-      # The effect is that a row will not be normalized for authority extraction
-      #   if it isn't mapping to a place authority-controlled field
-      def controlled_type_condition
-        ->(row) do
-          types = Tms::ObjGeography.controlled_types
-          return true if types == :all
-          return false if types == :none
-
-          types.any?(row[:geocode])
-        end
-      end
+      # See the following for description of settings and options:
+      # https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/mixins/controllable_by_type.rb
+      extend Tms::Mixins::ControllableByType
 
       # Hierarchical order of the :country and :nation fields, ordered
       #   narrow-to-broad. To omit one or both from the overall hierarchy,

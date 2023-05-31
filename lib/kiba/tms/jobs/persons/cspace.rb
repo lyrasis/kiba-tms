@@ -25,7 +25,10 @@ module Kiba
             base << :con_phones__to_merge if Tms::ConPhones.used
             base << :name_compile__variant_term
             base << :name_compile__bio_note
-            base << :prep__con_geography if Tms::ConGeography.used?
+            if Tms::ConGeography.used?
+              base << :con_geography__for_authority
+              base << :con_geography__for_non_authority
+            end
             if Tms::TextEntries.for?("Constituents")
               base << :text_entries_for__constituents
             end
@@ -106,10 +109,17 @@ module Kiba
                 transform Tms::TextEntries.for_constituents_merge,
                   lookup: text_entries_for__constituents
               end
-              if lookups.any?(:prep__con_geography)
-                transform Tms::ConGeography.merger,
-                  auth: :person,
-                  lookup: prep__con_geography
+              if lookups.any?(:con_geography__for_authority) &&
+                  Tms::ConGeography.auth_merger
+                transform Tms::ConGeography.auth_merger,
+                  auth: :org,
+                  lookup: con_geography__for_authority
+              end
+              if lookups.any?(:con_geography__for_non_authority) &&
+                  Tms::ConGeography.non_auth_merger
+                transform Tms::ConGeography.non_auth_merger,
+                  auth: :org,
+                  lookup: con_geography__for_non_authority
               end
 
               transform Delete::Fields,

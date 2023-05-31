@@ -556,6 +556,21 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("con_geography") do
+          register :for_authority, {
+            creator: Kiba::Tms::Jobs::ConGeography::ForAuthority,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_geography_for_authority.csv"),
+            tags: %i[con con_geography places]
+          }
+          register :for_non_authority, {
+            creator: Kiba::Tms::Jobs::ConGeography::ForNonAuthority,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_geography_for_non_authority.csv"),
+            tags: %i[con con_geography]
+          }
+        end
+
         Kiba::Tms.registry.namespace("con_phones") do
           register :dropping, {
             creator: Kiba::Tms::Jobs::ConPhones::Dropping,
