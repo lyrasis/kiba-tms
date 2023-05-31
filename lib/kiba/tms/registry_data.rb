@@ -3630,6 +3630,109 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("reference_master") do
+          register :prep_clean, {
+            creator: Kiba::Tms::Jobs::ReferenceMaster::PrepClean,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "reference_master_prep_clean.csv"),
+            desc: "Merges in corrections from placepublished cleanup "\
+              "worksheet, if completed.",
+            tags: %i[reference_master]
+          }
+          register :places, {
+            creator: Kiba::Tms::Jobs::ReferenceMaster::Places,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "reference_master_places.csv"),
+            desc: "Extracts unique place values from placepublished, in "\
+              "format for combination with other places for cleanup and "\
+              "translation to authority terms",
+            tags: %i[reference_master]
+          }
+          refmaster_ppworksheet_hdrs = %i[placepublished publisher
+                                          merge_fingerprint]
+          if Tms::ReferenceMaster.placepublished_done
+            refmaster_ppworksheet_hdrs.unshift(:to_review)
+          end
+          register :placepublished_worksheet, {
+            creator: Kiba::Tms::Jobs::ReferenceMaster::PlacepublishedWorksheet,
+            path: File.join(Kiba::Tms.datadir, "to_client",
+                            "reference_master_placepublished_cleanup.csv"),
+            desc: "Supports splitting of multiple place names by adding a "\
+              "delimiter, and separating publisher name from place value",
+            tags: %i[reference_master places],
+            dest_special_opts: {
+              initial_headers: refmaster_ppworksheet_hdrs
+            }
+          }
+
+          if Tms::ReferenceMaster.placepublished_done
+            Tms::ReferenceMaster.placepublished_worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("reference_master__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::ReferenceMaster.placepublished_worksheets[idx],
+                  desc: "Placepublished cleanup worksheet provided to client",
+                  tags: %i[reference_master cleanup],
+                  supplied: true
+                }
+              end
+            register :placepublished_worksheet_compile, {
+              creator:
+              Kiba::Tms::Jobs::ReferenceMaster::PlacepublishedWorksheetCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "reference_master_placepublished_worksheet_compile.csv"
+              ),
+              tags: %i[reference_master cleanup],
+              desc: "Joins completed supplied worksheets and deduplicates on "\
+                ":merge_fingerprint",
+              lookup_on: :merge_fingerprint
+            }
+            Tms::ReferenceMaster.placepublished_returned_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("reference_master__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::ReferenceMaster.placepublished_returned[idx],
+                  desc: "Completed placepublished cleanup worksheet",
+                  tags: %i[reference_master cleanup],
+                  supplied: true
+                }
+              end
+            register :placepublished_returned_compile, {
+              creator:
+              Kiba::Tms::Jobs::ReferenceMaster::PlacepublishedReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "reference_master_placepublished_returned_compile.csv"
+              ),
+              tags: %i[reference_master cleanup],
+              desc: "Joins completed worksheets and deduplicates on "\
+                ":merge_fingerprint. Flags corrected fields (based on decoded "\
+                "fingerprint) and deletes the decoded original fields",
+              lookup_on: :merge_fingerprint
+            }
+            register :placepublished_corrections, {
+              creator:
+              Kiba::Tms::Jobs::ReferenceMaster::PlacepublishedCorrections,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "reference_master_placepublished_corrections.csv"
+              ),
+              tags: %i[reference_master cleanup],
+              desc: "Only rows from :placepublished_returned_compile that "\
+                "have changes, for merge into :placepublishedcleaned.",
+              lookup_on: :merge_fingerprint
+            }
+          end
+        end
+
         Kiba::Tms.registry.namespace("registration_sets") do
           register :for_ingest, {
             creator: Kiba::Tms::Jobs::RegistrationSets::ForIngest,
