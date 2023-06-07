@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjGeography
-        module AuthNormHierString
+      module Places
+        module NormHierString
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__auth_unique_norm,
-                destination: :obj_geography__auth_norm_hier_string
+                source: :places__norm_unique,
+                destination: :places__norm_hier_string
               },
               transformer: xforms
             )

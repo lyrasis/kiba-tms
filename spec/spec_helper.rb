@@ -8,18 +8,26 @@ SimpleCov.start do
   enable_coverage :branch
 end
 
+require_relative "helpers"
 require_relative "../lib/kiba/tms"
+require_relative "./support/matchers/match_csv"
 require "dry/configurable/test_interface"
 
 Tms.base_config
 Tms.loader
 
 module Tms
+  enable_test_interface
+
   module Constituents
     enable_test_interface
   end
 
   module Orgs
+    enable_test_interface
+  end
+
+  module Places
     enable_test_interface
   end
 end

@@ -30,6 +30,12 @@ module Kiba
                 lambda: config.controlled_type_condition
 
               transform config.auth_cleaner if config.auth_cleaner
+
+              transform Delete::Fields,
+                fields: config.non_content_fields
+              transform Merge::ConstantValue,
+                target: :sourcetable,
+                value: 'ConGeography'
             end
           end
         end

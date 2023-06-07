@@ -3,13 +3,13 @@
 module Kiba
   module Tms
     module Transforms
-      module ObjGeography
+      module Places
         class ExplodeValues
           include Kiba::Extend::Transforms::Helpers
 
-          def initialize(referencefield:)
-            @referencefield = referencefield
-            @fields = Tms::ObjGeography.content_fields
+          def initialize(referencefields:)
+            @referencefields = referencefields
+            @fields = Tms::Places.source_fields
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields
             )
@@ -17,14 +17,15 @@ module Kiba
           end
 
           def process(row)
+            reference_fields = get_reference_fields(row)
             getter.call(row)
               .each do |fieldname, value|
-                rows << {
+                base = {
                   fieldname: fieldname,
                   value: value,
-                  referencefield=>row[referencefield],
-                  key: "#{value}|||#{fieldname}"
+                  fieldkey: "#{value}|||#{fieldname}"
                 }
+                rows << base.merge(reference_fields)
               end
             nil
           end
@@ -35,7 +36,12 @@ module Kiba
 
           private
 
-          attr_reader :referencefield, :fields, :getter, :rows
+          attr_reader :referencefields, :fields, :getter, :rows
+
+          def get_reference_fields(row)
+            referencefields.map{ |fld| [fld, row[fld]] }
+              .to_h
+          end
         end
       end
     end

@@ -21,7 +21,11 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform Merge::MultiRowLookup,
                 lookup: tms__objects,
                 keycolumn: :objectid,
@@ -31,7 +35,11 @@ module Kiba
                   objectdesc: :description
                 }
 
-              transform Tms.final_data_cleaner if Tms.final_data_cleaner
+              if Tms.final_data_cleaner
+                transform Tms.final_data_cleaner,
+                  fields: config.content_fields
+              end
+
               transform Sort::ByFieldValue,
                 field: :objectnumber,
                 mode: :string

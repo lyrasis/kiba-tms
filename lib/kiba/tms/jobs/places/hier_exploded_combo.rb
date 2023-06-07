@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjGeography
-        module AuthHierExplodedCombo
+      module Places
+        module HierExplodedCombo
           module_function
 
           def job
@@ -13,10 +13,10 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: %i[
-                           obj_geography__auth_norm_hier_string
-                           obj_geography__auth_norm_non_hier_exploded
+                           places__norm_hier_string
+                           places__norm_non_hier_exploded
                            ],
-                destination: :obj_geography__auth_hier_exploded_combo
+                destination: :places__hier_exploded_combo
               },
               transformer: xforms
             )
@@ -24,7 +24,10 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Tms.final_data_cleaner if Tms.final_data_cleaner
+              if Tms.final_data_cleaner
+                transform Tms.final_data_cleaner,
+                  fields: :value
+              end
             end
           end
         end

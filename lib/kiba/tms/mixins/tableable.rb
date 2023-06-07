@@ -33,6 +33,8 @@ module Kiba
         end
 
         def all_fields
+          return [] unless table_path
+
           unless File.exist?(table_path)
             if respond_to?(:source_job_key) && Tms.registry.key?(source_job_key)
               Kiba::Extend::Command::Run.job(source_job_key)

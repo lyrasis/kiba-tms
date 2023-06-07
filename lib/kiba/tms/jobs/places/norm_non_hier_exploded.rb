@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjGeography
-        module AuthNormNonHierExploded
+      module Places
+        module NormNonHierExploded
           module_function
 
           def job
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__auth_unique_norm,
-                destination: :obj_geography__auth_norm_non_hier_exploded
+                source: :places__norm_unique,
+                destination: :places__norm_non_hier_exploded
               },
               transformer: xforms
             )
@@ -27,7 +27,7 @@ module Kiba
 
               transform Delete::Fields,
                 fields: config.hierarchy_fields
-              transform Tms::Transforms::ObjGeography::ExplodeValues,
+              transform Tms::Transforms::Places::ExplodeValues,
                 referencefield: :norm_combined
               transform Sort::ByFieldValue,
                 field: :value,

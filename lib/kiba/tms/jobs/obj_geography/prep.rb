@@ -40,7 +40,7 @@ module Kiba
               end
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
-                fields: config.content_fields
+                fields: config.content_fields - [:geocodeid]
               transform Tms.data_cleaner if Tms.data_cleaner
 
               unless config.prep_cleaners.empty?
