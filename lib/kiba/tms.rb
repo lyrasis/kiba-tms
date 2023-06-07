@@ -121,34 +121,26 @@ module Kiba
       reader: true
     setting :cspace_profile, default: :fcart, reader: true
     setting :boolean_yn_mapping, default: {"0" => "n", "1" => "y"}, reader: true
-    # client-specific initial data cleaner, applied before processing
-    setting :data_cleaner, default: nil, reader: true
-    # TMS-internal fields to be deleted
-    # client-specific cleanup of whitespace, special characters, etc. to be
-    #   generically applied before finalizing initial data prep jobs (or writing
-    #   out final data for ingest)
-    setting :final_data_cleaner, default: nil, reader: true
     setting :inverted_boolean_yn_mapping,
       default: {"0" => "y", "1" => "n"},
       reader: true
+
+    # Client-specific initial data cleaner, applied before processing
+    setting :data_cleaner, default: nil, reader: true
+
+    # Client-specific cleanup of whitespace, special characters, etc. to be
+    #   generically applied before finalizing initial data prep jobs (or writing
+    #   out final data for ingest)
+    #
+    # IMPLEMENTATION NOTE: Should take a `fields` parameter that defaults to
+    #   `:all`, but can be given an array of specific field names
+    setting :final_data_cleaner, default: nil, reader: true
+
+
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
     setting :migrate_no_value_types, default: false, reader: true
-    # Controls selected behavior of migration. Generally :dev will retain some
-    #   data values that will be removed when this is set to :prod.
-    #
-    # - Names marked by client to be dropped from migration: When `dev`, these
-    #   will be retained, but converted to `DROPPED FROM MIGRATION` so that any
-    #   inadvertent effects of dropping the names may be caught. When `prod`,
-    #   the names just won't be merged into any data
-    # Expected values: :dev, :prod
-    setting :migration_status, default: :dev, reader: true
-    # Used to keep track of multi-table-merge work. Organized by target table.
-    setting :table_merge_status, default: {}, reader: true
-    setting :tms_fields,
-      default: %i[loginid entereddate gsrowversion],
-      reader: true
-    setting :using_public_browser, default: false, reader: true
+
     # @return String ready to be converted into a Regexp
     #
     # If :migrate_no_value_types = false, type values matching any of these
@@ -164,6 +156,26 @@ module Kiba
         alts = "(#{value.join("|")})"
         "(\\(|\\[)?#{alts}(\\)|\\])?$"
       }
+
+    # Controls selected behavior of migration. Generally :dev will retain some
+    #   data values that will be removed when this is set to :prod.
+    #
+    # - Names marked by client to be dropped from migration: When `dev`, these
+    #   will be retained, but converted to `DROPPED FROM MIGRATION` so that any
+    #   inadvertent effects of dropping the names may be caught. When `prod`,
+    #   the names just won't be merged into any data
+    # Expected values: :dev, :prod
+    setting :migration_status, default: :dev, reader: true
+
+    # Used to keep track of multi-table-merge work. Organized by target table.
+    setting :table_merge_status, default: {}, reader: true
+
+    # TMS-internal fields to be deleted
+    setting :tms_fields,
+      default: %i[loginid entereddate gsrowversion],
+      reader: true
+    setting :using_public_browser, default: false, reader: true
+
     setting :inventory_status_mapping,
       default: {},
       reader: true,
