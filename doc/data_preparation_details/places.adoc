@@ -1,0 +1,131 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Places
+
+[source,mermaid]
+----
+graph TD;
+  obj_geography__for_authority["`**obj_geography__for_authority**
+
+  Extract content fields
+  Add :orig_combined`"]
+
+  con_geography__for_authority["`**con_geography__for_authority**
+
+  Extract content fields
+  Add :orig_combined`"]
+
+  reference_master__places["`**reference_master__places**
+
+  Extract :placepublished
+  Add :orig_combined`"]
+
+  places__compile["`**places__compile**
+
+  EnsureConsistentFields`"]
+
+  places__unique["`**places__unique**
+
+  Deduplicate on :orig_combined
+  Add :occurrences from count of :orig_combined in src`"]
+
+  places__orig_normalized["`**places__orig_normalized**
+
+  Extract derived_note_fields to separate fields
+  Adds :normalized (y/blank)
+  Adds :norm_combined`"]
+
+  places__norm_unique["`**places__norm_unique**
+
+  Delete derived_note_fields
+  Delete :occurrences
+  Delete :normalized
+  Delete :orig_combined
+  Deduplicate on :norm_combined
+  Add :occurrences with summed merged values
+  Add :norm_fingerprint`"]
+
+  places__norm_unique_cleaned["`**places__norm_unique_cleaned**
+
+  Adds worksheet_added_fields
+  If cleanup done, merges from places__corrections
+  Adds :clean_combined`"]
+
+  places__cleaned_unique["`**places__cleaned_unique**`
+
+  Deduplicate on :clean_combined
+  Delete norm_combined
+  Delete norm_fingerprint
+  Delete occurrences
+  Merge collated :norm_fingerprints
+  Merge collated :norm_combineds
+  Merge summed :occurrences`"]
+
+  places__worksheet["`**places__worksheet**
+
+  Add :clean_fingerprint
+  If cleanup done, add :to_review
+  Set :to_review y if no :norm_combineds in lkup`"]
+
+  returned[/"`**places__returned_job_n**
+
+  One CSV per cleanup worksheet returned`"\]
+
+  places__returned_compile["`**places__returned_compile**
+
+  Delete :to_review
+  Deduplicate on :clean_combined (keep most recent)
+  Flag changes via :clean_fingerprint`"]
+
+  places__corrections["`**places__corrections**
+
+  Delete :occurrences
+  Delete :norm_combineds
+  Delete :clean_combined
+  Delete :clean_fingerprint
+  Keep only rows with corrections
+  Explode on :norm_fingerprints
+  :norm_fingerprints->:norm_fingerprint
+  Deduplicate on :norm_fingerprint`"]
+
+  obj_geography__for_authority-- if used & controlled_types -->places__compile;
+  con_geography__for_authority-- if used & controlled_types -->places__compile;
+  reference_master__places-- if used -->places__compile;
+  places__compile-->places__unique;
+  places__compile-- lkup on :orig_combined -->places__unique;
+  places__unique-->places__orig_normalized;
+  places__orig_normalized-->places__norm_unique;
+  places__orig_normalized-- lkup on :norm_combined -->places__norm_unique;
+  places__norm_unique-->places__norm_unique_cleaned;
+  places__corrections-.
+    "`if cleanup done
+    lkup on :norm_fingerprint`" .->
+    places__norm_unique_cleaned;
+  places__norm_unique_cleaned-->places__cleaned_unique;
+  places__norm_unique_cleaned--
+    "`lkup on
+    :clean_combined`" -->
+    places__cleaned_unique;
+  places__cleaned_unique-->places__worksheet;
+  places__returned_compile-.
+   "`if cleanup done
+   lkup on :clean_combined`" .->
+   places__worksheet;
+  places__worksheet-.
+    "`returned
+    if cleanup done`" .->
+    returned;
+  returned-. if cleanup done .->places__returned_compile;
+  places__returned_compile-. if cleanup done .->places__corrections;
+----

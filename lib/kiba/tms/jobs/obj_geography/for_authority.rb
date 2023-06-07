@@ -28,6 +28,8 @@ module Kiba
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: config.controlled_type_condition
+              transform Delete::Fields,
+                fields: config.non_content_fields
             end
           end
         end

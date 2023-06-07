@@ -2917,7 +2917,8 @@ module Kiba
             dest_special_opts: {
               initial_headers: %i[objectnumber objecttitle objectdesc geocode
                                  orig_combined]
-            }
+            },
+            lookup_on: :orig_combined
           }
           register :for_authority, {
             creator: Kiba::Tms::Jobs::ObjGeography::ForAuthority,
@@ -2926,120 +2927,6 @@ module Kiba
             tags: %i[obj_geography],
             desc: "Removes rows with :geocode values that are not mapping to "\
               "CS place authority-controlled fields",
-          }
-          register :auth_unique_orig, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueOrig,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_unique_orig.csv"),
-            tags: %i[obj_geography],
-            desc: "Unique content rows from prepped ObjGeography table, that "\
-              "will be mapped to CS place authority-controlled fields"
-          }
-          register :auth_unique_orig_normalized, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueOrigNormalized,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_unique_orig_norm.csv"),
-            tags: %i[obj_geography],
-            desc: "Normalizes result of :auth_unique_orig job and adds "\
-              ":norm_combined field\n"\
-              "The output of this job is the connector between all unique "\
-              ":orig_combined values (for merging authority forms with their "\
-              "associated notes into object records) and norm/corrected "\
-              "authority terms.\n"\
-              "Depending on project settings, normalization may include "\
-              "setting the value of separate :proximity, :uncertainty, and/or "\
-              ":misc_note fields based on the presence of patterns in the "\
-              "content field values. When a separate field is set based on a "\
-              "pattern, the string segment matching the pattern is also "\
-              "deleted from the original content field.",
-            lookup_on: :orig_combined
-          }
-          register :auth_unique_norm, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthUniqueNorm,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_unique_norm.csv"),
-            tags: %i[obj_geography],
-            desc: "Deduplicates the output of :auth_unique_orig_normalized "\
-              "and removes extracted/normalized out note fields, so we are "\
-              "just working with data for authority terms."
-          }
-          register :auth_norm_exploded, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExploded,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_exploded.csv"),
-            tags: %i[obj_geography],
-            desc: "All unique authority norm values, exploded to one row per "\
-              "field value, with the source field recorded in :fieldname "\
-              "column. :key field is added, containing concatenation of "\
-              ":value and :fieldname\n"\
-              "This table is important to keep separately because, once we "\
-              "deduplicate on the :key field, we do not know if "\
-              "value=Portland, fieldname=city was always Portland, Oregon, "\
-              "or was sometimes Portland, Maine.",
-            dest_special_opts: {
-              initial_headers: %i[value fieldname norm_combined]
-            }
-
-          }
-          register :auth_norm_exploded_report, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedReport,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_exploded_report.csv"),
-            tags: %i[obj_geography],
-            desc: ""
-          }
-          register :auth_norm_exploded_broader, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedBroader,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_exploded_broader.csv"),
-            tags: %i[obj_geography],
-            desc: ""
-          }
-          register :auth_norm_exploded_uniq, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormExplodedUniq,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_exploded_uniq.csv"),
-            tags: %i[obj_geography],
-            desc: "All unique authority norm values, exploded to one row per "\
-              "field value, with the source field recorded in :fieldname "\
-              "column. Deduplicated on field value + field name combination.\n"\
-              ":norm_combined",
-            dest_special_opts: {
-              initial_headers: %i[value fieldname norm_combined]
-            }
-          }
-          register :auth_norm_hier_string, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormHierString,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_hier_string.csv"),
-            tags: %i[obj_geography],
-            desc: "Values from :hierarchy_fields setting fields, concatenated "\
-              "into a single field value",
-            dest_special_opts: {
-              initial_headers: %i[value fieldname norm_combined]
-            }
-
-          }
-          register :auth_norm_non_hier_exploded, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthNormNonHierExploded,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_norm_non_hier_exploded.csv"),
-            tags: %i[obj_geography],
-            desc: "Values from content fields not included in "\
-              ":hierarchy_fields setting fields, exploded to one row per "\
-              "field value, with source field recorded in :fieldname column. "\
-              "Deduplicated on field value + field name combination",
-            dest_special_opts: {
-              initial_headers: %i[value fieldname norm_combined]
-            }
-          }
-          register :auth_hier_exploded_combo, {
-            creator: Kiba::Tms::Jobs::ObjGeography::AuthHierExplodedCombo,
-            path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_auth_hier_exploded_combo.csv"),
-            tags: %i[obj_geography],
-            desc: "Results of :norm_hier_string and :norm_non_hier_exploded "\
-              "combined into one spreadsheet"
           }
         end
 
@@ -3628,6 +3515,235 @@ module Kiba
               "looking up final controlled name values by normalized form",
             lookup_on: :norm
           }
+        end
+
+        Kiba::Tms.registry.namespace("places") do
+          register :compile, {
+            creator: Kiba::Tms::Jobs::Places::Compile,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "places_compile.csv"),
+            tags: %i[places],
+            lookup_on: :orig_combined
+          }
+          register :unique, {
+            creator: Kiba::Tms::Jobs::Places::Unique,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_unique.csv"),
+            tags: %i[places]
+          }
+          register :orig_normalized, {
+            creator: Kiba::Tms::Jobs::Places::OrigNormalized,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_orig_normalized.csv"),
+            tags: %i[places],
+            desc: "Normalizes result of :unique_job and adds "\
+              ":norm_combined field\n"\
+              "The output of this job is the connector between all unique "\
+              ":orig_combined values (for merging authority forms with their "\
+              "associated notes into target records) and norm/corrected "\
+              "authority terms.\n"\
+              "Depending on project settings, normalization may include "\
+              "setting the value of separate :proximity, :uncertainty, and/or "\
+              ":misc_note fields based on the presence of patterns in the "\
+              "content field values. When a separate field is set based on a "\
+              "pattern, the string segment matching the pattern is also "\
+              "deleted from the original content field.",
+            lookup_on: :norm_combined
+          }
+          register :norm_unique, {
+            creator: Kiba::Tms::Jobs::Places::NormUnique,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_norm_unique.csv"),
+            tags: %i[places],
+            desc: "Deduplicates the output of :orig_normalized "\
+              "and removes extracted/normalized out note fields, so we are "\
+              "just working with data for authority terms.\n"\
+              "Adds :occurrences field, with sum of :orig_combined "\
+              "occurrences that normalize to each :norm_combined value.\n"\
+              "This is the base from which place cleanup worksheet is "\
+              "derived."
+          }
+          register :norm_exploded, {
+            creator: Kiba::Tms::Jobs::Places::NormExploded,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_norm_exploded.csv"),
+            tags: %i[places],
+            desc: "All exploded authority norm values, exploded to one row "\
+              "per fieldkey/norm_combined combination, with the source "\
+              "field recorded in :fieldname column. :fieldkey field is added, "\
+              "containing concatenation of :value and :fieldname\n"\
+              "This table is important to keep separately because, once we "\
+              "deduplicate on the :key field, we do not know if "\
+              "value=Portland, fieldname=city was always Portland, Oregon, "\
+              "or was sometimes Portland, Maine.",
+            dest_special_opts: {
+              initial_headers: %i[value fieldname norm_combined fieldkey]
+            },
+            lookup_on: :fieldkey
+          }
+          register :norm_exploded_report_prep, {
+            creator: Kiba::Tms::Jobs::Places::NormExplodedReportPrep,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_norm_exploded_report_prep.csv"),
+            tags: %i[places],
+            desc: "Generates the report, but data finalization is not yet "\
+              "applied"
+          }
+          register :norm_exploded_report, {
+            creator: Kiba::Tms::Jobs::Places::NormExplodedReport,
+            path: File.join(Kiba::Tms.datadir, "reports",
+                            "places_norm_exploded_report.csv"),
+            tags: %i[places reports],
+            desc: "Report based on :norm_exploded that can be used as a "\
+              "reference to guide name cleanup. Adds:\n"\
+              "- :field_cat - whether the value is found in a single field "\
+              "(e.g. :city) or multiple fields (:city, :county)"\
+              "- :left_combined - either `(top)` (value is the broadest value "\
+              "in multi-field-value row), `(single)` (value is from the "\
+              "field populated in a row), or all of `:norm_combined` to the "\
+              "left of the value. This can be used to identify where "\
+              "hierarchical info may need to be provided or corrected\n"\
+              "- :left_cat - either `single broader usage pattern in field` "\
+              "(i.e. only one :left_combined value for the given "\
+              "value/fieldname key) or `multiple broader usage patterns "\
+              "in field` (i.e. multiple :left_combined values for the given "\
+              "value/fieldname key)\n"\
+              "- :occs - how many target records (objects, citations, etc.) "\
+              "the :norm_combined value maps back to. May be used to "\
+              "prioritize cleanup\n"\
+              "- For place values from ObjGeography table: object number, "\
+              "title, and description from a maximum of 10 objects that the "\
+              ":norm_combined value maps back to. May be helpful in "\
+              "determining things like whether `state: Maine|||city: "\
+              "Portland` is the same as `city: Portland`"
+          }
+          register :norm_unique_cleaned, {
+            creator: Kiba::Tms::Jobs::Places::NormUniqueCleaned,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_norm_unique_cleaned.csv"),
+            tags: %i[places],
+            desc: "Adds :clean_combined field. If place cleanup has been "\
+              "done, overlays the cleanup.",
+            lookup_on: :clean_combined
+          }
+          register :cleaned_unique, {
+            creator: Kiba::Tms::Jobs::Places::CleanedUnique,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "places_cleaned_unique.csv"),
+            tags: %i[places],
+            desc: "Deduplicates on :clean_combined. Adds :norm_combined_srcs "\
+              "field to record the :norm_combined values that have been "\
+              "collapsed/combined into the cleaned up value.",
+            lookup_on: :clean_combined
+          }
+          register :worksheet, {
+            creator: Kiba::Tms::Jobs::Places::Worksheet,
+            path: File.join(Kiba::Tms.datadir, "to_client",
+                            "place_cleanup_worksheet.csv"),
+            tags: %i[places cleanup],
+            dest_special_opts: {
+              initial_headers: proc { Tms::Places.worksheet_columns }
+            }
+          }
+
+          # register :norm_hier_string, {
+          #   creator: Kiba::Tms::Jobs::Places::NormHierString,
+          #   path: File.join(Kiba::Tms.datadir, "working",
+          #                   "places_norm_hier_string.csv"),
+          #   tags: %i[places],
+          #   desc: "Values from :hierarchy_fields setting fields, concatenated "\
+          #     "into a single field value",
+          #   dest_special_opts: {
+          #     initial_headers: %i[value fieldname norm_combined]
+          #   }
+
+          # }
+          # register :norm_non_hier_exploded, {
+          #   creator: Kiba::Tms::Jobs::Places::NormNonHierExploded,
+          #   path: File.join(Kiba::Tms.datadir, "working",
+          #                   "places_norm_non_hier_exploded.csv"),
+          #   tags: %i[places],
+          #   desc: "Values from content fields not included in "\
+          #     ":hierarchy_fields setting fields, exploded to one row per "\
+          #     "field value, with source field recorded in :fieldname column. "\
+          #     "Deduplicated on field value + field name combination",
+          #   dest_special_opts: {
+          #     initial_headers: %i[value fieldname norm_combined]
+          #   }
+          # }
+          # register :hier_exploded_combo, {
+          #   creator: Kiba::Tms::Jobs::Places::HierExplodedCombo,
+          #   path: File.join(Kiba::Tms.datadir, "working",
+          #                   "places_hier_exploded_combo.csv"),
+          #   tags: %i[places],
+          #   desc: "Results of :norm_hier_string and :norm_non_hier_exploded "\
+          #     "combined into one spreadsheet"
+          # }
+          if Tms::Places.cleanup_done
+            Tms::Places.worksheet_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("places__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::Places.worksheets[idx],
+                  desc: "Place cleanup worksheet provided to client",
+                  tags: %i[places cleanup],
+                  supplied: true
+                }
+              end
+            # register :worksheet_compile, {
+            #   creator:
+            #   Kiba::Tms::Jobs::Places::WorksheetCompile,
+            #   path: File.join(
+            #     Kiba::Tms.datadir,
+            #     "working",
+            #     "places_worksheet_compile.csv"
+            #   ),
+            #   tags: %i[places cleanup],
+            #   desc: "Joins completed supplied worksheets and deduplicates on "\
+            #     ":merge_fingerprint",
+            #   lookup_on: :merge_fingerprint
+            # }
+            Tms::Places.returned_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("places__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::Places.returned[idx],
+                  desc: "Completed cleanup worksheet",
+                  tags: %i[places cleanup],
+                  supplied: true
+                }
+               end
+            register :returned_compile, {
+              creator:
+              Kiba::Tms::Jobs::Places::ReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "places_returned_compile.csv"
+              ),
+              tags: %i[places cleanup],
+              desc: "Joins completed worksheets and deduplicates on "\
+                ":merge_fingerprint. Flags corrected fields (based on decoded "\
+                "fingerprint) and deletes the decoded original fields",
+              lookup_on: :clean_combined
+            }
+            register :corrections, {
+              creator: Kiba::Tms::Jobs::Places::Corrections,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "places_corrections.csv"
+              ),
+              tags: %i[places cleanup],
+              desc: "Only rows from :returned_compile that "\
+                "have changes, for merge into :norm_unique_cleaned.",
+              lookup_on: :norm_fingerprint
+            }
+          end
         end
 
         Kiba::Tms.registry.namespace("reference_master") do

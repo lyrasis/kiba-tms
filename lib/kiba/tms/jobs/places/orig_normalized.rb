@@ -3,17 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjGeography
-        module AuthUniqueOrigNormalized
+      module Places
+        module OrigNormalized
           module_function
 
           def job
-            return unless config.used?
-
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :obj_geography__auth_unique_orig,
-                destination: :obj_geography__auth_unique_orig_normalized
+                source: :places__unique,
+                destination: :places__orig_normalized
               },
               transformer: xforms
             )
@@ -27,24 +25,21 @@ module Kiba
 
               if config.proximity_as_note
                 transform Tms::Transforms::SetNoteFromPattern,
-                  fields: config.content_fields,
+                  fields: config.source_fields,
                   patterns: config.proximity_patterns,
-                  target: :proximity,
-                  conditions: config.controlled_type_condition
+                  target: :proximity
               end
               if config.uncertainty_as_note
                 transform Tms::Transforms::SetNoteFromPattern,
-                  fields: config.content_fields,
+                  fields: config.source_fields,
                   patterns: config.uncertainty_patterns,
-                  target: :uncertainty,
-                  conditions: config.controlled_type_condition
+                  target: :uncertainty
               end
               unless config.misc_note_patterns.empty?
                 transform Tms::Transforms::SetNoteFromPattern,
-                  fields: config.content_fields,
+                  fields: config.source_fields,
                   patterns: config.misc_note_patterns,
-                  target: :misc_note,
-                  conditions: config.controlled_type_condition
+                  target: :misc_note
               end
 
               if config.delete_patterns.empty?
@@ -55,13 +50,12 @@ module Kiba
                   fields: :normalized
               else
                 transform Tms::Transforms::DeletePatterns,
-                  fields: config.content_fields,
-                  patterns: config.delete_patterns,
-                  conditions: config.controlled_type_condition
+                  fields: config.source_fields,
+                  patterns: config.delete_patterns
                 transform Clean::StripFields,
-                  fields: config.content_fields
+                  fields: config.source_fields
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: config.content_fields,
+                  sources: config.source_fields,
                   target: :norm_combined,
                   prepend_source_field_name: true,
                   delim: "|||",
