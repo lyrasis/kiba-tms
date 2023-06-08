@@ -115,6 +115,8 @@ The next worksheet you receive will collapse all those rows to:
 
 If you work to make things more consistent starting with the hierarchy fields, broader-to-narrower, then you can substantially reduce the number of rows/values you are dealing with in the next iteration of the worksheet.
 
+WARNING: Once you have returned a version of the worksheet to your migration specialist, *do not* do any additional work in that version. There will be no way to merge your additional work into the new version of the worksheet your migration specialist will be preparing.
+
 === Suggested general approach
 
 It would be appropriate to return the worksheet for a new iteration after completing each step.
@@ -142,6 +144,13 @@ If you like what you see in the `value_from_hierarchy` column (and after refresh
 
 They will generate a new version of the worksheet and supporting report that incorporates `county` into hierarchy.
 ====
+
+* Make sure terms that will be coming from non-hierarchy fields are contextualized to avoid unwanted collapse of separate places into one term.
+
+(examples on this and use of accompanying report todo)
+
+* Separate out any proximity or uncertainty info from terms missed or impossible to handle in the normalization process
+* Do any values belong treated as general notes in the records where they are used, instead of as authority terms? (generally objects and/or persons/organizations---your migration specialist can tell you which are relevant for your project)
 
 == Examples for different situations
 
