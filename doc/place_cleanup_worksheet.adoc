@@ -26,16 +26,16 @@ Your migration specialist will have initially identified which fields in your da
 
 Each unique value from other fields will be treated as a standalone term in CS. For example, if your `hierarchy_fields` include `continent`, `country`, `state`, and `city`, and you have the following data in a row:
 
-`country`:: United States
-`state`:: North Carolina
-`city`:: Raleigh
-`region`:: Uptown
-`building`:: Capitol Building
+....
+| continent | country       | state          | city    | region   | building         |
+|-----------+---------------+----------------+---------+----------+------------------|
+|           | United States | North Carolina | Raleigh | Downtown | Capitol Building |
+....
 
 You will end up with 3 place authority terms in CS:
 
 * Raleigh < North Carolina < United States
-* Uptown
+* Downtown
 * Capitol Building
 
 
@@ -114,6 +114,34 @@ The next worksheet you receive will collapse all those rows to:
 ....
 
 If you work to make things more consistent starting with the hierarchy fields, broader-to-narrower, then you can substantially reduce the number of rows/values you are dealing with in the next iteration of the worksheet.
+
+=== Suggested general approach
+
+It would be appropriate to return the worksheet for a new iteration after completing each step.
+
+* Fill out the levels of your hierarchy consistently and make the terms used in each level consistent (US vs USA vs United States)
+* Examine non-hierarchy fields for terms entered in the wrong field (California in `county`, for example). Move values to the correct fields
+* Once non-hierarchy field values have been correctly categorized, can you add any more fields into your hierarchy?
+
+[TIP]
+.Experiment with hierarchy in spreadsheet
+====
+Say your initial `hierarchy_fields` include `continent`, `country`, `state`, and `city`
+
+These are columns A, B, C, and D in your worksheet, respectively.
+
+Remembering that term concatenation is done narrower-to-broader, the formula in row 2's `value_from_hierarchy` column is:
+
+`=TEXTJOIN(" < ",TRUE,D2,C2,B2,A2)`
+
+If you have cleaned up the `county` column (H) and want to see what the effect of adding it in the hierarchy would be, you can change the formula to add it between `state` and `city`:
+
+`=TEXTJOIN(" < ",TRUE,D2,H2,C2,B2,A2)`
+
+If you like what you see in the `value_from_hierarchy` column (and after refreshing table on `hierarchysummary` tab after doing that, you can return the worksheet to your migration specialist and ask them to add `county` between `state` and `city`.
+
+They will generate a new version of the worksheet and supporting report that incorporates `county` into hierarchy.
+====
 
 == Examples for different situations
 
