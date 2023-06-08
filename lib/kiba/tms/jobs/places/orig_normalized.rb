@@ -54,6 +54,7 @@ module Kiba
                   patterns: config.delete_patterns
                 transform Clean::StripFields,
                   fields: config.source_fields
+                transform Tms.final_data_cleaner if Tms.final_data_cleaner
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.source_fields,
                   target: :norm_combined,

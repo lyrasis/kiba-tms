@@ -137,9 +137,9 @@ RSpec.describe Kiba::Tms::Jobs::Places do
     end
   end
 
-    context "when second round of cleanup", :clean2 do
-      it "transforms as expected" do
-        reset_configs
+  context "when second round of cleanup", :clean2 do
+    it "transforms as expected" do
+      reset_configs
       clear_working
       copy_from_test_to_working("places_orig_normalized_N2.csv")
       Tms::Places.config.returned = [

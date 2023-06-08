@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Places
-        module NormExplodedReportPrep
+        module CleanedExplodedReportPrep
           module_function
 
           def job
             info = Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :places__norm_exploded,
-                destination: :places__norm_exploded_report_prep,
+                source: :places__cleaned_exploded,
+                destination: :places__cleaned_exploded_report_prep,
                 lookup: %i[
                            places__orig_normalized
                            obj_geography__mapping_review
