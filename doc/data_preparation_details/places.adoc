@@ -44,6 +44,7 @@ graph TD;
 
   Extract derived_note_fields to separate fields
   Adds :normalized (y/blank)
+  Finalizes data if Tms.final_data_cleaner
   Adds :norm_combined`"]
 
   places__norm_unique["`**places__norm_unique**
@@ -98,6 +99,12 @@ graph TD;
   :norm_fingerprints->:norm_fingerprint
   Deduplicate on full row match`"]
 
+  places__cleaned_exploded["`**places__cleaned_exploded**
+
+  One row per source_fields column
+  (minus worksheet_added_fields columns)
+  Keeping :norm_combineds and :occurrences for each row`"]
+
   obj_geography__for_authority-- if used & controlled_types -->places__compile;
   con_geography__for_authority-- if used & controlled_types -->places__compile;
   reference_master__places-- if used -->places__compile;
@@ -127,4 +134,5 @@ graph TD;
     returned;
   returned-. if cleanup done .->places__returned_compile;
   places__returned_compile-. if cleanup done .->places__corrections;
+  places__cleaned_unique-->places__cleaned_exploded;
 ----
