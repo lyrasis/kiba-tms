@@ -9,7 +9,7 @@ module Kiba
 
           def initialize(referencefields:)
             @referencefields = referencefields
-            @fields = Tms::Places.source_fields
+            @fields = Tms::Places.source_fields - Tms::Places.worksheet_added_fields
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields
             )

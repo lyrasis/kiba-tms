@@ -103,7 +103,7 @@ graph TD;
 
   One row per source_fields column
   (minus worksheet_added_fields columns)
-  Keeping :norm_combineds and :occurrences for each row`"]
+  Keep :norm_combineds and :occurrences for each row`"]
 
   obj_geography__for_authority-- if used & controlled_types -->places__compile;
   con_geography__for_authority-- if used & controlled_types -->places__compile;

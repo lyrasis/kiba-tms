@@ -3536,18 +3536,6 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
                             "places_orig_normalized.csv"),
             tags: %i[places],
-            desc: "Normalizes result of :unique_job and adds "\
-              ":norm_combined field\n"\
-              "The output of this job is the connector between all unique "\
-              ":orig_combined values (for merging authority forms with their "\
-              "associated notes into target records) and norm/corrected "\
-              "authority terms.\n"\
-              "Depending on project settings, normalization may include "\
-              "setting the value of separate :proximity, :uncertainty, and/or "\
-              ":misc_note fields based on the presence of patterns in the "\
-              "content field values. When a separate field is set based on a "\
-              "pattern, the string segment matching the pattern is also "\
-              "deleted from the original content field.",
             lookup_on: :norm_combined
           }
           register :norm_unique, {
@@ -3555,44 +3543,27 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
                             "places_norm_unique.csv"),
             tags: %i[places],
-            desc: "Deduplicates the output of :orig_normalized "\
-              "and removes extracted/normalized out note fields, so we are "\
-              "just working with data for authority terms.\n"\
-              "Adds :occurrences field, with sum of :orig_combined "\
-              "occurrences that normalize to each :norm_combined value.\n"\
-              "This is the base from which place cleanup worksheet is "\
-              "derived."
           }
-          register :norm_exploded, {
-            creator: Kiba::Tms::Jobs::Places::NormExploded,
+          register :cleaned_exploded, {
+            creator: Kiba::Tms::Jobs::Places::CleanedExploded,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_norm_exploded.csv"),
+                            "places_cleaned_exploded.csv"),
             tags: %i[places],
-            desc: "All exploded authority norm values, exploded to one row "\
-              "per fieldkey/norm_combined combination, with the source "\
-              "field recorded in :fieldname column. :fieldkey field is added, "\
-              "containing concatenation of :value and :fieldname\n"\
-              "This table is important to keep separately because, once we "\
-              "deduplicate on the :key field, we do not know if "\
-              "value=Portland, fieldname=city was always Portland, Oregon, "\
-              "or was sometimes Portland, Maine.",
             dest_special_opts: {
-              initial_headers: %i[value fieldname norm_combined fieldkey]
+              initial_headers: %i[value fieldname norm_combineds fieldkey]
             },
             lookup_on: :fieldkey
           }
-          register :norm_exploded_report_prep, {
-            creator: Kiba::Tms::Jobs::Places::NormExplodedReportPrep,
+          register :cleaned_exploded_report_prep, {
+            creator: Kiba::Tms::Jobs::Places::CleanedExplodedReportPrep,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_norm_exploded_report_prep.csv"),
+                            "places_cleaned_exploded_report_prep.csv"),
             tags: %i[places],
-            desc: "Generates the report, but data finalization is not yet "\
-              "applied"
           }
-          register :norm_exploded_report, {
-            creator: Kiba::Tms::Jobs::Places::NormExplodedReport,
+          register :cleaned_exploded_report, {
+            creator: Kiba::Tms::Jobs::Places::CleanedExplodedReport,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "places_norm_exploded_report.csv"),
+                            "places_cleaned_exploded_report.csv"),
             tags: %i[places reports],
             desc: "Report based on :norm_exploded that can be used as a "\
               "reference to guide name cleanup. Adds:\n"\
@@ -3622,8 +3593,6 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
                             "places_norm_unique_cleaned.csv"),
             tags: %i[places],
-            desc: "Adds :clean_combined field. If place cleanup has been "\
-              "done, overlays the cleanup.",
             lookup_on: :clean_combined
           }
           register :cleaned_unique, {
@@ -3631,9 +3600,6 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
                             "places_cleaned_unique.csv"),
             tags: %i[places],
-            desc: "Deduplicates on :clean_combined. Adds :norm_combined_srcs "\
-              "field to record the :norm_combined values that have been "\
-              "collapsed/combined into the cleaned up value.",
             lookup_on: :clean_combined
           }
           register :worksheet, {
@@ -3726,9 +3692,6 @@ module Kiba
                 "places_returned_compile.csv"
               ),
               tags: %i[places cleanup],
-              desc: "Joins completed worksheets and deduplicates on "\
-                ":merge_fingerprint. Flags corrected fields (based on decoded "\
-                "fingerprint) and deletes the decoded original fields",
               lookup_on: :clean_combined
             }
             register :corrections, {
@@ -3739,8 +3702,6 @@ module Kiba
                 "places_corrections.csv"
               ),
               tags: %i[places cleanup],
-              desc: "Only rows from :returned_compile that "\
-                "have changes, for merge into :norm_unique_cleaned.",
               lookup_on: :norm_fingerprint
             }
           end

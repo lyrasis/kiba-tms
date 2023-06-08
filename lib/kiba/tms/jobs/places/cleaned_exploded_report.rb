@@ -4,14 +4,14 @@ module Kiba
   module Tms
     module Jobs
       module Places
-        module NormExploded
+        module CleanedExplodedReport
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :places__norm_unique,
-                destination: :places__norm_exploded
+                source: :places__cleaned_exploded_report_prep,
+                destination: :places__cleaned_exploded_report
               },
               transformer: xforms
             )
@@ -19,11 +19,11 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Rename::Field,
-                from: :occurrences,
-                to: :norm_combined_occs
-              transform Tms::Transforms::Places::ExplodeValues,
-                referencefields: %i[sourcetable norm_combined norm_combined_occs]
+              if Tms.final_data_cleaner
+                transform Tms.final_data_cleaner,
+                  fields: %i[value key left_combined objectnumbers objecttitles
+                             objectdescriptions]
+              end
             end
           end
         end
