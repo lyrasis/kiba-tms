@@ -1,0 +1,44 @@
+"continent","country","region","river","state","county","city","locale","building","locus","notes","township","politicalregion","nation","culturalregion","subregion","orig_combined","placepublished","occurrences","proximity","uncertainty","misc_note","norm_combined","normalized"
+,"USA",,,"North Carolina",,"Highlands",,,,,,,,,,"country: USA|||state: North Carolina|||city: Highlands (near)",,1,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Highlands","y"
+,"USA",,,"North Carolina",,"Currituck",,,,,,,,,,"country: USA|||state: North Carolina|||city: Currituck",,2,,,,"country: USA|||state: North Carolina|||city: Currituck",
+,"USA",,,"North Carolina",,"Beria",,,,,,,,,,"country: USA|||state: North Carolina|||city: Beria",,15,,,,"country: USA|||state: North Carolina|||city: Beria",
+,"USA",,,"North Carolina",,,,,,,,,,,,"country: USA|||state: North Carolina",,41,,,,"country: USA|||state: North Carolina",
+,"USA",,,"North Carolina",,"Durham",,,,,,,,,,"country: USA|||state: North Carolina|||city: Durham",,7,,,,"country: USA|||state: North Carolina|||city: Durham",
+,"USA",,,"North Carolina",,"Yanceyville",,,,,,,,,,"country: USA|||state: North Carolina|||city: Yanceyville",,2,,,,"country: USA|||state: North Carolina|||city: Yanceyville",
+,"USA",,,"North Carolina",,"Cherokee",,,,,,,,,,"country: USA|||state: North Carolina|||city: Cherokee (near)",,2,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Cherokee","y"
+,"USA",,,"North Carolina",,"Penland",,,,,,,,,,"country: USA|||state: North Carolina|||city: Penland",,4,,,,"country: USA|||state: North Carolina|||city: Penland",
+,"USA",,,"North Carolina",,"Wing",,,,,,,,,,"country: USA|||state: North Carolina|||city: Wing",,1,,,,"country: USA|||state: North Carolina|||city: Wing",
+,"USA",,,"North Carolina",,"Wadesboro",,,,,,,,,,"country: USA|||state: North Carolina|||city: Wadesboro",,2,,,,"country: USA|||state: North Carolina|||city: Wadesboro",
+,"USA",,,"North Carolina",,"Tallyho",,,,,,,,,,"country: USA|||state: North Carolina|||city: Tallyho (near)",,1,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Tallyho","y"
+,"USA",,,"North Carolina",,"Charlotte",,,,,,,,,,"country: USA|||state: North Carolina|||city: Charlotte",,2,,,,"country: USA|||state: North Carolina|||city: Charlotte",
+,"USA",,,"North Carolina",,"Kitty Hawk",,,,,,,,,,"country: USA|||state: North Carolina|||city: Kitty Hawk",,1,,,,"country: USA|||state: North Carolina|||city: Kitty Hawk",
+,"USA",,,"North Carolina",,"Wendell",,,,,,,,,,"country: USA|||state: North Carolina|||city: Wendell",,4,,,,"country: USA|||state: North Carolina|||city: Wendell",
+,"USA",,,"North Carolina",,"PENLAND",,,,,,,,,,"country: USA|||state: North Carolina|||city: PENLAND",,1,,,,"country: USA|||state: North Carolina|||city: PENLAND",
+,"USA",,,"North Carolina","Durham County","Durham",,,,,,,,,,"country: USA|||state: North Carolina|||county: Durham County|||city: Durham (near)",,1,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||county: Durham County|||city: Durham","y"
+,"USA",,,"North Carolina",,"Morganton",,,,,,,,,,"country: USA|||state: North Carolina|||city: Morganton",,1,,,,"country: USA|||state: North Carolina|||city: Morganton",
+,,,,"North Carolina",,,,,,,,,,,,"state: North Carolina (?--see GR)",,1,,"{:state=>[""uncertain""]}","{:state=>[""(?--see GR)""]}","state: North Carolina","y"
+,"USA",,,"North Carolina",,"Tallyho , Granville County",,,,"Stem",,,,,,"country: USA|||state: North Carolina|||city: Tallyho (near), Granville County|||notes: Stem (near)",,1,"{:city=>[""near""], :notes=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Tallyho , Granville County|||notes: Stem","y"
+,"USA",,,"North Carolina",,"Asheville",,,,,,,,,,"country: USA|||state: North Carolina|||city: Asheville (near)",,5,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Asheville","y"
+,"USA",,,"North Carolina",,"Asheville",,,,,,,,,,"country: USA|||state: North Carolina|||city: Asheville",,18,,,,"country: USA|||state: North Carolina|||city: Asheville",
+,"USA",,,"North Carolina",,,,,,,,,,,,"country: USA|||state: North Carolina (?)",,6,,"{:state=>[""uncertain""]}",,"country: USA|||state: North Carolina","y"
+,,,,"North Carolina",,"Beria",,,,,,,,,,"state: North Carolina (?)|||city: Beria (?)",,5,,"{:state=>[""uncertain""], :city=>[""uncertain""]}",,"state: North Carolina|||city: Beria","y"
+,"USA",,,"North Carolina",,"Beria",,,,,,,,,,"country: USA|||state: North Carolina (?)|||city: Beria (?)",,1,,"{:state=>[""uncertain""], :city=>[""uncertain""]}",,"country: USA|||state: North Carolina|||city: Beria","y"
+,,,,"North Carolina",,,,,,,,,,,,"state: North Carolina",,1,,,,"state: North Carolina",
+,"USA",,,"North Carolina",,"Jacksonville",,,,,,,,,,"country: USA|||state: North Carolina|||city: Jacksonville",,1,,,,"country: USA|||state: North Carolina|||city: Jacksonville",
+,"USA",,,"North Carolina",,"Marshall",,,,,,,,,,"country: USA|||state: North Carolina|||city: Marshall",,22,,,,"country: USA|||state: North Carolina|||city: Marshall",
+,"USA",,,"North Carolina",,"Bakersville",,,,,,,,,,"country: USA|||state: North Carolina|||city: Bakersville",,4,,,,"country: USA|||state: North Carolina|||city: Bakersville",
+,"USA",,,"North Carolina",,"Guntertown [sic]",,,,,,,,,,"country: USA|||state: North Carolina|||city: Guntertown [sic]",,2,,,,"country: USA|||state: North Carolina|||city: Guntertown [sic]",
+,"USA",,,"North Carolina",,"Shelton Laurel",,,,,,,,,,"country: USA|||state: North Carolina|||city: Shelton Laurel",,2,,,,"country: USA|||state: North Carolina|||city: Shelton Laurel",
+,"USA",,,"North Carolina",,"Spruce Pine",,,,,,,,,,"country: USA|||state: North Carolina|||city: Spruce Pine",,2,,,,"country: USA|||state: North Carolina|||city: Spruce Pine",
+,"USA",,,"North Carolina",,"Marshall",,,,,,,,,,"country: USA|||state: North Carolina|||city: near Marshall",,1,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Marshall","y"
+,"USA",,,"North Carolina",,"Marshall",,,,,,,,,,"country: USA|||state: North Carolina|||city: Marshall (near)",,1,"{:city=>[""near""]}",,,"country: USA|||state: North Carolina|||city: Marshall","y"
+,,,,"North Carolina",,,,,,,,,,,,"state: North Carolina (?)",,1,,"{:state=>[""uncertain""]}",,"state: North Carolina","y"
+,"USA",,,"North Carolina",,"Raleigh",,,,,,,,,,"country: USA|||state: North Carolina|||city: Raleigh",,3,,,,"country: USA|||state: North Carolina|||city: Raleigh",
+,"USA",,,"North Carolina",,"Stem",,,,,,,,,,"country: USA|||state: North Carolina|||city: Stem",,1,,,,"country: USA|||state: North Carolina|||city: Stem",
+,"USA",,,"North Carolina",,"Hot Springs",,,,,,,,,,"country: USA|||state: North Carolina|||city: Hot Springs",,2,,,,"country: USA|||state: North Carolina|||city: Hot Springs",
+,"United States of America",,,"North Carolina",,"Waynesville",,,,,,,,,,"country: United States of America|||state: North Carolina|||city: Waynesville",,1,,,,"country: United States of America|||state: North Carolina|||city: Waynesville",
+,"United States",,,"North Carolina","Burke County","Salem",,,,,,,,,,"country: United States|||state: North Carolina|||county: Burke County|||city: Salem",,1,,,,"country: United States|||state: North Carolina|||county: Burke County|||city: Salem",
+,"United States",,,"North Carolina","Wake County","Raleigh",,,,,,,,,,"country: United States|||state: North Carolina|||county: Wake County|||city: Raleigh",,1,,,,"country: United States|||state: North Carolina|||county: Wake County|||city: Raleigh",
+,,,,"North Carolina","Chatham County","Silk Hope",,"Community Center",,,,,,,,"state: North Carolina|||county: Chatham County|||city: Silk Hope|||building: Community Center",,2,,,,"state: North Carolina|||county: Chatham County|||city: Silk Hope|||building: Community Center",
+,,,,"North Carolina","Chatham County","Silk Hope",,"next to Community Center",,,,,,,,"state: North Carolina|||county: Chatham County|||city: Silk Hope|||building: next to Community Center",,5,,,,"state: North Carolina|||county: Chatham County|||city: Silk Hope|||building: next to Community Center",
+,"USA",,,"North Carolina",,"Tallyho , Granville County",,,,,,,,,,"country: USA|||state: North Carolina|||city: Tallyho, Granville County",,1,,,,"country: USA|||state: North Carolina|||city: Tallyho , Granville County",

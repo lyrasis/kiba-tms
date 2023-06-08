@@ -23,6 +23,10 @@ module Tms
     enable_test_interface
   end
 
+  module ObjGeography
+    enable_test_interface
+  end
+
   module Orgs
     enable_test_interface
   end

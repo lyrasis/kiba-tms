@@ -85,7 +85,6 @@ graph TD;
   places__returned_compile["`**places__returned_compile**
 
   Delete :to_review
-  Deduplicate on :clean_combined (keep most recent)
   Flag changes via :clean_fingerprint`"]
 
   places__corrections["`**places__corrections**
@@ -97,7 +96,7 @@ graph TD;
   Keep only rows with corrections
   Explode on :norm_fingerprints
   :norm_fingerprints->:norm_fingerprint
-  Deduplicate on :norm_fingerprint`"]
+  Deduplicate on full row match`"]
 
   obj_geography__for_authority-- if used & controlled_types -->places__compile;
   con_geography__for_authority-- if used & controlled_types -->places__compile;

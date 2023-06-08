@@ -27,9 +27,6 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[to_review]
-              transform Deduplicate::Table,
-                field: :clean_combined,
-                delete_field: false
               transform Fingerprint::FlagChanged,
                 fingerprint: :clean_fingerprint,
                 source_fields: config.source_fields,

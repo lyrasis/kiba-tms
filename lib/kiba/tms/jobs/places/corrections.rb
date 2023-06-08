@@ -37,9 +37,10 @@ module Kiba
               transform Rename::Field,
                 from: :norm_fingerprints,
                 to: :norm_fingerprint
+              transform CombineValues::FullRecord
               transform Deduplicate::Table,
-                field: :norm_fingerprint,
-                delete_field: false
+                field: :index,
+                delete_field: true
             end
           end
         end

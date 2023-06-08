@@ -270,7 +270,8 @@ module Kiba
           base << Tms::ConGeography.content_fields
         end
         base << :placepublished if Tms::ReferenceMaster.used?
-        base << worksheet_added_fields if cleanup_done
+        base << worksheet_added_fields
+        base.flatten!
         base - %i[orig_combined norm_combined]
       end
 
