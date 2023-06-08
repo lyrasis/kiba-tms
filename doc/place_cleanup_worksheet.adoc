@@ -1,0 +1,216 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Place cleanup worksheet
+
+toc::[]
+
+== Background/rationale
+
+To prepare place data from TMS into usable authority terms for ingest into CS Place authority.
+
+=== How this data will end up going into CS
+
+Your migration specialist will have initially identified which fields in your data should be treated as hierarchical in this process (i.e. `hierarchy_fields`). Values in `hierarchy_fields` will be combined into a single string term in CS (e.g. "North Carolina < United States").
+
+Each unique value from other fields will be treated as a standalone term in CS. For example, if your `hierarchy_fields` include `continent`, `country`, `state`, and `city`, and you have the following data in a row:
+
+`country`:: United States
+`state`:: North Carolina
+`city`:: Raleigh
+`region`:: Uptown
+`building`:: Capitol Building
+
+You will end up with 3 place authority terms in CS:
+
+* Raleigh < North Carolina < United States
+* Uptown
+* Capitol Building
+
+
+== Completing the worksheet
+
+[IMPORTANT]
+====
+Do **not** make changes to the following columns:
+
+* `norm_combineds`
+* `norm_fingerprints`
+* `clean_fingerprint`
+* `clean_combined`
+
+**If you change values in these fields, we will not be able to merge your changes back into the migration.**
+====
+
+You can edit any other fields as you wish. You can also:
+
+* Re-order columns (useful if you want to make changes to what fields are included in `hierarchy_fields` setting, or the order in which they are combined);
+* Sort and filter the spreadsheet; and
+* Change the formula in the `value_from_hierarchy` field (if you are changing `hierarchy_fields` and their order)
+
+=== Understanding the worksheet
+
+* From left-to-right, the first columns are your `hierarchy_fields` columns, organized from broader-to-narrower (Though these will be combined narrower-to-broader to create the place authority terms, so that the most specfic part of the term is always visible in your CS records)
+* These are followed by the TMS place fields that aren't included in `hierarchy_fields`
+* These are followed by 4 blank fields (in your initial worksheet iteration) whose use will be covered in the examples:
+** `uncontrolled_value`
+** `proximity_note`
+** `uncertainty_note`
+** `place_note`
+* `value_from_hierarchy` - auto-populated via formula from your `hierarchy_fields`, so you can sort/filter to see the effect of your work on the eventual hierarchy terms.
+** The pivot table in the `hierarchysummary` tab shows you all unique combined values in this field. You will need to right click in the table > Refresh after making changes in the `data` tab
+* `occurrences`- number of times the place data represented by this row gets used elsewhere in your data. You may want to focus your work more on terms that are used a lot, or determine a "preferred" form to used based on usage in your data
+
+The remaining fields are for managing the iterative cleanup workflow and data merging back into the migration.
+
+=== Iterative cleanup process
+
+TMS has a lot of place-related fields, and often there are a lot of rows in this worksheet to deal with.
+
+It can be useful to do the work in stages. Each time you return a copy of the worksheet to your migration specialist, they can prepare a new version with your corrections merged in, and fewer rows to deal with.
+
+For example, if you receive a worksheet with:
+
+....
+| continent     | country       | state          | city    | township |
+|---------------+---------------+----------------+---------+----------|
+| North America | United States | NC             |         |          |
+|               | USA           | NC             |         |          |
+|               |               | North Carolina |         |          |
+|               |               | North Carolina | Raleigh |          |
+|               | US            | NC             |         | Raleigh  |
+....
+
+And return that worksheet with the following changes:
+
+....
+| continent     | country       | state          | city    | township |
+|---------------+---------------+----------------+---------+----------|
+| North America | United States | North Carolina |         |          |
+| North America | United States | North Carolina |         |          |
+| North America | United States | North Carolina |         |          |
+| North America | United States | North Carolina | Raleigh |          |
+| North America | United States | North Carolina | Raleigh |          |
+....
+
+The next worksheet you receive will collapse all those rows to:
+
+....
+| continent     | country       | state          | city    | township |
+|---------------+---------------+----------------+---------+----------|
+| North America | United States | North Carolina |         |          |
+| North America | United States | North Carolina | Raleigh |          |
+....
+
+If you work to make things more consistent starting with the hierarchy fields, broader-to-narrower, then you can substantially reduce the number of rows/values you are dealing with in the next iteration of the worksheet.
+
+== Examples for different situations
+
+TIP: If you have a situation not shown below, please ask how to handle it and we'll add an example!
+
+=== Use of `uncontrolled_value` field
+
+todo
+
+=== Use of `proximity_note` field
+
+todo
+
+=== Use of `uncertainty_note` field
+
+todo
+
+=== Use of `place_note` field
+
+todo
+
+== Things we cannot handle via this process
+
+=== Associating variant forms of place name with main term
+
+For more on variant terms in CS, see: https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[Authority main and variant term functionality]. (Note that in a Lyrasis-hosted CS instance you will not be able to select/use variant forms in your records)
+
+The purpose of this cleanup is to establish the *main terms* that will be created in the Place authority.
+
+There's no feasible way to add in recording variant forms, given that:
+
+* the values of multiple `hierarchy_fields` are combined into one main term; and
+* values from multiple other fields in the same row may become separate main terms
+
+.Original
+....
+| state          | city                       |
+|----------------+----------------------------|
+| North Carolina | Stem                       |
+| North Carolina | Tally-ho (i.e. Stem)       |
+| North Carolina | Stem (previously Tally-ho) |
+| North Carolina | Tally-ho                   |
+....
+
+Most clients will likely want to change this to:
+
+....
+| state          | city | value_from_hierarchy  |
+|----------------+------+-----------------------|
+| North Carolina | Stem | Stem < North Carolina |
+| North Carolina | Stem | Stem < North Carolina |
+| North Carolina | Stem | Stem < North Carolina |
+| North Carolina | Stem | Stem < North Carolina |
+....
+
+[IMPORTANT]
+====
+Keep a list of variant terms you want to associate with main terms, because we will be able to merge these in once you have finalized your main terms.
+
+For example:
+
+....
+| main term               | variant term              | type             | historical_status | language |
+|-------------------------+---------------------------+------------------+-------------------+----------|
+| Stem < North Carolina   | Tally-ho < North Carolina |                  | historical        |          |
+| Stem < North Carolina   | Tallyho < North Carolina  | spelling variant | historical        |          |
+| United States           | États-Unis                |                  |                   | French   |
+| Devil's Tramping Ground | Devil's Stomping Ground   |                  |                   |          |
+....
+
+Note that, for main terms derived from a combination of hierarchy terms, we need the whole combined term as the main term.
+
+For a term like "Devil's Tramping Ground", recorded in non-hierarchy field `locus`, we just need the value in `locus` as the main term.
+
+It's up to you if you want to keep track of things like `type`, `historical status`, and `language`.
+
+Check out the fields in the Place authority term box.
+
+image::place_term_field_group.png[2274]
++++&nbsp;+++
+
+Each variant term will create an additional iteration of this term box, and we can map associated values to fields in the term box, if you provide them consistently and tell us how to map them.
+====
+
+=== Splitting a given field value into multiple main terms
+
+There's currently no feasible way to turn something like this:
+
+....
+| country       | state          | city               |
+|---------------+----------------+--------------------|
+| United States | North Carolina | Raleigh and Durham |
+....
+
+into two main terms in CS:
+
+* Raleigh < North Carolina < United States
+* Durham < North Carolina < United States
+
+Keep track of any you run into like this, and discuss options with your migration specialist once you have otherwise finalized your main terms.
