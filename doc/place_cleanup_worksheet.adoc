@@ -152,25 +152,326 @@ They will generate a new version of the worksheet and supporting report that inc
 * Separate out any proximity or uncertainty info from terms missed or impossible to handle in the normalization process
 * Do any values belong treated as general notes in the records where they are used, instead of as authority terms? (generally objects and/or persons/organizations---your migration specialist can tell you which are relevant for your project)
 
+== About the accompanying cleaned_exploded_report
+
+=== Purpose/connection to place cleanup worksheet
+
+The purpose of this report is to serve as a reference and alternate way to explore your place data for cleanup.
+
+WARNING: Do not do cleanup in this report, as we cannot merge changes from this report back into the migration.
+
+Each row in this report has a `clean_combined` value, which can be used to find the matching row in the place cleanup worksheet.
+
+=== Source data
+
+* Based on TMS base data with all returned cleanup to the current point in time merged in. The source data for this report has one row per unique `clean_combined` value.
+* This source data is "exploded" to create one row per field value. So if `clean_combined` is "country: USA|||state: New Mexico|||city: Zuni", 3 rows are created.
+
+=== Columns
+
+==== `key`
+
+Concatenation of `value`+ `fieldname`. May be useful for sorting or pivot table summary/analysis.
+
+==== `value`
+
+The field value kept when original source row was exploded. For instance, if `clean_combined` is "country: USA|||state: New Mexico|||city: Zuni" the `value` in the three rows will be "USA", "New Mexico", and "Zuni".
+
+==== `fieldname`
+
+Name of field in which `value` was recorded.
+
+==== `field_cat`
+Whether the given value is used only in a single field, or is used in multiple fields.
+
+single field:: when the value is only used in one field, for example if "Adams" is only recorded as a city:
+
+....
+| value | fieldname | field_cat    |
+|-------+-----------+--------------|
+| Adams | city      | single field |
+| Adams | city      | single field |
+....
+
+multi field:: when the value is used in more than one field, for example if "Durham" is recorded in both county and city:
+
+....
+| value  | fieldname | field_cat   |
+|--------+-----------+-------------|
+| Durham | city      | multi field |
+| Durham | county    | multi field |
+....
+
+or
+
+....
+| value      | fieldname | field_cat   |
+|------------+-----------+-------------|
+| California | county    | multi field |
+| California | country   | multi field |
+| California | state     | multi field |
+....
+
+
+[TIP]
+.Multi field does not necessarily indicate a problem
+====
+In North Carolina, the city of Durham is located in Durham County. When identical place names are actually used to represent different levels of place-ness, you probably want to add something to at least one of the values to distinguish it. For example:
+
+....
+| value      | fieldname | field_cat   |
+|------------+-----------+-------------|
+| Durham     | city      | multi field |
+| Durham Co. | county    | multi field |
+....
+
+That said, the California example shows that multi field can highlight issues where values have been recorded in the wrong field and should be cleaned up
+====
+
+==== `left_cat`
+
+Whether the leftward, or broader, information for a value/field key is consistent (i.e. single broader) or varies (multi broader).
+
+Multi broader value/field keys indicate places where the hierarchy may be inconsistently provided or recorded, or where places need to be disambiguated.
+
+.`key` = "Albany|||city"
+....
+| value  | fieldname | field_cat    | left_cat      | left_combined                                         |
+|--------+-----------+--------------+---------------+-------------------------------------------------------|
+| Albany | city      | single field | multi broader | country: USA|||state: California                      |
+| Albany | city      | single field | multi broader | country: USA|||state: Georgia                         |
+| Albany | city      | single field | multi broader | country: USA|||state: New York                        |
+| Albany | city      | single field | multi broader | country: USA|||state: Ohio                            |
+| Albany | city      | single field | multi broader | country: United States of America|||state: California |
+| Albany | city      | single field | multi broader | state: Georgia                                        |
+| Albany | city      | single field | multi broader | state: Indiana                                        |
+....
+
+By cleaning up the following in the associated rows in the cleanup worksheet:
+
+* Row 5: change country to "USA"
+* Row 6 and 7: add "USA" in country field
+
+You will end up with consistent, clearly disambiguated terms for the different Albanys.
+
+.`key` = "Algeria|||country"
+....
+| value   | fieldname | field_cat    | left_cat       | left_combined |
+|---------+-----------+--------------+----------------+---------------|
+| Algeria | country   | single field | single broader | (top)         |
+| Algeria | country   | single field | single broader | (top)         |
+| Algeria | country   | single field | single broader | (top)         |
+| Algeria | country   | single field | single broader | (top)         |
+
+....
+
+"Algeria" is only ever recorded as the broadest term level.
+
+.single broader?
+....
+| value      | fieldname | field_cat   | left_cat       | left_combined                    |
+|------------+-----------+-------------+----------------+----------------------------------|
+| Alfajayuca | city      | multi field | single broader | country: Mexico|||state: Hidalgo |
+| Alfajayuca | region    | multi field | single broader | (single)                         |
+....
+
+One value has country and state broader values. The other was recorded in region field with no other fields populated. Why do these show up as `single broader`?
+
+Because this categorization is done on value/fieldname key. Alfajayuca as a city only ever has one broader pattern. Alfajayuca as a region is only ever recorded as the only field value in its row.
+
+==== `left_combined`
+
+There are two special values:
+
+(single):: Indicates there is only this value in the row, so leftward value would always be empty.
+(top):: Indicates that there is more than one value for the row, but this value occupies the broadest/leftmost position
+
+
+Otherwise, the value here is the actual leftward/broader values for each row, concatenated broader-to-narrower.
+
+NOTE: The order of the fields in `left_combined` is determined as follows: `hierarchy_fields` from broader to narrower, followed by non-hierarchy data fields from left-to-right as the fields appear in the original source data.
+
+[TIP]
+====
+Sorting on `left_combined` may be a useful strategy for identifying places where hierarchy can be made more consistent.
+
+.Consistent - cities are recorded under Algeria (country)
+....
+| value    | fieldname | field_cat    | left_cat       | left_combined    |
+|----------+-----------+--------------+----------------+------------------|
+| El Goléa | city      | single field | single broader | country: Algeria |
+| Ghardaïa | city      | single field | single broader | country: Algeria |
+| Ouargla  | city      | single field | single broader | country: Algeria |
+| Luanda   | city      | single field | single broader | country: Angola  |
+....
+
+.Inconsistent - perhaps add a `state` value for Jindabyne?
+....
+| value           | fieldname | field_cat    | left_cat       | left_combined      |
+|-----------------+-----------+--------------+----------------+--------------------|
+| Jindabyne       | city      | single field | single broader | country: Australia |
+| New South Wales | state     | single field | single broader | country: Australia |
+| Tasmania        | state     | single field | single broader | country: Australia |
+| Victoria        | state     | multi field  | single broader | country: Australia |
+....
+====
+
+==== `clean_combined`
+
+The full `clean_combined` value. This will match up with the `clean_combined` value in your places cleanup worksheet.
+
+==== `occs`
+
+Number of times the value is used/mapped to a field in a record in your data.
+
+==== `objectnumbers`, `objecttitles`, `objectdescriptions`
+
+Example values from object records that values will be merged into. This information can be helpful in situations like this:
+
+....
+| value | fieldname | field_cat    | left_cat         | left_combined                       | clean_combined                                    | occs | objectnumbers | objecttitles                                          |
+|-------+-----------+--------------+------------------+-------------------------------------+---------------------------------------------------+------+---------------+-------------------------------------------------------|
+| Adams | city      | single field | multiple broader | (single)                            | city: Adams                                       |    1 |             1 | AMANZAMTOTO, SOUTH AFRICA (NOW CALLED ADAMS)..., 1898 |
+| Adams | city      | single field | multiple broader | country: USA|||state: Massachusetts | country: USA|||state: Massachusetts|||city: Adams |    1 |            38 | ADAMS, MASSACHUSETTS, 1992                            |
+....
+
+We can determine from this data that the initial "Adams" is a different place from the second.
+
 == Examples for different situations
 
 TIP: If you have a situation not shown below, please ask how to handle it and we'll add an example!
 
 === Use of `uncontrolled_value` field
 
-todo
+Use to record value(s) that are not related to the place name, and which does not need to be kept with the place information in order to make sense.
+
+Fairly rarely needed.
+
+.Original
+....
+| continent | country | city      | locale                                  | uncontrolled_value |
+|-----------+---------+-----------+-----------------------------------------+--------------------|
+| Europe    | Wales   | Laugharne | Brown's Hotel, reproduction at 1/2 size |                    |
+....
+
+.Cleaned
+....
+| continent | country | city      | locale        | uncontrolled_value                     |
+|-----------+---------+-----------+---------------+----------------------------------------|
+| Europe    | Wales   | Laugharne | Brown's Hotel | 1/2 size reproduction of Brown's Hotel |
+....
+
+If your `hierarchy_fields` do not contain `locale`, place authority terms created for:
+
+* Laugharne < Wales < Europe
+* Brown's Hotel
+
+If your `hierarchy_fields` does contain `locale`, place authority term created for:
+
+* Brown's Hotel < Laugharne < Wales < Europe
+
+Either way, "reproduction at 1/2 size" is not included in the place data. The slightly edited version entered in `uncontrolled_value` will be mapped into a rarely-used note field in any object records linked to the `orig_combined` value(s) associated with this row. A post-migration cleanup task will be created to remind you to check records with the rarely-used note field populated and manually figure out to do with this information once the migration is complete. The note in `uncontrolled_value` was edited to capture some of the context of the place it referred to, since the note value will be separated from any info about places in the record.
 
 === Use of `proximity_note` field
 
-todo
+Your chance to manually fix any proximity information that wasn't separated out programmatically in the normalization process.
+
+.Original
+....
+| continent | country | city                         | locale               | proxmity_note |
+|-----------+---------+------------------------------+----------------------+---------------|
+| Europe    | Wales   | down the road from Laugharne | next to Gray's Hotel |               |
+....
+
+.Cleaned
+....
+| continent | country | city      | locale       | proxmity_note                                      |
+|-----------+---------+-----------+--------------+----------------------------------------------------|
+| Europe    | Wales   | Laugharne | Gray's Hotel | down the road from Laugharne; next to Gray's Hotel |
+....
+
+If your `hierarchy_fields` do not contain `locale`, place authority terms created for:
+
+* Laugharne < Wales < Europe
+* Gray's Hotel
+
+If your `hierarchy_fields` does contain `locale`, place authority term created for:
+
+* Gray's Hotel < Laugharne < Wales < Europe
+
+If your CS domain profile and mapping decisions permit, the value of `proximity_note` will be included as a note associated with any place values used in objects linked to the `orig_combined` value(s) associated with this row. This does mean that if your `hierarchy_fields` do not contain `locale`, the same proximity note will appear next to both terms merged in from this row.
+
+If your CS domain profile and mapping decisions do not permit, the value of `proximity_note` will be dropped.
 
 === Use of `uncertainty_note` field
 
-todo
+Your chance to manually fix any uncertainty information that wasn't separated out programmatically in the normalization process.
+
+.Original
+....
+| continent | country | city      | locale             | uncertainty_note |
+|-----------+---------+-----------+--------------------+------------------|
+| Europe    | Wales   | Laugharne | maybe Blue's Hotel |                  |
+....
+
+.Cleaned
+....
+| continent | country | city      | locale       | uncertainty_note |
+|-----------+---------+-----------+--------------+------------------|
+| Europe    | Wales   | Laugharne | Blue's Hotel | maybe            |
+....
+
+If your `hierarchy_fields` do not contain `locale`, place authority terms created for:
+
+* Laugharne < Wales < Europe
+* Blue's Hotel
+
+If your `hierarchy_fields` does contain `locale`, place authority term created for:
+
+* Blue's Hotel < Laugharne < Wales < Europe
+
+If your CS domain profile and mapping decisions permit, the value of `uncertainty_note` will be included as a note associated with any place values used in objects linked to the `orig_combined` value(s) associated with this row. This does mean that if your `hierarchy_fields` do not contain `locale`, the same uncertainty note will appear next to both terms merged in from this row.
+
+If your CS domain profile and mapping decisions do not permit, the value of `uncertainty_note` will be dropped.
 
 === Use of `place_note` field
 
-todo
+Use to remove all/part of a value from data that will be used to create the controlled place term, but keep it in a note that will be associated with the place term. Contrast this from the `uncontrolled_value` field, where the note gets separated from the place term.
+
+.Original
+....
+| continent | country | city      | locale                                  | place_note |
+|-----------+---------+-----------+-----------------------------------------+------------|
+| Europe    | Wales   | Laugharne | Brown's Hotel, reproduction at 1/2 size |            |
+....
+
+.Cleaned
+....
+| continent | country | city      | locale        | place_note            |
+|-----------+---------+-----------+---------------+-----------------------|
+| Europe    | Wales   | Laugharne | Brown's Hotel | 1/2 size reproduction |
+....
+
+If your `hierarchy_fields` do not contain `locale`, place authority terms created for:
+
+* Laugharne < Wales < Europe
+* Brown's Hotel
+
+If your `hierarchy_fields` does contain `locale`, place authority term created for:
+
+* Brown's Hotel < Laugharne < Wales < Europe
+
+If your CS domain profile and mapping decisions permit, the value of `place_note` will be included as a note associated with any place values used in objects linked to the `orig_combined` value(s) associated with this row.
+
+If your `hierarchy_fields` do not contain `locale`, the result will be:
+
+* Laugharne < Wales < Europe (with "1/2 size reproduction" note with the use of that place term)
+* Brown's Hotel (with "1/2 size reproduction" note with the use of that place term)
+
+In this situation, it may be best to use the `uncontrolled_value` field, to manually put the note in the proper place, post-migration.
+
+If your CS domain profile and mapping decisions do not permit, the value of `uncertainty_note` will be dropped.
+
 
 == Things we cannot handle via this process
 

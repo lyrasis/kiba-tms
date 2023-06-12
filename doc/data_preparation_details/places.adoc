@@ -103,7 +103,17 @@ graph TD;
 
   One row per source_fields column
   (minus worksheet_added_fields columns)
-  Keep :norm_combineds and :occurrences for each row`"]
+  Keep :clean_combined for each row
+  Keep :norm_combineds for each row
+  Keep :occurrences for each row`"]
+
+  places__cleaned_exploded_report_prep["`**places__cleaned_exploded_report_prep**
+
+  Run script to produce report data`"]
+
+  places__cleaned_exploded_report["`**places__cleaned_exploded_report**
+
+  Finalize report format and column order`"]
 
   obj_geography__for_authority-- if used & controlled_types -->places__compile;
   con_geography__for_authority-- if used & controlled_types -->places__compile;
@@ -135,4 +145,7 @@ graph TD;
   returned-. if cleanup done .->places__returned_compile;
   places__returned_compile-. if cleanup done .->places__corrections;
   places__cleaned_unique-->places__cleaned_exploded;
+  places__cleaned_exploded-->places__cleaned_exploded_report_prep;
+  places__cleaned_exploded_report_prep-->places__cleaned_exploded_report;
+  places__cleaned_exploded_report-. supports completion of .->places__worksheet;
 ----
