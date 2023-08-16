@@ -1,0 +1,52 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Initial cleaned place terms report
+
+This page describes the `place_init_cleaned_terms.csv` report you may receive as part of your migration process.
+
+toc::[]
+
+== Understanding the report
+
+The work you did on places cleanup has been processed. Combined terms have been created from the fields you've designated to be treated as hierarchical. Individual terms were extracted from the non-note fields not treated as hierarchical.
+
+The combined and individual terms are normalized, then deduplicated on the normalized form. The normalization process ensures differences in the following will not be treated as separate values: spaces, special characters, punctuation, captitalization, diacritics. When minor variations in term form are collapsed into one normalized value, the process assigns the most frequently used form as the `norm` value. If variants are used the name number of times, the first form encountered in processing is used.
+
+.Report columns
+`norm`:: The normalized form that will be used as the Place authority term going forward in the migration.
+`orig`:: The variant form(s) that are collapsed/treated as the `norm` value. Separated by `|`.
+`orig_ct`:: The number of values in `orig` column.
+
+== Actions for client
+
+=== Review rows where `orig_ct` > 1
+Ensure the values in `orig` can/should be collapsed into one term (in `norm`)
+
+For example, if:
+
+`norm` = Kate's Hill
+
+`orig` = Kate's Hill|Kates Hill
+
+
+If "Kate's Hill" and "Kates Hill" are variant forms of the same place, this is fine.
+
+If they are two different places, we need to fix it. This is rare enough that we don't have a workflow in place, so let your migration specialist know if you find any that need to be fixed.
+
+=== Inform migration specialist whether you'd like a final round of cleanup based on this simplified data
+
+You may want to do a final round of cleanup based on this data if:
+
+* You want to change what form of place term is being used as the `norm` value
+* You see that separate terms will be created for variant names for the same place. This can be a lot easier to spot in this format than the previous complex cleanup worksheet
