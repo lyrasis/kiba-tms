@@ -20,7 +20,7 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Tms::Transforms::Places::ExplodeValues,
-                referencefields: %i[norm_combineds occurrences]
+                referencefields: %i[clean_combined norm_combineds occurrences]
             end
           end
         end

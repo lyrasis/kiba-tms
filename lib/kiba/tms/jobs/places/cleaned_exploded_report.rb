@@ -21,8 +21,7 @@ module Kiba
             Kiba.job_segment do
               if Tms.final_data_cleaner
                 transform Tms.final_data_cleaner,
-                  fields: %i[value key left_combined objectnumbers objecttitles
-                             objectdescriptions]
+                  fields: %i[objectnumbers objecttitles objectdescriptions]
               end
             end
           end

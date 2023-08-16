@@ -35,6 +35,36 @@ module Kiba
                     continent],
         reader: true
 
+      # Value inserted between segments when combining TMS field values into a
+      #   single hierarchical term in CS
+      setting :hierarchy_separator,
+        default: " < ",
+        reader: true
+
+      # For reporting -- the original TMS place source fields that are not
+      #   categorized as hierarchy fields
+      def non_hierarchy_fields
+        @non_hierarchy_fields ||= Tms::Places.source_fields -
+          Tms::Places.hierarchy_fields -
+          Tms::Places.worksheet_added_fields
+      end
+
+      # If true, if unique nonhierarchical term list includes identical
+      #   terms from different source fields, the name of the source field
+      #   is appended to the term value (in parentheses)
+      setting :qualify_non_hierarchical_terms,
+        default: true,
+        reader: true
+      # String value prepended to source field name in parentheses if
+      #   :qualify_non_hierarchical_terms = true. This is useful at initial
+      #   processing stages, as it allows terms qualified in this way to be
+      #   easily separated from terms that have parentheticals in their
+      #   actual data values, for analysis of how many terms are affected
+      #   and whether qualification should be turned off.
+      setting :nonhier_qualifier_prefix,
+        default: "fieldsrc:",
+        reader: true
+
       # Whether to remove parts of terms indicating proximity (near, or close
       #   to) from the values that will become authority terms, moving these
       #   strings to a separate :proximity field, which can be merged in as
@@ -195,8 +225,8 @@ module Kiba
           end
         }
 
-      # List returned/completed worksheet files, most recent first. Assumes
-      #   they are in the client project directory/supplied subdir
+      # List returned/completed worksheet files, oldest first, newest last.
+      #   Assumes they are in the client project directory/supplied subdir
       setting :returned,
         default: [],
         reader: true,

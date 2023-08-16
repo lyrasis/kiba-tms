@@ -561,13 +561,15 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConGeography::ForAuthority,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_geography_for_authority.csv"),
-            tags: %i[con con_geography places]
+            tags: %i[con con_geography places],
+            lookup_on: :constituentid
           }
           register :for_non_authority, {
             creator: Kiba::Tms::Jobs::ConGeography::ForNonAuthority,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_geography_for_non_authority.csv"),
-            tags: %i[con con_geography]
+            tags: %i[con con_geography],
+            lookup_on: :constituentid
           }
         end
 
@@ -3572,28 +3574,11 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "reports",
                             "places_cleaned_exploded_report.csv"),
             tags: %i[places reports],
-            desc: "Report based on :norm_exploded that can be used as a "\
-              "reference to guide name cleanup. Adds:\n"\
-              "- :field_cat - whether the value is found in a single field "\
-              "(e.g. :city) or multiple fields (:city, :county)"\
-              "- :left_combined - either `(top)` (value is the broadest value "\
-              "in multi-field-value row), `(single)` (value is from the "\
-              "field populated in a row), or all of `:norm_combined` to the "\
-              "left of the value. This can be used to identify where "\
-              "hierarchical info may need to be provided or corrected\n"\
-              "- :left_cat - either `single broader usage pattern in field` "\
-              "(i.e. only one :left_combined value for the given "\
-              "value/fieldname key) or `multiple broader usage patterns "\
-              "in field` (i.e. multiple :left_combined values for the given "\
-              "value/fieldname key)\n"\
-              "- :occs - how many target records (objects, citations, etc.) "\
-              "the :norm_combined value maps back to. May be used to "\
-              "prioritize cleanup\n"\
-              "- For place values from ObjGeography table: object number, "\
-              "title, and description from a maximum of 10 objects that the "\
-              ":norm_combined value maps back to. May be helpful in "\
-              "determining things like whether `state: Maine|||city: "\
-              "Portland` is the same as `city: Portland`"
+            dest_special_opts: {
+              initial_headers: %i[key value fieldname field_cat left_cat
+                                  left_combined clean_combined occs
+                                  objectnumbers objecttitles objectdescriptions]
+            }
           }
           register :norm_unique_cleaned, {
             creator: Kiba::Tms::Jobs::Places::NormUniqueCleaned,
@@ -3618,40 +3603,45 @@ module Kiba
               initial_headers: proc { Tms::Places.worksheet_columns }
             }
           }
-
-          # register :norm_hier_string, {
-          #   creator: Kiba::Tms::Jobs::Places::NormHierString,
-          #   path: File.join(Kiba::Tms.datadir, "working",
-          #                   "places_norm_hier_string.csv"),
-          #   tags: %i[places],
-          #   desc: "Values from :hierarchy_fields setting fields, concatenated "\
-          #     "into a single field value",
-          #   dest_special_opts: {
-          #     initial_headers: %i[value fieldname norm_combined]
-          #   }
-
-          # }
-          # register :norm_non_hier_exploded, {
-          #   creator: Kiba::Tms::Jobs::Places::NormNonHierExploded,
-          #   path: File.join(Kiba::Tms.datadir, "working",
-          #                   "places_norm_non_hier_exploded.csv"),
-          #   tags: %i[places],
-          #   desc: "Values from content fields not included in "\
-          #     ":hierarchy_fields setting fields, exploded to one row per "\
-          #     "field value, with source field recorded in :fieldname column. "\
-          #     "Deduplicated on field value + field name combination",
-          #   dest_special_opts: {
-          #     initial_headers: %i[value fieldname norm_combined]
-          #   }
-          # }
-          # register :hier_exploded_combo, {
-          #   creator: Kiba::Tms::Jobs::Places::HierExplodedCombo,
-          #   path: File.join(Kiba::Tms.datadir, "working",
-          #                   "places_hier_exploded_combo.csv"),
-          #   tags: %i[places],
-          #   desc: "Results of :norm_hier_string and :norm_non_hier_exploded "\
-          #     "combined into one spreadsheet"
-          # }
+          register :build_hierarchical, {
+            creator: Kiba::Tms::Jobs::Places::BuildHierarchical,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_build_hierarchical.csv"),
+            tags: %i[places],
+            lookup_on: :norm
+          }
+          register :uniq_hierarchical, {
+            creator: Kiba::Tms::Jobs::Places::UniqHierarchical,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_uniq_hierarchical.csv"),
+            tags: %i[places]
+          }
+          register :build_nonhier, {
+            creator: Kiba::Tms::Jobs::Places::BuildNonhier,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_build_nonhier.csv"),
+            tags: %i[places],
+            lookup_on: :norm
+          }
+          register :uniq_nonhier, {
+            creator: Kiba::Tms::Jobs::Places::UniqNonhier,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_uniq_nonhier.csv"),
+            tags: %i[places]
+          }
+          register :init_cleaned_lookup, {
+            creator: Kiba::Tms::Jobs::Places::InitCleanedLookup,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_init_cleaned_lookup.csv"),
+            tags: %i[places],
+            lookup_on: :norm_combined
+          }
+          register :init_cleaned_terms, {
+            creator: Kiba::Tms::Jobs::Places::InitCleanedTerms,
+            path: File.join(Kiba::Tms.datadir, "working",
+                            "place_init_cleaned_terms.csv"),
+            tags: %i[places reports]
+          }
           if Tms::Places.cleanup_done
             Tms::Places.worksheet_jobs
               .each_with_index do |job, idx|
@@ -3665,19 +3655,6 @@ module Kiba
                   supplied: true
                 }
               end
-            # register :worksheet_compile, {
-            #   creator:
-            #   Kiba::Tms::Jobs::Places::WorksheetCompile,
-            #   path: File.join(
-            #     Kiba::Tms.datadir,
-            #     "working",
-            #     "places_worksheet_compile.csv"
-            #   ),
-            #   tags: %i[places cleanup],
-            #   desc: "Joins completed supplied worksheets and deduplicates on "\
-            #     ":merge_fingerprint",
-            #   lookup_on: :merge_fingerprint
-            # }
             Tms::Places.returned_jobs
               .each_with_index do |job, idx|
                 jobname = job.to_s

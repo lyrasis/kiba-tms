@@ -23,6 +23,14 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
+              # transform Copy::Field,
+              #   from: :orig_combined,
+              #   to: :real_orig_combined
+              # if Tms.final_data_cleaner
+              #   transform Tms.final_data_cleaner,
+              #     fields: :orig_combined
+              # end
+
               if config.proximity_as_note
                 transform Tms::Transforms::SetNoteFromPattern,
                   fields: config.source_fields,
@@ -54,7 +62,10 @@ module Kiba
                   patterns: config.delete_patterns
                 transform Clean::StripFields,
                   fields: config.source_fields
-                transform Tms.final_data_cleaner if Tms.final_data_cleaner
+                if Tms.final_data_cleaner
+                  transform Tms.final_data_cleaner,
+                    fields: config.source_fields
+                end
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.source_fields,
                   target: :norm_combined,
