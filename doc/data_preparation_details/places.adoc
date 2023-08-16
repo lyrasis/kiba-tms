@@ -115,6 +115,41 @@ graph TD;
 
   Finalize report format and column order`"]
 
+  places__build_hierarchical["`**places__build_hierarchical**
+
+  Build hierarchical terms from initial cleanup
+  Assign :norm value based on most frequently used form`"]
+
+  places__build_nonhier["`**places__build_nonhier**
+
+  Extract nonhierarchical terms from initial cleanup
+  Qualify term values with field name if configured to do so
+  Assign :norm value based on most frequently used form`"]
+
+  places__uniq_hierarchical["`**places__uniq_hierarchical**
+
+  Deduplicate on :norm
+  Delete all other fields
+  Merge collated :norm_combineds
+  Merge norm variant forms (and count of them)`"]
+
+  places__uniq_nonhier["`**places__uniq_nonhier**
+
+  Deduplicate on :norm
+  Delete all other fields
+  Merge collated :norm_combineds
+  Merge norm variant forms (and count of them)`"]
+
+  places__init_cleaned_lookup["`**places__init_cleaned_lookup**
+
+  Explode rows on :norm_combineds
+  :norm_combineds renamed to :norm_combined`"]
+
+  places__init_cleaned_terms["`**places__init_cleaned_terms**
+
+  Deduplicate on :norm
+  Delete :norm_combined`"]
+
   obj_geography__for_authority-- if used & controlled_types -->places__compile;
   con_geography__for_authority-- if used & controlled_types -->places__compile;
   reference_master__places-- if used -->places__compile;
@@ -148,4 +183,13 @@ graph TD;
   places__cleaned_exploded-->places__cleaned_exploded_report_prep;
   places__cleaned_exploded_report_prep-->places__cleaned_exploded_report;
   places__cleaned_exploded_report-. supports completion of .->places__worksheet;
+  places__cleaned_unique-->places__build_hierarchical;
+  places__cleaned_unique-->places__build_nonhier;
+  places__build_hierarchical-->places__uniq_hierarchical;
+  places__build_hierarchical-- lkup on :norm -->places__uniq_hierarchical;
+  places__build_nonhier-->places__uniq_nonhier;
+  places__build_nonhier-- lkup on :norm -->places__uniq_nonhier;
+  places__uniq_hierarchical-->places__init_cleaned_lookup;
+  places__uniq_nonhier-->places__init_cleaned_lookup;
+  places__init_cleaned_lookup-->places__init_cleaned_terms;
 ----
