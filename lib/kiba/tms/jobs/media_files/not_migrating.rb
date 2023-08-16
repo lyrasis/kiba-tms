@@ -20,10 +20,16 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated,
-                action: :reject,
-                field: :mediafileuri
+              config = bind.receiver.send(:config)
+
+              unless config.migrate_fileless
+                transform FilterRows::FieldPopulated,
+                  action: :reject,
+                  field: :mediafileuri
+              end
             end
           end
         end

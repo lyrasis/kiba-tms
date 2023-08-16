@@ -75,9 +75,27 @@ module Kiba
         default: Tms::Transforms::MediaFiles::UriGenerator,
         reader: true
 
+      # Whether media files have been uploaded to S3 bucket for ingest
+      setting :files_uploaded,
+        default: false,
+        reader: true
+
       # Name of AWS S3 bucket containing ingestable media files
       setting :bucket_name,
         default: nil,
+        reader: true
+
+      # Directory created at bucket base, into which client uploaded ALL
+      #  files. Only needed if client created such a directory.
+      setting :bucket_base_dir,
+        default: nil,
+        reader: true
+
+      # Prefixes to remove from paths stored in TMS, for matching against
+      #  S3 paths. Typically these will indicate the local filesystems where
+      #  TMS data was stored prior to being uploaded to S3
+      setting :tms_path_bases,
+        default: [],
         reader: true
 
       # All ingestable data fields for CS media ingest

@@ -9,6 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
+            return unless config.files_uploaded
 
             Kiba::Extend::Jobs::Job.new(
               files: {

@@ -9,6 +9,7 @@ module Kiba
 
           def job
             return unless config.used?
+            return unless config.files_uploaded
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -26,10 +27,16 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform do |row|
-                row[:norm] = row[:filepath].downcase
+                path = row[:filepath]
 
-                prefix = "#{config.s3_url_base}/"
-                row[:filepath] = "#{prefix}#{row[:filepath]}"
+                if config.bucket_base_dir
+                  filename = path.delete_prefix("#{config.bucket_base_dir}/")
+                else
+                  filename = path
+                end
+
+                row[:norm] = filename.downcase
+                row[:filepath] = "#{config.s3_url_base}/#{path}"
                 row
               end
             end

@@ -4,8 +4,8 @@ module Kiba
   module Tms
     module Transforms
       module MediaFiles
-        # Generates :mediafileuri value in :media_files__cspace. Assumes there is
-        #   a :media_files__file_path_lookup
+        # Generates :mediafileuri value in :media_files__cspace. Assumes there
+        #   is a :media_files__file_path_lookup
         class UriGenerator
           def initialize
             @lookup = Tms.get_lookup(
@@ -18,6 +18,7 @@ module Kiba
               fieldmap: {mediafileuri: :filepath},
               delim: Tms.delim
             )
+            @bases = Tms::MediaFiles.tms_path_bases
           end
 
           def process(row)
@@ -30,15 +31,22 @@ module Kiba
 
           private
 
-          attr_reader :lookup, :merger
+          attr_reader :lookup, :merger, :bases
 
           def norm_path(row)
             val = row[:fullpath]
             return nil if val.blank?
 
-            val.downcase
+            bases_removed(val).downcase
               .delete_prefix("\\\\")
               .tr("\\", "/")
+          end
+
+          def bases_removed(val)
+            return val if bases.empty?
+
+            bases.each{ |base| val = val.delete_prefix(base) }
+            val
           end
         end
       end

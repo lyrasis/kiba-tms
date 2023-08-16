@@ -1550,6 +1550,12 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("media_files") do
+          register :aws_ls, {
+            supplied: true,
+            path: File.join(
+              Kiba::Tms.datadir, "supplied", "aws_ls.csv"
+            )
+          }
           register :file_path_lookup, {
             creator: Kiba::Tms::Jobs::MediaFiles::FilePathLookup,
             path: File.join(
@@ -1607,7 +1613,8 @@ module Kiba
             ),
             desc: "Removes rows without files, if not migrating fileless "\
               "media; Adds :identificationnumber",
-            tags: %i[mediafiles media]
+            tags: %i[mediafiles media],
+            lookup_on: :mediafileuri
           }
           register :not_migrating, {
             creator: Kiba::Tms::Jobs::MediaFiles::NotMigrating,
@@ -1618,7 +1625,7 @@ module Kiba
             ),
             desc: "Lists TMS media data rows that cannot be matched to a "\
               "media file in S3",
-            tags: %i[mediafiles media]
+            tags: %i[mediafiles media reports]
           }
           register :duplicate_files, {
             creator: Kiba::Tms::Jobs::MediaFiles::DuplicateFiles,
