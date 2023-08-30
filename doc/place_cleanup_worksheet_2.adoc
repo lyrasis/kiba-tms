@@ -61,7 +61,24 @@ All terms will be mapped into the Place/Local authority.
 
 * Limit to `normalized_variants` = "y"
 * Look at the values in `orig`. Should they be collapsed into one term?
-* If the answer is NO, let your migration specialist know what the issue is. This is very rare, so we will need to work out a way to handle it.
+** *If the answer is NO:* let your migration specialist know what the issue is. This is very rare, so we will need to work out a way to handle it.
+** *If the answer is YES:* if you do not like the variant form that was selected, you can change it in the `place` column. For example:
+
+.Original worksheet data
+....
+| place       | orig                                    |
+|-------------+-----------------------------------------|
+| Smiths Café | Smith's Cafe|Smiths Café|Smith's "Café" |
+....
+
+NOTE: The exact value you enter in `place` does not need to appear in `orig`.
+
+.Edited worksheet data
+....
+| place        | orig                                    |
+|--------------+-----------------------------------------|
+| Smith's Café | Smith's Cafe|Smiths Café|Smith's "Café" |
+....
 
 == To-do: Tasks 2 and 3: Editing the worksheet to collapse variants into consistent terms
 
