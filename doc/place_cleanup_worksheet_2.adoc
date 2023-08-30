@@ -1,0 +1,180 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Place cleanup worksheet (phase 2)
+
+toc::[]
+
+== Background/rationale
+
+Presents the post-processed results of _Place cleanup worksheet (phase 1)_ in a simpler format, where you can:
+
+1. identify any very-near-duplicate terms that should NOT have been collapsed in the automated normalization/deduplication process used to create this worksheet;
+2. identify near-duplicates and variant forms that you may want to collapse into a single term; and
+3. specify what variant forms should be added as https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[variant terms in CollectionSpace]
+
+=== How was data post-processed from the first place cleanup worksheet?
+
+Combined hierarchical terms have been extracted and combined from fields that are part of your `hierarchy_fields` list.
+
+Other field values are extracted as separate terms.
+
+For example, if your `hierarchy_fields` include `continent`, `country`, `state`, and `city`, and this row is in your phase 1 spreadsheet:
+
+....
+| continent | country       | state          | city    | region   | building         |
+|-----------+---------------+----------------+---------+----------+------------------|
+|           | United States | North Carolina | Raleigh | Downtown | Capitol Building |
+....
+
+
+Three place values are extracted for inclusion in this worksheet:
+
+* Raleigh < North Carolina < United States
+* Downtown
+* Capitol Building
+
+All the place values to be included in this worksheet are then normalized and deduplicated on the normalized form, to collapse _very-near-duplicates_.footnote:[Normalization performs the following: removes all non-alpha-numeric characters; removes spaces; downcases; normalizes accented/diacritical characters to their base characters (é becomes e).]
+
+=== How will data from this worksheet map into CollectionSpace?
+
+Each distinct value from the `place` column will become a main/preferred term in a Place authority term record.
+
+Any values entered in `add_variant` column will become a variant term on the Place authority record created for its main term.
+
+See the https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/authority_main_variant_term_functionality.adoc[explainer on main vs. variant terms in CollectionSpace authorities].
+
+All terms will be mapped into the Place/Local authority.
+
+== To-do: Task 1: Identify any very-near-duplicate terms that should NOT have been collapsed in the automated normalization/deduplication process used to create this worksheet
+
+* Limit to `normalized_variants` = "y"
+* Look at the values in `orig`. Should they be collapsed into one term?
+* If the answer is NO, let your migration specialist know what the issue is. This is very rare, so we will need to work out a way to handle it.
+
+== To-do: Tasks 2 and 3: Editing the worksheet to collapse variants into consistent terms
+
+Edit in the `allterms` tab. The other tabs are for reference only.
+
+[IMPORTANT]
+====
+Do **not** make changes to the `fingerprint` column.
+
+**If you change values in this field, we will not be able to merge your changes back into the migration.**
+====
+
+You can edit any other fields as you wish, but only changes to `place` and `add_variant` will be merged back into the migration.
+
+. You can also:
+* Re-order columns (useful if you want to make changes to what fields are included in `hierarchy_fields` setting, or the order in which they are combined); and
+* Sort and filter the spreadsheet
+
+**See examples below.**
+
+
+== Understanding the worksheet
+
+=== `allterms` tab
+
+This tab is where you will make edits.
+
+`place`:: Place term that will become a main term in CollectionSpace. Edit this field directly to make changes.
+`add_variant`:: Terms provided here will become variant terms in the authority record for the value in `place`. Separate multiple values in this field with "|" (pipe character, typed as shift-\)
+`normalized_variants`:: y, (blank = n) - whether multiple forms were collapsed in the normalization/deduplication process
+`orig`:: All original (i.e. pre-normalized) values that got collapsed into the `place` value, separated by "|" (pipe character, typed as shift-\)
+`orig_ct`:: Count of values in `orig`
+`clustered?`:: Whether the `place` term appears as part of one or more reported clusters. See the sections below on clustering for what this means
+`fingerprint`:: Special value used to identify your changes and merge them back into the migration
+
+=== Clustering: `clusters` and `clusterdetails` tabs
+
+We use https://openrefine.org[OpenRefine] to open the list of place values and generate clusters of similar terms via several different algorithms.footnote:[OpenRefine's clustering is https://openrefine.org/docs/manual/cellediting#clustering-methods[explained in detail here]]. Cluster information is exported from OpenRefine (in JSON format) and reformatted as tabular data that can be included in the worksheet in the `clusterdetails` tab.
+
+The allterms/clustered? column = "yes" if the term appears in at least one cluster. Filtering on this can help target your review/corrections.
+
+The `clusters` tab is a pivot table based on data in `clusterdetails` that may or may not work better for you for seeing what terms got clustered.
+
+
+[CAUTION]
+====
+The clustering algorithms are about as smart as any algorithms, which is to say "not very." While they DO surface a lot of similar terms that should be collapsed, they miss some, and they find false clusters. The majority of false clusters are like:
+
+
+.knn/levenshtein.10
+* 6th Avenue < New York < New York < United States
+* 7th Avenue < New York < New York < United States
+* 8th Avenue < New York < New York < United States
+* 9th Avenue < New York < New York < United States
+
+While to us, it's OBVIOUS these are different streets, to the algorithm, these values share 48 identical characters and 1 varying character, making them *very* similar to one another. That's why they are reported as a cluster.
+
+Some examples of terms that (depending on the data set) might not get clustered are shown below:
+
+.Set 1
+* Aegean
+* Aegean Sea
+
+.Set 2
+* Agra < India
+* Agra < Uttar Pradesh < India
+
+*Don't _only_ look at terms that got clustered!*
+====
+
+== Examples
+=== Collapse two terms into one, with a variant term added
+
+.Original worksheet data
+....
+| place                            | add_variant |
+|----------------------------------+-------------|
+| Agua Fria Siphon < Arizona < USA |             |
+| Agua Fria Tunnel < Arizona < USA |             |
+....
+
+The edits shown below will result in:
+
+* one place authority term record will be created with "Agua Fria Siphon < Arizona < USA" as the main term.
+* "Agua Fria Tunnel < Arizona < USA" will be recorded as a variant term in that term record
+
+.Edited worksheet data
+....
+| place                            | add_variant                      |
+|----------------------------------+----------------------------------|
+| Agua Fria Siphon < Arizona < USA |                                  |
+| Agua Fria Siphon < Arizona < USA | Agua Fria Tunnel < Arizona < USA |
+....
+
+=== Collapse two terms into one, no variant term
+
+.Original worksheet data
+....
+| place                        | add_variant |
+|------------------------------+-------------|
+| Agra < India                 |             |
+| Agra < Uttar Pradesh < India |             |
+....
+
+The edits shown below will result in:
+
+* one place authority term record will be created with "Agra < Uttar Pradesh < India" as the main term.
+* no variant term will be added to that record
+
+.Edited worksheet data
+....
+| place                        | add_variant |
+|------------------------------+-------------|
+| Agra < Uttar Pradesh < India |             |
+| Agra < Uttar Pradesh < India |             |
+....
