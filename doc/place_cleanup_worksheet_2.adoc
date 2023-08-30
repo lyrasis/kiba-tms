@@ -97,8 +97,52 @@ You can edit any other fields as you wish, but only changes to `place` and `add_
 * Re-order columns (useful if you want to make changes to what fields are included in `hierarchy_fields` setting, or the order in which they are combined); and
 * Sort and filter the spreadsheet
 
-**See examples below.**
 
+=== Example: Collapse two terms into one, with a variant term added
+
+.Original worksheet data
+....
+| place                            | add_variant |
+|----------------------------------+-------------|
+| Agua Fria Siphon < Arizona < USA |             |
+| Agua Fria Tunnel < Arizona < USA |             |
+....
+
+The edits shown below will result in:
+
+* one place authority term record will be created with "Agua Fria Siphon < Arizona < USA" as the main term.
+* "Agua Fria Tunnel < Arizona < USA" will be recorded as a variant term in that term record
+
+.Edited worksheet data
+....
+| place                            | add_variant                      |
+|----------------------------------+----------------------------------|
+| Agua Fria Siphon < Arizona < USA |                                  |
+| Agua Fria Siphon < Arizona < USA | Agua Fria Tunnel < Arizona < USA |
+....
+
+=== Example: Collapse two terms into one, no variant term
+
+.Original worksheet data
+....
+| place                        | add_variant |
+|------------------------------+-------------|
+| Agra < India                 |             |
+| Agra < Uttar Pradesh < India |             |
+....
+
+The edits shown below will result in:
+
+* one place authority term record will be created with "Agra < Uttar Pradesh < India" as the main term.
+* no variant term will be added to that record
+
+.Edited worksheet data
+....
+| place                        | add_variant |
+|------------------------------+-------------|
+| Agra < Uttar Pradesh < India |             |
+| Agra < Uttar Pradesh < India |             |
+....
 
 == Understanding the worksheet
 
@@ -148,50 +192,3 @@ Some examples of terms that (depending on the data set) might not get clustered 
 
 *Don't _only_ look at terms that got clustered!*
 ====
-
-== Examples
-=== Collapse two terms into one, with a variant term added
-
-.Original worksheet data
-....
-| place                            | add_variant |
-|----------------------------------+-------------|
-| Agua Fria Siphon < Arizona < USA |             |
-| Agua Fria Tunnel < Arizona < USA |             |
-....
-
-The edits shown below will result in:
-
-* one place authority term record will be created with "Agua Fria Siphon < Arizona < USA" as the main term.
-* "Agua Fria Tunnel < Arizona < USA" will be recorded as a variant term in that term record
-
-.Edited worksheet data
-....
-| place                            | add_variant                      |
-|----------------------------------+----------------------------------|
-| Agua Fria Siphon < Arizona < USA |                                  |
-| Agua Fria Siphon < Arizona < USA | Agua Fria Tunnel < Arizona < USA |
-....
-
-=== Collapse two terms into one, no variant term
-
-.Original worksheet data
-....
-| place                        | add_variant |
-|------------------------------+-------------|
-| Agra < India                 |             |
-| Agra < Uttar Pradesh < India |             |
-....
-
-The edits shown below will result in:
-
-* one place authority term record will be created with "Agra < Uttar Pradesh < India" as the main term.
-* no variant term will be added to that record
-
-.Edited worksheet data
-....
-| place                        | add_variant |
-|------------------------------+-------------|
-| Agra < Uttar Pradesh < India |             |
-| Agra < Uttar Pradesh < India |             |
-....
