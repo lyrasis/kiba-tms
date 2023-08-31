@@ -73,10 +73,10 @@ module Kiba
       #   These should be tables that are not literally empty. Empty tables are
       #   listed in the file found at Tms.empty_table_list_path
       setting :excluded_tables, default: [], reader: true
-    end
-
-    def tms_table_dir_path
-      File.join(datadir, tmsdir)
+      setting :tms_table_dir_path,
+        default: nil,
+        reader: true,
+        constructor: ->(_val) { File.join(datadir, tmsdir) }
     end
 
     setting :table_lookup,
