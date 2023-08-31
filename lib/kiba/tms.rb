@@ -136,7 +136,6 @@ module Kiba
     #   `:all`, but can be given an array of specific field names
     setting :final_data_cleaner, default: nil, reader: true
 
-
     # if true, do not delete (not assigned) and (not entered) and other similar
     #   values from type lookup tables before merging in
     setting :migrate_no_value_types, default: false, reader: true
