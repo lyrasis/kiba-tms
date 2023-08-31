@@ -3640,7 +3640,17 @@ module Kiba
             creator: Kiba::Tms::Jobs::Places::InitCleanedTerms,
             path: File.join(Kiba::Tms.datadir, "working",
                             "place_init_cleaned_terms.csv"),
-            tags: %i[places reports]
+            tags: %i[places reports],
+            lookup_on: :norm
+          }
+          register :final_cleanup_worksheet, {
+            creator: Kiba::Tms::Jobs::Places::FinalCleanupWorksheet,
+            path: File.join(Kiba::Tms.datadir, "to_client",
+                            "place_final_cleanup_worksheet.csv"),
+            tags: %i[places cleanup],
+            dest_special_opts: {
+              initial_headers: %i[place add_variant normalized_variants]
+            }
           }
           if Tms::Places.cleanup_done
             Tms::Places.worksheet_jobs
@@ -3688,6 +3698,42 @@ module Kiba
               tags: %i[places cleanup],
               lookup_on: :norm_fingerprint
             }
+          end
+
+          if Tms::Places.final_cleanup_done
+            Tms::Places.final_returned_jobs
+              .each_with_index do |job, idx|
+                jobname = job.to_s
+                  .delete_prefix("places__")
+                  .to_sym
+                register jobname, {
+                  path: Tms::Places.final_returned[idx],
+                  desc: "Completed final cleanup worksheet",
+                  tags: %i[places cleanup],
+                  supplied: true
+                }
+              end
+            # register :final_returned_compile, {
+            #   creator:
+            #   Kiba::Tms::Jobs::Places::FinalReturnedCompile,
+            #   path: File.join(
+            #     Kiba::Tms.datadir,
+            #     "working",
+            #     "places_final_returned_compile.csv"
+            #   ),
+            #   tags: %i[places cleanup],
+            #   lookup_on: :clean_combined
+            # }
+            # register :corrections, {
+            #   creator: Kiba::Tms::Jobs::Places::Corrections,
+            #   path: File.join(
+            #     Kiba::Tms.datadir,
+            #     "working",
+            #     "places_corrections.csv"
+            #   ),
+            #   tags: %i[places cleanup],
+            #   lookup_on: :norm_fingerprint
+            # }
           end
         end
 

@@ -212,7 +212,8 @@ module Kiba
       end
 
       # ------------------------------------------------------------------------
-      # Cleanup related settings
+      # Cleanup related settings - initial cleanup (from TMS table structure to
+      #   terms)
       # ------------------------------------------------------------------------
       # List provided worksheets, most recent first. Assumes they
       #   are in the client project directory/to_client subdir
@@ -258,6 +259,39 @@ module Kiba
           "places__worksheet_returned_#{idx}".to_sym
         end
       end
+
+      # ------------------------------------------------------------------------
+      # Final cleanup related settings - ensuring consistency of terms derived
+      #   in initial cleanup, and indicating variants
+      # ------------------------------------------------------------------------
+      # List returned/completed worksheet files, oldest first, newest last.
+      #   Assumes they are in the client project directory/supplied subdir
+      setting :final_returned,
+        default: [],
+        reader: true,
+        constructor: proc { |value|
+          value.map do |filename|
+            File.join(Kiba::Tms.datadir, "supplied", filename)
+          end
+        }
+
+      # Indicates whether any cleanup has been returned. If not,
+      #   we run everything on base data. If yes, we merge in/overlay cleanup on
+      #   the affected base data tables
+      def final_cleanup_done
+        !returned.empty?
+      end
+
+      def final_returned_jobs
+        final_returned.map.with_index do |filename, idx|
+          "places__final_worksheet_returned_#{idx}".to_sym
+        end
+      end
+
+      # Fields from which fingerprint is created in cleanup worksheet
+      setting :final_wksht_fp_fields,
+              default: %i[place add_variant],
+              reader: true
 
       # ------------------------------------------------------------------------
       # More technical settings
