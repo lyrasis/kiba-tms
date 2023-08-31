@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/kspurgin/emendate
+  remote: https://github.com/kspurgin/emendate.git
   revision: 3e5e788e29e5ef62498c5204aec0524f403e9ed5
   branch: main
   specs:
@@ -10,7 +10,7 @@ GIT
       dry-validation
 
 GIT
-  remote: https://github.com/lyrasis/kiba-extend
+  remote: https://github.com/lyrasis/kiba-extend.git
   revision: 5e76c5ff5459adcb920c01cdc8fc22435b1d3a49
   branch: main
   specs:
@@ -32,9 +32,9 @@ PATH
   remote: .
   specs:
     kiba-tms (0.0.1)
-      chronic (~> 0.10.2)
-      dry-monads (~> 1.4)
-      zeitwerk (~> 2.5)
+      chronic
+      dry-monads
+      zeitwerk
 
 GEM
   remote: https://rubygems.org/

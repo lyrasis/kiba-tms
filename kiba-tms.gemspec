@@ -39,9 +39,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "chronic", "~> 0.10.2"
-  spec.add_dependency "dry-monads", "~> 1.4"
-  spec.add_dependency "zeitwerk", "~> 2.5"
+  spec.add_dependency "chronic"
+  spec.add_dependency "dry-monads"
+  spec.add_dependency "zeitwerk"
 
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rake"
