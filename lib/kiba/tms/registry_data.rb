@@ -2925,17 +2925,17 @@ module Kiba
               "can be reviewed to determine where to map each geocode type",
             dest_special_opts: {
               initial_headers: %i[objectnumber objecttitle objectdesc geocode
-                                 orig_combined]
+                orig_combined]
             },
             lookup_on: :orig_combined
           }
           register :for_authority, {
             creator: Kiba::Tms::Jobs::ObjGeography::ForAuthority,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "obj_geography_for_authority.csv"),
+              "obj_geography_for_authority.csv"),
             tags: %i[obj_geography],
             desc: "Removes rows with :geocode values that are not mapping to "\
-              "CS place authority-controlled fields",
+              "CS place authority-controlled fields"
           }
         end
 
@@ -3537,26 +3537,26 @@ module Kiba
           register :unique, {
             creator: Kiba::Tms::Jobs::Places::Unique,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_unique.csv"),
+              "places_unique.csv"),
             tags: %i[places]
           }
           register :orig_normalized, {
             creator: Kiba::Tms::Jobs::Places::OrigNormalized,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_orig_normalized.csv"),
+              "places_orig_normalized.csv"),
             tags: %i[places],
             lookup_on: :norm_combined
           }
           register :norm_unique, {
             creator: Kiba::Tms::Jobs::Places::NormUnique,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_norm_unique.csv"),
-            tags: %i[places],
+              "places_norm_unique.csv"),
+            tags: %i[places]
           }
           register :cleaned_exploded, {
             creator: Kiba::Tms::Jobs::Places::CleanedExploded,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_cleaned_exploded.csv"),
+              "places_cleaned_exploded.csv"),
             tags: %i[places],
             dest_special_opts: {
               initial_headers: %i[value fieldname norm_combineds fieldkey]
@@ -3566,38 +3566,45 @@ module Kiba
           register :cleaned_exploded_report_prep, {
             creator: Kiba::Tms::Jobs::Places::CleanedExplodedReportPrep,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_cleaned_exploded_report_prep.csv"),
-            tags: %i[places],
+              "places_cleaned_exploded_report_prep.csv"),
+            tags: %i[places]
           }
           register :cleaned_exploded_report, {
             creator: Kiba::Tms::Jobs::Places::CleanedExplodedReport,
             path: File.join(Kiba::Tms.datadir, "reports",
-                            "places_cleaned_exploded_report.csv"),
+              "places_cleaned_exploded_report.csv"),
             tags: %i[places reports],
             dest_special_opts: {
               initial_headers: %i[key value fieldname field_cat left_cat
-                                  left_combined clean_combined occs
-                                  objectnumbers objecttitles objectdescriptions]
+                left_combined clean_combined occs
+                objectnumbers objecttitles objectdescriptions]
             }
           }
           register :norm_unique_cleaned, {
             creator: Kiba::Tms::Jobs::Places::NormUniqueCleaned,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_norm_unique_cleaned.csv"),
+              "places_norm_unique_cleaned.csv"),
             tags: %i[places],
             lookup_on: :clean_combined
           }
           register :cleaned_unique, {
             creator: Kiba::Tms::Jobs::Places::CleanedUnique,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "places_cleaned_unique.csv"),
+              "places_cleaned_unique.csv"),
             tags: %i[places],
             lookup_on: :clean_combined
+          }
+          register :cleaned_notes, {
+            creator: Kiba::Tms::Jobs::Places::CleanedNotes,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "places_cleaned_notes.csv"),
+            tags: %i[places],
+            lookup_on: :norm_combined
           }
           register :worksheet, {
             creator: Kiba::Tms::Jobs::Places::Worksheet,
             path: File.join(Kiba::Tms.datadir, "to_client",
-                            "place_cleanup_worksheet.csv"),
+              "place_cleanup_worksheet.csv"),
             tags: %i[places cleanup],
             dest_special_opts: {
               initial_headers: proc { Tms::Places.worksheet_columns }
@@ -3606,47 +3613,47 @@ module Kiba
           register :build_hierarchical, {
             creator: Kiba::Tms::Jobs::Places::BuildHierarchical,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_build_hierarchical.csv"),
+              "place_build_hierarchical.csv"),
             tags: %i[places],
             lookup_on: :norm
           }
           register :uniq_hierarchical, {
             creator: Kiba::Tms::Jobs::Places::UniqHierarchical,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_uniq_hierarchical.csv"),
+              "place_uniq_hierarchical.csv"),
             tags: %i[places]
           }
           register :build_nonhier, {
             creator: Kiba::Tms::Jobs::Places::BuildNonhier,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_build_nonhier.csv"),
+              "place_build_nonhier.csv"),
             tags: %i[places],
             lookup_on: :norm
           }
           register :uniq_nonhier, {
             creator: Kiba::Tms::Jobs::Places::UniqNonhier,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_uniq_nonhier.csv"),
+              "place_uniq_nonhier.csv"),
             tags: %i[places]
           }
           register :init_cleaned_lookup, {
             creator: Kiba::Tms::Jobs::Places::InitCleanedLookup,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_init_cleaned_lookup.csv"),
+              "place_init_cleaned_lookup.csv"),
             tags: %i[places],
             lookup_on: :norm_combined
           }
           register :init_cleaned_terms, {
             creator: Kiba::Tms::Jobs::Places::InitCleanedTerms,
             path: File.join(Kiba::Tms.datadir, "working",
-                            "place_init_cleaned_terms.csv"),
+              "place_init_cleaned_terms.csv"),
             tags: %i[places reports],
             lookup_on: :norm
           }
           register :final_cleanup_worksheet, {
             creator: Kiba::Tms::Jobs::Places::FinalCleanupWorksheet,
             path: File.join(Kiba::Tms.datadir, "to_client",
-                            "place_final_cleanup_worksheet.csv"),
+              "place_final_cleanup_worksheet.csv"),
             tags: %i[places cleanup],
             dest_special_opts: {
               initial_headers: %i[place add_variant normalized_variants]
@@ -3667,16 +3674,16 @@ module Kiba
               end
             Tms::Places.returned_jobs
               .each_with_index do |job, idx|
-                jobname = job.to_s
-                  .delete_prefix("places__")
-                  .to_sym
-                register jobname, {
-                  path: Tms::Places.returned[idx],
-                  desc: "Completed cleanup worksheet",
-                  tags: %i[places cleanup],
-                  supplied: true
-                }
-               end
+              jobname = job.to_s
+                .delete_prefix("places__")
+                .to_sym
+              register jobname, {
+                path: Tms::Places.returned[idx],
+                desc: "Completed cleanup worksheet",
+                tags: %i[places cleanup],
+                supplied: true
+              }
+            end
             register :returned_compile, {
               creator:
               Kiba::Tms::Jobs::Places::ReturnedCompile,
@@ -3713,27 +3720,44 @@ module Kiba
                   supplied: true
                 }
               end
-            # register :final_returned_compile, {
-            #   creator:
-            #   Kiba::Tms::Jobs::Places::FinalReturnedCompile,
-            #   path: File.join(
-            #     Kiba::Tms.datadir,
-            #     "working",
-            #     "places_final_returned_compile.csv"
-            #   ),
-            #   tags: %i[places cleanup],
-            #   lookup_on: :clean_combined
-            # }
-            # register :corrections, {
-            #   creator: Kiba::Tms::Jobs::Places::Corrections,
-            #   path: File.join(
-            #     Kiba::Tms.datadir,
-            #     "working",
-            #     "places_corrections.csv"
-            #   ),
-            #   tags: %i[places cleanup],
-            #   lookup_on: :norm_fingerprint
-            # }
+            register :final_returned_compile, {
+              creator:
+              Kiba::Tms::Jobs::Places::FinalReturnedCompile,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "places_final_returned_compile.csv"
+              ),
+              tags: %i[places cleanup],
+              lookup_on: :clean_combined
+            }
+            register :final_cleanup_corrections, {
+              creator: Kiba::Tms::Jobs::Places::FinalCleanupCorrections,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "places_final_cleanup_corrections.csv"
+              ),
+              tags: %i[places cleanup],
+              lookup_on: :fingerprint
+            }
+            register :final_cleanup_cleaned, {
+              creator: Kiba::Tms::Jobs::Places::FinalCleanupCleaned,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "places_final_cleanup_cleaned.csv"
+              ),
+              tags: %i[places cleanup],
+              lookup_on: :norm
+            }
+            register :final_cleaned_lookup, {
+              creator: Kiba::Tms::Jobs::Places::FinalCleanedLookup,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "place_final_cleaned_lookup.csv"),
+              tags: %i[places],
+              lookup_on: :norm_combined
+            }
           end
         end
 
@@ -3756,14 +3780,14 @@ module Kiba
             tags: %i[reference_master]
           }
           refmaster_ppworksheet_hdrs = %i[placepublished publisher
-                                          merge_fingerprint]
+            merge_fingerprint]
           if Tms::ReferenceMaster.placepublished_done
             refmaster_ppworksheet_hdrs.unshift(:to_review)
           end
           register :placepublished_worksheet, {
             creator: Kiba::Tms::Jobs::ReferenceMaster::PlacepublishedWorksheet,
             path: File.join(Kiba::Tms.datadir, "to_client",
-                            "reference_master_placepublished_cleanup.csv"),
+              "reference_master_placepublished_cleanup.csv"),
             desc: "Supports splitting of multiple place names by adding a "\
               "delimiter, and separating publisher name from place value",
             tags: %i[reference_master places],

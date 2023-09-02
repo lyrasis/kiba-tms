@@ -46,6 +46,9 @@ module Kiba::Tms::Jobs::Places::UniqNonhier
       if config.qualify_non_hierarchical_terms
         transform Kiba::Tms::Transforms::Places::QualifyMultifieldNonhier
       end
+      transform Merge::ConstantValue,
+        target: :termtype,
+        value: "nonhier"
     end
   end
 end

@@ -43,7 +43,9 @@ module Kiba::Tms::Jobs::Places::UniqHierarchical
         row[:orig_ct] = vals.length
         row
       end
-
+      transform Merge::ConstantValue,
+        target: :termtype,
+        value: "hier"
     end
   end
 end
