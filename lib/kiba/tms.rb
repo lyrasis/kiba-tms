@@ -26,6 +26,7 @@ module Kiba
 
     def setup_loader
       puts "LOADING KIBA-TMS"
+      base_config
       @loader = Zeitwerk::Loader.new
       #              @loader.log!
       @loader.push_dir(
@@ -41,7 +42,6 @@ module Kiba
       )
       @loader.enable_reloading
       @loader.setup
-      @loader.eager_load
       @loader
     end
     private_class_method(:setup_loader)
@@ -276,3 +276,5 @@ module Kiba
     end
   end
 end
+
+Kiba::Tms.loader
