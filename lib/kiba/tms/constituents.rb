@@ -139,8 +139,12 @@ module Kiba
           reader: true
         # Transform that adds parsed date columns and warnings about date values
         #   that cannot be parsed
-        setting :date_parser, default: Tms::Transforms::ConDates::DateParser,
-          reader: true
+        setting :date_parser,
+          default: nil,
+          reader: true,
+          constructor: ->(value) do
+            value ||= Tms::Transforms::ConDates::DateParser
+          end
       end
 
       def initial_headers
