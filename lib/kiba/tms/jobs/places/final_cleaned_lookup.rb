@@ -14,6 +14,7 @@ module Kiba::Tms::Jobs::Places::FinalCleanedLookup
           places__final_cleanup_cleaned
           places__orig_normalized
           places__cleaned_notes
+          places__notes_extracted
         ]
       },
       transformer: xforms
@@ -41,16 +42,31 @@ module Kiba::Tms::Jobs::Places::FinalCleanedLookup
         keycolumn: :norm_combined,
         fieldmap: {orig_combined: :orig_combined},
         delim: config.norm_fingerprint_delim
+
       config.worksheet_added_fields.each do |field|
         transform Tms::Transforms::Places::UniquifyWorksheetPlaceNote,
           notefield: field
       end
-      transform Delete::FieldsExcept,
-        fields: [:place, :orig_combined,
-          config.worksheet_added_fields].flatten
+
       transform Explode::RowsFromMultivalField,
         field: :orig_combined,
         delim: config.norm_fingerprint_delim
+      config.derived_note_fields.each do |field|
+        transform Merge::MultiRowLookup,
+          lookup: places__notes_extracted,
+          keycolumn: :orig_combined,
+          fieldmap: {field => field}
+        transform Tms::Transforms::Places::CombineExtractedAndProvidedNotes,
+          notefield: field
+      end
+
+      transform Delete::FieldsExcept,
+        fields: [:place, :orig_combined,
+          config.worksheet_added_fields].flatten
+      transform CombineValues::FromFieldsWithDelimiter,
+        sources: config.worksheet_added_fields,
+        target: :note,
+        delim: ". "
     end
   end
 end

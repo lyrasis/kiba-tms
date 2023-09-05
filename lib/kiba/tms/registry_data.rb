@@ -564,6 +564,13 @@ module Kiba
             tags: %i[con con_geography places],
             lookup_on: :constituentid
           }
+          register :authority_merge, {
+            creator: Kiba::Tms::Jobs::ConGeography::AuthorityMerge,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "con_geography_authority_merge.csv"),
+            tags: %i[con con_geography places],
+            lookup_on: :constituentid
+          }
           register :for_non_authority, {
             creator: Kiba::Tms::Jobs::ConGeography::ForNonAuthority,
             path: File.join(Kiba::Tms.datadir, "working",
@@ -2937,6 +2944,12 @@ module Kiba
             desc: "Removes rows with :geocode values that are not mapping to "\
               "CS place authority-controlled fields"
           }
+          register :authority_merge, {
+            creator: Kiba::Tms::Jobs::ObjGeography::AuthorityMerge,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_geography_authority_merge.csv"),
+            tags: %i[obj_geography]
+          }
         end
 
         Kiba::Tms.registry.namespace("obj_incoming") do
@@ -3540,6 +3553,13 @@ module Kiba
               "places_unique.csv"),
             tags: %i[places]
           }
+          register :notes_extracted, {
+            creator: Kiba::Tms::Jobs::Places::NotesExtracted,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "places_notes_extracted.csv"),
+            tags: %i[places],
+            lookup_on: :orig_combined
+          }
           register :orig_normalized, {
             creator: Kiba::Tms::Jobs::Places::OrigNormalized,
             path: File.join(Kiba::Tms.datadir, "working",
@@ -3756,6 +3776,13 @@ module Kiba
               path: File.join(Kiba::Tms.datadir, "working",
                 "place_final_cleaned_lookup.csv"),
               tags: %i[places],
+              lookup_on: :orig_combined
+            }
+            register :orig_cleaned, {
+              creator: Kiba::Tms::Jobs::Places::FinalCleanedLookup,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "place_final_cleaned_lookup.csv"),
+              tags: %i[places],
               lookup_on: :norm_combined
             }
           end
@@ -3777,7 +3804,15 @@ module Kiba
             desc: "Extracts unique place values from placepublished, in "\
               "format for combination with other places for cleanup and "\
               "translation to authority terms",
-            tags: %i[reference_master]
+            tags: %i[reference_master places]
+          }
+          register :place_authority_merge, {
+            creator: Kiba::Tms::Jobs::ReferenceMaster::PlaceAuthorityMerge,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "reference_master_place_authority_merge.csv"),
+            desc: "Merges in cleaned-up authority terms.",
+            tags: %i[reference_master places],
+            lookup_on: :placepublished
           }
           refmaster_ppworksheet_hdrs = %i[placepublished publisher
             merge_fingerprint]

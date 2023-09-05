@@ -1,15 +1,36 @@
 graph TD;
-    obj_geography__for_authority["`**obj_geography__for_authority**
-    Extract content fields
+    prep__obj_geography["`**prep__obj_geography**
+    Apply cleaning/prep
+    Keep only rows w/content fields
     Add :orig_combined`"]
+
+    prep__con_geography["`**prep__con_geography**
+    Extract content fields
+    Keep only rows w/content fields
+    Add :orig_combined`"]
+
+    obj_geography__for_authority["`**obj_geography__for_authority**
+    Keep only rows for controlled types
+    Delete non-content fields`"]
+
+    obj_geography__authority_merge["`**obj_geography__authority_merge**
+    Merge in cleaned place values and notes
+    Keep only rows with place values`"]
 
     con_geography__for_authority["`**con_geography__for_authority**
     Extract content fields
     Add :orig_combined`"]
 
+    con_geography__authority_merge["`**con_geography__authority_merge**
+    Merge in cleaned place values and notes
+    Keep only rows with place values`"]
+
     reference_master__places["`**reference_master__places**
     Extract :placepublished
     Add :orig_combined`"]
+
+    reference_master__place_authority_merge["`**reference_master__place_authority_merge**
+    Merge in cleaned place values and notes`"]
 
     places__compile["`**places__compile**
     EnsureConsistentFields`"]
@@ -18,8 +39,11 @@ graph TD;
     Deduplicate on :orig_combined
     Add :occurrences from count of :orig_combined in src`"]
 
+    places__notes_extracted["`**places__notes_extracted**
+    Extract derived_note_fields to separate fields`"]
+
     places__orig_normalized["`**places__orig_normalized**
-    Extract derived_note_fields to separate fields
+    Removed note-extracted patterns from place field content
     Adds :normalized (y/blank)
     Finalizes data if Tms.final_data_cleaner
     Adds :norm_combined`"]
@@ -150,14 +174,18 @@ graph TD;
     Merged in initial cleanup worksheet notes
     Keeps only :place, :orig_combined, notes
     Keep only one copy of note per row for :orig_combined
-    Explodes :orig_combined`"]
+    Explodes :orig_combined
+    Merges in original auto-extracted notes`"]
 
+    prep__obj_geography-- if used --> obj_geography__for_authority;
+    prep__con_geography-- if used --> con_geography__for_authority;
     obj_geography__for_authority-- if used & controlled_types -->places__compile;
     con_geography__for_authority-- if used & controlled_types -->places__compile;
     reference_master__places-- if used -->places__compile;
     places__compile-->places__unique;
     places__compile-- lkup on :orig_combined -->places__unique;
-    places__unique-->places__orig_normalized;
+    places__unique-->places__notes_extracted;
+    places__notes_extracted-->places__orig_normalized;
     places__orig_normalized-->places__norm_unique;
     places__orig_normalized-- lkup on :norm_combined -->places__norm_unique;
     places__norm_unique-->places__norm_unique_cleaned;
@@ -229,3 +257,29 @@ graph TD;
     "`if final cleanup done
     lkup on :norm_combined`" .->
     places__final_cleaned_lookup;
+
+    places__notes_extracted-.
+    "`if final cleanup done
+    lkup on :orig_combined`" .->
+    places__final_cleaned_lookup;
+
+    prep__obj_geography-->obj_geography__authority_merge;
+
+    places__final_cleaned_lookup-.
+    "`if final cleanup done
+    lkup on :orig_combined`" .->
+    obj_geography__authority_merge;
+
+    prep__con_geography-->con_geography__authority_merge;
+
+    places__final_cleaned_lookup-.
+    "`if final cleanup done
+    lkup on :orig_combined`" .->
+    con_geography__authority_merge;
+
+    reference_master__places-->reference_master__place_authority_merge;
+
+    places__final_cleaned_lookup-.
+    "`if final cleanup done
+    lkup on :orig_combined`" .->
+    reference_master__place_authority_merge;
