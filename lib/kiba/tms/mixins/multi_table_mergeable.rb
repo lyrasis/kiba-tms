@@ -3,9 +3,29 @@
 module Kiba
   module Tms
     module Mixins
-      # Mixin module
+      # Mixin module for consistently handling multi-table mergeable
+      #   data tables.
       #
-      # ## Implementation
+      # One example of a MultiTableMergeable table typically used in
+      #   TMS instances is TextEntries. This table stores long text
+      #   values that may need to be merged into data in Objects,
+      #   Constituents, ReferenceMaster, or many other tables.
+      #
+      # Target tables are the other tables that data from a
+      #   MultiTableMergeable table needs to be merged into.
+      #
+      # This module provides methods for setting up config settings in
+      #   the module, generating auto-configuration settings, running
+      #   config checks, and registering jobs to (a) break the
+      #   original table up into tables for each target; and (b) merge
+      #   human-readable ids from the main target tables into the
+      #   mergable "for" tables. (Example: merge objectnumber values into alt_nums__
+      #
+      # ## Implementation details
+      #
+      # Modules mixing this in must:
+      #
+      # - `extend Tms::Mixins::MultiTableMergeable`
       #
       # Assumes the table to be split up into individual target tables is
       #   produced by :prep__job_key
@@ -101,6 +121,7 @@ module Kiba
         #      sourcejob: :objects__number_lookup,
         #      numberfield: :objectnumber
         #  }, reader: true
+        #
         # @return [Hash] of reportable-for-tables, i.e. target tables whose
         #   configs define the :record_num_merge_config setting. Hash key
         #   is the target table config Constant, and value is the
@@ -175,7 +196,9 @@ module Kiba
               targetobj = Tms::Table::Obj.new(target)
               targetxform = mod.target_xform(xforms, targetobj)
               params = [mod, ns_name, targetobj, field, targetxform]
-              register targetobj.filekey, mod.send(:target_job_hash, *params)
+              register targetobj.filekey, mod.send(
+                :target_job_hash, *params
+              )
             end
           end
         end
@@ -238,14 +261,14 @@ module Kiba
                         module #{for_table_module_name(jobkey)}
                           extend Dry::Configurable
                           module_function
-            
+
                           # Indicates what job output to use as the base for non-TMS-table-sourced
             #   modules
             setting :source_job_key, default: :#{jobkey}, reader: true
                           setting :delete_fields, default: [], reader: true
                           setting :empty_fields, default: {}, reader: true
                           extend Tms::Mixins::Tableable
-            
+
                           def used?
                             true
                           end

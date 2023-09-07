@@ -3,6 +3,12 @@
 module Kiba
   module Tms
     module Mixins
+      # Type lookup tables are generally simple data lookups, like
+      #   TextTypes, LoanObjStatuses, DimensionTypes, etc.
+      #
+      # Typically, we need to map the TMS type values to values or
+      #   terms appropriate for CollectionSpace.
+      #
       # ## Implementation details
       #
       # Modules mixing this in must:
