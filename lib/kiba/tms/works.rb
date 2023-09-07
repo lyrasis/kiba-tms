@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
-module Kiba
-  module Tms
-    module Works
-      extend Dry::Configurable
+module Kiba::Tms::Works
+  extend Dry::Configurable
 
-      module_function
+  module_function
 
-      setting :multi_source_normalizer,
-        default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
-    end
-  end
+  extend Tms::Mixins::CsTargetable
 end

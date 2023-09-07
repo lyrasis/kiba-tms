@@ -1,38 +1,30 @@
 # frozen_string_literal: true
 
-module Kiba
-  module Tms
-    module Jobs
-      module ValuationControl
-        module FromAccessionLot
-          module_function
+module Kiba::Tms::Jobs::ValuationControl::FromAccessionLot
+  module_function
 
-          def job
-            return unless Tms::AccessionLot.used?
-            return unless Tms::AccessionLot.has_valuations
+  def job
+    return unless Tms::AccessionLot.used?
+    return unless Tms::AccessionLot.has_valuations
 
-            approaches = Tms::ObjAccession.processing_approaches
-            return unless approaches.any?(:linkedlot)
+    approaches = Tms::ObjAccession.processing_approaches
+    return unless approaches.any?(:linkedlot)
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
-              files: {
-                source: :accession_lot__valuation_prep,
-                destination: :valuation_control__from_accession_lot
-              },
-              transformer: xforms,
-              helper: config.multi_source_normalizer
-            )
-          end
+    Kiba::Extend::Jobs::Job.new(
+      files: {
+        source: :accession_lot__valuation_prep,
+        destination: :valuation_control__from_accession_lot
+      },
+      transformer: xforms
+    )
+  end
 
-          def xforms
-            Kiba.job_segment do
-              transform Delete::Fields, fields: :acquisitionlotid
+  def xforms
+    Kiba.job_segment do
+      transform Delete::Fields, fields: :acquisitionlotid
 
-              warn("Need to implement the rest of ValuationControl::FromAccessionLot")
-            end
-          end
-        end
-      end
+      warn("Need to implement the rest of "\
+           "ValuationControl::FromAccessionLot")
     end
   end
 end
