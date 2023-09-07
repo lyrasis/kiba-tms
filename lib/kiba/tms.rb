@@ -253,9 +253,6 @@ module Kiba
     end
 
     # methods to delete after development is done
-    def needconfig
-      configs.reject { |c| c.respond_to?(:used?) }
-    end
 
     # @param jobkey [Symbol]
     # @param column [Symbol] keycolumn on which to lookup
