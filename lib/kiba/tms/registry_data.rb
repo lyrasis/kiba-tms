@@ -190,35 +190,8 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
               "alt_nums_occ_merge.csv"),
             desc: "Merge in object number or other id from target tables",
-            tags: %i[altnums]
-          }
-          register :description_single_occs, {
-            creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_description_single_occ.csv"),
-            desc: "AltNums with a description only used once",
-            tags: %i[altnums reports]
-          }
-          register :description_occs, {
-            creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_description_occs.csv"),
-            desc: "AltNums with count of description occurrences - source "\
-              "data for other reports",
-            tags: %i[altnums]
-          }
-          register :no_description, {
-            creator: Kiba::Tms::Jobs::AltNums::NoDescription,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_no_description.csv"),
-            desc: "AltNums without a description value",
-            tags: %i[altnums reports]
-          }
-          register :types, {
-            creator: Kiba::Tms::Jobs::AltNums::Types,
-            path: File.join(Kiba::Tms.datadir, "reports", "alt_num_types.csv"),
-            desc: "AltNumber types",
-            tags: %i[altnums reports]
+            tags: %i[altnums],
+            lookup_on: :lookupkey
           }
           Tms::AltNums.target_tables.each do |table|
             tableobj = Tms::Table::Obj.new(table)
@@ -253,6 +226,36 @@ module Kiba
               }
             }
           end
+
+          # reports
+          register :description_single_occs, {
+            creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "alt_nums_description_single_occ.csv"),
+            desc: "AltNums with a description only used once",
+            tags: %i[altnums reports]
+          }
+          register :description_occs, {
+            creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "alt_nums_description_occs.csv"),
+            desc: "AltNums with count of description occurrences - source "\
+              "data for other reports",
+            tags: %i[altnums]
+          }
+          register :no_description, {
+            creator: Kiba::Tms::Jobs::AltNums::NoDescription,
+            path: File.join(Kiba::Tms.datadir, "reports",
+              "alt_nums_no_description.csv"),
+            desc: "AltNums without a description value",
+            tags: %i[altnums reports]
+          }
+          register :types, {
+            creator: Kiba::Tms::Jobs::AltNums::Types,
+            path: File.join(Kiba::Tms.datadir, "reports", "alt_num_types.csv"),
+            desc: "AltNumber types",
+            tags: %i[altnums reports]
+          }
         end
 
         Kiba::Tms.registry.namespace("associations") do
