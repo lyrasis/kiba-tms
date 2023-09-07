@@ -21,6 +21,9 @@ module Kiba
             Kiba.job_segment do
               transform Append::NilFields,
                 fields: %i[correct_type treatment note]
+              transform Fingerprint::Add,
+                target: :fingerprint,
+                fields: %i[number_type correct_type treatment note]
             end
           end
         end

@@ -117,7 +117,7 @@ Only make changes to the following columns:
 * `treatment`
 * `note`
 
-If you change values in `number_type`, we will not be able to merge your changes back into the migration.
+If you change values in `fingerprint`, we will not be able to merge your changes back into the migration.
 ====
 
 === `correct_type`

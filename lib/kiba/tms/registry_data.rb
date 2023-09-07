@@ -234,13 +234,14 @@ module Kiba
             }
           end
 
+          # cleanup
           if Tms::AltNums.target_table_type_cleanup_needed.any?("Objects")
             register :types_for_obj_worksheet, {
               creator: Kiba::Tms::Jobs::AltNums::TypesForObjWorksheet,
               path: File.join(
                 Kiba::Tms.datadir,
                 "to_client",
-                "alt_num_types_for_objects.csv"
+                "alt_num_types_for_objects_cleanup.csv"
               ),
               tags: %i[altnums objects altnumtypescleanup],
               dest_special_opts: {
