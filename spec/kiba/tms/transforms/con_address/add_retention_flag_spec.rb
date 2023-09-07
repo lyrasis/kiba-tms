@@ -15,7 +15,9 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::AddRetentionFlag do
     ]
   end
 
-  context "without omit_inactive" do
+  context "when migrate_inactive true" do
+    before(:all) { Tms::ConAddress.config.migrate_inactive = true }
+    after(:all) { Tms::ConAddress.reset_config }
     let(:expected) do
       [
         {streetline1: "1", active: "1", keeping: "y"},
@@ -32,9 +34,9 @@ RSpec.describe Kiba::Tms::Transforms::ConAddress::AddRetentionFlag do
     end
   end
 
-  context "with omit_inactive" do
-    before(:all) { Tms::Constituents.config.omit_inactive_address = true }
-    after(:all) { Tms::Constituents.config.omit_inactive_address = false }
+  context "when migrate_inactive false" do
+    before(:all) { Tms::ConAddress.config.migrate_inactive = false }
+    after(:all) { Tms::ConAddress.reset_config }
     let(:expected) do
       [
         {streetline1: "1", active: "1", keeping: "y"},

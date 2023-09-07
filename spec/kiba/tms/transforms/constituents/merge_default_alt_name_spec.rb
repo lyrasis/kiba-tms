@@ -3,23 +3,15 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Constituents::MergeDefaultAltName do
-  let(:accumulator) { [] }
-  let(:test_job) {
-    Helpers::TestJob.new(input: input, accumulator: accumulator,
-      transforms: transforms)
-  }
-  let(:result) { test_job.accumulator }
-  let(:transforms) do
-    alt_names = {
+  subject(:xform) { described_class.new(alt_names: alt_names) }
+  let(:result) { input.map { |row| xform.process(row) } }
+  let(:alt_names) do
+    {
       "1" => [{displayname: "a b", alphasort: "b a"}],
       "3" => []
     }
-
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::Constituents::MergeDefaultAltName,
-        alt_names: alt_names
-    end
   end
+
   let(:input) do
     [
       {displayname: "a", alphasort: "b", defaultnameid: "1"},
@@ -28,6 +20,11 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::MergeDefaultAltName do
   end
 
   context "with preferred name field = displayname" do
+    before do
+      Tms::Constituents.config.preferred_name_field = :displayname
+    end
+    after { Tms::Constituents.reset_config }
+
     let(:expected) do
       [
         "a b",
@@ -40,8 +37,11 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::MergeDefaultAltName do
     end
   end
 
-  context "with preferred name field = alpHasort" do
-    before { Kiba::Tms::Constituents.config.preferred_name_field = :alphasort }
+  context "with preferred name field = alphasort" do
+    before do
+      Tms::Constituents.config.preferred_name_field = :alphasort
+    end
+    after { Tms::Constituents.reset_config }
     let(:expected) do
       [
         "b a",

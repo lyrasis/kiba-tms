@@ -53,30 +53,29 @@ module Kiba
       #   such during its prep. It does not control anything about processing
       #   the ConDates table. These settings are used by the
       #   Constituents::AppendDatesToNames transform.
-      setting :date_append, reader: true do
-        # constituenttype values to add dates to. Should be one of:
-        #
-        # - :none - no dates will be added to constituent preferred names
-        # - :all - will add available dates to all constituent preferred names
-        # - :duplicate - will add available dates to any Person/Org constituent
-        #   preferred names that are duplicates when normalized
-        # - :person - will add available dates to all Person constituent
-        #   preferred names
-        # - :org  - will add available dates to all Organization constituent
-        #   preferred names
-        setting :to_type, default: :duplicate, reader: true
-        # String that will separate the two dates. Will be appended to start
-        #   date if there is no end date. Will be prepended to end date if there
-        #   is no start date.
-        setting :date_sep, default: " - ", reader: true
-        # String that will be inserted between name and prepared date value. Any
-        #   punctuation that should open the wrapping of the date value should
-        #   be included here.
-        setting :name_date_sep, default: ", (", reader: true
-        # String that will be appended to the end of result, closing the date
-        #   value
-        setting :date_suffix, default: ")", reader: true
-      end
+
+      # constituenttype values to add dates to. Should be one of:
+      #
+      # - :none - no dates will be added to constituent preferred names
+      # - :all - will add available dates to all constituent preferred names
+      # - :duplicate - will add available dates to any Person/Org constituent
+      #   preferred names that are duplicates when normalized
+      # - :person - will add available dates to all Person constituent
+      #   preferred names
+      # - :org  - will add available dates to all Organization constituent
+      #   preferred names
+      setting :date_append_to_type, default: :duplicate, reader: true
+      # String that will separate the two dates. Will be appended to start
+      #   date if there is no end date. Will be prepended to end date if there
+      #   is no start date.
+      setting :date_append_date_sep, default: " - ", reader: true
+      # String that will be inserted between name and prepared date value. Any
+      #   punctuation that should open the wrapping of the date value should
+      #   be included here.
+      setting :date_append_name_date_sep, default: ", (", reader: true
+      # String that will be appended to the end of result, closing the date
+      #   value
+      setting :date_append_date_suffix, default: ")", reader: true
 
       # ## :constituents__clean_dates options
       #

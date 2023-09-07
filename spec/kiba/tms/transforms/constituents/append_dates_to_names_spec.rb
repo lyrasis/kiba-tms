@@ -3,44 +3,45 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
-  let(:accumulator) { [] }
-  let(:test_job) {
-    Helpers::TestJob.new(input: input, accumulator: accumulator,
-      transforms: transforms)
-  }
-  let(:result) { test_job.accumulator }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
-    end
-  end
+  subject(:xform) { described_class.new }
+  let(:result) { input.map { |row| xform.process(row) } }
   let(:input) do
     [
-      {constituenttype: "Individual", displayname: "Ann B.",
-       alphasort: "B., Ann", begindateiso: "1901", enddateiso: "1929"},
-      {constituenttype: "Individual", displayname: "Ann C.",
-       alphasort: "C., Ann", begindateiso: "1902", enddateiso: ""},
-      {constituenttype: "Individual", displayname: "Ann D.",
-       alphasort: "D., Ann", begindateiso: "", enddateiso: "1930"},
-      {constituenttype: "Individual", displayname: "Ann E.",
-       alphasort: "E., Ann", begindateiso: "", enddateiso: ""},
-      {constituenttype: "Institution", displayname: "Foo", alphasort: "Foo",
-       begindateiso: "1901", enddateiso: "1929"},
-      {constituenttype: "Institution", displayname: "Bar", alphasort: "Bar",
-       begindateiso: "1902", enddateiso: ""},
-      {constituenttype: "Institution", displayname: "Baz", alphasort: "Baz",
-       begindateiso: "", enddateiso: "1930"},
-      {constituenttype: "Institution", displayname: "Bam", alphasort: "Bam",
-       begindateiso: "", enddateiso: ""},
-      {constituenttype: "Individual", displayname: "", alphasort: "B., Ann",
-       begindateiso: "1901", enddateiso: "1929"},
-      {constituenttype: "Individual", displayname: nil, alphasort: "B., Ann",
-       begindateiso: "1901", enddateiso: "1929"}
+      {contype: "Person", displayname: "Ann B.",
+       alphasort: "Ann B.", birth_foundation_date: "1901",
+       death_dissolution_date: "1929"},
+      {contype: "Person", displayname: "Ann C.",
+       alphasort: "Ann C.", birth_foundation_date: "1902",
+       death_dissolution_date: ""},
+      {contype: "Person", displayname: "Ann D.",
+       alphasort: "Ann D.", birth_foundation_date: "",
+       death_dissolution_date: "1930"},
+      {contype: "Person", displayname: "Ann E.",
+       alphasort: "Ann E.", birth_foundation_date: "",
+       death_dissolution_date: ""},
+      {contype: "Organization", displayname: "Foo",
+       alphasort: "Foo", birth_foundation_date: "1901",
+       death_dissolution_date: "1929"},
+      {contype: "Organization", displayname: "Bar",
+       alphasort: "Bar", birth_foundation_date: "1902",
+       death_dissolution_date: ""},
+      {contype: "Organization", displayname: "Baz",
+       alphasort: "Baz", birth_foundation_date: "",
+       death_dissolution_date: "1930"},
+      {contype: "Organization", displayname: "Bam",
+       alphasort: "Bam", birth_foundation_date: "",
+       death_dissolution_date: ""},
+      {contype: "Person", displayname: "Ann",
+       alphasort: "", birth_foundation_date: "1901",
+       death_dissolution_date: "1929"},
+      {contype: "Person", displayname: "Ann",
+       alphasort: nil, birth_foundation_date: "1901",
+       death_dissolution_date: "1929"}
     ]
   end
 
   context "when append to types = none" do
-    before { Kiba::Tms::Constituents.config.date_append.to_type = :none }
+    before { Kiba::Tms::Constituents.config.date_append_to_type = :none }
     after { Tms::Constituents.reset_config }
 
     it "passes rows through unaltered" do
@@ -49,7 +50,7 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
   end
 
   context "when append to types = all" do
-    before { Kiba::Tms::Constituents.config.date_append.to_type = :all }
+    before { Kiba::Tms::Constituents.config.date_append_to_type = :all }
     after { Tms::Constituents.reset_config }
 
     let(:expected) do
@@ -68,12 +69,13 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
     end
 
     it "transforms as expected" do
-      expect(result.map { |row| row[:displayname] }).to eq(expected)
+      name = Tms::Constituents.preferred_name_field
+      expect(result.map { |row| row[name] }).to eq(expected)
     end
   end
 
   context "when append to types = Individual" do
-    before { Kiba::Tms::Constituents.config.date_append.to_type = :person }
+    before { Kiba::Tms::Constituents.config.date_append_to_type = :person }
     after { Tms::Constituents.reset_config }
 
     let(:expected) do
@@ -92,7 +94,8 @@ RSpec.describe Kiba::Tms::Transforms::Constituents::AppendDatesToNames do
     end
 
     it "transforms as expected" do
-      expect(result.map { |row| row[:displayname] }).to eq(expected)
+      name = Tms::Constituents.preferred_name_field
+      expect(result.map { |row| row[name] }).to eq(expected)
     end
   end
 end

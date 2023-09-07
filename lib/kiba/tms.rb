@@ -275,4 +275,4 @@ module Kiba
   end
 end
 
-Kiba::Tms.loader
+Kiba::Tms.loader.eager_load

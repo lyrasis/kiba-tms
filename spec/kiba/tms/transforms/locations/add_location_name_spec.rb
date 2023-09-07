@@ -3,17 +3,8 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationName do
-  let(:accumulator) { [] }
-  let(:test_job) {
-    Helpers::TestJob.new(input: input, accumulator: accumulator,
-      transforms: transforms)
-  }
-  let(:result) { test_job.accumulator }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::Locations::AddLocationName
-    end
-  end
+  subject(:xform) { described_class.new }
+  let(:result) { input.map { |row| xform.process(row) } }
   let(:locnames) { result.map { |row| row[:location_name] } }
   let(:input) do
     [
@@ -29,10 +20,11 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddLocationName do
 
   context "when append to types = none" do
     it "adds location_name field as expected" do
+      delim = Tms::Locations.hierarchy_delim
       expected = [
-        "a >> b >> c >> d e >> f",
-        "a >> b >> c >> f",
-        "a >> c >> e",
+        ["a", "b", "c", "d e", "f"].join(delim),
+        ["a", "b", "c", "f"].join(delim),
+        ["a", "c", "e"].join(delim),
         nil
       ]
       expect(locnames).to eq(expected)

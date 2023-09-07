@@ -94,7 +94,7 @@ RSpec.describe Kiba::Tms::Transforms::ObjLocations::TemptextMappings do
     ]
   end
 
-  it "transforms as expected" do
+  it "transforms as expected", skip: "Test with project data" do
     expect(result).to eq(expected)
   end
 

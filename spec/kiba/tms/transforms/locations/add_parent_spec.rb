@@ -3,25 +3,16 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
-  let(:accumulator) { [] }
-  let(:test_job) {
-    Helpers::TestJob.new(input: input, accumulator: accumulator,
-      transforms: transforms)
-  }
-  let(:result) { test_job.accumulator.map { |row| row[:parent_location] } }
-  let(:transforms) do
-    Kiba.job_segment do
-      transform Kiba::Tms::Transforms::Locations::AddParent
-    end
-  end
+  subject(:xform) { described_class.new }
+  let(:result) { input.map { |row| xform.process(row) } }
   let(:input) do
     [
       {location_name: ""},
       {location_name: nil},
       {other_data: "blah"},
       {location_name: "a"},
-      {location_name: "a >> b"},
-      {location_name: "a >> b >> c"}
+      {location_name: "a > b"},
+      {location_name: "a > b > c"}
     ]
   end
 
@@ -32,8 +23,8 @@ RSpec.describe Kiba::Tms::Transforms::Locations::AddParent do
       nil,
       nil,
       "a",
-      "a >> b"
+      "a > b"
     ]
-    expect(result).to eq(expected)
+    expect(result.map { |row| row[:parent_location] }).to eq(expected)
   end
 end

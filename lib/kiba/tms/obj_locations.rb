@@ -135,7 +135,7 @@ module Kiba
         reader: true,
         constructor: proc {
           lkup = hier_lvl_lookup
-          fulllocid_fields.map { |field| lkup[field] }
+          fulllocid_fields.map { |field| lkup.fetch(field, field) }
         }
       setting :searchcontainer_lvl,
         default: :loc8,

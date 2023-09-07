@@ -23,6 +23,10 @@ module Tms
     enable_test_interface
   end
 
+  module ConAddress
+    enable_test_interface
+  end
+
   module ObjGeography
     enable_test_interface
   end
@@ -36,10 +40,11 @@ module Tms
   end
 end
 
-# pulls in kiba-extend's helpers.rb, which lets you use existing methods for setting up and running
-#   transform tests
+# pulls in kiba-extend's helpers.rb, which lets you use existing
+#   methods for setting up and running transform tests
 require "kiba/extend"
-kiba_spec_dir = "#{Gem.loaded_specs["kiba-extend"].full_gem_path}/spec"
+kiba_spec_dir =
+  "#{Gem.loaded_specs["kiba-extend"].full_gem_path}/spec"
 Dir.glob("#{kiba_spec_dir}/*").sort.select { |path|
   path.match?(/helpers\.rb$/)
 }.each do |rbfile|
