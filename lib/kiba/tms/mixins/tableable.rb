@@ -136,10 +136,10 @@ module Kiba
 
         def used?
           if respond_to?(:populated)
-            return populated ? true : false
+            table.included && populated
+          else
+            table.included
           end
-
-          table.included
         end
 
         def self.check_source_job_key(mod)
