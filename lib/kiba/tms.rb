@@ -267,14 +267,7 @@ module Kiba
 
     # @param jobkey [Symbol]
     def job_output?(jobkey)
-      reg = Tms.registry.resolve(jobkey)
-      return false unless reg
-      return true if File.exist?(reg.path)
-
-      res = Kiba::Extend::Command::Run.job(jobkey)
-      return false unless res
-
-      !(res.outrows == 0)
+      Kiba::Extend::Job.output?(jobkey)
     end
   end
 end
