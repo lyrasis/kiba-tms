@@ -190,7 +190,7 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
               "alt_nums_occ_merge.csv"),
             desc: "Merge in object number or other id from target tables",
-            tags: %i[altnums],
+            tags: %i[alt_nums],
             lookup_on: :lookupkey
           }
           Tms::AltNums.target_tables.each do |table|
@@ -203,7 +203,7 @@ module Kiba
                 "working",
                 "alt_num_types_for_#{tableobj.filekey}.csv"
               ),
-              tags: [:altnums, :altnumtypes, tableobj.filekey.to_sym]
+              tags: [:alt_nums, :alt_nums_types, tableobj.filekey.to_sym]
             }
           end
 
@@ -216,7 +216,7 @@ module Kiba
                 "to_client",
                 "alt_num_types_for_objects_cleanup.csv"
               ),
-              tags: %i[altnums objects altnumtypescleanup],
+              tags: %i[alt_nums objects alt_nums_types_cleanup],
               dest_special_opts: {
                 initial_headers:
                 %i[number_type correct_type treatment note
@@ -233,7 +233,7 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "reports",
               "alt_nums_description_single_occ.csv"),
             desc: "AltNums with a description only used once",
-            tags: %i[altnums reports]
+            tags: %i[alt_nums reports]
           }
           register :description_occs, {
             creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
@@ -241,20 +241,20 @@ module Kiba
               "alt_nums_description_occs.csv"),
             desc: "AltNums with count of description occurrences - source "\
               "data for other reports",
-            tags: %i[altnums]
+            tags: %i[alt_nums reports]
           }
           register :no_description, {
             creator: Kiba::Tms::Jobs::AltNums::NoDescription,
             path: File.join(Kiba::Tms.datadir, "reports",
               "alt_nums_no_description.csv"),
             desc: "AltNums without a description value",
-            tags: %i[altnums reports]
+            tags: %i[alt_nums reports]
           }
           register :types, {
             creator: Kiba::Tms::Jobs::AltNums::Types,
             path: File.join(Kiba::Tms.datadir, "reports", "alt_num_types.csv"),
             desc: "AltNumber types",
-            tags: %i[altnums reports]
+            tags: %i[alt_nums reports]
           }
         end
 
@@ -295,7 +295,7 @@ module Kiba
             desc: "Limits to rows which, based on attribute type value, need"\
               "to be mapped to conservation treatment record, as well as "\
               "mentioned in condition check record",
-            tags: %i[conditions conservationtreatments],
+            tags: %i[conditions conservation_treatments],
             lookup_on: :conditionid
           }
         end
@@ -307,7 +307,7 @@ module Kiba
               "conservation_from_condlineitems.csv"),
             desc: "Conservation treatment records derived from CondLineItems "\
               "rows",
-            tags: %i[conservationtreatments]
+            tags: %i[conservation_treatments]
           }
           register :all, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::All,
@@ -315,7 +315,7 @@ module Kiba
               "conservation_all.csv"),
             desc: "Conservation treatment records from all sources. Finalizes "\
               ":conservationnumber",
-            tags: %i[conservationtreatments]
+            tags: %i[conservation_treatments]
           }
           register :nhrs_cond_line_items, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsCondLineItems,
@@ -324,21 +324,21 @@ module Kiba
             desc: "Nonhierarchical relationships between conservation records "\
               "derived from CondLineItems and a) object or other record type; "\
               "and b) related Condition Check record",
-            tags: %i[conservationtreatments conditions nhrs objects]
+            tags: %i[conservation_treatments conditions nhrs objects]
           }
           register :nhrs_all, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::NhrsAll,
             path: File.join(Kiba::Tms.datadir, "working",
               "nhrs_conservation_all.csv"),
             desc: "Compiled and deduplicated nhrs for conservation records",
-            tags: %i[conservationtreatments conditions nhrs objects]
+            tags: %i[conservation_treatments conditions nhrs objects]
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::ConservationTreatments::Cspace,
             path: File.join(Kiba::Tms.datadir, "working",
               "conservation_cspace.csv"),
             desc: ":conservation_treatment__all with non-CS fields removed ",
-            tags: %i[conservationtreatments]
+            tags: %i[conservation_treatments]
           }
         end
 
@@ -490,7 +490,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConDates::Compiled,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_dates_compiled.csv"),
-            tags: %i[con condates],
+            tags: %i[con con_dates],
             desc: "Combines data from constituents__clean_dates and, if used, "\
               "prep__con_dates; Reduces to unique value per date type, as "\
               "much as possible",
@@ -504,7 +504,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConDates::PrepCompiled,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_dates_compiled_prep.csv"),
-            tags: %i[con condates],
+            tags: %i[con con_dates],
             desc: "Adds warnings to be pulled into review; creates "\
               ":datenotes; adds CS mappable fields",
             dest_special_opts: {
@@ -517,7 +517,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConDates::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_dates_to_merge.csv"),
-            tags: %i[con condates],
+            tags: %i[con con_dates],
             desc: "Keeps only fields from :prep_compiled to be merged back "\
             "into Constituents.",
             lookup_on: :constituentid
@@ -526,7 +526,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConDates::ForReview,
             path: File.join(Kiba::Tms.datadir, "reports",
               "con_dates_for_review.csv"),
-            tags: %i[con condates reports cleanup],
+            tags: %i[con con_dates reports cleanup],
             dest_special_opts: {
               initial_headers:
               %i[constituentname constituentid datasource warn datedescription
@@ -538,7 +538,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConDates::Postmig,
             path: File.join(Kiba::Tms.datadir, "reports",
               "con_dates_for_post_mig_handling.csv"),
-            tags: %i[con condates reports postmigcleanup]
+            tags: %i[con con_dates reports postmigcleanup]
           }
         end
 
@@ -547,7 +547,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConEMail::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
               "con_email_dropping.csv"),
-            tags: %i[con conemail prep postmigcleanup],
+            tags: %i[con con_email prep postmigcleanup],
             desc: "Rows from TMS ConEMail table that are omitted from the "\
               "migration because the associated constituent is not migrating"
           }
@@ -555,7 +555,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConEMail::ToMerge,
             path: File.join(Kiba::Tms.datadir, "working",
               "con_email_to_merge.csv"),
-            tags: %i[con conemail],
+            tags: %i[con con_email],
             lookup_on: :constituentid
           }
         end
@@ -589,7 +589,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ConPhones::Dropping,
             path: File.join(Kiba::Tms.datadir, "reports",
               "con_phones_dropping.csv"),
-            tags: %i[con conphones prep not_migrating reports]
+            tags: %i[con con_phones prep not_migrating reports]
           }
           register :to_merge, {
             creator: Kiba::Tms::Jobs::ConPhones::ToMerge,
@@ -598,7 +598,7 @@ module Kiba
               "working",
               "con_phones_to_merge.csv"
             ),
-            tags: %i[con conphones],
+            tags: %i[con con_phones],
             lookup_on: :constituentid
           }
           register :for_orgs, {
@@ -608,7 +608,7 @@ module Kiba
               "working",
               "con_phones_for_orgs.csv"
             ),
-            tags: %i[con conphones],
+            tags: %i[con con_phones],
             lookup_on: :constituentid
           }
         end
@@ -992,7 +992,7 @@ module Kiba
             ),
             desc: "Relationships between Exhibitions and Objects that "\
               "have TextEntries merged in",
-            tags: %i[exhibitions objects textentries reports]
+            tags: %i[exhibitions objects text_entries reports]
           }
         end
 
@@ -1578,7 +1578,7 @@ module Kiba
             ),
             desc: "Adds normalized form of file path for lookup of actual "\
               "media file paths in S3",
-            tags: %i[mediafiles media],
+            tags: %i[media_files media],
             lookup_on: :norm
           }
           register :migratable, {
@@ -1590,7 +1590,7 @@ module Kiba
             ),
             desc: "Removes rows for media files included in "\
               ":media_files__unmigratable_report",
-            tags: %i[mediafiles media]
+            tags: %i[media_files media]
           }
           register :migratable_files, {
             creator: Kiba::Tms::Jobs::MediaFiles::MigratableFiles,
@@ -1602,7 +1602,7 @@ module Kiba
             desc: "List of unique media files (deduplicated on :fullpath "\
               "value), with :filesize, :memorysize. Give to client so they "\
               "can location and transfer media files to S3 for ingest.",
-            tags: %i[mediafiles media reports],
+            tags: %i[media_files media reports],
             dest_special_opts: {
               initial_headers: %i[fullpath filename filesize memorysize]
             }
@@ -1615,7 +1615,7 @@ module Kiba
               "media_files_shaped.csv"
             ),
             desc: "Media files data reshaped for CS; Creates :mediafileuri",
-            tags: %i[mediafiles media]
+            tags: %i[media_files media]
           }
           register :migrating, {
             creator: Kiba::Tms::Jobs::MediaFiles::Migrating,
@@ -1626,7 +1626,7 @@ module Kiba
             ),
             desc: "Removes rows without files, if not migrating fileless "\
               "media; Adds :identificationnumber",
-            tags: %i[mediafiles media],
+            tags: %i[media_files media],
             lookup_on: :mediafileuri
           }
           register :not_migrating, {
@@ -1638,7 +1638,7 @@ module Kiba
             ),
             desc: "Lists TMS media data rows that cannot be matched to a "\
               "media file in S3",
-            tags: %i[mediafiles media reports]
+            tags: %i[media_files media reports]
           }
           register :duplicate_files, {
             creator: Kiba::Tms::Jobs::MediaFiles::DuplicateFiles,
@@ -1656,7 +1656,7 @@ module Kiba
               "we can't know what descriptive data the client wants to retain "\
               "in the migration for that file. We provide this report for "\
               "initial decision-making on how to handle these.",
-            tags: %i[mediafiles media reports],
+            tags: %i[media_files media reports],
             dest_special_opts: {
               initial_headers:
               %i[fullpath rend_renditionnumber file_entered_date filedate
@@ -1672,7 +1672,7 @@ module Kiba
             ),
             # desc: "Removes non-CS fields",
             desc: "Removes non-CS fields",
-            tags: %i[mediafiles media]
+            tags: %i[media_files media]
           }
           register :id_lookup, {
             creator: Kiba::Tms::Jobs::MediaFiles::IdLookup,
@@ -1682,7 +1682,7 @@ module Kiba
               "media_files_id_lookup.csv"
             ),
             desc: "Get :identificationnumber via :fileid",
-            tags: %i[mediafiles],
+            tags: %i[media_files],
             lookup_on: :mediamasterid
           }
           register :file_names, {
@@ -1693,7 +1693,7 @@ module Kiba
               "media_file_names.csv"
             ),
             desc: "List of media file names only",
-            tags: %i[mediafiles reports]
+            tags: %i[media_files reports]
           }
           register :no_filename, {
             creator: Kiba::Tms::Jobs::MediaFiles::NoFilename,
@@ -1705,7 +1705,7 @@ module Kiba
             desc: "MediaXrefs::TargetReport rows where :filename is not "\
               "populated. MediaXrefs::TargetReport is the source only so "\
               "output columns will match unmigratable and unreferenced",
-            tags: %i[mediafiles]
+            tags: %i[media_files]
           }
           register :target_report, {
             creator: Kiba::Tms::Jobs::MediaFiles::TargetReport,
@@ -1715,7 +1715,7 @@ module Kiba
               "media_file_target_tables.csv"
             ),
             desc: "Merges MediaXrefs target tables into MediaFiles::Prep",
-            tags: %i[mediafiles reports],
+            tags: %i[media_files reports],
             dest_special_opts: {
               initial_headers: %i[targettable fullpath_duplicate
                 filename_duplicate path filename]
@@ -1731,7 +1731,7 @@ module Kiba
             desc: "MediaXrefs::TargetReport rows where :targettable is empty "\
               "or contains only tables that cannot be related to Media "\
               "Handling procedures",
-            tags: %i[mediafiles reports],
+            tags: %i[media_files reports],
             lookup_on: :fileid
           }
           register :unmigratable, {
@@ -1743,7 +1743,7 @@ module Kiba
             ),
             desc: "MediaXrefs::TargetReport rows where :targettable contains "\
               "only tables that cannot be related to Media Handling procedures",
-            tags: %i[mediafiles]
+            tags: %i[media_files]
           }
           register :unreferenced, {
             creator: Kiba::Tms::Jobs::MediaFiles::Unreferenced,
@@ -1753,7 +1753,7 @@ module Kiba
               "media_files_unreferenced.csv"
             ),
             desc: "MediaXrefs::TargetReport rows where :targettable is empty",
-            tags: %i[mediafiles]
+            tags: %i[media_files]
           }
           register :nhr_report, {
             creator: Kiba::Tms::Jobs::MediaFiles::NhrReport,
@@ -1764,7 +1764,7 @@ module Kiba
             ),
             desc: "Summary of nonhierarchical relationships between Media and "\
               "other record types",
-            tags: %i[mediafiles]
+            tags: %i[media_files]
           }
           register :not_matched_to_record, {
             creator: Kiba::Tms::Jobs::MediaFiles::NotMatchedToRecord,
@@ -1775,7 +1775,7 @@ module Kiba
             ),
             desc: "List of media files uploaded to S3 that cannot be matched "\
               "TMS data on normalized file path",
-            tags: %i[mediafiles reports]
+            tags: %i[media_files reports]
           }
         end
 
@@ -1870,7 +1870,7 @@ module Kiba
             ),
             desc: "Lookup table used to merge target tables into media files "\
               "report",
-            tags: %i[mediaxrefs reports],
+            tags: %i[media_xrefs reports],
             lookup_on: :mediamasterid
           }
         end
@@ -2104,49 +2104,49 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_org_plain.csv"),
             desc: "Org MAIN TERMS from Constituents",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_org_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithInst,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_org_with_inst.csv"),
             desc: "From Constituents orgs with institution field",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_org_with_name_parts, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithNameParts,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_org_with_name_parts.csv"),
             desc: "From Constituents orgs with multipe core name detail elements OR (a single core name detail element AND a position value)",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_org_with_single_name_part_no_position, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConOrgWithSingleNamePartNoPosition,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_org_with_single_name_part_no_position.csv"),
             desc: "From Constituents orgs with a single core name detail element, and no position value",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_person_plain, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonPlain,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_person_plain.csv"),
             desc: "Person MAIN TERMS from Constituents",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_person_with_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithInst,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_person_with_inst.csv"),
             desc: "From Constituents persons with institution value",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_con_person_with_position_no_inst, {
             creator: Kiba::Tms::Jobs::NameCompile::FromConPersonWithPositionNoInst,
             path: File.join(Kiba::Tms.datadir, "working",
               "names_compiled_from_con_person_with_position_no_inst.csv"),
             desc: "From Constituents persons with position value but no institution value",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
           register :from_can_typematch_alt_established, {
             creator: Kiba::Tms::Jobs::NameCompile::FromCanTypematchAltEstablished,
@@ -2371,7 +2371,7 @@ module Kiba
               "names_variants_from_duplicate_constituents.csv"),
             desc: "Variant names from duplicate (after normalization!) "\
                 "constituent names that are not literally duplicates",
-            tags: %i[names constituents]
+            tags: %i[names con]
           }
         end
 
@@ -2735,7 +2735,7 @@ module Kiba
               "working",
               "obj_accession_in_migration.csv"
             ),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Removes rows for objects linked to loansin, if configured "\
               "to do so. Otherwise passes through all rows."
           }
@@ -2743,14 +2743,14 @@ module Kiba
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
             path: File.join(Kiba::Tms.datadir, "working",
               "obj_accession_linked_lot.csv"),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Rows from which acquisitions will be created using LinkedLot approach"
           }
           register :linked_set, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedSet,
             path: File.join(Kiba::Tms.datadir, "working",
               "obj_accession_linked_set.csv"),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Rows from which acquisitions will be created using LinkedSet approach"
           }
           register :lot_number, {
@@ -2760,7 +2760,7 @@ module Kiba
               "working",
               "obj_accession_lot_number.csv"
             ),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Rows from which acquisitions will be created using "\
               "LotNumber approach"
           }
@@ -2771,7 +2771,7 @@ module Kiba
               "working",
               "obj_accession_acq_number.csv"
             ),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Rows from which acquisitions will be created using "\
               "AcqNumber approach"
           }
@@ -2779,7 +2779,7 @@ module Kiba
             creator: Kiba::Tms::Jobs::ObjAccession::OneToOne,
             path: File.join(Kiba::Tms.datadir, "working",
               "obj_accession_one_to_one.csv"),
-            tags: %i[objaccession setup],
+            tags: %i[obj_accessions setup],
             desc: "Rows from which acquisitions will be created using OneToOne approach"
           }
         end
@@ -3969,7 +3969,7 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "reference",
               "term_ids_used_in_thes_xrefs.csv"),
             desc: "List of term ids used in ThesXrefs.",
-            tags: %i[termdata thesxrefs terms reference],
+            tags: %i[termdata thes_xrefs terms reference],
             lookup_on: :termid
           }
         end

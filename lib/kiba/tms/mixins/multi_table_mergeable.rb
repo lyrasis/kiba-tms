@@ -212,16 +212,16 @@ module Kiba
           end
         end
 
+        def for_table_tags(ns_name, targetobj)
+          [
+            ns_name.to_s.delete_suffix("_for").to_sym,
+            targetobj.filekey,
+            :for_table
+          ]
+        end
+
         def target_job_hash(mod, ns_name, targetobj, field, xforms)
           key = targetobj.filekey
-          tags = [ns_name, key].map(&:to_s)
-            .map { |val| val.delete("_") }
-            .map(&:to_sym)
-          tabletag = tags.shift
-          [tabletag.to_s.delete_suffix("_for").to_sym, :for_table].each do |tag|
-            tags << tag
-          end
-
           {
             path: File.join(Tms.datadir, "working", "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::ForTable,
@@ -232,7 +232,7 @@ module Kiba
                         field: field,
                         xforms: xforms
                       }},
-            tags: tags,
+            tags: for_table_tags(ns_name, targetobj),
             lookup_on: mod.lookup_on_field
           }
         end
