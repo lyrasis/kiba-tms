@@ -219,7 +219,9 @@ module Kiba
     def for_merge_into(tablename)
       Tms.configs.select do |config|
         config.respond_to?(:target_tables) &&
-          config.target_tables.any?(tablename)
+          config.target_tables.any?(tablename) &&
+          config.respond_to?(:used?) &&
+          config.used?
       end
     end
 
