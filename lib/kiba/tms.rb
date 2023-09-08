@@ -190,7 +190,7 @@ module Kiba
     end
 
     Error = Module.new
-    SourceJobKeyUndefinedError = Class.new(StandardError) {
+    SettingUndefinedError = Class.new(StandardError) {
       include Error
     }
     UnconfiguredModuleError = Class.new(NameError) { include Error }
