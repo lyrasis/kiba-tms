@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-# require 'active_support'
-# require 'active_support/core_ext/object'
-# require 'dry-configurable'
-# require 'kiba'
-# require 'kiba-common/destinations/csv'
-# require 'kiba-common/dsl_extensions/show_me'
-# require 'kiba-common/sources/csv'
 require "kiba/extend"
 require "zeitwerk"
 
