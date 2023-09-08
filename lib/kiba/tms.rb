@@ -187,6 +187,9 @@ module Kiba
     end
 
     Error = Module.new
+    SourceJobKeyUndefinedError = Class.new(StandardError) {
+      include Error
+    }
     UnconfiguredModuleError = Class.new(NameError) { include Error }
     UnknownObjLocTempTextMappingError = Class.new(StandardError) {
       include Error
