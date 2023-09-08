@@ -5,8 +5,8 @@ require "csv"
 module Kiba
   module Tms
     module Mixins
-      # Mixin module providing consistent methods for accessing the db or derived
-      #   table for a config module
+      # Mixin module providing consistent methods for accessing the db
+      #   or derived table for a config module
       #
       # - defines `delete_fields` (Array) and `empty_fields` (Hash) config
       #   settings if they are not manually set in the config module
@@ -17,9 +17,9 @@ module Kiba
       #
       # - `extend Dry::Configurable`
       # - `extend Tms::Mixins::Tableable`
-      # - **If the module name does not match a TMS supplied table name**, you must
-      #   also define a `source_job_key` (the registry entry key of the job that
-      #   produces the source data for the module you are configuring
+      # - **If the module name does not match a TMS supplied table name**, you
+      #   must also define a `source_job_key` (the registry entry key of the job
+      #   that produces the source data for the module you are configuring
       module Tableable
         def self.extended(mod)
           set_delete_fields_setting(mod)
@@ -144,23 +144,28 @@ module Kiba
 
         def self.check_source_job_key(mod)
           if mod.respond_to?(:source_job_key)
-            str = "# Indicates what job output to use as the base for non-TMS-table-sourced
-#   modules
-setting :source_job_key_overridden, default: true, reader: true"
-            mod.module_eval(str)
+            str = "# Indicates what job output to use as the base for\n"\
+                  "#   non-TMS-table-sourced modules\n"\
+                  "setting :source_job_key_overridden,\n"\
+                  "default: true,\n"\
+                  "reader: true"
+            mod.module_eval(str, __FILE__, __LINE__ - 5)
           elsif mod.supplied?
             key = "tms__#{mod.filekey}"
-            str = "# Indicates what job output to use as the base for non-TMS-table-sourced
-#   modules
-setting :source_job_key, default: :#{key}, reader: true"
-            mod.module_eval(str)
-            str = "# Indicates what job output to use as the base for non-TMS-table-sourced
-#   modules
-setting :source_job_key_overridden, default: false, reader: true"
-            mod.module_eval(str)
+            str = "# Indicates what job output to use as the base for\n"\
+              "#   non-TMS-table-sourced modules\n"\
+              "setting :source_job_key, default: :#{key}, reader: true"
+            mod.module_eval(str, __FILE__, __LINE__ - 3)
+            str = "# Indicates what job output to use as the base for\n"\
+              "#   non-TMS-table-sourced modules\n"\
+              "setting :source_job_key_overridden,\n"\
+              "default: false,\n"\
+              "reader: true"
+            mod.module_eval(str, __FILE__, __LINE__ - 5)
           else
             return unless mod.used?
-            warn("#{mod} needs :source_job_key defined before extending Tableable")
+            warn("#{mod} needs :source_job_key defined before extending "\
+                 "Tableable")
           end
         end
         private_class_method :check_source_job_key
