@@ -33,6 +33,9 @@ module Kiba
         "ref_xrefs" => "RefXRefs",
         "version" => "VERSION"
       )
+      jobs = File.join(__dir__, "tms", "jobs")
+      transforms = File.join(__dir__, "tms", "transforms")
+      @loader.do_not_eager_load(jobs, transforms)
       @loader.enable_reloading
       @loader.setup
       @loader
