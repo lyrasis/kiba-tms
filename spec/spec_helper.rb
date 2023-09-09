@@ -38,6 +38,10 @@ module Tms
   module Places
     enable_test_interface
   end
+
+  module PlacesCleanupInitial
+    enable_test_interface
+  end
 end
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing

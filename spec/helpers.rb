@@ -74,6 +74,7 @@ module Helpers
     Tms.reset_config
     Tms::ObjGeography.reset_config
     Tms::Places.reset_config
+    Tms::PlacesCleanupInitial.reset_config
   end
 
   def copy_from_test_to_working(file)

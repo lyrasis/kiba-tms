@@ -21,7 +21,7 @@ module Kiba
           def lookups
             base = []
             base << :places__corrections if config.cleanup_done
-            base.select{ |job| Kiba::Extend::Job.output?(job) }
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -43,11 +43,11 @@ module Kiba
                     todofield: :corrected
                 end
                 transform CombineValues::FromFieldsWithDelimiter,
-                 sources: config.source_fields,
-                 target: :clean_combined,
-                 delim: "|||",
-                 prepend_source_field_name: true,
-                 delete_sources: false
+                  sources: config.source_fields,
+                  target: :clean_combined,
+                  delim: "|||",
+                  prepend_source_field_name: true,
+                  delete_sources: false
               else
                 transform Copy::Field,
                   from: :norm_combined,

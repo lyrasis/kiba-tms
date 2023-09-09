@@ -52,7 +52,6 @@ module Kiba::Tms::Mixins::IterativeCleanupable
     check_required_settings(mod)
     define_provided_worksheets_setting(mod)
     define_returned_files_setting(mod)
-    register_cleanup_jobs(mod)
   end
 
   # @return [Array<Symbol>] supplied registry entry job keys corresponding to
@@ -79,12 +78,23 @@ module Kiba::Tms::Mixins::IterativeCleanupable
 
   # @return [Boolean]
   def worksheet_sent_not_done?
-    true if !cleanup_done? && !worksheets_provided.empty?
+    true if !cleanup_done? && !provided_worksheets.empty?
+  end
+
+  # @return [Symbol] the registry entry job key for the base job with cleanup
+  #   merged in
+  def base_job_cleaned_job_key
+    "#{cleanup_base_name}__base_job_cleaned".to_sym
   end
 
   # @return [Symbol] the registry entry job key for the worksheet prep job
   def worksheet_job_key
     "#{cleanup_base_name}__worksheet".to_sym
+  end
+
+  # @return [Symbol] the registry entry job key for the compiled corrections job
+  def corrections_job_key
+    "#{cleanup_base_name}__corrections".to_sym
   end
 
   def self.check_required_settings(mod)
@@ -106,6 +116,7 @@ module Kiba::Tms::Mixins::IterativeCleanupable
       #
       # @return Array<String>
       setting :provided_worksheets,
+        default: [],
         reader: true,
         constructor: proc { |value|
           value.map do |filename|
@@ -137,23 +148,37 @@ module Kiba::Tms::Mixins::IterativeCleanupable
   end
   private_class_method :define_returned_files_setting
 
-  def self.register_cleanup_jobs(mod)
-    ns = build_namespace(mod)
+  def register_cleanup_jobs
+    ns = build_namespace
     Tms.registry.import(ns)
   end
-  private_class_method :register_cleanup_jobs
 
-  def self.build_namespace(mod)
+  def build_namespace
     bind = binding
 
-    Dry::Container::Namespace.new(mod.cleanup_base_name) do
-      mixin = bind.receiver
-      register :worksheet, mixin.send(:worksheet_job_hash, mod)
+    Dry::Container::Namespace.new(cleanup_base_name) do
+      mod = bind.receiver
+      register :base_job_cleaned,
+        mod.send(:base_job_cleaned_job_hash, mod)
+      register :worksheet, mod.send(:worksheet_job_hash, mod)
     end
   end
-  private_class_method :build_namespace
+  private :build_namespace
 
-  def self.worksheet_job_hash(mod)
+  def base_job_cleaned_job_hash(mod)
+    {
+      path: File.join(Tms.datadir, "working",
+        "#{mod.cleanup_base_name}_base_job_cleaned.csv"),
+      creator: {
+        callee: Tms::Jobs::IterativeCleanup::BaseJobCleaned,
+        args: {mod: mod}
+      },
+      tags: mod.job_tags
+    }
+  end
+  private :base_job_cleaned_job_hash
+
+  def worksheet_job_hash(mod)
     {
       path: File.join(Tms.datadir, "to_client",
         "#{mod.cleanup_base_name}_worksheet.csv"),
@@ -165,5 +190,5 @@ module Kiba::Tms::Mixins::IterativeCleanupable
       dest_special_opts: {initial_headers: mod.worksheet_field_order}
     }
   end
-  private_class_method :worksheet_job_hash
+  private :worksheet_job_hash
 end
