@@ -3,19 +3,18 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Jobs::Places do
-  # before(:all){ setup_project }
-  # after(:all) do
-  #   Tms.reset_config
-  #   Tms::Places.reset_config
-  # end
+  before(:all) do # Fix flaky failure due to LoadError?
+    Kiba::Tms.configs
+  rescue LoadError
+  end
 
   context "when no cleanup done", :initial do
     it "transforms as expected" do
       reset_configs
       clear_working
       copy_from_test_to_working("places_norm_unique_N0.csv")
-      Kiba::Tms::Places.config.returned = []
-      Kiba::Tms::Places.config.worksheets = []
+      Tms::Places.config.returned = []
+      Tms::Places.config.worksheets = []
       setup_project
 
       result_a = result_path(:places__norm_unique_cleaned)

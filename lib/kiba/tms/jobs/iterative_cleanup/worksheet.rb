@@ -6,19 +6,11 @@ module Kiba::Tms::Jobs::IterativeCleanup::Worksheet
   def job(mod:)
     Kiba::Extend::Jobs::Job.new(
       files: {
-        source: get_source(mod),
+        source: mod.cleaned_uniq_job_key,
         destination: mod.worksheet_job_key
       },
       transformer: get_xforms(mod)
     )
-  end
-
-  def get_source(mod)
-    if mod.cleanup_done?
-      "#{mod.cleanup_base_name}__base_cleaned".to_sym
-    else
-      mod.base_job
-    end
   end
 
   def get_lookups(mod)
@@ -33,23 +25,42 @@ module Kiba::Tms::Jobs::IterativeCleanup::Worksheet
 
   def get_xforms(mod)
     base = []
-    if mod.respond_to?(:worksheet_prestd_xforms)
-      base << mod.worksheet_prestd_xforms
+    if mod.respond_to?(:worksheet_pre_xforms)
+      base << mod.worksheet_pre_xforms
     end
-    base << std_xforms(mod)
-    if mod.respond_to?(:worksheet_poststd_xforms)
-      base << mod.worksheet_poststd_xforms
+    base << xforms(mod)
+    if mod.respond_to?(:worksheet_post_xforms)
+      base << mod.worksheet_post_xforms
     end
     base
   end
 
-  def std_xforms(mod)
+  def xforms(mod)
     Kiba.job_segment do
       transform Append::NilFields,
         fields: mod.worksheet_add_fields
       transform Fingerprint::Add,
-        target: :fingerprint,
+        target: :clean_fingerprint,
         fields: mod.fingerprint_fields
+
+      unless mod.provided_worksheets.empty?
+        known_vals = Tms::Jobs::IterativeCleanup::KnownWorksheetValues.new(mod)
+          .call
+        transform Append::NilFields,
+          fields: :to_review
+        transform do |row|
+          ids = row[mod.collated_orig_values_id_field]
+          next row if ids.blank?
+
+          known = ids.split(mod.collation_delim)
+            .map { |id| known_vals.include?(id) }
+            .all?
+          next row if known
+
+          row[:to_review] = "y"
+          row
+        end
+      end
     end
   end
 end

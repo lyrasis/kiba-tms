@@ -13,8 +13,6 @@ module Helpers
     rescue LoadError
     end
 
-    Kiba::Tms.loader.eager_load
-
     # OVERRIDE KIBA::EXTEND'S DEFAULT OPTIONS
     Kiba::Extend.config.csvopts = {encoding: "utf-8",
                                    headers: true,

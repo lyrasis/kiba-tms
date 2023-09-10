@@ -36,24 +36,27 @@ module Kiba::Tms::Jobs::IterativeCleanup::BaseJobCleaned
     bind = binding
 
     Kiba.job_segment do
-      lookups = bind.receiver.send(:get_lookups, mod)
+      job = bind.receiver
+      lookups = job.send(:get_lookups, mod)
 
       transform Append::NilFields,
         fields: mod.worksheet_add_fields
 
+      # Add :fingerprint (orig values) before merging any cleanup in
+      transform Fingerprint::Add,
+        target: :fingerprint,
+        fields: mod.fingerprint_fields
+
       if mod.cleanup_done? && lookups.any?(mod.corrections_job_key)
         transform Fingerprint::MergeCorrected,
-          lookup: method(mod.corrections_job_key).send,
-          keycolumn: :fingerprint,
+          lookup: method(mod.corrections_job_key).call,
+          keycolumn: mod.orig_values_identifier,
           todofield: :corrected
       end
 
-      transform CombineValues::FromFieldsWithDelimiter,
-        sources: mod.fingerprint_fields,
-        target: :clean_combined,
-        delim: "|||",
-        prepend_source_field_name: true,
-        delete_sources: false
+      transform Fingerprint::Add,
+        target: :clean_fingerprint,
+        fields: mod.fingerprint_fields
     end
   end
 end

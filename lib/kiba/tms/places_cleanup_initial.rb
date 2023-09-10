@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Config module setting up initial place cleanup. This module should
+#   NOT necessarily be used as a model for setting up
+#   IterativeCleanupable. It was converted to use the mixin as a
+#   proof-of-concept that the mixin approach could handle a high level
+#   of weird custom stuff. In particular, the custom pre/post transforms
+#   defined are way over-complicated, to keep from having to completely rebuild
+#   the test data set for place cleanup.
 module Kiba::Tms::PlacesCleanupInitial
   extend Dry::Configurable
 
@@ -55,23 +62,76 @@ module Kiba::Tms::PlacesCleanupInitial
 
   extend Tms::Mixins::IterativeCleanupable
 
-  # String used to delimit/split multiple :norm_fingerprint values in cleanup
-  #   process
-  setting :norm_fingerprint_delim, default: "////", reader: true
+  # Field in base job that combines/identifies the original field
+  #   values entering the cleanup process. This field is used as a
+  #   matchpoint for merging cleaned up data back into the migration,
+  #   and identifying whether a given value in subsequent worksheet
+  #   iterations has been previously included in a worksheet
+  def orig_values_identifier
+    :norm_fingerprint
+  end
+
+  # Field used in cleanup process to deduplicate cleaned values and as
+  #   a matchpoint for collating orig_values_identifiers (and,
+  #   optionally, other field data) associated with cleaned values
+  def cleaned_values_identifier
+    :clean_combined
+  end
+
+  # Fields from base_job_cleaned that will be deleted in cleaned_uniq,
+  #   and then merged back into the deduplicated data from
+  #   base_job_cleaned. I.e., fields whose values will be collated
+  #   into multivalued fields on the deduplicated values
+  def cleaned_uniq_collate_fields
+    %i[fingerprint norm_combined norm_fingerprint occurrences]
+  end
 
   def base_job_cleaned_pre_xforms
     Kiba.job_segment do
-      transform Rename::Field,
+      transform Copy::Field,
         from: :norm_fingerprint,
         to: :fingerprint
     end
   end
 
   def base_job_cleaned_post_xforms
+    bind = binding
+
     Kiba.job_segment do
-      transform Rename::Field,
-        from: :fingerprint,
-        to: :norm_fingerprint
+      mod = bind.receiver
+
+      transform CombineValues::FromFieldsWithDelimiter,
+        sources: mod.fingerprint_fields,
+        target: :clean_combined,
+        delim: "|||",
+        prepend_source_field_name: true,
+        delete_sources: false
+    end
+  end
+
+  def cleaned_uniq_post_xforms
+    bind = binding
+
+    Kiba.job_segment do
+      mod = bind.receiver
+
+      transform do |row|
+        occ = row[:occurrences]
+        next row if occ.blank?
+
+        occs = occ.split(mod.collation_delim)
+          .map(&:to_i)
+          .sum
+        row[:occurrences] = occs
+        row
+      end
+    end
+  end
+
+  def corrections_post_xforms
+    Kiba.job_segment do
+      transform Delete::Fields,
+        fields: %i[occurrences norm_combineds clean_combined clean_fingerprint]
     end
   end
 end
