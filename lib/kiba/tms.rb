@@ -190,9 +190,6 @@ module Kiba
     end
 
     Error = Module.new
-    SettingUndefinedError = Class.new(StandardError) {
-      include Error
-    }
     UnconfiguredModuleError = Class.new(NameError) { include Error }
     UnknownObjLocTempTextMappingError = Class.new(StandardError) {
       include Error
@@ -275,3 +272,4 @@ module Kiba
 end
 
 Kiba::Tms.loader
+Kiba::Extend.config.config_namespaces = [Kiba::Tms]

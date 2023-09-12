@@ -12,7 +12,7 @@ module Kiba
         register_supplied_files
         register_prep_files
         Tms::Utils::PerTableJobRegistrar.call
-        Tms::Utils::IterativeCleanupJobRegistrar.call
+        Kiba::Extend::Utils::IterativeCleanupJobRegistrar.call
         register_files
       end
 

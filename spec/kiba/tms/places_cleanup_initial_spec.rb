@@ -193,11 +193,19 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
         Tms.datadir, "test", "places_cleanup_initial_cleaned_uniq_N3.csv"
       )
 
+      result_f = result_path(
+        Tms::PlacesCleanupInitial.final_job_key
+      )
+      expected_f = File.join(
+        Tms.datadir, "test", "places_cleanup_initial_final_N3.csv"
+      )
+
       expect(result_a).to match_csv(expected_a)
       expect(result_b).to match_csv(expected_b)
       expect(result_c).to match_csv(expected_c)
       expect(result_d).to match_csv(expected_d)
       expect(result_e).to match_csv(expected_e)
+      expect(result_f).to match_csv(expected_f)
 
       reset_configs
     end

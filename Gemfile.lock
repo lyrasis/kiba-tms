@@ -11,10 +11,10 @@ GIT
 
 GIT
   remote: https://github.com/lyrasis/kiba-extend.git
-  revision: f2f55d5f39cd56074e368f349634fa89e4553a66
+  revision: 6fd77b00403f6d03a444d54051711eb61bcb62a4
   branch: main
   specs:
-    kiba-extend (3.3.0)
+    kiba-extend (4.0.0)
       activesupport (>= 6, < 8)
       amazing_print (~> 1.4)
       csv (~> 3)
