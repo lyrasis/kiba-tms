@@ -195,10 +195,7 @@ module Kiba
     UnknownAuthorityTypeCode = Class.new(StandardError) { include Error }
 
     def configs
-      Tms.constants.select do |constant|
-        evaled = Tms.const_get(constant)
-        evaled.is_a?(Module) && evaled.respond_to?(:config)
-      end.map { |const| Tms.const_get(const) }
+      Kiba::Extend.project_configs
     end
 
     def finalize_config
