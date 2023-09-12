@@ -2,9 +2,6 @@
 
 module Kiba
   module Tms
-    # Central place to register the expected jobs/files used and produced by your project
-    #
-    # Populates file registry provided by Kiba::Extend
     module RegistryData
       module_function
 

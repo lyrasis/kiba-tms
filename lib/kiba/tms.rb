@@ -48,8 +48,6 @@ module Kiba
 
     extend Dry::Configurable
     def base_config
-      # you will want to override the following in any application using this
-      # extension
       setting :empty_table_list_path,
         default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/"\
         "empty_tables.txt",
