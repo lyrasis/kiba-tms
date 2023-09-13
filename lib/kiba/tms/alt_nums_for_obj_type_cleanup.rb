@@ -72,5 +72,18 @@ module Kiba
           end
         end
       end
+
+      def final_post_xforms
+        bind = binding
+
+        Kiba.job_segment do
+          mod = bind.receiver
+
+          transform Delete::Fields,
+            fields: [mod.collate_fields, :fingerprint,
+              :clean_fingerprint].flatten
+        end
+      end
+    end
   end
 end
