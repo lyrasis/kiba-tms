@@ -16,21 +16,6 @@ module Kiba
         default: [],
         reader: true
 
-      # Names of completed CSV files for any cleaned up (by client) target
-      #   table worksheets. Expected to be found in `base_dir/supplied`
-      #   directory
-      # Format like:
-      #   {
-      #     'Objects'=>[
-      #        'alt_num_types_for_objects_2023-01-18.csv',
-      #        'alt_num_types_for_objects_2022-12-21.csv',
-      #     ]
-      #   }
-      # Worksheets for a given target table are in newest-to-oldest order
-      setting :target_table_type_cleanup_done,
-        default: {},
-        reader: true
-
       # pass in client-specific transform classes to prepare rows for
       #   merging
       setting :for_constituents_prepper, default: nil, reader: true
@@ -59,19 +44,6 @@ module Kiba
       setting :reference_master_resource_id_dates_to_note,
         default: false,
         reader: true
-
-      def cleaned_files_for(tablename)
-        return [] unless target_table_type_cleanup_done.key?(tablename)
-
-        target_table_type_cleanup_done[tablename]
-      end
-
-      def cleanup_done_for?(tablename)
-        return false unless target_table_type_cleanup_done.key?(tablename)
-        return false if target_table_type_cleanup_done[tablename].blank?
-
-        true
-      end
     end
   end
 end

@@ -207,22 +207,6 @@ module Kiba
 
           # cleanup
           if Tms::AltNums.target_table_type_cleanup_needed.any?("Objects")
-            register :types_for_obj_worksheet, {
-              creator: Kiba::Tms::Jobs::AltNums::TypesForObjWorksheet,
-              path: File.join(
-                Kiba::Tms.datadir,
-                "to_client",
-                "alt_num_types_for_objects_cleanup.csv"
-              ),
-              tags: %i[alt_nums objects alt_nums_types_cleanup],
-              dest_special_opts: {
-                initial_headers:
-                %i[number_type correct_type treatment note
-                  occurrences occs_with_remarks occs_with_begindate
-                  occs_with_enddate
-                  example_rec_nums example_values]
-              }
-            }
           end
 
           # reports
