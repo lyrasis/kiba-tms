@@ -46,5 +46,17 @@ module Kiba
       setting :orig_fingerprint_fields,
         default: %i[number_type],
         reader: true
+
+      def base_job_cleaned_pre_xforms
+        bind = binding
+
+        Kiba.job_segment do
+          mod = bind.receiver
+
+          transform Fingerprint::Add,
+            target: :fingerprint,
+            fields: mod.orig_fingerprint_fields
+        end
+      end
   end
 end
