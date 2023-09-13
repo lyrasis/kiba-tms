@@ -58,5 +58,19 @@ module Kiba
             fields: mod.orig_fingerprint_fields
         end
       end
+
+      def cleaned_uniq_post_xforms
+        bind = binding
+
+        Kiba.job_segment do
+          mod = bind.receiver
+
+          mod.occ_fields.each do |field|
+            transform Kiba::Tms::Transforms::SumCollatedOccurrences,
+              field: field,
+              delim: mod.collation_delim
+          end
+        end
+      end
   end
 end

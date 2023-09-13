@@ -77,16 +77,9 @@ module Kiba::Tms::PlacesCleanupInitial
     Kiba.job_segment do
       mod = bind.receiver
 
-      transform do |row|
-        occ = row[:occurrences]
-        next row if occ.blank?
-
-        occs = occ.split(mod.collation_delim)
-          .map(&:to_i)
-          .sum
-        row[:occurrences] = occs
-        row
-      end
+      transform Tms::Transforms::SumCollatedOccurrences,
+        field: :occurrences,
+        delim: mod.collation_delim
     end
   end
 
