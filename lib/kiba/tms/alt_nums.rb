@@ -28,10 +28,10 @@ module Kiba
       setting :for_objects_merge, default: nil, reader: true
       setting :for_reference_master_merge, default: nil, reader: true
 
-      # If a number type is mapped to `resource_id` treatment and the TMS AltNums
-      #   `:remarks` field is populated, should the `:remarks` value be mapped to
-      #   the CollectionSpace Citation Note field (with label indicating associated
-      #   number/type)?
+      # If a number type is mapped to `resource_id` treatment and the
+      #   TMS AltNums `:remarks` field is populated, should the
+      #   `:remarks` value be mapped to the CollectionSpace Citation
+      #   Note field (with label indicating associated number/type)?
       setting :reference_master_resource_id_remarks_to_note,
         default: false,
         reader: true
