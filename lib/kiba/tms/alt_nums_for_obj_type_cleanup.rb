@@ -25,15 +25,26 @@ module Kiba
         %i[correct_type treatment note]
       end
 
-  def worksheet_field_order
-    %i[number_type correct_type treatment note
-      occurrences occs_with_remarks occs_with_begindate
-      occs_with_enddate
-      example_rec_nums example_values]
-  end
+      def worksheet_field_order
+        [:number_type, :correct_type, :treatment, :note,
+          collate_fields].flatten
+      end
+
+      def occ_fields
+        %i[occurrences occs_with_remarks occs_with_begindate
+          occs_with_enddate]
+      end
+
+      def collate_fields
+        [occ_fields, :example_rec_nums, :example_values]
+      end
+
       def fingerprint_flag_ignore_fields
         %i[number_type]
       end
 
+      setting :orig_fingerprint_fields,
+        default: %i[number_type],
+        reader: true
   end
 end
