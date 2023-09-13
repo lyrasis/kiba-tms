@@ -1,0 +1,164 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Alternate number types for citations worksheet
+
+toc::[]
+
+== Background/rationale
+
+TMS allows AltNum (alternate number) data to be recorded in association with data recorded in the ReferenceMaster table.
+
+Data in the TMS ReferenceMaster table will be mapped into CollectionSpace Citation authority records in your migration.
+
+Due to differences in how TMS and CollectionSpace (CS) model references/citations, cleanup of alternate number descriptions is often necessary for a migration.
+
+=== Data model differences
+==== TMS
+
+From our experience analyzing client data, it appears that TMS allows you to enter:
+
+* an alternate number value (or not, sometimes the `altnum` field is empty!)
+* free text alternate number description (optional)
+* free text remarks on alternate number (optional)
+* start and end dates for the use of the number (or its assignment/removal)
+
+There appears to be no controlled vocabulary for types of alternate numbers.
+
+There appears to be no data validation/checks. For example, we often find that users have entered the description in the `altnum` field and the number in the `description` field. This is common enough that we know to look for this pattern and flip the values.
+
+NOTE: We may have fixed some common issues prior to preparing this worksheet and the reference spreadsheet we send with it. This means, you may in some cases see different data in these provided sources than you will if you look up the items in TMS.
+
+==== CollectionSpace (CS) treatments
+
+Depending on your data and your needs, you might opt to use one of the mapping approaches described below, OR you might combine some or all of the approaches.
+
+This worksheet allows you to specify which of the following treatments should be used for each of your alt number types in TMS.
+
+The examples below show the given treatment for the following row of data in TMS:
+
+* altnum: 123456789X
+* description: ISBN
+* remarks: Some note value
+* beginisodate: 1995-09-13
+* endisodate: 2003-02-17
+
+===== Resource identifier field group
+
+This is the typical, obvious mapping for citation AltNum data, however, the CollectionSpace data model is much simpler and much more constrained than TMS'.
+
+image::citation_other_number.png[630]
++++&nbsp;+++
+
+* The identifier _value_ is free text
+* The identifier _type_ is field is populated from the `resourceidtype` controlled vocabulary
+* The `resourceidtype` controlled vocabulary is an https://github.com/lyrasis/collectionspace-data-explainers/blob/main/docs/controlled_vocabulary_types.adoc#term-lists[term list].
+* The capture date field may be populated with a single valid date. By default, we do not populate this from the TMS data. Most clients have not entered significant date data in the AltNums table, and we are not confident that any dates recorded in AltNums would be appropriately mapped as a Resource identifier capture date.
+
+This is the preferred mapping for most clients. It allows controlled searching for specific identifier values via advanced search.
+
+Note that remarks and dates are not captured. If there is concern about losing this data, you can tell your migration specialist to set the following options in your migration project:
+
+* `reference_master_resource_id_remarks_to_note` = `true`
+* `reference_master_resource_id_dates_to_note` = `true`
+
+These settings are for all number types being mapped into Citation records, and cannot be turned on/off for individual values or number types.
+
+Setting these both to true results in essentially using both `Resource identifier field group` and `Note` treatments simultaneously:
+
+image::citation_remarks_dates_to_note.png[630]
++++&nbsp;+++
+
+The value and type are retained in the note because you need to know which id a remark or date goes with, if you have more than one AltNum row associated with one Citation.
+
+===== Alternative mapping: Note
+
+image::citation_note_altnum.png[630]
++++&nbsp;+++
+
+We can alternately map a number type to the Note field.
+
+This captures all the TMS data, but in a non-structured way.
+
+===== Alternative mapping: Drop
+
+You can indicate that you do not wish to migrate data for a number type. No data from rows with this number type will be migrated into CollectionSpace.
+
+== Interpreting the worksheet
+
+TIP: For reference, your Migration Specialist will also provide you with a spreadsheet that shows all individual AltNums rows, so that you can look at the details of what is being summarized in the worksheet.
+
+.Non-editable columns
+`number_type`:: This is the value of the `description` column in the reference spreadsheet
+`occurrences`:: How many times a `number_type` value is used in your data. Small numbers may indicate variant terms, typos, or number types that do not need an established controlled number type term in CS
+`occs_with_remarks`:: How many occurrences of this `number_type` value have associated alt number `remarks`. If non-zero, and you choose `resource id` treatment, any data in this column will be dropped in the migration unless you request custom option described above.
+`occs_with_begindate`:: How many occurrences of this `number_type` value have associated alt number `beginisodate`. If non-zero, and you choose `resource id` treatment, any data in this column will be dropped in the migration unless you request custom option described above.
+`occs_with_enddate`:: How many occurrences of this `number_type` value have associated alt number `endisodate`. If non-zero, and you choose `resource id` treatment, any data in this column will be dropped in the migration unless you request custom option described above unless you request custom option described above.
+`example_rec_nums`:: Up to 3 citation identifiers (usually a title) having the given `number_type`. Note that, if there are 100 occurrences, and 5 occs_with_remarks (or begin/end date occs), the example_rec_nums may or may not include records that have remarks data. You will need to filter the reference spreadsheet to the given `description` value and `remarks` (or begin/end date not empty) to see what remarks are made for the `number_type`
+`example_values`:: Up to 3 `altnum` values for the given `number_type`. These should correspond to the records in `example_rec_nums`
+
+If you edit the above columns, your edits will not be merged into the migration.
+
+The other columns are either editable (described below), or internal to the migration (*do not edit these*).
+
+== Completing the worksheet
+
+[IMPORTANT]
+====
+Only make changes to the following columns:
+
+* `correct_type`
+* `treatment`
+* `note`
+
+If you change values in `clean_fingerprint` or `fingerprints`, we will not be able to merge your changes back into the migration.
+====
+
+=== `correct_type`
+
+Use this column to standardize variant forms of number type terms, and fix typos:
+
+.Will collapse four separate strings to one number type in CS
+....
+| number_type | correct_type |
+|-------------+--------------|
+| ISBN number | ISBN         |
+| ISBN        | ISBN         |
+| ISBN 13     | ISBN         |
+| ISBN - 13   | ISBN         |
+....
+
+NOTE: If `treatment` value is `drop`, any information in this column is discarded.
+
+=== `treatment`
+
+Use this column to indicate the desired treatment for each type of number. See the data model differences section above, and the treatment examples below for further information.
+
+The allowed values are:
+
+* drop
+* resource id
+* note
+
+=== `note`
+
+Use this column to record specific information from the existing `number_type` value that should be treated as remarks instead.
+
+....
+| number_type       | correct_type | note       |
+|-------------------+--------------+------------|
+| ISBN (hard cover) | ISBN         | hard cover |
+....
+
+NOTE: If `treatment` value is `resource id`, any information moved to note is treated as though it were in the TMS remarks field, and will be discarded unless you instruct your migration specialist to set `reference_master_resource_id_remarks_to_note` = `true`.
