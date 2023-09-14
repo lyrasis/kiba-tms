@@ -172,7 +172,7 @@ module Kiba::Tms::Mixins::MultiTableMergeable
   end
 
   # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
-  def register_per_table_jobs(field = split_on_column)
+  def register_for_table_jobs(field = split_on_column)
     key = filekey
     return unless key
 

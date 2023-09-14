@@ -8,7 +8,7 @@ module Kiba
       def register
         register_supplied_files
         register_prep_files
-        Tms::Utils::PerTableJobRegistrar.call
+        Tms::Utils::ForTableJobRegistrar.call
         Kiba::Extend::Utils::IterativeCleanupJobRegistrar.call
         register_files
       end

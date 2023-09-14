@@ -3,9 +3,11 @@
 module Kiba
   module Tms
     module Mixins
-      # Mixin module for use in job-definition modules
-      #
-      # See AltNums jobs as a model for use
+      # Defines transforms for "for_table" jobs defined by
+      #   {MultiTableMergable}. Transforms are defined dynamically
+      #   based on config derived from the module that extends
+      #   {MultiTableMergable}. {Kiba::Tms::AltNums} is an example of
+      #   a {MultiTableMergable} module.
       module ForTable
         module_function
 

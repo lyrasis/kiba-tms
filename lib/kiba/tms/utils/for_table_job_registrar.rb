@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Utils
-      class PerTableJobRegistrar
+      class ForTableJobRegistrar
         def self.call
           new.call
         end
@@ -13,9 +13,9 @@ module Kiba
         end
 
         def call
-          puts "Registering per-table jobs"
+          puts "Registering for_table jobs"
           to_register.each do |mod|
-            mod.register_per_table_jobs
+            mod.register_for_table_jobs
             mod.register_reportable_for_table_jobs
           end
         end
