@@ -37,10 +37,6 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     set_checkable(mod)
   end
 
-  def is_multi_table_mergeable?
-    true
-  end
-
   def for?(table)
     target_tables.any?(table)
   end

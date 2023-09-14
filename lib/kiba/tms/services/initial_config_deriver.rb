@@ -67,7 +67,7 @@ module Kiba
             end
           end
 
-          if mod.respond_to?(:is_multi_table_mergeable?) &&
+          if mod.is_a?(Tms::Mixins::MultiTableMergeable) &&
               mod.auto_generate_target_tables
             base << proc { target_table_deriver.call(mod: mod) }
           end
