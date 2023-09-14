@@ -216,7 +216,7 @@ module Kiba::Tms::Mixins::MultiTableMergeable
   def reportable_job_hash(ns:, source:, dest:, config:)
     {
       path: File.join(Tms.datadir, "working", "#{dest}.csv"),
-      creator: {callee: Tms::Jobs::ReportableForTable,
+      creator: {callee: Tms::Jobs::MultiTableMergeable::ReportableForTable,
                 args: {
                   source: source,
                   dest: dest,
@@ -282,7 +282,7 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     key = targetobj.filekey
     {
       path: File.join(Tms.datadir, "working", "#{ns_name}_#{key}.csv"),
-      creator: {callee: Tms::Jobs::ForTable,
+      creator: {callee: Tms::Jobs::MultiTableMergeable::ForTable,
                 args: {
                   source: mod.for_table_source_job_key,
                   dest: "#{ns_name}__#{key}".to_sym,
