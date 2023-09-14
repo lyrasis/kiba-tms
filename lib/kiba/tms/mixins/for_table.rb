@@ -33,7 +33,7 @@ module Kiba
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
               targetxform = mod.target_xform(targetobj)
-              params = [mod, ns_name, targetobj, field, targetxform]
+              params = [ns_name, targetobj, field, targetxform]
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
               )
@@ -56,20 +56,27 @@ module Kiba
           ]
         end
 
-        def target_job_hash(mod, ns_name, targetobj, field, xforms)
+        # Builds a registry entry hash for a reportable-for-job
+        #
+        # @param ns_name [String] e.g. "alt_nums_for"
+        # @param targetobj [Tms::Table::Obj]
+        # @param field [Symbol] e.g. "alt_nums_reportable_for__objects"
+        # @param xforms [Array<Class>]
+        # @return [Hash]
+        def target_job_hash(ns_name, targetobj, field, xforms)
           key = targetobj.filekey
           {
             path: File.join(Tms.datadir, "working", "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::MultiTableMergeable::ForTable,
                       args: {
-                        source: mod.for_table_source_job_key,
+                        source: for_table_source_job_key,
                         dest: "#{ns_name}__#{key}".to_sym,
                         targettable: targetobj.tablename,
                         field: field,
                         xforms: xforms
                       }},
             tags: for_table_tags(ns_name, targetobj),
-            lookup_on: mod.lookup_on_field
+            lookup_on: lookup_on_field
           }
         end
 
