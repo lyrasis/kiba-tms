@@ -72,6 +72,9 @@ module Kiba
               terms: {
                 initial_headers: %i[termid prefterm termtype term thesaurus_name
                   termsource sourcetermid]
+              },
+              text_entries: {
+                initial_headers: %i[tablename recordid]
               }
             }
           end

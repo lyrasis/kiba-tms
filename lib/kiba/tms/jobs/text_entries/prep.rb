@@ -36,14 +36,15 @@ module Kiba
               transform Tms::Transforms::DeleteTmsFields
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
-                fields: %i[purpose remarks textentry]
-              transform Delete::Fields, fields: :combined
+                fields: config.text_content_fields
 
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
+
+              transform config.initial_cleaner if config.initial_cleaner
 
               transform Rename::Fields, fieldmap: {
                 id: :recordid,
