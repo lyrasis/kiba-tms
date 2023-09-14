@@ -10,8 +10,26 @@ module Kiba
       #   AltNums) into separate tables for each mergeable target table (e.g.
       #   alt_nums_for__objects, alt_nums_for__constituents, etc.)
       module ForTable
+        # Called as part of Tms.meta_config setup
         def define_for_table_modules
           target_tables.each { |target| define_for_table_module(target) }
+        end
+
+        # Called by {Kiba::Tms::Utils::ForTableJobRegistrar} at application load
+        #
+        # @param field [Symbol] name of field on which for_tables will be
+        #   split. Defaults to: `:tablename`.
+        def register_for_table_jobs(field = split_on_column)
+          key = filekey
+          return unless key
+
+          ns = build_registry_namespace(
+            "#{key}_for",
+            target_tables,
+            field
+          )
+
+          Tms.registry.import(ns)
         end
 
         def define_for_table_module(target)
@@ -37,37 +55,31 @@ module Kiba
           MODDEF
           Tms.module_eval(moddef)
         end
+        private :define_for_table_module
 
+        # @return [String]
         def for_table_module_name(jobkey)
           jobkey.to_s
             .split(/_+/)
             .map(&:capitalize)
             .join
         end
+        private :for_table_module_name
 
-        # @param field [Symbol] name of field on which for_tables will be
-        #   split. By default this is `:tablename`. To override, define
-        #   `split_on_column` setting prior to extending this module. See
-        #   {Kiba::Tms::ConRefs} for an example.
-        def register_for_table_jobs(field = split_on_column)
-          key = filekey
-          return unless key
-
-          ns = build_registry_namespace(
-            "#{key}_for",
-            target_tables,
-            field
-          )
-          Tms.registry.import(ns)
-        end
-
+        # Defines a registry namespace (e.g. alt_nums_for).
+        #   Within it, registers a job for each for-table (e.g.
+        #   alt_nums_for__objects)
+        #
+        # @param ns_name [String] e.g. "alt_nums_for"
+        # @param targets [Array<String>] target tables
+        # @param field [Symbol] to split on
         def build_registry_namespace(ns_name, targets, field)
           bind = binding
           Dry::Container::Namespace.new(ns_name) do
             mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              targetxform = mod.target_xform(targetobj)
+              targetxform = mod.send(:target_xform, targetobj)
               params = [ns_name, targetobj, field, targetxform]
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
@@ -75,21 +87,16 @@ module Kiba
             end
           end
         end
+        private :build_registry_namespace
 
+        # @return [Array<Class>] prepper transform class(es) for the for-table
         def target_xform(targetobj)
           sym = "for_#{targetobj.filekey}_prepper".to_sym
           return [send(sym)].flatten if respond_to?(sym) && !send(sym).nil?
 
           []
         end
-
-        def for_table_tags(ns_name, targetobj)
-          [
-            ns_name.to_s.delete_suffix("_for").to_sym,
-            targetobj.filekey,
-            :for_table
-          ]
-        end
+        private :target_xform
 
         # Builds a registry entry hash for a reportable-for-job
         #
@@ -115,6 +122,17 @@ module Kiba
           }
         end
 
+        # @return [Array<Symbol>]
+        def for_table_tags(ns_name, targetobj)
+          [
+            ns_name.to_s.delete_suffix("_for").to_sym,
+            targetobj.filekey,
+            :for_table
+          ]
+        end
+        private :for_table_tags
+
+        # @return [Symbol]
         def lookup_on_field
           return for_table_lookup_on_field if respond_to?(
             :for_table_lookup_on_field
@@ -122,6 +140,7 @@ module Kiba
 
           :recordid
         end
+        private :lookup_on_field
       end
     end
   end
