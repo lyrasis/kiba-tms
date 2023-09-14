@@ -13,6 +13,38 @@ module Kiba
         def define_for_table_modules
           target_tables.each { |target| define_for_table_module(target) }
         end
+
+        def define_for_table_module(target)
+          targetobj = Tms::Table::Obj.new(target)
+          jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
+
+          moddef = <<~MODDEF
+            module #{for_table_module_name(jobkey)}
+              extend Dry::Configurable
+              module_function
+
+              # Indicates what job output to use as the base for
+              #   non-TMS-table-sourced modules
+              setting :source_job_key, default: :#{jobkey}, reader: true
+              setting :delete_fields, default: [], reader: true
+              setting :empty_fields, default: {}, reader: true
+              extend Tms::Mixins::Tableable
+
+              def used?
+                true
+              end
+            end
+          MODDEF
+          Tms.module_eval(moddef)
+        end
+
+        def for_table_module_name(jobkey)
+          jobkey.to_s
+            .split(/_+/)
+            .map(&:capitalize)
+            .join
+        end
+
         # @param field [Symbol] name of field on which for_tables will be
         #   split. By default this is `:tablename`. To override, define
         #   `split_on_column` setting prior to extending this module. See
@@ -89,38 +121,6 @@ module Kiba
           )
 
           :recordid
-        end
-
-        # METHODS USED FOR AUTO-CONFIGURING FOR-TABLES
-        def for_table_module_name(jobkey)
-          jobkey.to_s
-            .split(/_+/)
-            .map(&:capitalize)
-            .join
-        end
-
-        def define_for_table_module(target)
-          targetobj = Tms::Table::Obj.new(target)
-          jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
-
-          moddef = <<~MODDEF
-            module #{for_table_module_name(jobkey)}
-              extend Dry::Configurable
-              module_function
-
-              # Indicates what job output to use as the base for
-              #   non-TMS-table-sourced modules
-              setting :source_job_key, default: :#{jobkey}, reader: true
-              setting :delete_fields, default: [], reader: true
-              setting :empty_fields, default: {}, reader: true
-              extend Tms::Mixins::Tableable
-
-              def used?
-                true
-              end
-            end
-          MODDEF
-          Tms.module_eval(moddef)
         end
       end
     end
