@@ -34,6 +34,7 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     set_for_table_source_job_key_setting(mod)
     set_split_on_column_setting(mod)
     set_target_tables_setting(mod)
+    set_unreportable_for_tables_ok_setting(mod)
     set_checkable(mod)
   end
 
@@ -70,6 +71,26 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     return nil if undefined.empty?
 
     "#{name}: no transforms defined for: #{undefined.join(", ")}"
+  end
+
+  def check_unreportable_for_tables
+    tables = unreportable_for_tables
+    return nil if tables.empty?
+
+    "#{name}: tables needing :record_num_merge_config defined: "\
+      "#{tables.join(", ")}"
+  end
+
+  # List target tables that do not respond to `:record_num_merge_config`, that
+  #   are not listed in the :unreportable_for_tables_ok setting
+  #
+  # @return [Array<String>] of table names, e.g. "Objects"
+  def unreportable_for_tables
+    target_tables.map { |t| Object.const_get("Tms::#{t}") }
+      .reject { |t| t.respond_to?(:record_num_merge_config) }
+      .map(&:to_s)
+      .map { |val| val.delete_prefix("Kiba::Tms::") }
+      .sort - unreportable_for_tables_ok
   end
 
   # All `for_*_prepper` methods/settings defined on extending module
@@ -336,6 +357,17 @@ module Kiba::Tms::Mixins::MultiTableMergeable
   end
   private_class_method :set_target_tables_setting
 
+  def self.set_unreportable_for_tables_ok_setting(mod)
+    return if mod.respond_to?(:unreportable_for_tables_ok)
+
+    mod.module_eval(
+      "setting :unreportable_for_tables_ok, default: [], reader: true",
+      __FILE__,
+      __LINE__ - 2
+    )
+  end
+  private_class_method :set_unreportable_for_tables_ok_setting
+
   # METHODS USED BY METHODS USED FOR EXTENDING
   def self.checkable_as_needed(mod)
     existing = mod.checkable.dup
@@ -354,6 +386,9 @@ module Kiba::Tms::Mixins::MultiTableMergeable
               },
               undefined_table_transforms: Proc.new{
                 check_undefined_table_transforms
+              },
+              nonreportable_for_tables: Proc.new{
+                check_unreportable_for_tables
               }
             },
             reader: true
