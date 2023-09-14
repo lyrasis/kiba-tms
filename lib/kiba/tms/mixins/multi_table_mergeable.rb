@@ -59,10 +59,11 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     "#{name}: add config settings: #{needed.join(", ")}"
   end
 
-  # Reports if a defined for-target-table transform setting defined in
-  #   the config, but no value (an actual transform class or
-  #   :no_xform) has been assigned to the setting. These indicate
-  #   there may be more work to be done.
+  # Reports if a defined for-target-table transform setting (e.g. a
+  #   `for_*_prepper` method/setting) defined in the config, but no
+  #   value (an actual transform class or :no_xform) has been assigned
+  #   to the setting. These indicate there may be more work to be
+  #   done.
   def check_undefined_table_transforms
     undefined =
       target_transform_settings - target_transform_settings_handled
@@ -71,36 +72,54 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     "#{name}: no transforms defined for: #{undefined.join(", ")}"
   end
 
+  # All `for_*_prepper` methods/settings defined on extending module
+  #
+  # @return [Array<Symbol>]
   def target_transform_settings
     settings
       .map(&:to_s)
       .select { |meth| meth.match?(/^for_.*_prepper$/) }
       .map(&:to_sym)
   end
+  private :target_transform_settings
 
-  # These are defined with actual transform classes
-  def target_transform_settings_defined
+  # `for_*_prepper` methods/settings that are explicitly defined with
+  #   an xform class. This list is passed to job definitions to
+  #   configure what xforms each job will run.
+  #
+  # @return [Array<Symbol>]
+  def target_transform_settings_defined_with_xform
     target_transform_settings.reject do |setting|
       val = config.values[setting]
       val.nil? || val == :no_xform
     end
   end
+  private :target_transform_settings_defined_with_xform
 
+  # Generates a list of expected `for_*_prepper` method/setting names---one for
+  #   each target table
+  #
+  # @return [Array<Symbol>]
   def target_transform_settings_expected
     target_tables.map do |target|
       tobj = Tms::Table::Obj.new(target)
       "for_#{tobj.filekey}_prepper".to_sym
     end
   end
+  private :target_transform_settings_expected
 
-  # These are defined with actual transform classes or :no_xform
-  #   placeholders to indicate we have analyzed the data and found no
-  #   need for a specific transform
+  # `for_*_prepper` methods/settings defined with actual transform
+  #   classes or :no_xform placeholders to indicate we have analyzed
+  #   the data and found no need for a specific transform. These
+  #   should no longer be flagged as needing attention/work.
+  #
+  # @return [Array<Symbol>]
   def target_transform_settings_handled
     target_transform_settings.reject do |setting|
       config.values[setting].nil?
     end
   end
+  private :target_transform_settings_handled
 
   # METHODS USED FOR AUTO-REGISTERING REPORTABLE-FOR-TABLE JOBS
   #
@@ -168,6 +187,9 @@ module Kiba::Tms::Mixins::MultiTableMergeable
   end
 
   # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
+
+  # @param field [Symbol] name of field on which for_tables will be split. By
+  #   default this is `:tablename`.
   def register_for_table_jobs(field = split_on_column)
     key = filekey
     return unless key
@@ -176,7 +198,7 @@ module Kiba::Tms::Mixins::MultiTableMergeable
       "#{key}_for",
       target_tables,
       field,
-      target_transform_settings_defined
+      target_transform_settings_defined_with_xform
     )
     Tms.registry.import(ns)
   end
