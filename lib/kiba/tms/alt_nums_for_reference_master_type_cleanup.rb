@@ -2,7 +2,7 @@
 
 module Kiba
   module Tms
-    module AltNumsForRefmasterTypeCleanup
+    module AltNumsForReferenceMasterTypeCleanup
       module_function
 
       extend Dry::Configurable
@@ -12,14 +12,14 @@ module Kiba
         reader: true
 
       setting :fingerprint_fields,
-        default: Tms::AltNumsCleanupShared.clean_fingerprint_fields,
+        default: Tms::AltNumsTypeCleanupShared.clean_fingerprint_fields,
         reader: true
 
       extend Kiba::Extend::Mixins::IterativeCleanup
-      extend Tms::AltNumsCleanupShared
+      extend Tms::AltNumsTypeCleanupShared
 
       def job_tags
-        Tms::AltNumsCleanupShared.cleanup_job_tags(:reference_master)
+        Tms::AltNumsTypeCleanupShared.cleanup_job_tags(:reference_master)
       end
     end
   end

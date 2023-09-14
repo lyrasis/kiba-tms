@@ -2,7 +2,7 @@
 
 module Kiba
   module Tms
-    module AltNumsCleanupShared
+    module AltNumsTypeCleanupShared
       def clean_fingerprint_fields
         %i[number_type correct_type treatment note]
       end
