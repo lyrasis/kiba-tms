@@ -14,21 +14,112 @@
 # This module provides methods for setting up config settings in the
 #   module, generating auto-configuration settings, running config
 #   checks, and registering jobs to (a) break the original table up
-#   into tables for each target; and (b) merge human-readable ids from
-#   the main target tables into the mergable "for" tables. (Example:
-#   merge objectnumber values into alt_nums_for__objects)
+#   into tables for each target--"for-tables"; and (b) merge
+#   human-readable ids from the main target tables into the mergable
+#   "for" tables--"reportable-for-tables". (Example: merge
+#   objectnumber values into alt_nums_for__objects)
 #
-# ## Implementation details
+# It also provides a pattern for triggering setup of for-table type cleanup and
+#   treatment definition routines for config modules where this is necessary.
+#
+# ## Usage
 #
 # Modules mixing this in must:
 #
 # - `extend Tms::Mixins::MultiTableMergeable`
 #
-# Assumes the table to be split up into individual target tables is
-#   produced by :prep__job_key
+# ### Optional settings/methods set ***before*** extending
 #
-# **IF NOT**, manually specify in :for_table_source_job_key setting
-#   in your config module before extending MultiTableMergeable
+# The following settings are optional, but, if used, must be defined
+#   ***before*** this module is extended.
+#
+# These settings generally seem inherent to the TMS data structure and
+#   shouldn't usually need to be overridden in client project config.
+#   `type_field` may be an exception to this rule, if a client has
+#   done something strange in their data entry.
+#
+# #### `for_table_source_job_key`
+#
+# Defines the full registry entry key for the job that will be used a
+#   the base multi-table-mergeable table. This is the table that will
+#   get split into separate for-tables.
+#
+# If this is not set before extending, extension will set it to the
+#   prep job for the extending config module. So, if `AltNums` is
+#   extending, it will be set to `:prep__alt_nums`.
+#
+# #### `split_on_column`
+#
+# In most multi-table-mergeable tables, the original TMS data has a
+#   `tableid` field. The migration prep job for these tables usually
+#   runs the {Tms::Transforms::TmsTableNames} transform, which
+#   converts `tableid` to a human-readable `tablename` column that
+#   matches the TMS table name and associated config module in the
+#   migration.
+#
+# For this reason, if you don't define this setting/method prior to
+#   extending, extension will set it to `:tablename`. See
+#   {Kiba::Tms::ConRefs} for an example of an overriding config
+#   module.
+#
+# #### `type_field`
+#
+# Some multi-table mergeable tables include information on the type of
+#   data recorded in each row. For example, TextEntries (for objects)
+#   may record restrictions, provenance notes, creator biographical
+#   notes, or textual exhibition history. AltNums (for
+#   references/citations) may be ISBNs, call numbers, etc.
+#
+# For such tables, we need type cleanup and treatment indication
+#   routine. This will happen at the "for-table" level, since values
+#   for Objects vs. Constituents, etc. will need to be handled
+#   separately.
+#
+# If you wish to trigger inclusion of this handling for a
+#   MultiTableMergeable config module, define a `type_field` setting
+#   or method in the config module prior to extending MultiTableMergeable.
+#
+# As mentioned above, this will generally be set in the Kiba::Tms
+#   config module for the table, because, in general, for example, for
+#   TextEntries, the value will be `:textype`. If a specific client
+#   has done something like record the types in the `:purpose` field,
+#   you can override this in client project config.
+#
+# If a client has not entered types at all, they will not need to do
+#   type cleanup or treatment indication. (Unless they want to). Turn
+#   off default type processing by overriding `type_field` in client
+#   project config with `nil`
+#
+# #### `unreportable_for_tables_ok`
+#
+# If you are being nagged/warned about "unreportable for tables" needing
+#   `record_num_merge_config` settings configured, adding the for table name to
+#   this setting will suppress those warnings.
+#
+# #### `for_table_lookup_on_field`
+#
+# Used in {ForTable}.
+#
+# Sets the field used as `lookup_on` value in the for-table job registry
+#   entries. That is, when target table Objects uses `alt_nums_for__objects` as
+#   a lookup, what field in the latter will match `:objectid`?
+#
+# By default, this is `:recordid`, but you may override it before extending.
+#
+# ### Auto-configurable settings
+#
+# These are expected to vary per project. The settings below will be
+#   defined with blank default values on the extending module, and
+#   should be overridden in client configs. These are auto-configured
+#   settings, which means you can use Utils::InitialConfigDeriver to
+#   get output you can copy/paste into the client config, based on
+#   what's actually in their data.
+#
+# #### `target_tables`
+#
+# The list of tables the multi-table-mergeable table's data will be
+#   merged into. Depending on how a client has entered data into TMS,
+#   target tables will differ.
 module Kiba
   module Tms
     module Mixins
