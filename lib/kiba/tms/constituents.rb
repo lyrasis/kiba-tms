@@ -40,6 +40,13 @@ module Kiba
         reader: true,
         constructor: proc { |value| value << preferred_name_field }
 
+      # Used in reportable for_table jobs
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :constituents__prep_clean,
+          numberfield: preferred_name_field
+        }, reader: true
+
       # map these boolean, coded fields to text note values?
       # IF a client wants these true, then you need to do work
       setting :map_approved, default: false, reader: true

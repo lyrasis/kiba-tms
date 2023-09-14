@@ -14,6 +14,13 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      # Used in reportable for_table jobs
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :reference_master__prep_clean,
+          numberfield: :title
+        }, reader: true
+
       setting :con_ref_name_merge_rules,
         default: {
           fcart: {
