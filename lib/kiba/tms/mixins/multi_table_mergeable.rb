@@ -192,8 +192,10 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     bind = binding
     Dry::Container::Namespace.new(ns) do
       mod = bind.receiver
+
       config.each do |const, cfg|
         filekey = const.filekey
+
         params = {
           ns: ns,
           source: "#{source_ns}__#{filekey}".to_sym,
