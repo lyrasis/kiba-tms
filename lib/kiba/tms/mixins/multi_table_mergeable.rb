@@ -155,17 +155,8 @@ module Kiba::Tms::Mixins::MultiTableMergeable
   #      numberfield: :objectnumber
   #  }, reader: true
   #
-  # @return [Hash] of reportable-for-tables, i.e. target tables whose
-  #   configs define the :record_num_merge_config setting. Hash key
-  #   is the target table config Constant, and value is the
-  #   :record_num_merge_config setting value
-  def reportable_for_tables
-    target_tables.map { |t| Object.const_get("Tms::#{t}") }
-      .select { |t| t.respond_to?(:record_num_merge_config) }
-      .map { |t| [t, t.send(:record_num_merge_config)] }
-      .to_h
-  end
 
+  # Called by {Kiba::Tms::Utils::ForTableJobRegistrar} at application load
   def register_reportable_for_table_jobs
     return if reportable_for_tables.empty?
 
@@ -177,6 +168,26 @@ module Kiba::Tms::Mixins::MultiTableMergeable
     Tms.registry.import(ns)
   end
 
+  # @return [Hash{Constant=>Hash}] of reportable-for-tables, i.e.
+  #   target tables whose configs define the :record_num_merge_config
+  #   setting. Hash key is the target table config Constant (e.g.
+  #   Kiba::Tms::Objects), and value is the :record_num_merge_config
+  #   setting value
+  def reportable_for_tables
+    target_tables.map { |t| Object.const_get("Tms::#{t}") }
+      .select { |t| t.respond_to?(:record_num_merge_config) }
+      .map { |t| [t, t.send(:record_num_merge_config)] }
+      .to_h
+  end
+  private :reportable_for_tables
+
+  # Defines a registry namespace (e.g. alt_nums_reportable_for).
+  #   Within it, registers a job for each reportable-for-table (e.g.
+  #   alt_nums_reportable_for__objects)
+  #
+  # @param source_ns [String] e.g. "alt_nums_for"
+  # @param ns [String] e.g. "alt_nums_reportable_for"
+  # @param config [Hash{Constant=>Hash}]
   def build_reportable_registry_namespace(source_ns:, ns:, config:)
     bind = binding
     Dry::Container::Namespace.new(ns) do
@@ -193,7 +204,15 @@ module Kiba::Tms::Mixins::MultiTableMergeable
       end
     end
   end
+  private :build_reportable_registry_namespace
 
+  # Builds a registry entry hash for a reportable-for-job
+  #
+  # @param ns [String] e.g. "alt_nums_reportable_for"
+  # @param source [Symbol] e.g. "alt_nums_for__objects"
+  # @param dest [Symbol] e.g. "alt_nums_reportable_for__objects"
+  # @param config [Hash{Constant=>Hash}]
+  # @return [Hash]
   def reportable_job_hash(ns:, source:, dest:, config:)
     {
       path: File.join(Tms.datadir, "working", "#{dest}.csv"),
@@ -206,11 +225,14 @@ module Kiba::Tms::Mixins::MultiTableMergeable
       tags: [ns.to_sym]
     }
   end
+  private :reportable_job_hash
 
   # METHODS USED FOR AUTO-REGISTERING FOR-TABLE JOBS
 
-  # @param field [Symbol] name of field on which for_tables will be split. By
-  #   default this is `:tablename`.
+  # @param field [Symbol] name of field on which for_tables will be
+  #   split. By default this is `:tablename`. To override, define
+  #   `split_on_column` setting prior to extending this module. See
+  #   {Kiba::Tms::ConRefs} for an example.
   def register_for_table_jobs(field = split_on_column)
     key = filekey
     return unless key
