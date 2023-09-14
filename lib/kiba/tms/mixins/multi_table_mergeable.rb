@@ -62,9 +62,9 @@
 #   {Kiba::Tms::ConRefs} for an example of an overriding config
 #   module.
 #
-# #### `type_field`
+# #### `target_table_type_cleanup_needed`
 #
-# Some multi-table mergeable tables include information on the type of
+# Some multi-table mergeable tables specify the type of
 #   data recorded in each row. For example, TextEntries (for objects)
 #   may record restrictions, provenance notes, creator biographical
 #   notes, or textual exhibition history. AltNums (for
@@ -75,9 +75,14 @@
 #   for Objects vs. Constituents, etc. will need to be handled
 #   separately.
 #
-# If you wish to trigger inclusion of this handling for a
-#   MultiTableMergeable config module, define a `type_field` setting
-#   or method in the config module prior to extending MultiTableMergeable.
+# If this handling is needed for a target table of a
+#   MultiTableMergeable config module, add the target table name to
+#   this this setting or method's value in the config module prior to
+#   extending MultiTableMergeable. This can be overridden in
+#   client-specific config as needed.
+#
+# #### `type_field`
+#
 #
 # As mentioned above, this will generally be set in the Kiba::Tms
 #   config module for the table, because, in general, for example, for
@@ -131,6 +136,7 @@ module Kiba
           set_split_on_column_setting(mod)
           set_target_tables_setting(mod)
           set_unreportable_for_tables_ok_setting(mod)
+          set_target_table_type_cleanup_needed_setting(mod)
           set_checkable(mod)
         end
 
@@ -280,6 +286,18 @@ module Kiba
           )
         end
         private_class_method :set_unreportable_for_tables_ok_setting
+
+        def self.set_target_table_type_cleanup_needed_setting(mod)
+          return if mod.respond_to?(:target_table_type_cleanup_needed)
+
+          mod.module_eval(
+            "setting :target_table_type_cleanup_needed, "\
+              "default: [], reader: true",
+            __FILE__,
+            __LINE__ - 3
+          )
+        end
+        private_class_method :set_target_table_type_cleanup_needed_setting
 
         # METHODS USED BY METHODS USED FOR EXTENDING
         def self.checkable_as_needed(mod)

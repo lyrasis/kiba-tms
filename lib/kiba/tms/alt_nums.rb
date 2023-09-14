@@ -12,9 +12,6 @@ module Kiba
 
       setting :initial_cleaner, default: nil, reader: true
       setting :description_cleaner, default: nil, reader: true
-      setting :target_table_type_cleanup_needed,
-        default: [],
-        reader: true
 
       # pass in client-specific transform classes to prepare rows for
       #   merging
