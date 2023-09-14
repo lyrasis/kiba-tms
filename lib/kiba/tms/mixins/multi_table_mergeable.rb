@@ -201,19 +201,6 @@ module Kiba
         end
         private :target_transform_settings
 
-        # `for_*_prepper` methods/settings that are explicitly defined with
-        #   an xform class. This list is passed to job definitions to
-        #   configure what xforms each job will run.
-        #
-        # @return [Array<Symbol>]
-        def target_transform_settings_defined_with_xform
-          target_transform_settings.reject do |setting|
-            val = config.values[setting]
-            val.nil? || val == :no_xform
-          end
-        end
-        private :target_transform_settings_defined_with_xform
-
         # Generates a list of expected `for_*_prepper` method/setting
         #   names---one for each target table
         #

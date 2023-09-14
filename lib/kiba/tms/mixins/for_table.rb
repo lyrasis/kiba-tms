@@ -21,19 +21,18 @@ module Kiba
           ns = build_registry_namespace(
             "#{key}_for",
             target_tables,
-            field,
-            target_transform_settings_defined_with_xform
+            field
           )
           Tms.registry.import(ns)
         end
 
-        def build_registry_namespace(ns_name, targets, field, xforms)
+        def build_registry_namespace(ns_name, targets, field)
           bind = binding
           Dry::Container::Namespace.new(ns_name) do
             mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              targetxform = mod.target_xform(xforms, targetobj)
+              targetxform = mod.target_xform(targetobj)
               params = [mod, ns_name, targetobj, field, targetxform]
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
@@ -42,13 +41,11 @@ module Kiba
           end
         end
 
-        def target_xform(xforms, targetobj)
+        def target_xform(targetobj)
           sym = "for_#{targetobj.filekey}_prepper".to_sym
-          if xforms.any?(sym)
-            [send(sym)].flatten
-          else
-            []
-          end
+          return [send(sym)].flatten if respond_to?(sym) && !send(sym).nil?
+
+          []
         end
 
         def for_table_tags(ns_name, targetobj)
