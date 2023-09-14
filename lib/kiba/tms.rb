@@ -205,11 +205,9 @@ module Kiba
     def meta_config
       Tms::Utils::ConRefTargetExtender.call
       Tms::NameCompile.register_uncontrolled_name_compile_jobs
-      # Tms::NameTypeCleanup.register_uncontrolled_ntc_jobs
-      per_job_tables.each do |srctable|
-        srctable.target_tables.each do |target|
-          srctable.define_for_table_module(target)
-        end
+
+      used_multi_table_mergeable_configs.each do |mod|
+        mod.define_for_table_modules
       end
     end
 
@@ -226,9 +224,10 @@ module Kiba
       Tms.configs.select { |config| config.respond_to?(:checkable) }
     end
 
-    def per_job_tables
+    # @return [Array<Module>]
+    def used_multi_table_mergeable_configs
       Tms.configs.select do |config|
-        config.respond_to?(:target_tables) &&
+        config.is_a?(Tms::Mixins::MultiTableMergeable) &&
           config.respond_to?(:used?) &&
           config.used?
       end

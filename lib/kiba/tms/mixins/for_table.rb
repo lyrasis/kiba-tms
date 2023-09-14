@@ -10,6 +10,9 @@ module Kiba
       #   AltNums) into separate tables for each mergeable target table (e.g.
       #   alt_nums_for__objects, alt_nums_for__constituents, etc.)
       module ForTable
+        def define_for_table_modules
+          target_tables.each { |target| define_for_table_module(target) }
+        end
         # @param field [Symbol] name of field on which for_tables will be
         #   split. By default this is `:tablename`. To override, define
         #   `split_on_column` setting prior to extending this module. See
