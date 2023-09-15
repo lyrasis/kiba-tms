@@ -8,4 +8,10 @@ gem "kiba-extend", git: "https://github.com/lyrasis/kiba-extend.git",
 gem "emendate",
   git: "https://github.com/kspurgin/emendate.git",
   branch: "main"
+
+group :documentation do
+  gem "kramdown" # markdown parser for generating documentation
+  gem "yard"
+end
+
 gemspec
