@@ -6,12 +6,46 @@ require "zeitwerk"
 # dev
 require "pry"
 
-# Namespace for the overall project
 module Kiba
+  # kiba-tms application loading, configuration, and convenience methods
+  #
+  # == Explanation of the configuration and order of things in this file
+  #
+  # . {base_config} - Define default and basic project settings that
+  #   need to be available in order for the rest of the application
+  #   settings to be constructed and/or loaded
+  # . {loader}
   module Tms
     ::Tms = Kiba::Tms
 
     module_function
+
+    extend Dry::Configurable
+    def base_config
+      setting :empty_table_list_path,
+        default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/"\
+        "empty_tables.txt",
+        reader: true
+      setting :datadir,
+        default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/data",
+        reader: true
+      # Name of directory containing TMS tables in CSV format. Expected to be
+      #   found in `:datadir`
+      setting :tmsdir, default: "tms", reader: true
+      setting :delim, default: Kiba::Extend.delim, reader: true
+      setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
+      setting :nullvalue, default: "%NULLVALUE%", reader: true
+      # File registry - best to just leave this as-is
+      setting :registry, default: Kiba::Extend.registry, reader: true
+      # TMS tables not used in a given project. Override in project application
+      #   These should be tables that are not literally empty. Empty tables are
+      #   listed in the file found at Tms.empty_table_list_path
+      setting :excluded_tables, default: [], reader: true
+      setting :tms_table_dir_path,
+        default: nil,
+        reader: true,
+        constructor: ->(_val) { File.join(datadir, tmsdir) }
+    end
 
     def loader
       @loader ||= setup_loader
@@ -44,33 +78,6 @@ module Kiba
 
     def reload!
       @loader.reload
-    end
-
-    extend Dry::Configurable
-    def base_config
-      setting :empty_table_list_path,
-        default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/"\
-        "empty_tables.txt",
-        reader: true
-      setting :datadir,
-        default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/data",
-        reader: true
-      # Name of directory containing TMS tables in CSV format. Expected to be
-      #   found in `:datadir`
-      setting :tmsdir, default: "tms", reader: true
-      setting :delim, default: Kiba::Extend.delim, reader: true
-      setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
-      setting :nullvalue, default: "%NULLVALUE%", reader: true
-      # File registry - best to just leave this as-is
-      setting :registry, default: Kiba::Extend.registry, reader: true
-      # TMS tables not used in a given project. Override in project application
-      #   These should be tables that are not literally empty. Empty tables are
-      #   listed in the file found at Tms.empty_table_list_path
-      setting :excluded_tables, default: [], reader: true
-      setting :tms_table_dir_path,
-        default: nil,
-        reader: true,
-        constructor: ->(_val) { File.join(datadir, tmsdir) }
     end
 
     setting :table_lookup,
