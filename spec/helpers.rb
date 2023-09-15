@@ -14,6 +14,13 @@ module Helpers
         cfg.enable_test_interface
       end
   end
+
+  def auto_derive_config
+    init_config = Tms::Utils::InitialConfigDeriver.call(mode: :quiet)
+    Tms::Utils::InitialConfigWriter.call(results: init_config)
+    eval(File.read(File.join(Tms.datadir, "initial_config.txt")))
+  end
+
   def setup_project
     Kiba::Tms.base_config
 
