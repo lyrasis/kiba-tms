@@ -12,18 +12,42 @@ module Kiba
               files: {
                 source: source,
                 destination: dest,
-                lookup: config[:sourcejob]
+                lookup: lookups(config)
               },
-              transformer: reportable_for_table_xforms(config)
+              transformer: xforms(config)
             )
           end
 
-          def reportable_for_table_xforms(config)
+          def lookups(config)
+            base = []
+
+            if config.record_num_merge_config
+              base << config.record_num_merge_config[:sourcejob]
+            end
+
+            base.select { |job| Kiba::Extend::Job.output?(job) }
+          end
+
+          def xforms(config)
+            if lookups(config).empty?
+              passthrough_xforms
+            else
+              merge_xforms(config.record_num_merge_config)
+            end
+          end
+
+          def merge_xforms(mergeconfig)
             Kiba.job_segment do
               transform Merge::MultiRowLookup,
-                lookup: send(config[:sourcejob]),
+                lookup: send(mergeconfig[:sourcejob]),
                 keycolumn: :recordid,
-                fieldmap: config[:fieldmap]
+                fieldmap: mergeconfig[:fieldmap]
+            end
+          end
+
+          def passthrough_xforms
+            Kiba.job_segment do
+              # passthrough
             end
           end
         end

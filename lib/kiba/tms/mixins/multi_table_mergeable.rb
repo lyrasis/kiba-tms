@@ -137,6 +137,7 @@ module Kiba
           set_target_tables_setting(mod)
           set_unreportable_for_tables_ok_setting(mod)
           set_target_table_type_cleanup_needed_setting(mod)
+          set_record_num_merge_config_setting(mod)
           set_checkable(mod)
         end
 
@@ -183,14 +184,18 @@ module Kiba
             "#{tables.join(", ")}"
         end
 
-        # List target tables that do not respond to
+        # List target tables that have a nil
         #   `:record_num_merge_config`, that are not listed in the
         #   :unreportable_for_tables_ok setting
         #
         # @return [Array<String>] of table names, e.g. "Objects"
         def unreportable_for_tables
           target_tables.map { |t| Object.const_get("Tms::#{t}") }
-            .reject { |t| t.respond_to?(:record_num_merge_config) }
+            .reject { |mod|
+              mod.respond_to?(:record_num_merge_config) &&
+                mod.record_num_merge_config
+            }
+            .select { |mod| mod.used? }
             .map(&:to_s)
             .map { |val| val.delete_prefix("Kiba::Tms::") }
             .sort - unreportable_for_tables_ok
@@ -298,6 +303,18 @@ module Kiba
           )
         end
         private_class_method :set_target_table_type_cleanup_needed_setting
+
+        def self.set_record_num_merge_config_setting(mod)
+          return if mod.respond_to?(:record_num_merge_config)
+
+          mod.module_eval(
+            "setting :record_num_merge_config, "\
+              "default: nil, reader: true",
+            __FILE__,
+            __LINE__ - 3
+          )
+        end
+        private_class_method :set_record_num_merge_config_setting
 
         # METHODS USED BY METHODS USED FOR EXTENDING
         def self.checkable_as_needed(mod)

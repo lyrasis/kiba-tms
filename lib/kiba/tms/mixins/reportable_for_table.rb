@@ -20,28 +20,23 @@ module Kiba
       module ReportableForTable
         # Called by {Kiba::Tms::Utils::ForTableJobRegistrar} at application load
         def register_reportable_for_table_jobs
-          return if reportable_for_table_configs.empty?
+          return if target_table_configs.empty?
 
           ns = build_reportable_registry_namespace(
             source_ns: "#{filekey}_for",
             ns: "#{filekey}_reportable_for",
-            config: reportable_for_table_configs
+            configs: target_table_configs
           )
           Tms.registry.import(ns)
         end
 
-        # @return [Hash{Constant=>Hash}] of reportable-for-tables, i.e.
-        #   target tables whose configs define the :record_num_merge_config
-        #   setting. Hash key is the target table config Constant (e.g.
-        #   Kiba::Tms::Objects), and value is the :record_num_merge_config
-        #   setting value
-        def reportable_for_table_configs
+        # @return [Array<Module>] target tables of extending module, that are
+        #   not excluded from project
+        def target_table_configs
           target_tables.map { |t| Object.const_get("Tms::#{t}") }
-            .select { |t| t.respond_to?(:record_num_merge_config) }
-            .map { |t| [t, t.send(:record_num_merge_config)] }
-            .to_h
+            .select { |mod| mod.used? }
         end
-        private :reportable_for_table_configs
+        private :target_table_configs
 
         # Defines a registry namespace (e.g. alt_nums_reportable_for).
         #   Within it, registers a job for each reportable-for-table (e.g.
@@ -50,19 +45,19 @@ module Kiba
         # @param source_ns [String] e.g. "alt_nums_for"
         # @param ns [String] e.g. "alt_nums_reportable_for"
         # @param config [Hash{Constant=>Hash}]
-        def build_reportable_registry_namespace(source_ns:, ns:, config:)
+        def build_reportable_registry_namespace(source_ns:, ns:, configs:)
           bind = binding
           Dry::Container::Namespace.new(ns) do
             mod = bind.receiver
 
-            config.each do |const, cfg|
-              filekey = const.filekey
+            configs.each do |config|
+              filekey = config.filekey
 
               params = {
                 ns: ns,
                 source: "#{source_ns}__#{filekey}".to_sym,
                 dest: "#{ns}__#{filekey}".to_sym,
-                config: cfg
+                config: config
               }
               register filekey, mod.send(:reportable_job_hash, **params)
             end
