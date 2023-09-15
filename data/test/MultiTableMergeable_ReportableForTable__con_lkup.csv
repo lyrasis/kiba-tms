@@ -1,0 +1,3 @@
+"constituentid","derivedcontype","contype","alphasort","firstname","lastname","birth_foundation_date","death_dissolution_date","datenote","institution","inconsistent_org_names","displayname","code","nationality","defaultnameid","defaultdisplaybioid","namedata","norm","nonprefnorm","combined","duplicate","prefnormorig","nonprefnormorig"
+13,"Person?","Person?","Abbe, Bill","Bill","Abbe",,,,,,"Bill Abbe","ACODE","United States",5,1,"Bill AbbeAbbe, BillAbbeBill","abbebill","billabbe","Person abbebill",,"abbebill","billabbe"
+3542,"Organization?","Organization?","LIFE Magazine",,,,,,,,,"ACODE",,3534,,"LIFE Magazine","lifemagazine",,"Organization lifemagazine",,"lifemagazine",
