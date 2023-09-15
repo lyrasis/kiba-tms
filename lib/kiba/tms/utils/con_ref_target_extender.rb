@@ -11,18 +11,18 @@ module Kiba
         end
 
         def initialize(
-          extender: Tms::Services::ConRefTargetExtender,
+          extender: Tms::Services::ModuleExtender,
           verbose: false
         )
-          @extender = extender
-          @verbose = verbose
+          @extender = extender.new(extend_mod: Tms::Mixins::RolesMergedIn,
+            verbose: verbose)
           @configs = prep_configs
           @extendable = prep_extendable
         end
 
         def call
           extendable.each do |mod|
-            extender.call(mod: mod, verbose: verbose)
+            extender.call(mod)
           end
         end
 
