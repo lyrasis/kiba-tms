@@ -96,6 +96,9 @@ module Helpers
     dirpath = File.join(Tms.datadir, "working")
     FileUtils.rm_rf(dirpath)
     FileUtils.mkdir(dirpath)
+    dirpath = File.join(Tms.datadir, "prepped")
+    FileUtils.rm_rf(dirpath)
+    FileUtils.mkdir(dirpath)
   end
 
   def run(job)
