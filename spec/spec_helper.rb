@@ -16,34 +16,6 @@ require "dry/configurable/test_interface"
 Tms.base_config
 Tms.loader
 
-module Tms
-  enable_test_interface
-
-  module Constituents
-    enable_test_interface
-  end
-
-  module ConAddress
-    enable_test_interface
-  end
-
-  module ObjGeography
-    enable_test_interface
-  end
-
-  module Orgs
-    enable_test_interface
-  end
-
-  module Places
-    enable_test_interface
-  end
-
-  module PlacesCleanupInitial
-    enable_test_interface
-  end
-end
-
 # pulls in kiba-extend's helpers.rb, which lets you use existing
 #   methods for setting up and running transform tests
 require "kiba/extend"
@@ -58,6 +30,9 @@ end
 RSpec.configure do |config|
   config.extend Kiba::Tms
   config.include Helpers
+  config.before(:suite) do
+    Helpers.enable_test_interfaces_on_configs
+  end
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 

@@ -5,6 +5,15 @@ require "fileutils"
 module Helpers
   module_function
 
+  def enable_test_interfaces_on_configs
+    Tms.enable_test_interface
+    Tms.configs
+      .each do |cfg|
+        next unless cfg.respond_to?(:enable_test_interface)
+
+        cfg.enable_test_interface
+      end
+  end
   def setup_project
     Kiba::Tms.base_config
 
