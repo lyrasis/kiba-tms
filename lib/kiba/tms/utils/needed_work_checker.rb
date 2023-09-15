@@ -58,7 +58,9 @@ module Kiba
             next if fails.compact.empty?
 
             puts(mod)
-            fails.each { |f| puts "  #{f[0]}\n    #{f[1]}" }
+            fails.each { |f|
+              puts "  #{f.mod}\n    #{f.name}"
+            }
           end
         end
       end
