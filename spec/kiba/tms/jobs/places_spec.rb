@@ -3,11 +3,6 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::Jobs::Places do
-  before(:all) do # Fix flaky failure due to LoadError?
-    Kiba::Tms.configs
-  rescue LoadError
-  end
-
   context "when no cleanup done", :initial do
     it "transforms as expected" do
       reset_configs

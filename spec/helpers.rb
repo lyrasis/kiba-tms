@@ -22,8 +22,6 @@ module Helpers
   end
 
   def setup_project
-    Kiba::Tms.base_config
-
     # OVERRIDE KIBA::EXTEND'S DEFAULT OPTIONS
     Kiba::Extend.config.csvopts = {encoding: "utf-8",
                                    headers: true,

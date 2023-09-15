@@ -13,8 +13,7 @@ require_relative "../lib/kiba/tms"
 require_relative "./support/matchers/match_csv"
 require "dry/configurable/test_interface"
 
-Tms.base_config
-Tms.loader
+# Tms.loader
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing
 #   methods for setting up and running transform tests
@@ -31,7 +30,14 @@ RSpec.configure do |config|
   config.extend Kiba::Tms
   config.include Helpers
   config.before(:suite) do
-    Tms.loader.eager_load
+    Tms.loader
+
+    begin
+      Tms.configs
+    rescue LoadError => err
+      "Rescued LoadError: #{err}"
+    end
+
     Helpers.enable_test_interfaces_on_configs
     Helpers.auto_derive_config
   end
