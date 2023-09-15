@@ -14,10 +14,10 @@ RSpec.describe Kiba::Tms::Jobs::MultiTableMergeable::ReportableForTable do
     let(:prefix) { "#{base_prefix}obj" }
 
     it "transforms as expected" do
-      copy_from_test_to_working(
+      copy_from_test(
         "#{prefix}_src.csv", "alt_nums_for_objects.csv"
       )
-      copy_from_test_to_working(
+      copy_from_test(
         "#{prefix}_lkup.csv", "objects_numbers_cleaned.csv"
       )
       setup_project
@@ -35,10 +35,10 @@ RSpec.describe Kiba::Tms::Jobs::MultiTableMergeable::ReportableForTable do
     let(:prefix) { "#{base_prefix}con" }
 
     it "transforms as expected" do
-      copy_from_test_to_working(
+      copy_from_test(
         "#{prefix}_src.csv", "alt_nums_for_constituents.csv"
       )
-      copy_from_test_to_working(
+      copy_from_test(
         "#{prefix}_lkup.csv", "constituents_prepped_clean.csv"
       )
       setup_project

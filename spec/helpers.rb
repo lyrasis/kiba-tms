@@ -84,11 +84,11 @@ module Helpers
     Tms::PlacesCleanupInitial.reset_config
   end
 
-  def copy_from_test_to_working(file)
-    target = file.sub(/_[A-Z]\d+\.csv/, ".csv")
+  def copy_from_test(file, target = nil, dir = "working")
+    to = target || file.sub(/_[A-Z]\d+\.csv/, ".csv")
     FileUtils.cp(
       File.join(Tms.datadir, "test", file),
-      File.join(Tms.datadir, "working", target)
+      File.join(Tms.datadir, dir, to)
     )
   end
 

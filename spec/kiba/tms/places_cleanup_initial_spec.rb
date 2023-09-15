@@ -7,7 +7,7 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_norm_unique_N0.csv")
+      copy_from_test("places_norm_unique_N0.csv")
       Kiba::Tms::PlacesCleanupInitial.config.provided_worksheets = []
       Kiba::Tms::PlacesCleanupInitial.config.returned_files = []
       setup_project
@@ -40,7 +40,7 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_norm_unique_N0.csv")
+      copy_from_test("places_norm_unique_N0.csv")
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_cleanup_initial_worksheet_1.csv"
       ]
@@ -97,7 +97,7 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_orig_normalized_N2.csv")
+      copy_from_test("places_orig_normalized_N2.csv")
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_worksheet_ret_N1.csv"
       ]
@@ -149,7 +149,7 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_orig_normalized_N2.csv")
+      copy_from_test("places_orig_normalized_N2.csv")
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_cleanup_initial_worksheet_1.csv",
         "places_cleanup_initial_worksheet_3.csv"

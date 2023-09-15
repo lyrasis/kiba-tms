@@ -7,7 +7,7 @@ RSpec.describe Kiba::Tms::Jobs::Places do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_norm_unique_N0.csv")
+      copy_from_test("places_norm_unique_N0.csv")
       Tms::Places.config.returned = []
       Tms::Places.config.worksheets = []
       setup_project
@@ -40,7 +40,7 @@ RSpec.describe Kiba::Tms::Jobs::Places do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_norm_unique_N0.csv")
+      copy_from_test("places_norm_unique_N0.csv")
       Tms::Places.config.returned = [
         "places_worksheet_ret_N1.csv"
       ]
@@ -89,7 +89,7 @@ RSpec.describe Kiba::Tms::Jobs::Places do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_orig_normalized_N2.csv")
+      copy_from_test("places_orig_normalized_N2.csv")
       Tms::Places.config.returned = [
         "places_worksheet_ret_N1.csv"
       ]
@@ -135,7 +135,7 @@ RSpec.describe Kiba::Tms::Jobs::Places do
     it "transforms as expected" do
       reset_configs
       clear_working
-      copy_from_test_to_working("places_orig_normalized_N2.csv")
+      copy_from_test("places_orig_normalized_N2.csv")
       Tms::Places.config.returned = [
         "places_worksheet_ret_N1.csv",
         "places_worksheet_ret_N3.csv"
