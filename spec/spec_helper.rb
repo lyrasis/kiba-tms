@@ -31,6 +31,7 @@ RSpec.configure do |config|
   config.extend Kiba::Tms
   config.include Helpers
   config.before(:suite) do
+    Tms.loader.eager_load
     Helpers.enable_test_interfaces_on_configs
     Helpers.auto_derive_config
   end
