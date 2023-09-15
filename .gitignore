@@ -3,8 +3,10 @@
 .yardoc/
 .ruby-version
 coverage
-docs
 data/backup
+data/initial_config.txt
+data/working/*
+docs
 **/*.csv#
 .DS_Store
 .rubocop-https*
