@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
-module Kiba::Tms::Acquisitions
-  extend Dry::Configurable
-  extend Tms::Mixins::CsTargetable
+module Kiba
+  module Tms
+    module Acquisitions
+      extend Dry::Configurable
+      extend Tms::Mixins::CsTargetable
 
-  module_function
+      module_function
+    end
+  end
 end

@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-module Kiba::Tms::ObjRightsTypes
-  extend Dry::Configurable
+module Kiba
+  module Tms
+    module ObjRightsTypes
+      extend Dry::Configurable
 
-  module_function
+      module_function
 
-  extend Tms::Mixins::Tableable
+      extend Tms::Mixins::Tableable
 
-  setting :id_field, default: :objrightstypeid, reader: true
-  setting :type_field, default: :objrightstype, reader: true
-  setting :used_in,
-    default: ["ObjRights.#{id_field}"],
-    reader: true
-  extend Tms::Mixins::TypeLookupTable
+      setting :id_field, default: :objrightstypeid, reader: true
+      setting :type_field, default: :objrightstype, reader: true
+      setting :used_in,
+        default: ["ObjRights.#{id_field}"],
+        reader: true
+      extend Tms::Mixins::TypeLookupTable
+    end
+  end
 end

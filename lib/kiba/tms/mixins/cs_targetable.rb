@@ -10,22 +10,28 @@
 # - `extend Tms::Mixins::CsTargetable`
 #
 # This module should be mixed in AFTER any other mixins
-module Kiba::Tms::Mixins::CsTargetable
-  def self.extended(mod)
-    define_used_method(mod)
-  end
+module Kiba
+  module Tms
+    module Mixins
+      module CsTargetable
+        def self.extended(mod)
+          define_used_method(mod)
+        end
 
-  def self.define_used_method(mod)
-    return if mod.respond_to?(:used?)
+        def self.define_used_method(mod)
+          return if mod.respond_to?(:used?)
 
-    str = <<~CFG
-      def used?
-        Tms.cspace_target_records.include?(
-          name.delete_prefix("Kiba::Tms::")
-        )
+          str = <<~CFG
+            def used?
+              Tms.cspace_target_records.include?(
+                name.delete_prefix("Kiba::Tms::")
+              )
+            end
+          CFG
+
+          mod.instance_eval(str)
+        end
       end
-    CFG
-
-    mod.instance_eval(str)
+    end
   end
 end

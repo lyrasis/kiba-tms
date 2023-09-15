@@ -3,10 +3,9 @@
 module Kiba
   module Tms
     module ClassificationXRefs
-      extend Dry::Configurable
-
       module_function
 
+      extend Dry::Configurable
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
     end

@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
-module Kiba::Tms::Works
-  extend Dry::Configurable
+module Kiba
+  module Tms
+    module Works
+      extend Dry::Configurable
 
-  module_function
+      module_function
 
-  extend Tms::Mixins::CsTargetable
+      extend Tms::Mixins::CsTargetable
+    end
+  end
 end
