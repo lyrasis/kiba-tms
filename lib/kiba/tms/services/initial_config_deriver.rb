@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "dry-monads"
+
 module Kiba
   module Tms
     module Services
@@ -10,7 +12,7 @@ module Kiba
           new(...).call
         end
 
-        def initialize(mod:,
+        def initialize(mod:, mode: verbose,
           empty_deriver: EmptyFieldsDeriver,
           mapping_deriver: TypeMappingDeriver,
           known_val_deriver: TypeTableKnownValueDeriver,
@@ -29,7 +31,7 @@ module Kiba
         end
 
         def call
-          puts "Deriving config for #{mod}..."
+          puts "Deriving config for #{mod}..." if mode == :verbose
           unless mod.used?
             return resobj.new(
               failures: [Failure(failobj.new(mod: mod, sym: :not_used))]
@@ -50,8 +52,9 @@ module Kiba
 
         private
 
-        attr_reader :mod, :empty_deriver, :mapping_deriver, :known_val_deriver,
-          :target_table_deriver, :failobj, :successobj, :resobj
+        attr_reader :mod, :mode, :empty_deriver, :mapping_deriver,
+          :known_val_deriver, :target_table_deriver, :failobj, :successobj,
+          :resobj
 
         def configs
           base = []

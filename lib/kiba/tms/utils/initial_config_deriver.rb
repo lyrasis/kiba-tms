@@ -4,18 +4,19 @@ module Kiba
   module Tms
     module Utils
       class InitialConfigDeriver
-        def self.call
-          new.call
+        def self.call(...)
+          new(...).call
         end
 
-        def initialize
+        def initialize(mode: :verbose)
+          @mode = mode
           @to_configure = gather_configurable
         end
 
         def call
           starttime = Time.now
           @configs = to_configure.map { |const|
-            Tms::Services::InitialConfigDeriver.call(mod: const)
+            Tms::Services::InitialConfigDeriver.call(mod: const, mode: mode)
           }
           elapsedtime = (Time.now - starttime) / 60
           puts "Duration: #{elapsedtime} minutes"
@@ -28,7 +29,7 @@ module Kiba
 
         private
 
-        attr_reader :to_configure, :configs
+        attr_reader :mode, :to_configure, :configs
 
         def gather_configurable
           constants = Kiba::Tms.constants.select do |constant|
