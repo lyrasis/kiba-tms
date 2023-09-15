@@ -263,10 +263,15 @@ module Kiba
       end
 
       def register_uncontrolled_name_compile_jobs
+        sources = uncontrolled_name_source_tables.keys
+        return if sources.empty?
+
+        puts "Registering uncontrolled name compile jobs for "\
+          "#{sources.join(", ")}"
+
         ns = build_registry_namespace(
           "name_compile_from",
-          uncontrolled_name_source_tables.keys
-            .map { |n| Tms.const_get(n) }
+          sources.map { |table| Tms.const_get(table) }
         )
         Tms.registry.import(ns)
       end
@@ -292,7 +297,7 @@ module Kiba
                     args: {
                       mod: tablemod
                     }},
-          tags: %i[namecompilefrom]
+          tags: %i[name_compile_from]
         }
       end
     end

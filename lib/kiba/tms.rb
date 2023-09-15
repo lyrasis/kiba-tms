@@ -204,8 +204,6 @@ module Kiba
 
     def meta_config
       Tms::Utils::ConRefTargetExtender.call
-      Tms::NameCompile.register_uncontrolled_name_compile_jobs
-
       used_multi_table_mergeable_configs.each do |mod|
         mod.define_for_table_modules
       end
