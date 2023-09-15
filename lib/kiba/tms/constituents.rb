@@ -44,7 +44,10 @@ module Kiba
       setting :record_num_merge_config,
         default: {
           sourcejob: :constituents__prep_clean,
-          numberfield: preferred_name_field
+          fieldmap: {
+            targetrecord: preferred_name_field,
+            authority_type: :contype
+          }
         }, reader: true
 
       # map these boolean, coded fields to text note values?

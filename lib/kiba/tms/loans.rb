@@ -32,7 +32,7 @@ module Kiba
       setting :record_num_merge_config,
         default: {
           sourcejob: :tms__loans,
-          numberfield: :loannumber
+          fieldmap: {targetrecord: :loannumber}
         }, reader: true
 
       # Defines how auto-generated config settings are populated

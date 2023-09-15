@@ -14,7 +14,7 @@ module Kiba
       #  setting :record_num_merge_config,
       #    default: {
       #      sourcejob: :objects__number_lookup,
-      #      numberfield: :objectnumber
+      #      fieldmap: {targetrecord: :objectnumber}
       #  }, reader: true
       #
       module ReportableForTable

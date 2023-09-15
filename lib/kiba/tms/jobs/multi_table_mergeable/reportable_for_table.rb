@@ -23,7 +23,7 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: send(config[:sourcejob]),
                 keycolumn: :recordid,
-                fieldmap: {config[:numberfield] => config[:numberfield]}
+                fieldmap: config[:fieldmap]
             end
           end
         end
