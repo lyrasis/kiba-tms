@@ -40,7 +40,7 @@
 #
 # #### `for_table_source_job_key`
 #
-# Defines the full registry entry key for the job that will be used a
+# Defines the full registry entry key for the job that will be used as
 #   the base multi-table-mergeable table. This is the table that will
 #   get split into separate for-tables.
 #
@@ -81,20 +81,6 @@
 #   extending MultiTableMergeable. This can be overridden in
 #   client-specific config as needed.
 #
-# #### `type_field`
-#
-#
-# As mentioned above, this will generally be set in the Kiba::Tms
-#   config module for the table, because, in general, for example, for
-#   TextEntries, the value will be `:textype`. If a specific client
-#   has done something like record the types in the `:purpose` field,
-#   you can override this in client project config.
-#
-# If a client has not entered types at all, they will not need to do
-#   type cleanup or treatment indication. (Unless they want to). Turn
-#   off default type processing by overriding `type_field` in client
-#   project config with `nil`
-#
 # #### `unreportable_for_tables_ok`
 #
 # If you are being nagged/warned about "unreportable for tables" needing
@@ -110,6 +96,27 @@
 #   a lookup, what field in the latter will match `:objectid`?
 #
 # By default, this is `:recordid`, but you may override it before extending.
+#
+# ### ***Required*** settings/methods if type cleanup is needed
+#
+# #### `type_field`
+#
+# The field in the mergeable table that is used to express the type of
+#   each value. For instance :texttype in TextEntries, and (usually)
+#   :description in AltNums. Override in client project config if they
+#   have done something weird.
+#
+# If clients have recorded type information in an erratic way (for
+#   example, in AltNums, they have sometimes used :description and
+#   sometimes :purpose, this will need to be standardized either in
+#   (or in a job feeding into) `for_table_source_job_key`, OR, if the
+#   messiness is target-table-specific, in the relevant
+#   `for_*_prepper` transform.
+#
+# This setting is also required for some types of for-table reports to
+#   be registered (If we don't know the type field, we can't generate
+#   a report of single-occurrence types or a meaningful report of
+#   occurrences with no type value.)
 #
 # ### Auto-configurable settings
 #
