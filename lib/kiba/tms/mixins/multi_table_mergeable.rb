@@ -138,6 +138,7 @@ module Kiba
       module MultiTableMergeable
         include Tms::Mixins::ForTable
         include Tms::Mixins::ReportableForTable
+
         def self.extended(mod)
           set_for_table_source_job_key_setting(mod)
           set_split_on_column_setting(mod)
@@ -155,6 +156,16 @@ module Kiba
         # override manually in module after extending
         def auto_generate_target_tables
           true
+        end
+
+        def type_cleanable?
+          return false if target_table_type_cleanup_needed.empty?
+          return true if respond_to?(:type_field) && type_field
+
+          warn("You need to define `:type_field` in #{name} to enable "\
+               "for-table type cleanup for "\
+               "#{target_table_type_cleanup_needed.join(", ")}")
+          false
         end
 
         # METHODS USED FOR RUNNING CHECKS
