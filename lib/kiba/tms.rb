@@ -214,6 +214,7 @@ module Kiba
       used_multi_table_mergeable_configs.each do |mod|
         mod.define_for_table_modules
       end
+      Tms::Utils::ForTableTypeCleanupExtender.call
     end
 
     def for_merge_into(tablename)

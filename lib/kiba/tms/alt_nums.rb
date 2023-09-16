@@ -8,6 +8,8 @@ module Kiba
       module_function
 
       extend Tms::Mixins::Tableable
+
+      setting :type_field, default: :description, reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       setting :initial_cleaner, default: nil, reader: true
