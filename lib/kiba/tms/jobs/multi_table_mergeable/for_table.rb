@@ -34,6 +34,8 @@ module Kiba
                 xforms.each { |xform| transform xform }
               end
               transform Delete::EmptyFields
+              transform Delete::Fields,
+                fields: field
             end
           end
         end
