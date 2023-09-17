@@ -34,7 +34,7 @@ module Kiba
               transform Count::MatchingRowsInLookup,
                 lookup: send(lookup),
                 keycolumn: :lookupkey,
-                targetfield: :type_occs
+                targetfield: :occurrences
 
               if mergemod.respond_to?(:additional_occurrence_ct_fields)
                 mergemod.additional_occurrence_ct_fields.each do |field|

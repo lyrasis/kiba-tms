@@ -33,7 +33,6 @@ module Kiba
               unless xforms.empty?
                 xforms.each { |xform| transform xform }
               end
-              transform Delete::EmptyFields
               transform Delete::Fields,
                 fields: field
             end
