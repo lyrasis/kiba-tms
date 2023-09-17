@@ -30,6 +30,15 @@ module Kiba
           Tms.registry.import(ns)
         end
 
+        # Whether there are human readable id numbers in reportable for table
+        #   job (and thus extra fields to deal with in subsequent jobs)
+        #
+        # @param target [Module]
+        # @return [Boolean]
+        def target_ids_mergeable?(target)
+          true if target.record_num_merge_config
+        end
+
         # @return [Array<Module>] target tables of extending module, that are
         #   not excluded from project
         def target_table_configs
