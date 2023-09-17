@@ -10,6 +10,7 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :type_field, default: :description, reader: true
+      setting :type_field_target, default: :number_type, reader: true
       setting :mergeable_value_field, default: :altnum, reader: true
       setting :additional_occurrence_ct_fields,
         default: %i[remarks beginisodate endisodate],

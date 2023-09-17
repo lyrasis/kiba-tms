@@ -123,6 +123,15 @@
 # The main value field in a multi-table-mergeable field. e.g. :altnum for
 #   AltNums table
 #
+# ### ***Optional*** settings/methods if type cleanup is needed
+#
+# #### `type_field_target`
+#
+# The `type_field` is not always the best value to use in client-facing
+#   cleanup worksheets. For example, in AltNums, the `type_field` is
+#   `:description`. We set `type_field_target` to `:number_type` to create a
+#   clearer name in client worksheets.
+#
 # #### `additional_occurrence_ct_fields`
 #
 # For type value reporting and cleanup, the following are merged into
