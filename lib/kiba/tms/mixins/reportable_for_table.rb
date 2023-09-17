@@ -61,14 +61,28 @@ module Kiba
 
             configs.each do |config|
               filekey = config.filekey
+              for_table_job = "#{source_ns}__#{filekey}".to_sym
+              reportable_job = "#{ns}__#{filekey}".to_sym
 
-              params = {
-                ns: ns,
-                source: "#{source_ns}__#{filekey}".to_sym,
-                dest: "#{ns}__#{filekey}".to_sym,
-                config: config
-              }
-              register filekey, mod.send(:reportable_job_hash, **params)
+              tags = [source_ns.delete_suffix("_for").to_sym,
+                filekey, :reportable_for_table]
+
+              register filekey, mod.send(:reportable_job_hash,
+                source: for_table_job,
+                dest: reportable_job,
+                config: config,
+                tags: tags)
+              break unless mod.respond_to?(:type_field) &&
+                mod.respond_to?(:mergeable_value_field)
+
+              type_occs = "#{filekey}_type_occs".to_sym
+              type_occs_job = "#{ns}__#{type_occs}".to_sym
+              register type_occs, mod.send(:type_occs_job_hash,
+                source: reportable_job,
+                dest: type_occs_job,
+                mergemod: mod,
+                targetmod: config,
+                tags: tags)
             end
           end
         end
@@ -81,20 +95,47 @@ module Kiba
         # @param dest [Symbol] e.g. "alt_nums_reportable_for__objects"
         # @param config [Hash{Constant=>Hash}]
         # @return [Hash]
-        def reportable_job_hash(ns:, source:, dest:, config:)
+        def reportable_job_hash(source:, dest:, config:, tags:)
           {
             path: File.join(Tms.datadir, "working", "#{dest}.csv"),
             creator: {callee:
-                        Tms::Jobs::MultiTableMergeable::ReportableForTable,
+                      Tms::Jobs::MultiTableMergeable::ReportableForTable,
                       args: {
                         source: source,
                         dest: dest,
                         config: config
                       }},
-            tags: [ns.to_sym]
+            tags: tags,
+            lookup_on: :lookupkey,
+            desc: "If target table is configured for id merge, merges human "\
+              "readable id for target record into each mergeable row. "\
+              "Otherwise passes all rows through with no changes."
           }
         end
         private :reportable_job_hash
+
+        def type_occs_job_hash(source:, dest:, mergemod:, targetmod:, tags:)
+          {
+            path: File.join(Tms.datadir, "working", "#{dest}.csv"),
+            creator: {callee:
+                      Tms::Jobs::MultiTableMergeable::TypeOccs,
+                      args: {
+                        source: source,
+                        dest: dest,
+                        mergemod: mergemod,
+                        targetmod: targetmod
+                      }},
+            tags: [tags, :reports].flatten,
+            desc: "Deduplicates on type field value and merges in occurrence "\
+              "count (number of times that type assigned to a value); example "\
+              "target record ids and example mergeable values using the type, "\
+              "and, optionally, counts of how many occurrences of each type "\
+              "have given fields populated (# of type occs with remarks or "\
+              "dates, typically. Used as input for other reports and type "\
+              "cleanup job processes"
+          }
+        end
+        private :type_occs_job_hash
       end
     end
   end

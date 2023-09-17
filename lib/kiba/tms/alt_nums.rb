@@ -10,6 +10,11 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :type_field, default: :description, reader: true
+      setting :mergeable_value_field, default: :altnum, reader: true
+      setting :additional_occurrence_ct_fields,
+        default: %i[remarks beginisodate endisodate],
+        reader: true,
+        constructor: ->(val) { val - empty_fields.keys }
       extend Tms::Mixins::MultiTableMergeable
 
       setting :initial_cleaner, default: nil, reader: true
