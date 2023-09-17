@@ -183,63 +183,10 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace("alt_nums") do
-          register :occ_merge, {
-            creator: Kiba::Tms::Jobs::AltNums::OccMerge,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "alt_nums_occ_merge.csv"),
-            desc: "Merge in object number or other id from target tables",
-            tags: %i[alt_nums],
-            lookup_on: :lookupkey
-          }
-          Tms::AltNums.target_tables.each do |table|
-            tableobj = Tms::Table::Obj.new(table)
-            register "types_for_#{tableobj.filekey}".to_sym, {
-              creator: {callee: Tms::Jobs::AltNums::TypesFor,
-                        args: {table: tableobj}},
-              path: File.join(
-                Kiba::Tms.datadir,
-                "working",
-                "alt_num_types_for_#{tableobj.filekey}.csv"
-              ),
-              tags: [:alt_nums, :alt_nums_types, tableobj.filekey.to_sym]
-            }
-          end
-
-          # cleanup
-          if Tms::AltNums.target_table_type_cleanup_needed.any?("Objects")
-          end
-
-          # reports
-          register :description_single_occs, {
-            creator: Kiba::Tms::Jobs::AltNums::DescriptionSingleOccs,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_description_single_occ.csv"),
-            desc: "AltNums with a description only used once",
-            tags: %i[alt_nums reports]
-          }
-          register :description_occs, {
-            creator: Kiba::Tms::Jobs::AltNums::DescriptionOccs,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_description_occs.csv"),
-            desc: "AltNums with count of description occurrences - source "\
-              "data for other reports",
-            tags: %i[alt_nums reports]
-          }
-          register :no_description, {
-            creator: Kiba::Tms::Jobs::AltNums::NoDescription,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "alt_nums_no_description.csv"),
-            desc: "AltNums without a description value",
-            tags: %i[alt_nums reports]
-          }
-          register :types, {
-            creator: Kiba::Tms::Jobs::AltNums::Types,
-            path: File.join(Kiba::Tms.datadir, "reports", "alt_num_types.csv"),
-            desc: "AltNumber types",
-            tags: %i[alt_nums reports]
-          }
-        end
+        # Kiba::Tms.registry.namespace("alt_nums") do
+        #   # Handled by MultiTableMergeable and config transforms.
+        #   # Do `thor jobs tagged alt_nums to see all jobs`
+        # end
 
         Kiba::Tms.registry.namespace("associations") do
           register :missing_values, {
@@ -3782,7 +3729,8 @@ module Kiba
               "reference_master_prep_clean.csv"),
             desc: "Merges in corrections from placepublished cleanup "\
               "worksheet, if completed.",
-            tags: %i[reference_master]
+            tags: %i[reference_master],
+            lookup_on: :referenceid
           }
           register :places, {
             creator: Kiba::Tms::Jobs::ReferenceMaster::Places,
