@@ -6,21 +6,17 @@ module Kiba
       # Methods used by {MultiTableMergeable} to setup type cleanup for
       #   for-tables listed in `target_table_type_cleanup_needed`
       #
-      # ## Required settings if f
+      # ## Required settings
       #
-      # #### `type_field`
+      # - `type_field`
+      # - `mergeable_value_field`
       #
+      # ## Optional settings
       #
-      # As mentioned above, this will generally be set in the Kiba::Tms
-      #   config module for the table, because, in general, for example, for
-      #   TextEntries, the value will be `:textype`. If a specific client
-      #   has done something like record the types in the `:purpose` field,
-      #   you can override this in client project config.
+      # - `type_field_target`
+      # - `additional_occurrence_ct_fields`
       #
-      # If a client has not entered types at all, they will not need to do
-      #   type cleanup or treatment indication. (Unless they want to). Turn
-      #   off default type processing by overriding `type_field` in client
-      #   project config with `nil`
+      # See {MultiTableMergeable} for full description of these settings
       module ForTableTypeCleanup
         def self.extended(mod)
           mod.send(:define_for_table_modules)

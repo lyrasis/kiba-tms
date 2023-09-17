@@ -118,6 +118,31 @@
 #   a report of single-occurrence types or a meaningful report of
 #   occurrences with no type value.)
 #
+# #### `mergeable_value_field`
+#
+# The main value field in a multi-table-mergeable field. e.g. :altnum for
+#   AltNums table
+#
+# #### `additional_occurrence_ct_fields`
+#
+# For type value reporting and cleanup, the following are merged into
+#   deduplicated type values by default:
+#
+# * example values (from `mergeable_values_field`) for each type
+# * (if target table is configured for merging human-readable ids) example
+#   target records for each type
+# * occurrence count of mergeable rows with the type
+#
+# Each field listed in this setting will cause another occurrence
+#   count field to be added, containing the number of mergeable rows
+#   for the type, where the field is populated. For example, the
+#   number of rows/occurrences having `remarks`.
+#
+# This additional information is useful in helping clients determine
+#   mapping treatments for different types, where some mapping
+#   treatments discard notes/date/etc info due to data model
+#   differences
+#
 # ### Auto-configurable settings
 #
 # These are expected to vary per project. The settings below will be
@@ -149,6 +174,11 @@ module Kiba
           set_checkable(mod)
         end
 
+        # Whether or not there are rows in the mergeable table to be merged into
+        #   the given table
+        #
+        # @param table [String]
+        # @return [Boolean]
         def for?(table)
           target_tables.any?(table)
         end
@@ -158,6 +188,10 @@ module Kiba
           true
         end
 
+        # Whether the extending module is configured to generate type
+        #  cleanup processes
+        #
+        # @return [Boolean]
         def type_cleanable?
           return false if target_table_type_cleanup_needed.empty?
           return true if respond_to?(:type_field) && type_field
