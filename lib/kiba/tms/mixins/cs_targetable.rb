@@ -29,7 +29,7 @@ module Kiba
             end
           CFG
 
-          mod.instance_eval(str)
+          mod.instance_eval(str, __FILE__, __LINE__)
         end
       end
     end

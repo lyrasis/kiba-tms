@@ -347,7 +347,7 @@ module Kiba
             default: :prep__#{mod.filekey},
             reader: true
           CFG
-          mod.module_eval(str)
+          mod.module_eval(str, __FILE__, __LINE__)
         end
         private_class_method :set_for_table_source_job_key_setting
 
@@ -461,7 +461,7 @@ module Kiba
             reader: true
           ).tr("\n", " ")
 
-          mod.module_eval(code)
+          mod.module_eval(code, __FILE__, __LINE__)
         end
         private_class_method :checkable_from_scratch
       end

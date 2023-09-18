@@ -58,7 +58,7 @@ module Kiba
               end
             end
           MODDEF
-          Tms.module_eval(moddef)
+          Tms.module_eval(moddef, __FILE__, __LINE__)
         end
         private :define_for_table_module
 

@@ -189,7 +189,7 @@ module Kiba
           return if mod.respond_to?(:non_content_fields)
 
           str = "setting :non_content_fields, default: [], reader: true"
-          mod.module_eval(str)
+          mod.module_eval(str, __FILE__, __LINE__)
         end
       end
     end

@@ -71,7 +71,7 @@ module Kiba
               end
             end
           CODE
-          mod.instance_eval(code)
+          mod.instance_eval(code, __FILE__, __LINE__)
         end
         private_class_method :set_controlled_type_condition
 

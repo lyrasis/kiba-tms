@@ -103,7 +103,7 @@ module Kiba
             },
             reader: true
           CODE
-          mod.module_eval(code)
+          mod.module_eval(code, __FILE__, __LINE__)
         end
         private_class_method :checkable_from_scratch
 
