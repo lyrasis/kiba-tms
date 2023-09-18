@@ -86,6 +86,17 @@ module Kiba
                 targetmod: config,
                 tags: tags)
               puts "Register job: #{type_occs_job}" if Tms.debug?
+
+              no_type = "#{filekey}_no_type".to_sym
+              no_type_job = "#{ns}__#{no_type}".to_sym
+              register no_type, mod.send(:no_type_job_hash,
+                source: reportable_job,
+                dest: no_type_job,
+                mod: mod,
+                tags: tags)
+              puts "Register job: #{no_type_job}" if Tms.debug?
+              next if mod.target_table_type_cleanup_needed.empty?
+
               cleanup_merge = "#{filekey}_type_cleanup_merge".to_sym
               cleanup_merge_job = "#{ns}__#{cleanup_merge}".to_sym
               register cleanup_merge, mod.send(:cleanup_merge_job_hash,
@@ -148,6 +159,24 @@ module Kiba
           }
         end
         private :type_occs_job_hash
+
+        def no_type_job_hash(source:, dest:, mod:, tags:)
+          {
+            path: File.join(Tms.datadir, "reports", "#{dest}.csv"),
+            creator: {callee:
+                      Tms::Jobs::MultiTableMergeable::NoType,
+                      args: {
+                        source: source,
+                        dest: dest,
+                        mod: mod
+                      }},
+            tags: [tags, :reports].flatten,
+            desc: "Report of mergeable values with no type value. If client "\
+              "desires, can be used as base for Provide Type Cleanup"
+          }
+        end
+        private :type_occs_job_hash
+
         def cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
           {
             path: File.join(Tms.datadir, "working", "#{dest}.csv"),
