@@ -81,6 +81,11 @@
 #   extending MultiTableMergeable. This can be overridden in
 #   client-specific config as needed.
 #
+# #### `target_table_empty_type_cleanup_needed`
+#
+# Add target table name to this setting to set up an IterativeCleanup process
+#   so client can provide type values for rows not having a type
+#
 # #### `unreportable_for_tables_ok`
 #
 # If you are being nagged/warned about "unreportable for tables" needing
@@ -179,6 +184,7 @@ module Kiba
           set_target_tables_setting(mod)
           set_unreportable_for_tables_ok_setting(mod)
           set_target_table_type_cleanup_needed_setting(mod)
+          set_target_table_empty_type_cleanup_needed_setting(mod)
           set_record_num_merge_config_setting(mod)
           set_checkable(mod)
         end
@@ -213,6 +219,26 @@ module Kiba
           warn("You need to define `:type_field` and `:mergeable_value_field` "\
                "in #{name} to enable for-table type cleanup for "\
                "#{target_table_type_cleanup_needed.join(", ")}")
+          false
+        end
+
+        # Whether the extending module is configured to generate type
+        #  cleanup processes
+        #
+        # @return [Boolean]
+        def empty_type_cleanable?
+          return false unless respond_to?(
+            :target_table_empty_type_cleanup_needed
+          )
+          return false if target_table_empty_type_cleanup_needed.empty?
+
+          return true if respond_to?(:type_field) && type_field &&
+            respond_to?(:mergeable_value_field) &&
+            mergeable_value_field
+
+          warn("You need to define `:type_field` and `:mergeable_value_field` "\
+               "in #{name} to enable for-table type cleanup for "\
+               "#{target_table_empty_type_cleanup_needed.join(", ")}")
           false
         end
 
@@ -376,6 +402,26 @@ module Kiba
           end
         end
         private_class_method :set_target_table_type_cleanup_needed_setting
+
+        def self.set_target_table_empty_type_cleanup_needed_setting(mod)
+          if Tms.debug?
+            puts "Check for setting: target_table_empty_type_cleanup_needed "\
+              "on #{mod}"
+          end
+          return if mod.respond_to?(:target_table_empty_type_cleanup_needed)
+
+          mod.module_eval(
+            "setting :target_table_empty_type_cleanup_needed, "\
+              "default: [], reader: true",
+            __FILE__,
+            __LINE__ - 3
+          )
+          if Tms.debug?
+            puts "Auto-defined setting: "\
+              "target_table_empty_type_cleanup_needed on #{mod}"
+          end
+        end
+        private_class_method :set_target_table_empty_type_cleanup_needed_setting
 
         def self.set_record_num_merge_config_setting(mod)
           return if mod.respond_to?(:record_num_merge_config)

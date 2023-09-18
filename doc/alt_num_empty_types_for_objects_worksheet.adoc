@@ -1,0 +1,88 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:figure-caption!:
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= Alternate number for objects with empty type values worksheet
+
+toc::[]
+
+== Background/rationale
+
+If you would like these numbers to be treated in the same way as other alt nums for objects, you need to indicate what type they should be treated as.
+
+See the https://github.com/lyrasis/kiba-tms/blob/main/doc/alt_num_types_for_object_worksheet.adoc[Alternate number types for objects worksheet instructions] for descriptions of the different number type treatments available for objects.
+
+[IMPORTANT]
+====
+*This cleanup task is OPTIONAL.*
+
+If you do not want to do this task at all, or if you want to skip some numbers, any `altnum` values remaining without a `number_type` will receive `other_number` treatment. The number will go in `Other number value` and `Other number type` will be left blank.
+
+If you would like untyped numbers to receive a different treatment (as described in the https://github.com/lyrasis/kiba-tms/blob/main/doc/alt_num_types_for_object_worksheet.adoc[Alternate number types for objects worksheet instructions]), let you migration specialist know which treatment to use for untyped numbers.
+====
+
+== Interpreting the worksheet
+
+.Non-editable columns
+`targetrecord`:: The human-readable object number of the object record the `altnum` value will be merged into
+`altnum`:: The altnum value that will be merged into an object record
+`remarks`, `beginisodate`, `endisodate`:: data recorded for the `altnum` value in TMS AltNums table.
+`recordid`:: The underlying `objectid` value in the TMS objects table, for identifying the target object in the reference spreadsheet if the `targetrecord` values are not unique
+
+The other columns are either editable (described below), or internal to the migration (can be ignored and *must not be edited*).
+
+.Data loss warning
+[WARNING]
+====
+The default untyped treatment (as `other_number`) will not migrate any values in the `remarks`, `beginisodate`, or `endisodate` columns. If this data is important to you, assign a type to any number having said values, or ask your migration specialist to use an untyped number treatment that will migrate these values.
+====
+
+== Completing the worksheet
+
+The following will be provided for reference in completing the worksheet:
+
+* A list of types assigned to other object alt nums in your migration
+* A CSV with preliminary pre-processed object data
+
+[IMPORTANT]
+====
+Only make changes to the following columns:
+
+* `number_type`
+* `note`
+
+If you change values in `clean_fingerprint` or `fingerprints`, we will not be able to merge your changes back into the migration.
+====
+
+=== `number_type`
+
+Use this column to enter the number type value of the `altnum`.
+
+Enter "DROP" (all caps, without quotes) to omit this number from the migration.
+
+
+TIP: Assign number types already established for your migration, copied directly from the reference spreadsheet of existing types. If you create any new number types here, and number type cleanup has already been done, there will need to be another round of type cleanup to indicate the treatment for the new types.
+
+=== `note`
+
+Use this column to record specific information about this number value that should not be part of the number type value itself.
+
+For example, if you look at the reference spreadsheet of object data and determine that the `altnum` value is the edition number of the print on the left side of a diptych, you might want to enter `number_type`="Edition number" and `note`="left print".
+
+.Data loss warning
+[WARNING]
+====
+If you enter `number_type`="DROP", `note` data will also be dropped from the migration.
+
+If you enter `note` data but do not provide a number type, you probably want to provide a number type that can be assigned a treatment that will retain notes/remarks values. Or, ask your migration specialist to use an untyped number treatment that will migrate these values.
+====

@@ -23,7 +23,7 @@ module Kiba
     extend Dry::Configurable
     # For dev/debugging. Set to :verbose to have application print everything
     #   it does to screen
-    Kiba::Extend.config.job_verbosity = :debug
+    Kiba::Extend.config.job_verbosity = :verbose
     setting :stdout_mode, default: Kiba::Extend.job_verbosity, reader: true
 
     def verbose?
@@ -227,6 +227,7 @@ module Kiba
       used_multi_table_mergeable_configs.each do |mod|
         mod.define_for_table_modules
       end
+      Tms::Utils::ForTableEmptyTypeCleanupExtender.call
       Tms::Utils::ForTableTypeCleanupExtender.call
     end
 
