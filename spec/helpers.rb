@@ -79,9 +79,12 @@ module Helpers
 
   def reset_configs
     Tms.reset_config
-    Tms::ObjGeography.reset_config
-    Tms::Places.reset_config
-    Tms::PlacesCleanupInitial.reset_config
+    Tms.configs
+      .each do |cfg|
+        next unless cfg.respond_to?(:reset_config)
+
+        cfg.reset_config
+      end
   end
 
   def copy_from_test(file, target = nil, dir = "working")
