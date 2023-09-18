@@ -26,8 +26,6 @@ RSpec.describe Kiba::Tms::Jobs::MultiTableMergeable::ReportableForTable do
         Tms.datadir, "test", "#{prefix}_dest.csv"
       )
       expect(result).to match_csv(expected)
-
-      reset_configs
     end
   end
 
@@ -47,8 +45,6 @@ RSpec.describe Kiba::Tms::Jobs::MultiTableMergeable::ReportableForTable do
         Tms.datadir, "test", "#{prefix}_dest.csv"
       )
       expect(result).to match_csv(expected)
-
-      reset_configs
     end
   end
 
@@ -69,8 +65,6 @@ RSpec.describe Kiba::Tms::Jobs::MultiTableMergeable::ReportableForTable do
         Tms.datadir, "test", "#{prefix}_dest.csv"
       )
       expect(result).to match_csv(expected)
-
-      reset_configs
     end
   end
 end

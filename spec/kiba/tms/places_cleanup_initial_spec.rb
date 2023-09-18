@@ -3,14 +3,17 @@
 require "spec_helper"
 
 RSpec.describe Kiba::Tms::PlacesCleanupInitial do
+  before(:each) do
+    reset_configs
+    clear_working
+  end
+
   context "when no cleanup done", :initial do
     it "transforms as expected" do
-      reset_configs
-      clear_working
       copy_from_test("places_norm_unique_N0.csv")
+      setup_project
       Kiba::Tms::PlacesCleanupInitial.config.provided_worksheets = []
       Kiba::Tms::PlacesCleanupInitial.config.returned_files = []
-      setup_project
 
       result_a = result_path(Tms::PlacesCleanupInitial.base_job_cleaned_job_key)
       expected_a = File.join(
@@ -32,22 +35,19 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
       expect(result_c).to match_csv(expected_c)
 
       FileUtils.rm(result_c)
-      reset_configs
     end
   end
 
   context "when initial cleanup returned", :clean1 do
     it "transforms as expected" do
-      reset_configs
-      clear_working
       copy_from_test("places_norm_unique_N0.csv")
+      setup_project
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_cleanup_initial_worksheet_1.csv"
       ]
       Tms::PlacesCleanupInitial.config.provided_worksheets = [
         "places_cleanup_initial_worksheet_N1.csv"
       ]
-      setup_project
 
       result_a = result_path(
         Tms::PlacesCleanupInitial.returned_compiled_job_key
@@ -89,22 +89,19 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
       expect(result_e).to match_csv(expected_e)
 
       FileUtils.rm(result_e)
-      reset_configs
     end
   end
 
   context "when fresh data after initial cleanup", :fresh1 do
     it "transforms as expected" do
-      reset_configs
-      clear_working
       copy_from_test("places_orig_normalized_N2.csv")
+      setup_project
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_worksheet_ret_N1.csv"
       ]
       Tms::PlacesCleanupInitial.config.provided_worksheets = [
         "places_worksheet_N1.csv"
       ]
-      setup_project
 
       result_a = result_path(:places__norm_unique)
       expected_a = File.join(
@@ -141,15 +138,13 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
       expect(result_d).to match_csv(expected_d)
 
       FileUtils.rm(result_d)
-      reset_configs
     end
   end
 
   context "when second round of cleanup", :clean2 do
     it "transforms as expected" do
-      reset_configs
-      clear_working
       copy_from_test("places_orig_normalized_N2.csv")
+      setup_project
       Tms::PlacesCleanupInitial.config.returned_files = [
         "places_cleanup_initial_worksheet_1.csv",
         "places_cleanup_initial_worksheet_3.csv"
@@ -157,8 +152,6 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
       Tms::PlacesCleanupInitial.config.provided_worksheets = [
         "places_cleanup_initial_worksheet_N1.csv"
       ]
-
-      setup_project
 
       result_a = result_path(:places__norm_unique)
       expected_a = File.join(
@@ -206,8 +199,6 @@ RSpec.describe Kiba::Tms::PlacesCleanupInitial do
       expect(result_d).to match_csv(expected_d)
       expect(result_e).to match_csv(expected_e)
       expect(result_f).to match_csv(expected_f)
-
-      reset_configs
     end
   end
 end
