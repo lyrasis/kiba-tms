@@ -13,6 +13,7 @@ module Kiba::Tms::MtmCleanupSetup
   setting :for_table_source_job_key, default: :mtm__cleanup, reader: true
   setting :target_table_type_cleanup_needed, default: ["Objects"], reader: true
   setting :type_field, default: :type, reader: true
+  setting :mergeable_value_field, default: :altnum, reader: true
   include Kiba::Tms::AltNums
 end
 
@@ -52,8 +53,8 @@ RSpec.describe Kiba::Tms::Mixins::MultiTableMergeable do
 
       it "returns false and warns" do
         mod.extend(subject)
-        msg = "You need to define `:type_field` in #{mod} to enable "\
-               "for-table type cleanup for Objects"
+        msg = "You need to define `:type_field` and `:mergeable_value_field` "\
+          "in #{mod} to enable for-table type cleanup for Objects"
         expect(mod).to receive(:warn).with(msg)
         expect(result).to be false
       end

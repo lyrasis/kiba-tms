@@ -202,11 +202,16 @@ module Kiba
         #
         # @return [Boolean]
         def type_cleanable?
+          return false unless respond_to?(:target_table_type_cleanup_needed)
           return false if target_table_type_cleanup_needed.empty?
-          return true if respond_to?(:type_field) && type_field
 
-          warn("You need to define `:type_field` in #{name} to enable "\
-               "for-table type cleanup for "\
+          return true if respond_to?(:type_field) &&
+            type_field &&
+            respond_to?(:mergeable_value_field) &&
+            mergeable_value_field
+
+          warn("You need to define `:type_field` and `:mergeable_value_field` "\
+               "in #{name} to enable for-table type cleanup for "\
                "#{target_table_type_cleanup_needed.join(", ")}")
           false
         end
