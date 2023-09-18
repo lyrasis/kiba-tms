@@ -74,6 +74,18 @@ module Kiba
                 tags: tags)
               puts "Register job: #{reportable_job}" if Tms.debug?
 
+              type_cleanup_merge = "#{filekey}_type_cleanup_merge".to_sym
+              type_cleanup_merge_job = "#{ns}__#{type_cleanup_merge}".to_sym
+              register type_cleanup_merge, mod.send(
+                :type_cleanup_merge_job_hash,
+                source: reportable_job,
+                dest: type_cleanup_merge_job,
+                lkup: "#{source_ns}_#{filekey}_type_cleanup__final".to_sym,
+                mod: mod,
+                tags: tags
+              )
+              puts "Register job: #{cleanup_merge_job}" if Tms.debug?
+
               next unless mod.respond_to?(:type_field) &&
                 mod.respond_to?(:mergeable_value_field)
 
@@ -95,17 +107,6 @@ module Kiba
                 mod: mod,
                 tags: tags)
               puts "Register job: #{no_type_job}" if Tms.debug?
-              next if mod.target_table_type_cleanup_needed.empty?
-
-              cleanup_merge = "#{filekey}_type_cleanup_merge".to_sym
-              cleanup_merge_job = "#{ns}__#{cleanup_merge}".to_sym
-              register cleanup_merge, mod.send(:cleanup_merge_job_hash,
-                source: reportable_job,
-                dest: cleanup_merge_job,
-                lkup: "#{source_ns}_#{filekey}_type_cleanup__final".to_sym,
-                mod: mod,
-                tags: tags)
-              puts "Register job: #{cleanup_merge_job}" if Tms.debug?
             end
           end
         end
@@ -177,7 +178,7 @@ module Kiba
         end
         private :type_occs_job_hash
 
-        def cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
+        def type_cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
           {
             path: File.join(Tms.datadir, "working", "#{dest}.csv"),
             creator: {callee:
@@ -190,10 +191,11 @@ module Kiba
                       }},
             tags: tags,
             desc: "Merges cleaned up types and assigned treatments into "\
-              "reportable for table"
+              "reportable for table. If no cleanup was done, passes the "\
+              "source table through."
           }
         end
-        private :cleanup_merge_job_hash
+        private :type_cleanup_merge_job_hash
       end
     end
   end

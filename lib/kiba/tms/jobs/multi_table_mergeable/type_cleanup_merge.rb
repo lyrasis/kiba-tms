@@ -10,26 +10,42 @@ module Kiba
           # @param source [Symbol] a reportable for table like
           #   :alt_nums_reportable_for__reference_master
           # @param dest [Symbol] like
-          #   :alt_nums_reportable_for__reference_master_cleanup_merge
+          #   :alt_nums_reportable_for__reference_master_type_cleanup_merge
           # @param lkup [Symbol] like
           #   :alt_nums_for_reference_master_type_cleanup__final
+          # @param mod [Module]
           def job(source:, dest:, lkup:, mod:)
+            lookups = get_lookup(lkup)
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: source,
                 destination: dest,
-                lookup: lkup
+                lookup: lookups
               },
-              transformer: xforms(lkup, mod)
+              transformer: get_xforms(lookups, mod)
             )
           end
 
-          def xforms(lkup, mod)
+          def get_lookup(lkup)
+            base = []
+            base << lkup if Tms.registry.key?(lkup)
+            base.map { |job| Kiba::Tms::Job.output?(job) }
+          end
+
+          def get_xforms(lookups, mod)
+            return passthrough_xforms if lookups.empty?
+
+            xforms(lookups, mod)
+          end
+
+          def xforms(lookups, mod)
             Kiba.job_segment do
               typefield = mod.type_field_target
+              lookup = lookups[0]
 
               transform Merge::MultiRowLookup,
-                lookup: method(lkup).call,
+                lookup: method(lookup).call,
                 keycolumn: :lookupkey,
                 fieldmap: {
                   typefield => :correct_type,
@@ -47,6 +63,12 @@ module Kiba
                 sources: [:typenote, mod.note_field],
                 target: mod.note_field,
                 delim: "; "
+            end
+          end
+
+          def passthrough_xforms
+            Kiba.job_segment do
+              # passthrough
             end
           end
         end
