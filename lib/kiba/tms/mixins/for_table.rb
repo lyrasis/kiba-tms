@@ -12,7 +12,12 @@ module Kiba
       module ForTable
         # Called as part of Tms.meta_config setup
         def define_for_table_modules
-          target_tables.each { |target| define_for_table_module(target) }
+          puts "Defining `for_table` modules for #{name}" if Tms.verbose?
+
+          target_tables.each do |target|
+            puts "Defining `for_table` module for #{target}" if Tms.debug?
+            define_for_table_module(target)
+          end
         end
 
         # Called by {Kiba::Tms::Utils::ForTableJobRegistrar} at application load
@@ -84,6 +89,9 @@ module Kiba
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
               )
+              if Tms.debug?
+                puts "Register job: #{ns_name}__#{targetobj.filekey}"
+              end
             end
           end
         end

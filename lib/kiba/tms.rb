@@ -21,6 +21,19 @@ module Kiba
     module_function
 
     extend Dry::Configurable
+    # For dev/debugging. Set to :verbose to have application print everything
+    #   it does to screen
+    Kiba::Extend.config.job_verbosity = :debug
+    setting :stdout_mode, default: Kiba::Extend.job_verbosity, reader: true
+
+    def verbose?
+      true if %i[verbose debug].include?(Tms.stdout_mode)
+    end
+
+    def debug?
+      true if Tms.stdout_mode == :debug
+    end
+
     def base_config
       setting :empty_table_list_path,
         default: "#{Gem.loaded_specs["kiba-tms"].full_gem_path}/"\
@@ -52,7 +65,7 @@ module Kiba
     end
 
     def setup_loader
-      puts "LOADING KIBA-TMS"
+      puts "LOADING KIBA-TMS" if Tms.verbose?
       base_config
       @loader = Zeitwerk::Loader.new
       #              @loader.log!

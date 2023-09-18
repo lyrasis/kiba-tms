@@ -11,11 +11,9 @@ module Kiba
         end
 
         def initialize(
-          extender: Tms::Services::ModuleExtender,
-          verbose: false
+          extender: Tms::Services::ModuleExtender
         )
-          @extender = extender.new(extend_mod: Tms::Mixins::ForTableTypeCleanup,
-            verbose: verbose)
+          @extender = extender.new(Tms::Mixins::ForTableTypeCleanup)
           @extendable = gather_extendable
         end
 
@@ -27,7 +25,7 @@ module Kiba
 
         private
 
-        attr_reader :extender, :verbose, :configs, :extendable
+        attr_reader :extender, :configs, :extendable
 
         def gather_extendable
           Tms.configs

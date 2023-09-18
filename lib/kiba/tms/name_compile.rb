@@ -266,8 +266,10 @@ module Kiba
         sources = uncontrolled_name_source_tables.keys
         return if sources.empty?
 
-        puts "Registering uncontrolled name compile jobs for "\
-          "#{sources.join(", ")}"
+        if Tms.verbose?
+          puts "Registering uncontrolled name compile jobs for "\
+            "#{sources.join(", ")}"
+        end
 
         ns = build_registry_namespace(
           "name_compile_from",

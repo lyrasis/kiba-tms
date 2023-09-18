@@ -73,6 +73,8 @@ module Kiba
                 config: config,
                 tags: tags)
               break unless mod.respond_to?(:type_field) &&
+              puts "Register job: #{reportable_job}" if Tms.debug?
+
                 mod.respond_to?(:mergeable_value_field)
 
               type_occs = "#{filekey}_type_occs".to_sym
@@ -83,6 +85,7 @@ module Kiba
                 mergemod: mod,
                 targetmod: config,
                 tags: tags)
+              puts "Register job: #{type_occs_job}" if Tms.debug?
             end
           end
         end

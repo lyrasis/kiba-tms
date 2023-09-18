@@ -354,6 +354,9 @@ module Kiba
         private_class_method :set_unreportable_for_tables_ok_setting
 
         def self.set_target_table_type_cleanup_needed_setting(mod)
+          if Tms.debug?
+            puts "Check for setting: target_table_type_cleanup_needed on #{mod}"
+          end
           return if mod.respond_to?(:target_table_type_cleanup_needed)
 
           mod.module_eval(
@@ -362,6 +365,10 @@ module Kiba
             __FILE__,
             __LINE__ - 3
           )
+          if Tms.debug?
+            puts "Auto-defined setting: target_table_type_cleanup_needed "\
+              "on #{mod}"
+          end
         end
         private_class_method :set_target_table_type_cleanup_needed_setting
 
