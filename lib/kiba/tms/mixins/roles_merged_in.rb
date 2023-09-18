@@ -45,9 +45,10 @@ module Kiba
           return nil unless con_ref_name_merge_rules
 
           targets = con_ref_target_base_fields
-          base = con_ref_name_merge_rules[Tms.cspace_profile].select do |field, rules|
-            targets.any?(field)
-          end
+          base = con_ref_name_merge_rules[Tms.cspace_profile]
+            .select do |field, rules|
+              targets.any?(field)
+            end
           return base if con_ref_name_merge_rules_override.empty?
 
           base.merge(con_ref_name_merge_rules_override)
@@ -119,7 +120,8 @@ module Kiba
         def self.set_treatment_mappings(mod)
           unless mod.respond_to?(:con_ref_role_to_field_mapping)
             mod.module_eval(
-              "setting :con_ref_role_to_field_mapping, default: {}, reader: true", __FILE__, __LINE__
+              "setting :con_ref_role_to_field_mapping, "\
+                "default: {}, reader: true", __FILE__, __LINE__ - 1
             )
           end
         end
@@ -128,7 +130,8 @@ module Kiba
         def self.set_con_ref_name_merge_rules(mod)
           unless mod.respond_to?(:con_ref_name_merge_rules)
             mod.module_eval(
-              "setting :con_ref_name_merge_rules, default: {}, reader: true", __FILE__, __LINE__
+              "setting :con_ref_name_merge_rules, "\
+                "default: {}, reader: true", __FILE__, __LINE__ - 1
             )
           end
 
