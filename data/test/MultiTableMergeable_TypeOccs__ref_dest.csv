@@ -1,2 +1,2 @@
-description,tablename,lookupkey,type_occs,occs_with_remarks,occs_with_beginisodate,occs_with_endisodate
+description,tablename,lookupkey,occurrences,occs_with_remarks,occs_with_beginisodate,occs_with_endisodate
 ISBN Number,ReferenceMaster,ReferenceMaster ISBN Number,2,0,0,0
