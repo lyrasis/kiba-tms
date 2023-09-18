@@ -18,8 +18,14 @@ module Helpers
   def auto_derive_config
     init_config = Tms::Utils::InitialConfigDeriver.call(mode: :quiet)
     Tms::Utils::InitialConfigWriter.call(results: init_config)
+    set_auto_derived_initial_config
+  end
+
+  # rubocop:disable Security/Eval
+  def set_auto_derived_initial_config
     eval(File.read(File.join(Tms.datadir, "initial_config.txt")))
   end
+  # rubocop:enable Security/Eval
 
   def setup_project
     # OVERRIDE KIBA::EXTEND'S DEFAULT OPTIONS
@@ -39,6 +45,7 @@ module Helpers
     Kiba::Extend.config.registry = registry
     Kiba::Tms.config.registry = Kiba::Extend.registry
 
+    set_auto_derived_initial_config
     # Setup kiba-tms options
     Kiba::Tms::ObjGeography.config.empty_fields = {
       concession: [nil, "", "0", ".0000"],
