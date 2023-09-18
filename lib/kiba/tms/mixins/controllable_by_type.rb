@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module Kiba
   module Tms
     module Mixins
@@ -53,7 +52,7 @@ module Kiba
         def self.check_controlled_type_field_is_defined(mod)
           unless mod.respond_to?(:controlled_type_field)
             fail UnconfiguredModuleError, "Define :controlled_type_field "\
-              "setting or method in #{mod} before extending with #{self.name}"
+              "setting or method in #{mod} before extending with #{name}"
           end
         end
         private_class_method :check_controlled_type_field_is_defined
