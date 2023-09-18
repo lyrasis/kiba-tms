@@ -86,6 +86,15 @@ module Kiba
                 targetmod: config,
                 tags: tags)
               puts "Register job: #{type_occs_job}" if Tms.debug?
+              cleanup_merge = "#{filekey}_type_cleanup_merge".to_sym
+              cleanup_merge_job = "#{ns}__#{cleanup_merge}".to_sym
+              register cleanup_merge, mod.send(:cleanup_merge_job_hash,
+                source: reportable_job,
+                dest: cleanup_merge_job,
+                lkup: "#{source_ns}_#{filekey}_type_cleanup__final".to_sym,
+                mod: mod,
+                tags: tags)
+              puts "Register job: #{cleanup_merge_job}" if Tms.debug?
             end
           end
         end
@@ -139,6 +148,23 @@ module Kiba
           }
         end
         private :type_occs_job_hash
+        def cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
+          {
+            path: File.join(Tms.datadir, "working", "#{dest}.csv"),
+            creator: {callee:
+                      Tms::Jobs::MultiTableMergeable::TypeCleanupMerge,
+                      args: {
+                        source: source,
+                        dest: dest,
+                        lkup: lkup,
+                        mod: mod
+                      }},
+            tags: tags,
+            desc: "Merges cleaned up types and assigned treatments into "\
+              "reportable for table"
+          }
+        end
+        private :cleanup_merge_job_hash
       end
     end
   end
