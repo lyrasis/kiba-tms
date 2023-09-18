@@ -30,8 +30,6 @@ module Helpers
     Kiba::Extend.config.delim = "|"
 
     Kiba::Extend.config.pre_job_task_action = :nuke
-    #  Kiba::Extend.config.pre_job_task_backup_dir = File.join(datadir, 'backup')
-    #  taskdirs = %w[working reports prepped].map do |dir|
     taskdirs = %w[working reports].map do |dir|
       File.join(Kiba::Tms.datadir, dir)
     end
