@@ -72,9 +72,9 @@ module Kiba
                 dest: reportable_job,
                 config: config,
                 tags: tags)
-              break unless mod.respond_to?(:type_field) &&
               puts "Register job: #{reportable_job}" if Tms.debug?
 
+              next unless mod.respond_to?(:type_field) &&
                 mod.respond_to?(:mergeable_value_field)
 
               type_occs = "#{filekey}_type_occs".to_sym
