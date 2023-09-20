@@ -10,7 +10,7 @@ end
 
 require_relative "helpers"
 require_relative "../lib/kiba/tms"
-require_relative "./support/matchers/match_csv"
+require "rspec/custom/matchers/match_csv"
 require "dry/configurable/test_interface"
 
 module Kiba

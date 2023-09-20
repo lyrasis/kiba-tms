@@ -10,8 +10,16 @@ GIT
       dry-validation
 
 GIT
+  remote: https://github.com/kspurgin/rspec-custom.git
+  revision: 074dcc0a4ffeccd1cebcd8654e13724117bc8b4f
+  branch: main
+  specs:
+    rspec-custom (0.1.0)
+      rspec-core
+
+GIT
   remote: https://github.com/lyrasis/kiba-extend.git
-  revision: b65cb790f19be8f9e3756f767c0e3182a11128d7
+  revision: 7980ae79fcabd14be59ec0c5fa0a342af2c53a20
   branch: main
   specs:
     kiba-extend (4.0.1)
@@ -188,6 +196,7 @@ DEPENDENCIES
   pry
   rake
   rspec
+  rspec-custom!
   rubocop
   simplecov
   standard

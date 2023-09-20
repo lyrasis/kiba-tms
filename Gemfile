@@ -14,4 +14,10 @@ group :documentation do
   gem "yard"
 end
 
+group :test do
+  gem "rspec-custom",
+  git: "https://github.com/kspurgin/rspec-custom.git",
+  branch: "main"
+end
+
 gemspec
