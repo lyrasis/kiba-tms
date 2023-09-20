@@ -11,3 +11,4 @@ docs
 .DS_Store
 .rubocop-https*
 .bundle/config
+/data/reports/

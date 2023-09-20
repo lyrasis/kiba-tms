@@ -70,7 +70,8 @@ module Kiba
               extend Kiba::Extend::Mixins::IterativeCleanup
 
               def job_tags
-                [:#{filekey}, :#{target.filekey}, :cleanup]
+                [:#{filekey}, :#{target.filekey}, :cleanup,
+                 :for_table_empty_type]
               end
 
               def worksheet_add_fields

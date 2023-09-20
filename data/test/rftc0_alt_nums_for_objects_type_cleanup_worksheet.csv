@@ -1,0 +1,8 @@
+number_type,correct_type,treatment,note,occurrences,occs_with_remarks,occs_with_beginisodates,occs_with_endisodates,example_rec_ids,example_values,orig_type_vals,lookupkey,clean_fingerprint,fingerprints
+Loan number,,,,2,1,0,0,T2012.35 ||| 2002.42.8,L2009.73 ||| L99.4.30,Loan number,Objects Loan number,bmls4pCfbmls4pCfbmls,TG9hbiBudW1iZXI=
+loan number,,,,2,0,0,0,2009.27.1 ||| 2009.27.2,L2005.50.13 ||| L2005.50.14,loan number,Objects loan number,bmls4pCfbmls4pCfbmls,bG9hbiBudW1iZXI=
+Associated Press ID,,,,1,0,0,0,2019.27.264,6510200360,Associated Press ID,Objects Associated Press ID,bmls4pCfbmls4pCfbmls,QXNzb2NpYXRlZCBQcmVzcyBJRA==
+Associated Press ID #,,,,1,0,1,0,2019.27.302,660807088,Associated Press ID #,Objects Associated Press ID #,bmls4pCfbmls4pCfbmls,QXNzb2NpYXRlZCBQcmVzcyBJRCAj
+Black & White (group portfolio),,,,1,0,0,0,TF5000,2012.35.1-9,Black & White (group portfolio),Objects Black & White (group portfolio),bmls4pCfbmls4pCfbmls,QmxhY2sgJiBXaGl0ZSAoZ3JvdXAgcG9ydGZvbGlvKQ==
+Accession Number,,,,1,0,0,0,T2007.127,2007.51,Accession Number,Objects Accession Number,bmls4pCfbmls4pCfbmls,QWNjZXNzaW9uIE51bWJlcg==
+Transaction Number,,,,1,0,0,0,2019.27.302,255,Transaction Number,Objects Transaction Number,bmls4pCfbmls4pCfbmls,VHJhbnNhY3Rpb24gTnVtYmVy

@@ -1,0 +1,8 @@
+lookupkey,number_type,correct_type,treatment,note
+Objects Loan number,Loan number,Loan number,numtyped_annotation,numtype note
+Objects loan number,loan number,Loan number,numtyped_annotation,
+Objects Associated Press ID,Associated Press ID,Alternate number,altnum_annotation,
+Objects Associated Press ID #,Associated Press ID #,Alternate number,altnum_annotation,another note
+Objects Black & White (group portfolio),Black & White (group portfolio),,drop,
+Objects Accession Number,Accession Number,Accession lot,other_number,
+Objects Transaction Number,Transaction Number,Accession lot,other_number,

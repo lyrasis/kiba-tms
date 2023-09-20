@@ -64,7 +64,7 @@ module Kiba
                 corrected_type = row[typefield]
                 row[origtypefield] = corrected_type
                 lkupbase = row[:lookupkey].strip
-                row[:lookupkey] = [lkupbase, corrected_type].join(" ")
+                row[:lookupkey] = [lkupbase, corrected_type].join(" ").strip
                 row
               end
 

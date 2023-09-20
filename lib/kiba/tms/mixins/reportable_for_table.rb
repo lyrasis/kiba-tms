@@ -83,7 +83,7 @@ module Kiba
                 dest: empty_type_cleanup_merge_job,
                 lkup: "#{source_ns}_#{filekey}_empty_type_cleanup__final".to_sym,
                 mod: mod,
-                tags: tags
+                tags: [tags, :empty_type_cleanup].flatten
               )
               puts "Register job: #{cleanup_merge_job}" if Tms.debug?
               # rubocop:enable Layout/LineLength
@@ -92,11 +92,12 @@ module Kiba
               type_cleanup_merge_job = "#{ns}__#{type_cleanup_merge}".to_sym
               register type_cleanup_merge, mod.send(
                 :type_cleanup_merge_job_hash,
-                source: reportable_job,
+                source: empty_type_cleanup_merge_job,
                 dest: type_cleanup_merge_job,
                 lkup: "#{source_ns}_#{filekey}_type_cleanup__final".to_sym,
-                mod: mod,
-                tags: tags
+                mergemod: mod,
+                targetmod: config,
+                tags: [tags, :type_cleanup].flatten
               )
               puts "Register job: #{cleanup_merge_job}" if Tms.debug?
 
@@ -204,7 +205,7 @@ module Kiba
                         lkup: lkup,
                         mod: mod
                       }},
-            tags: tags,
+            tags: [tags, :for_table_empty_type, :cleanup].flatten,
             lookup_on: :lookupkey,
             desc: "Merges client-cleanup provided type values and notes into "\
               "reportable for table. If no cleanup is needed or done, the "\
@@ -213,7 +214,8 @@ module Kiba
         end
         private :empty_type_cleanup_merge_job_hash
 
-        def type_cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
+        def type_cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mergemod:,
+          targetmod:)
           {
             path: File.join(Tms.datadir, "working", "#{dest}.csv"),
             creator: {callee:
@@ -222,7 +224,8 @@ module Kiba
                         source: source,
                         dest: dest,
                         lkup: lkup,
-                        mod: mod
+                        mergemod: mergemod,
+                        targetmod: targetmod
                       }},
             tags: tags,
             desc: "Merges cleaned up types and assigned treatments into "\

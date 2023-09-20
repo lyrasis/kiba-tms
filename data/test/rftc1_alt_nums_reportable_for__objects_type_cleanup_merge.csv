@@ -1,0 +1,13 @@
+altnum,remarks,beginisodate,recordid,sort,targetrecord,number_type,treatment
+L2009.73,numtype note,,75099,65588,T2012.35,Loan number,numtyped_annotation
+L99.4.30,numtype note; A remark,,34762,107161,2002.42.8,Loan number,numtyped_annotation
+L2005.50.13,,,59500,132562,2009.27.1,Loan number,numtyped_annotation
+L2005.50.14,,,74253,132618,2009.27.2,Loan number,numtyped_annotation
+S-41B,,,74022,132093,(L2005.40.2),,
+AG230.1.71,,,95683,146852,2019.27.302,,
+LI33.14,Different remark,,76499,147958,2011.47.1,,
+MR-F-218 (2999),,,96088,327994,2020.06.171,,
+6510200360,,,95645,327730,2019.27.264,Alternate number,altnum_annotation
+660807088,another note,2015-03-20,95683,327775,2019.27.302,Alternate number,altnum_annotation
+2007.51,,,72855,64429,T2007.127,Accession lot,other_number
+255,,,95683,69158,2019.27.302,Accession lot,other_number

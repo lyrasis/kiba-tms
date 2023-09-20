@@ -1,0 +1,9 @@
+description,lookupkey,occurrences,occs_with_remarks,occs_with_beginisodate,occs_with_endisodate,example_rec_ids,example_values
+Loan number,Objects Loan number,3,2,0,0,T2012.35 ||| 2002.42.8 ||| 2011.47.1,L2009.73 ||| L99.4.30 ||| LI33.14
+loan number,Objects loan number,3,0,0,0,2009.27.1 ||| 2009.27.2 ||| (L2005.40.2),L2005.50.13 ||| L2005.50.14 ||| S-41B
+Former accession number,Objects Former accession number,1,0,0,0,2020.06.171,MR-F-218 (2999)
+Associated Press ID,Objects Associated Press ID,1,0,0,0,2019.27.264,6510200360
+Associated Press ID #,Objects Associated Press ID #,1,0,1,0,2019.27.302,660807088
+Black & White (group portfolio),Objects Black & White (group portfolio),1,0,0,0,TF5000,2012.35.1-9
+Accession Number,Objects Accession Number,1,0,0,0,T2007.127,2007.51
+Transaction Number,Objects Transaction Number,1,0,0,0,2019.27.302,255
