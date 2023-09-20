@@ -69,10 +69,6 @@ module Kiba
 
               extend Kiba::Extend::Mixins::IterativeCleanup
 
-              def cleanup_base_name
-                "#{filekey}_#{target.filekey}_no_type_cleanup"
-              end
-
               def job_tags
                 [:#{filekey}, :#{target.filekey}, :cleanup]
               end
