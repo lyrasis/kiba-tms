@@ -27,7 +27,7 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[occurrences norm_combineds
-                           clean_combined clean_fingerprint]
+                  clean_combined clean_fingerprint]
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :corrected

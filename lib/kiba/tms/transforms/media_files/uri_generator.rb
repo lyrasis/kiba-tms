@@ -45,7 +45,7 @@ module Kiba
           def bases_removed(val)
             return val if bases.empty?
 
-            bases.each{ |base| val = val.delete_prefix(base) }
+            bases.each { |base| val = val.delete_prefix(base) }
             val
           end
         end

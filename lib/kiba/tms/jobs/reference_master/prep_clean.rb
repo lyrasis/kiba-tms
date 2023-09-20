@@ -25,7 +25,7 @@ module Kiba
             if config.placepublished_done
               base << :reference_master__placepublished_corrections
             end
-            base.select{ |job| Kiba::Extend::Job.output?(job) }
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms

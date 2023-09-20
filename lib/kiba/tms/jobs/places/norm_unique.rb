@@ -26,7 +26,7 @@ module Kiba
 
               transform Delete::Fields,
                 fields: [config.derived_note_fields, :occurrences,
-                         :normalized, :orig_combined].flatten
+                  :normalized, :orig_combined].flatten
               transform Deduplicate::Table,
                 field: :norm_combined,
                 delete_field: false

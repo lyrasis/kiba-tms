@@ -29,10 +29,10 @@ module Kiba
               transform do |row|
                 path = row[:filepath]
 
-                if config.bucket_base_dir
-                  filename = path.delete_prefix("#{config.bucket_base_dir}/")
+                filename = if config.bucket_base_dir
+                  path.delete_prefix("#{config.bucket_base_dir}/")
                 else
-                  filename = path
+                  path
                 end
 
                 row[:norm] = filename.downcase

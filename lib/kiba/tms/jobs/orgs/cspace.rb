@@ -124,7 +124,7 @@ module Kiba
 
               transform Rename::Fields, fieldmap: {
                 birth_foundation_date: :foundingdategroup,
-                death_dissolution_date: :dissolutiondategroup,
+                death_dissolution_date: :dissolutiondategroup
               }
 
               transform Delete::Fields,

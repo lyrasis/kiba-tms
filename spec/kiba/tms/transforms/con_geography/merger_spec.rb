@@ -5,7 +5,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
   let(:params) { {auth: auth, lookup: lookup} }
   let(:lookup_single) do
     {"1" => [
-      {constituentid: "1", type: "birth", mergeable: "London",},
+      {constituentid: "1", type: "birth", mergeable: "London"},
       {constituentid: "1", type: "death", mergeable: "Paris"}
     ]}
   end
@@ -18,7 +18,7 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
       {constituentid: "1", type: "death", mergeable: "Paris"},
       {constituentid: "1", type: "death", mergeable: "Montmartre"},
       {constituentid: "1", type: "death", mergeable: "Madrid"},
-      {constituentid: "1", type: nil, mergeable: "Disputed deathplaces"},
+      {constituentid: "1", type: nil, mergeable: "Disputed deathplaces"}
     ]}
   end
   let(:row) { {constituentid: "1", nationality: "English"} }

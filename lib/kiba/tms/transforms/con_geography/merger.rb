@@ -57,7 +57,9 @@ module Kiba
               mergerows.select { |row| row[:type] == type }
             end
             type = org_type_lookup(type) if auth == :org
-            return if matches.empty? unless type == "founding"
+            unless type == "founding"
+              return if matches.empty?
+            end
 
             if type == "founding"
               handle_founding_and_nationality(row, matches)

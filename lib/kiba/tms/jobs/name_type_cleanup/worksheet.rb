@@ -184,10 +184,10 @@ module Kiba
                 transform do |row|
                   next row unless row[:to_review].blank?
 
-                  if !row[:alreadycorrected].blank? || !row[:doneid].blank?
-                    row[:to_review] = "n"
+                  row[:to_review] = if !row[:alreadycorrected].blank? || !row[:doneid].blank?
+                    "n"
                   else
-                    row[:to_review] = "y"
+                    "y"
                   end
                   row
                 end

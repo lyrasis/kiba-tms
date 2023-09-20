@@ -19,7 +19,7 @@ module Kiba
 
           def sources
             config.compile_sources
-              .select{ |job| Kiba::Extend::Job.output?(job) }
+              .select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms

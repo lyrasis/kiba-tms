@@ -30,7 +30,7 @@ module Kiba
 
         def delete_patterns_from(row)
           getter.call(row).each do |field, val|
-            to_delete = patterns.select{ |patt| patt.match?(val) }
+            to_delete = patterns.select { |patt| patt.match?(val) }
             next if to_delete.empty?
 
             delete_patterns_from_field(row, field, val, to_delete)
@@ -38,10 +38,10 @@ module Kiba
         end
 
         def delete_patterns_from_field(row, field, val, to_delete)
-          if to_delete.length == 1
-            row[field] = val.gsub(to_delete[0], "")
+          row[field] = if to_delete.length == 1
+            val.gsub(to_delete[0], "")
           else
-            row[field] = val.gsub(Regexp.union(*to_delete), "")
+            val.gsub(Regexp.union(*to_delete), "")
           end
         end
       end

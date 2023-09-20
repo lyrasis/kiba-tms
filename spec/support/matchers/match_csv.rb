@@ -123,7 +123,7 @@ module MatchCsvMatcher
     def value_mismatch_message
       return if value_diff.empty?
 
-      value_diff.map{ |row, diff| row_mismatch_message(row, diff) }
+      value_diff.map { |row, diff| row_mismatch_message(row, diff) }
         .join("\n")
     end
 

@@ -31,8 +31,8 @@ module Kiba
         attr_reader :patterns, :getter, :target, :conditions
 
         def set_note(row)
-          eligible = getter.call(row).map{ |field, val|
-            matching = patterns.select{ |pattern| pattern.match?(val) }
+          eligible = getter.call(row).map { |field, val|
+            matching = patterns.select { |pattern| pattern.match?(val) }
             if matching.empty?
               nil
             else
@@ -46,7 +46,7 @@ module Kiba
         end
 
         def get_terms(matching, val)
-          matching.map{ |pattern, term|
+          matching.map { |pattern, term|
             if term == "patternmatch"
               val.match(pattern)
                 .to_s

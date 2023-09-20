@@ -47,10 +47,10 @@ module Kiba
               transform Tms.data_cleaner if Tms.data_cleaner
 
               if lookups.any?(:prep__ref_formats)
-              transform Merge::MultiRowLookup,
-                lookup: prep__ref_formats,
-                keycolumn: :formatid,
-                fieldmap: {format: :format}
+                transform Merge::MultiRowLookup,
+                  lookup: prep__ref_formats,
+                  keycolumn: :formatid,
+                  fieldmap: {format: :format}
               end
               transform Delete::Fields, fields: :formatid
 

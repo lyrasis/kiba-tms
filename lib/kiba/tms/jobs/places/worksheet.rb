@@ -21,7 +21,7 @@ module Kiba
           def lookups
             base = []
             base << :places__returned_compile if config.cleanup_done
-            base.select{ |job| Kiba::Extend::Job.output?(job) }
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -41,7 +41,7 @@ module Kiba
                   next row if norm.blank?
 
                   known = norm.split(config.norm_fingerprint_delim)
-                    .map{ |norm| places__returned_compile.key?(norm) }
+                    .map { |norm| places__returned_compile.key?(norm) }
                     .all?
                   next row if known
 

@@ -31,7 +31,7 @@ module Kiba
           end
 
           def close
-            rows.each{ |row| yield row }
+            rows.each { |row| yield row }
           end
 
           private
@@ -39,7 +39,7 @@ module Kiba
           attr_reader :referencefields, :fields, :getter, :rows
 
           def get_reference_fields(row)
-            referencefields.map{ |fld| [fld, row[fld]] }
+            referencefields.map { |fld| [fld, row[fld]] }
               .to_h
           end
         end

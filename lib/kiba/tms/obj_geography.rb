@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module ObjGeography
       extend Dry::Configurable
+
       module_function
 
       # @return [Array<Symbol>] unmigratable fields removed by default

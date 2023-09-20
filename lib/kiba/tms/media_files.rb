@@ -4,6 +4,7 @@ module Kiba
   module Tms
     module MediaFiles
       extend Dry::Configurable
+
       module_function
 
       # IMPLEMENTATION NOTE:

@@ -3,7 +3,7 @@
 RSpec.describe Kiba::Tms::Transforms::ObjGeography::RemoveFullParentheticals do
   subject(:xform) { described_class.new(**params) }
   let(:params) { {fields: %i[city state]} }
-  let(:row){ {city: "(New York)", state: "NY (state)"} }
+  let(:row) { {city: "(New York)", state: "NY (state)"} }
 
   describe "#process" do
     let(:result) { xform.process(row) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'set'
+require "set"
 
 module Kiba
   module Tms
@@ -32,7 +32,7 @@ module Kiba
 
           def get_parentheticals(row)
             getter.call(row)
-              .select{ |_field, value| value.match(/^\(.*\)$/) }
+              .select { |_field, value| value.match(/^\(.*\)$/) }
           end
 
           def remove_parentheticals(row, to_fix)

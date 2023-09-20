@@ -22,9 +22,9 @@ module Kiba
 
           def lookups
             base = %i[
-                      prep__geo_codes
-                     ]
-            base.select{ |job| Kiba::Extend::Job.output?(job) }
+              prep__geo_codes
+            ]
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -53,7 +53,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__geo_codes,
                   keycolumn: Tms::GeoCodes.id_field,
-                  fieldmap: {Tms::GeoCodes.type_field=>Tms::GeoCodes.type_field}
+                  fieldmap: {Tms::GeoCodes.type_field => Tms::GeoCodes.type_field}
               end
               transform Delete::Fields, fields: Tms::GeoCodes.id_field
 

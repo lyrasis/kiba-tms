@@ -13,9 +13,9 @@ module Kiba
                 source: :places__cleaned_exploded,
                 destination: :places__cleaned_exploded_report_prep,
                 lookup: %i[
-                           places__orig_normalized
-                           obj_geography__mapping_review
-                          ]
+                  places__orig_normalized
+                  obj_geography__mapping_review
+                ]
               },
               transformer: nil,
               mode: :setup
@@ -52,7 +52,7 @@ module Kiba
 
               next if exdata.blank?
               exdata.flatten!
-              excontent = exdata.reject{ |ex| ex.blank? }
+              excontent = exdata.reject { |ex| ex.blank? }
               examples[allnorms] = merge_examples(excontent)
             end
             examples
@@ -63,7 +63,7 @@ module Kiba
 
             base = {}
             %i[objnums titles descs].each do |field|
-              base[field] = excontent.map{ |ex| ex[field] }
+              base[field] = excontent.map { |ex| ex[field] }
                 .flatten
                 .compact
             end
@@ -72,14 +72,14 @@ module Kiba
 
           def get_norm_examples(norm, orig, ex, max)
             get_orig(norm, orig)
-              .map{ |ofp| get_examples(ofp, ex, max) }
+              .map { |ofp| get_examples(ofp, ex, max) }
           end
 
           def get_orig(norm, orig)
             rows = orig[norm]
             return [] if rows.blank?
 
-            rows.map{ |row| row[:orig_combined] }
+            rows.map { |row| row[:orig_combined] }
               .uniq
           end
 
@@ -115,12 +115,12 @@ module Kiba
 
               if data.key?(val)
                 add_field_to_value(data, val, field, leftward, combined, norms,
-                                   occs)
+                  occs)
               else
                 data[val] = {
-                  field=>{
-                    leftward=>{
-                      combined=>{occs: occs, norms: norms}
+                  field => {
+                    leftward => {
+                      combined => {occs: occs, norms: norms}
                     }
                   }
                 }
@@ -131,7 +131,7 @@ module Kiba
 
           def get_leftward(field, combined)
             c_segs = combined.split("|||")
-              .map{ |pairstr| split_field_val_pair(pairstr) }
+              .map { |pairstr| split_field_val_pair(pairstr) }
               .to_h
 
             return "(single)" if c_segs.length == 1
@@ -140,11 +140,11 @@ module Kiba
 
             binding.pry if field == "city" &&
               c_segs.length == 2 &&
-              c_segs['city'] == "Bodega Bay"
+              c_segs["city"] == "Bodega Bay"
 
             return "(top)" if leftward.empty?
 
-            leftward.map{ |key, val| "#{key}: #{val}" }
+            leftward.map { |key, val| "#{key}: #{val}" }
               .join("|||")
           end
 
@@ -194,29 +194,29 @@ module Kiba
           end
 
           def add_field_to_value(data, val, field, leftward, combined, norms,
-                                 occs)
+            occs)
             thisval = data[val]
             if thisval.key?(field)
               add_leftward_to_field(data, val, field, leftward, combined, norms,
-                                    occs)
+                occs)
             else
               thisval[field] = {
-                leftward=>{
-                  combined=>{occs: occs, norms: norms}
+                leftward => {
+                  combined => {occs: occs, norms: norms}
                 }
               }
             end
           end
 
           def add_leftward_to_field(data, val, field, leftward, combined, norms,
-                                    occs)
+            occs)
             thisfield = data[val][field]
             if thisfield.key?(leftward)
               add_combined_to_leftward(
                 data, val, field, leftward, combined, norms, occs
               )
             else
-              thisfield[leftward] = {combined=>{occs: occs, norms: norms}}
+              thisfield[leftward] = {combined => {occs: occs, norms: norms}}
             end
           end
 
@@ -239,8 +239,8 @@ module Kiba
           def write_report(examples, data, destpath)
             CSV.open(destpath, "w") do |csv|
               csv << %w[value fieldname key field_cat left_combined left_cat
-                        clean_combined occs objectnumbers objecttitles
-                        objectdescriptions]
+                clean_combined occs objectnumbers objecttitles
+                objectdescriptions]
               data.each do |value, fields|
                 row = [value]
                 add_fields(csv, row, fields, examples)
@@ -250,7 +250,7 @@ module Kiba
 
           def add_fields(csv, row, fields, examples)
             fieldct = fields.keys.length
-            cat = fieldct == 1 ? "single field" : "multi field"
+            cat = (fieldct == 1) ? "single field" : "multi field"
             fields.each do |field, lefts|
               thisrow = row.dup
               thisrow << field
@@ -263,10 +263,10 @@ module Kiba
           def write_leftwards_details(csv, row, lefts, examples)
             leftct = lefts.keys.length
             leftcat = if leftct == 1
-                        "single broader"
-                      else
-                        "multi broader"
-                      end
+              "single broader"
+            else
+              "multi broader"
+            end
             lefts.each do |left, usages|
               thisrow = row.dup
               thisrow << left
@@ -286,7 +286,7 @@ module Kiba
 
           def write_examples(csv, row, norms, examples)
             examples_for_norms(norms, examples)
-              .each{ |val| row << val }
+              .each { |val| row << val }
             csv << row
           end
 
@@ -295,7 +295,7 @@ module Kiba
             return ["", "", ""] if exdata.blank?
 
             exdata.values
-              .map{ |vals| vals.join(Tms.delim) }
+              .map { |vals| vals.join(Tms.delim) }
           end
 
           # def get_rightward(row, usage)

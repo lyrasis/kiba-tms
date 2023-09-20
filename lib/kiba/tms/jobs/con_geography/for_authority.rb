@@ -35,7 +35,7 @@ module Kiba
                 fields: config.non_content_fields
               transform Merge::ConstantValue,
                 target: :sourcetable,
-                value: 'ConGeography'
+                value: "ConGeography"
             end
           end
         end
