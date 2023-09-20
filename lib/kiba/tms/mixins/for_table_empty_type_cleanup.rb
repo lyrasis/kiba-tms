@@ -71,7 +71,7 @@ module Kiba
 
               def job_tags
                 [:#{filekey}, :#{target.filekey}, :cleanup,
-                 :for_table_empty_type]
+                 :empty_type_cleanup]
               end
 
               def worksheet_add_fields
