@@ -27,7 +27,7 @@ module Helpers
   end
   # rubocop:enable Security/Eval
 
-  def setup_project
+  def setup_project(dependent_config = nil)
     # OVERRIDE KIBA::EXTEND'S DEFAULT OPTIONS
     Kiba::Extend.config.csvopts = {encoding: "utf-8",
                                    headers: true,
@@ -75,6 +75,9 @@ module Helpers
     Kiba::Tms.meta_config
 
     # DEPENDENT CONFIG goes here
+    # rubocop:disable Security/Eval
+    eval(dependent_config) if dependent_config
+    # rubocop:enable Security/Eval
 
     Kiba::Tms.finalize_config
     Kiba::Tms::RegistryData.register
