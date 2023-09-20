@@ -65,7 +65,7 @@ module Kiba
               end
 
               def fingerprint_fields
-                [:#{type_field_target}, :correct_type, :treatment, :note]
+                [:correct_type, :treatment, :note]
               end
 
               extend Kiba::Extend::Mixins::IterativeCleanup
@@ -83,7 +83,8 @@ module Kiba
               end
 
               def collate_fields
-                [occ_fields, :example_rec_ids, :example_values].flatten
+                [occ_fields, :example_rec_ids, :example_values,
+                :orig_type_val].flatten
               end
 
               def collation_delim
@@ -91,7 +92,10 @@ module Kiba
               end
 
               def worksheet_field_order
-              [fingerprint_fields, pluralized_collate_fields].flatten
+              rev = #{modname}.provided_worksheets.empty? ? nil : :to_review
+              [rev, :#{type_field_target}, fingerprint_fields,
+               pluralized_collate_fields].flatten
+                 .compact
               end
 
               def fingerprint_flag_ignore_fields
@@ -129,6 +133,18 @@ module Kiba
                 end
               end
 
+              def base_job_cleaned_post_xforms
+                bind = binding
+
+                Kiba.job_segment do
+                  mod = bind.receiver
+
+                  transform Copy::Field,
+                  from: :#{type_field_target},
+                  to: :orig_type_val
+                end
+              end
+
               def cleaned_uniq_post_xforms
                 bind = binding
 
@@ -136,8 +152,13 @@ module Kiba
                   mod = bind.receiver
 
                   mod.occ_fields.each do |field|
+                  pf = if field.to_s.end_with?("s")
+                         field
+                       else
+                         ( field.to_s + "s" ).to_sym
+                       end
                     transform Kiba::Tms::Transforms::SumCollatedOccurrences,
-                      field: field,
+                      field: pf,
                       delim: mod.collation_delim
                   end
                 end
