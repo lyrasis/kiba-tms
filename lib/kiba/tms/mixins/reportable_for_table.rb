@@ -74,6 +74,20 @@ module Kiba
                 tags: tags)
               puts "Register job: #{reportable_job}" if Tms.debug?
 
+              # rubocop:disable Layout/LineLength
+              empty_type_cleanup_merge = "#{filekey}_empty_type_cleanup_merge".to_sym
+              empty_type_cleanup_merge_job = "#{ns}__#{empty_type_cleanup_merge}".to_sym
+              register empty_type_cleanup_merge, mod.send(
+                :empty_type_cleanup_merge_job_hash,
+                source: reportable_job,
+                dest: empty_type_cleanup_merge_job,
+                lkup: "#{source_ns}_#{filekey}_empty_type_cleanup__final".to_sym,
+                mod: mod,
+                tags: tags
+              )
+              puts "Register job: #{cleanup_merge_job}" if Tms.debug?
+              # rubocop:enable Layout/LineLength
+
               type_cleanup_merge = "#{filekey}_type_cleanup_merge".to_sym
               type_cleanup_merge_job = "#{ns}__#{type_cleanup_merge}".to_sym
               register type_cleanup_merge, mod.send(
@@ -92,7 +106,7 @@ module Kiba
               type_occs = "#{filekey}_type_occs".to_sym
               type_occs_job = "#{ns}__#{type_occs}".to_sym
               register type_occs, mod.send(:type_occs_job_hash,
-                source: reportable_job,
+                source: empty_type_cleanup_merge_job,
                 dest: type_occs_job,
                 mergemod: mod,
                 targetmod: config,
@@ -177,6 +191,27 @@ module Kiba
           }
         end
         private :type_occs_job_hash
+
+        def empty_type_cleanup_merge_job_hash(source:, dest:, lkup:, tags:,
+          mod:)
+          {
+            path: File.join(Tms.datadir, "working", "#{dest}.csv"),
+            creator: {callee:
+                      Tms::Jobs::MultiTableMergeable::EmptyTypeCleanupMerge,
+                      args: {
+                        source: source,
+                        dest: dest,
+                        lkup: lkup,
+                        mod: mod
+                      }},
+            tags: tags,
+            lookup_on: :lookupkey,
+            desc: "Merges client-cleanup provided type values and notes into "\
+              "reportable for table. If no cleanup is needed or done, the "\
+              "original reportable for table is passed through"
+          }
+        end
+        private :empty_type_cleanup_merge_job_hash
 
         def type_cleanup_merge_job_hash(source:, dest:, lkup:, tags:, mod:)
           {
