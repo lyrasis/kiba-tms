@@ -30,7 +30,7 @@ module Kiba
           def get_lookup(lkup)
             base = []
             base << lkup if Tms.registry.key?(lkup)
-            base.map { |job| Kiba::Tms::Job.output?(job) }
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def get_xforms(lookups, mod)
