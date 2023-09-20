@@ -2,13 +2,13 @@
 
 require "spec_helper"
 
-module Kiba::Tms::MtmNoCleanup
+module Kiba::Tms::Test::MtmNoCleanup
   extend Dry::Configurable
   setting :for_table_source_job_key, default: :mtm__no_cleanup, reader: true
   include Kiba::Tms::AltNums
 end
 
-module Kiba::Tms::MtmCleanupSetup
+module Kiba::Tms::Test::MtmCleanupSetup
   extend Dry::Configurable
   setting :for_table_source_job_key, default: :mtm__cleanup, reader: true
   setting :target_table_type_cleanup_needed, default: ["Objects"], reader: true
@@ -17,7 +17,7 @@ module Kiba::Tms::MtmCleanupSetup
   include Kiba::Tms::AltNums
 end
 
-module Kiba::Tms::MtmCleanupNoTypeField
+module Kiba::Tms::Test::MtmCleanupNoTypeField
   extend Dry::Configurable
   setting :for_table_source_job_key, default: :mtm__cleanup, reader: true
   setting :target_table_type_cleanup_needed, default: ["Objects"], reader: true
@@ -31,7 +31,7 @@ RSpec.describe Kiba::Tms::Mixins::MultiTableMergeable do
     let(:result) { mod.type_cleanable? }
 
     context "when no cleanup needed" do
-      let(:mod) { Kiba::Tms::MtmNoCleanup }
+      let(:mod) { Kiba::Tms::Test::MtmNoCleanup }
 
       it "returns false" do
         mod.extend(subject)
@@ -40,7 +40,7 @@ RSpec.describe Kiba::Tms::Mixins::MultiTableMergeable do
     end
 
     context "when cleanup needed and set up" do
-      let(:mod) { Kiba::Tms::MtmCleanupSetup }
+      let(:mod) { Kiba::Tms::Test::MtmCleanupSetup }
 
       it "returns true" do
         mod.extend(subject)
@@ -49,7 +49,7 @@ RSpec.describe Kiba::Tms::Mixins::MultiTableMergeable do
     end
 
     context "when cleanup needed but not set up" do
-      let(:mod) { Kiba::Tms::MtmCleanupNoTypeField }
+      let(:mod) { Kiba::Tms::Test::MtmCleanupNoTypeField }
 
       it "returns false and warns" do
         mod.extend(subject)

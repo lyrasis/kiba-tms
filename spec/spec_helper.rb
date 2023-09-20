@@ -13,7 +13,14 @@ require_relative "../lib/kiba/tms"
 require_relative "./support/matchers/match_csv"
 require "dry/configurable/test_interface"
 
-# Tms.loader
+module Kiba
+  module Tms
+    module Test
+      # Namespace for modules defined for tests
+      # Stops Tms.configs and extender/registrar utils from including them
+    end
+  end
+end
 
 # pulls in kiba-extend's helpers.rb, which lets you use existing
 #   methods for setting up and running transform tests
