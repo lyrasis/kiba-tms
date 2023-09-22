@@ -197,6 +197,17 @@ module Kiba
           target_tables.any?(table)
         end
 
+        def self.get_merge_lookup(for_mod)
+          Kiba::Extend::Utils::Lookup.csv_to_hash(
+            file: Tms.registry
+              .resolve(for_mod.merge_lookup)
+              .path,
+            keycolumn: :recordid
+          )
+        rescue NameError
+          nil
+        end
+
         # override manually in module after extending
         def auto_generate_target_tables
           true

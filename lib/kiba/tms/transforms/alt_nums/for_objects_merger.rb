@@ -7,7 +7,9 @@ module Kiba
         # Used in job that has an objects table as its source
         class ForObjectsMerger
           def initialize
-            @lookup = get_lookup
+            @lookup = Tms::Mixins::MultiTableMergeable.get_merge_lookup(
+              Tms::AltNumsForObjects
+            )
             @treatments = Tms::AltNumsForObjects.treatment_mergers
               .transform_keys { |key| key.to_s }
               .transform_values { |val| val.new }
@@ -25,17 +27,6 @@ module Kiba
           private
 
           attr_reader :lookup, :treatments
-
-          def get_lookup
-            Kiba::Extend::Utils::Lookup.csv_to_hash(
-              file: Tms.registry
-                .resolve(Tms::AltNumsForObjects.merge_lookup)
-                .path,
-              keycolumn: :recordid
-            )
-          rescue NameError
-            nil
-          end
 
           def do_merge(row, mergerow)
             treatment_val = mergerow[:treatment]
