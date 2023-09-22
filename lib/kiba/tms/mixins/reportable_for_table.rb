@@ -39,14 +39,6 @@ module Kiba
           true if target.record_num_merge_config
         end
 
-        # @return [Array<Module>] target tables of extending module, that are
-        #   not excluded from project
-        def target_table_configs
-          target_tables.map { |t| Object.const_get("Tms::#{t}") }
-            .select { |mod| mod.used? }
-        end
-        private :target_table_configs
-
         # Defines a registry namespace (e.g. alt_nums_reportable_for).
         #   Within it, registers a job for each reportable-for-table (e.g.
         #   alt_nums_reportable_for__objects)

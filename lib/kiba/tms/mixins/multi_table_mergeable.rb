@@ -175,9 +175,6 @@ module Kiba
   module Tms
     module Mixins
       module MultiTableMergeable
-        include Tms::Mixins::ForTable
-        include Tms::Mixins::ReportableForTable
-
         def self.extended(mod)
           set_for_table_source_job_key_setting(mod)
           set_split_on_column_setting(mod)
@@ -187,6 +184,8 @@ module Kiba
           set_target_table_empty_type_cleanup_needed_setting(mod)
           set_record_num_merge_config_setting(mod)
           set_checkable(mod)
+          mod.extend(Tms::Mixins::ForTable)
+          mod.extend(Tms::Mixins::ReportableForTable)
         end
 
         # Whether or not there are rows in the mergeable table to be merged into
@@ -464,6 +463,14 @@ module Kiba
           mod.module_eval(code, __FILE__, __LINE__)
         end
         private_class_method :checkable_from_scratch
+
+        # @return [Array<Module>] target tables of extending module, that are
+        #   not excluded from project
+        def target_table_configs
+          target_tables.map { |t| Object.const_get("Tms::#{t}") }
+            .select { |mod| mod.used? }
+        end
+        private :target_table_configs
       end
     end
   end
