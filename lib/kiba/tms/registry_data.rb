@@ -3122,6 +3122,18 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("objects") do
+          register :external_data_merged, {
+            creator: Kiba::Tms::Jobs::Objects::ExternalDataMerged,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "objects_external_data_merged.csv"
+            ),
+            tags: %i[objects],
+            desc: "Merges in data from external tables (where objects table "\
+              "does not contain external table id) such as AltNums and "\
+              "ConRefs"
+          }
           register :dates, {
             creator: Kiba::Tms::Jobs::Objects::Dates,
             path: File.join(
