@@ -22,17 +22,42 @@ module Kiba
       setting :initial_cleaner, default: nil, reader: true
       setting :description_cleaner, default: nil, reader: true
 
-      # pass in client-specific transform classes to prepare rows for
-      #   merging
-      setting :for_constituents_prepper, default: nil, reader: true
-      setting :for_objects_prepper, default: nil, reader: true
-      setting :for_reference_master_prepper, default: nil, reader: true
+      # The merge treatment to be applied to altnum values with no assigned
+      #   type value
+      setting :for_objects_untyped_default_treatment,
+        default: "other_number",
+        reader: true
 
-      # pass in client-specific transform classes to merge rows into
-      #   target tables
-      setting :for_constituents_merge, default: nil, reader: true
-      setting :for_objects_merge, default: nil, reader: true
-      setting :for_reference_master_merge, default: nil, reader: true
+      # Whether `altnum_annotation` or `numtyped_annotation` treatments are
+      #   used in the project. Used to determine whether we need to handle
+      #   the resulting intermediate fields in object record processing
+      #
+      # @return [Boolean]
+      setting :for_objects_annotation_treatments_used,
+        default: false,
+        reader: true
+
+      # Prefix added to `annotationType` vocabulary terms for alt number types
+      #   assigned the `numtype_annotation` treatment.
+      #
+      # The idea behind adding a prefix like "numtype: " is that, when
+      #   doing CollectionSpace data entry, in the Annotation type
+      #   field, you can type `numtype:` and the choices in the term
+      #   pick-list will be narrowed down to valid number type terms.
+      #   Also, this allows all the number type terms to be easily
+      #   reviewed and managed together in the interface for managing
+      #   the Annotation Type vocabulary
+      #
+      # @return [String]
+      setting :for_objects_numtype_annotation_type_prefix,
+        default: "numtype: ",
+        reader: true
+
+      # Value set as the Annotation Type field value when an alt number type
+      #   is treated as `altnum_annotation`.
+      setting :for_objects_altnum_annotation_type,
+        default: "alternate number",
+        reader: true
 
       # If a number type is mapped to `resource_id` treatment and the
       #   TMS AltNums `:remarks` field is populated, should the
