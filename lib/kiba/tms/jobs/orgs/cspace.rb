@@ -30,9 +30,6 @@ module Kiba
               base << :con_geography__for_authority
               base << :con_geography__for_non_authority
             end
-            if Tms::TextEntries.for?("Constituents")
-              base << :text_entries_for__constituents
-            end
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
@@ -97,18 +94,23 @@ module Kiba
                 transform Tms::Transforms::ConEmail::MergeIntoAuthority,
                   lookup: con_email__to_merge
               end
+
               if Tms::ConPhones.used?
                 transform Tms::Transforms::ConPhones::MergeIntoAuthority,
                   lookup: con_phones__to_merge
               end
+
               if Tms::ConDisplayBios.used?
                 transform Tms::ConDisplayBios.merger
               end
+
               if Tms::TextEntries.for?("Constituents") &&
-                  Tms::TextEntries.for_constituents_merge
-                transform Tms::TextEntries.for_constituents_merge,
-                  lookup: text_entries_for__constituents
+                  Tms::TextEntriesForConstituents.merger_xforms
+                Tms::TextEntriesForConstituents.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
+
               if lookups.any?(:con_geography__for_authority) &&
                   Tms::ConGeography.auth_merger
                 transform Tms::ConGeography.auth_merger,

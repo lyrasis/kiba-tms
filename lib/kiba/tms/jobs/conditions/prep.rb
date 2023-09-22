@@ -127,8 +127,11 @@ module Kiba
               end
               transform Delete::Fields, fields: :overallconditionid
 
-              if Tms::TextEntries.for?("Conditions")
-                transform Tms::TextEntries.for_conditions_merge
+              if Tms::TextEntries.for?("Conditions") &&
+                  Tms::TextEntriesForConditions.merger_xforms
+                Tms::TextEntriesForConditions.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
             end
           end

@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module TextEntries
-        class ForConstituents
+        class ForConstituentsPrepper
           def initialize
             @target = :text_entry
           end

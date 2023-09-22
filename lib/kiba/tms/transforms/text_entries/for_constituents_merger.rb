@@ -4,8 +4,11 @@ module Kiba
   module Tms
     module Transforms
       module TextEntries
-        class MergeConstituents
-          def initialize(lookup:)
+        class ForConstituentsMerger
+          def initialize
+            lookup = Tms::Mixins::MultiTableMergeable.get_merge_lookup(
+              Tms::TextEntriesForConstituents
+            )
             @merger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :constituentid,

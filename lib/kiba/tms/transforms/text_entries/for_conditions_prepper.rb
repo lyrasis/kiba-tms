@@ -3,7 +3,7 @@
 module Tms
   module Transforms
     module TextEntries
-      class ForConditions
+      class ForConditionsPrepper
         include Tms::Transforms::ValueCombiners
 
         def initialize(notefield: :text_entry)

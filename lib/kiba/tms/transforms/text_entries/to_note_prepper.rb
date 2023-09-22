@@ -3,17 +3,13 @@
 module Tms
   module Transforms
     module TextEntries
-      class ForLoans
+      class ToNotePrepper
         def initialize(target: :text_entry)
           @target = target
         end
 
         # @private
         def process(row)
-          if row.key?(:remarks)
-            msg = "#{self.class.name} includes unaccounted for `remarks` vals"
-            warn(msg)
-          end
           label = add_date(row, type_and_purpose(row))
           body = combine_label_and_note(row, label)
           row[target] = signed(row, body)
@@ -23,6 +19,7 @@ module Tms
         private
 
         attr_reader :target
+
         def add_date(row, label)
           date = row.fetch(:textdate, nil)
           return label if date.blank?
@@ -32,13 +29,13 @@ module Tms
         end
 
         def author(row)
-          author_val = [row.fetch(:org_author, nil),
-            row.fetch(:person_author, nil)].reject { |author|
-            author.blank?
-          }
+          author_val = [
+            row[:person_author],
+            row[:org_author]
+          ].reject { |author| author.blank? }
           return nil if author_val.empty?
 
-          author_val.first
+          author_val.join(", ")
         end
 
         def combine_label_and_note(row, label)
@@ -65,8 +62,6 @@ module Tms
 
           purpose = "" if purpose.nil?
           type = "" if type.nil?
-
-          purpose = purpose.sub("DOG", "Deed of Gift")
 
           return purpose if purpose.downcase[type.downcase]
           return type if type.downcase[purpose.downcase]

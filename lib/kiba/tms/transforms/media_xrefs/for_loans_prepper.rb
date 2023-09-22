@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module MediaXrefs
-        class ForLoans
+        class ForLoansPrepper
           def initialize
             @merger = Merge::MultiRowLookup.new(
               lookup: Tms.get_lookup(

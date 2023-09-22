@@ -31,7 +31,8 @@ module Kiba
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
+              job = bind.receiver
+              config = job.send(:config)
               conditions_label = Tms::LoanObjXrefs.conditions_label
 
               transform Tms::Transforms::DeleteTmsFields
@@ -109,10 +110,13 @@ module Kiba
                 warn("Unknown value for Tms::LoanObjXrefs.conditions_label")
               end
 
-              if Tms::TextEntries.for?("LoanObjXrefs")
-                xform = Tms::TextEntries.for_loan_obj_xrefs_merge
-                transform xform if xform
+              if Tms::TextEntries.for?("LoanObjXrefs") &&
+                  Tms::TextEntriesForLoanObjXrefs.merger_xforms
+                Tms::TextEntriesForLoanObjXrefs.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
+
               transform Delete::EmptyFields
             end
           end

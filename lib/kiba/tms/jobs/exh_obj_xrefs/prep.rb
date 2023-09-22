@@ -76,8 +76,11 @@ module Kiba
                   end
               end
 
-              if Tms::TextEntries.for?("ExhObjXrefs")
-                transform Tms::TextEntries.for_exh_obj_xrefs_merge
+              if Tms::TextEntries.for?("ExhObjXrefs") &&
+                  Tms::TextEntriesForExhObjXrefs.merger_xforms
+                Tms::TextEntriesForExhObjXrefs.merger_xforms.each do |xform|
+                  transform xform
+                end
 
                 if config.text_entry_handling == :exhibition_planning_note
                   transform CombineValues::FromFieldsWithDelimiter,

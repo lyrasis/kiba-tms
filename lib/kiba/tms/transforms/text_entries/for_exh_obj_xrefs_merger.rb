@@ -3,16 +3,16 @@
 module Tms
   module Transforms
     module TextEntries
-      class MergeExhibitions
+      class ForExhObjXrefsMerger
         def initialize
+          lookup = Tms::Mixins::MultiTableMergeable.get_merge_lookup(
+            TextEntriesForExhObjXrefs
+          )
           @merger = Merge::MultiRowLookup.new(
-            lookup: Tms.get_lookup(
-              jobkey: :text_entries_for__exhibitions,
-              column: :recordid
-            ),
-            keycolumn: :exhibitionid,
-            fieldmap: {text_entry: :text_entry},
-            delim: "%CR%"
+            lookup: lookup,
+            keycolumn: :exhobjxrefid,
+            fieldmap: {text_entry: :textentry},
+            delim: Tms.delim
           )
         end
 

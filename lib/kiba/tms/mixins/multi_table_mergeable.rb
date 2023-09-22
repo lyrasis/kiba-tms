@@ -198,10 +198,13 @@ module Kiba
         end
 
         def self.get_merge_lookup(for_mod)
+          key = for_mod.merge_lookup
+          path = Tms.registry
+            .resolve(key)
+            .path
+          Kiba::Extend::Command::Run.job(key) unless File.exist?(path)
           Kiba::Extend::Utils::Lookup.csv_to_hash(
-            file: Tms.registry
-              .resolve(for_mod.merge_lookup)
-              .path,
+            file: path,
             keycolumn: :recordid
           )
         rescue NameError

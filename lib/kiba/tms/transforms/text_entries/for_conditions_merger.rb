@@ -3,11 +3,10 @@
 module Tms
   module Transforms
     module TextEntries
-      class MergeConditions
+      class ForConditionsMerger
         def initialize
-          lookup = Tms.get_lookup(
-            jobkey: :text_entries_for__conditions,
-            column: :recordid
+          lookup = Tms::Mixins::MultiTableMergeable.get_merge_lookup(
+            TextEntriesForConditions
           )
           prefix = "te"
           datetarget = "#{prefix}_conditiondate".to_sym

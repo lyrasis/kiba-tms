@@ -3,13 +3,13 @@
 module Tms
   module Transforms
     module TextEntries
-      class MergeLoanObjXrefs
+      class ForLoanObjXrefsMerger
         def initialize
+          lookup = Tms::Mixins::MultiTableMergeable.get_merge_lookup(
+            TextEntriesForLoanObjXrefs
+          )
           @merger = Merge::MultiRowLookup.new(
-            lookup: Tms.get_lookup(
-              jobkey: :text_entries_for__loan_obj_xrefs,
-              column: :recordid
-            ),
+            lookup: lookup,
             keycolumn: :loanobjxrefid,
             fieldmap: {text_entry: :text_entry},
             delim: "%CR%"

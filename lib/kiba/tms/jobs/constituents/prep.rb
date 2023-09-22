@@ -134,8 +134,10 @@ module Kiba
               end
 
               if Tms::AltNums.for?(config.table_name) &&
-                  Tms::AltNums.for_constituents_merge
-                transform Tms::AltNums.for_constituents_merge
+                  Tms::AltNumsForConstituents.merger_xforms
+                Tms::AltNumsForConstituents.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,

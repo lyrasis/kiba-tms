@@ -125,9 +125,11 @@ module Kiba
                 end
               end
 
-              if Tms::TextEntries.for?("Exhibitions")
-                xform = Tms::TextEntries.for_exhibitions_merge
-                transform xform if xform
+              if Tms::TextEntries.for?("Exhibitions") &&
+                  Tms::TextEntriesForExhibitions.merger_xforms
+                Tms::TextEntriesForExhibitions.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
 
               transform Merge::ConstantValue,

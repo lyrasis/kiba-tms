@@ -9,10 +9,6 @@ module Kiba
 
       extend Tms::Mixins::Tableable
       extend Tms::Mixins::MultiTableMergeable
-
-      setting :for_loans_prepper,
-        default: Tms::Transforms::MediaXrefs::ForLoans,
-        reader: true
     end
   end
 end
