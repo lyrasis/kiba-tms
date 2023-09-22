@@ -30,16 +30,73 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      setting :annotation_source_fields, default: %i[creditline], reader: true
+      # -----------------------------------------------------------------------
+      # REPEATABLE FIELD GROUP COLLAPSE CONFIG
+      #
+      # Data from various sources may be merged into intermediate objects table
+      #   for later combination into a single repeatable field group.
+      #
+      # The settings in this section define the intermediate fields
+      #   and field group structure used to generate `sources` and
+      #   `targets` parameters for the
+      #   `Collapse::FieldsToRepeatableFieldGroup` transform used to
+      #   do this field group collapsing.
+      #
+      # This assumes intermediate field naming conventions so that the
+      #   source fields values are intermediate field name prefixes
+      #   separated from the remainder of the field name by an
+      #   underscore, and the rest of the field name does not contain
+      #   any underscores. For example, the intermediate fields
+      #   containing credit line data that will become annotations
+      #   would be:
+      #
+      # - creditline_annotationtype
+      # - creditline_annotationnote
+      # -----------------------------------------------------------------------
+      setting :annotation_source_fields,
+        default: %i[creditline],
+        reader: true,
+        constructor: ->(default) do
+          if Tms::AltNums.for_objects_annotation_treatments_used
+            default << :altnum
+          end
+          default
+        end
       setting :annotation_target_fields,
         default: %i[annotationtype annotationnote],
         reader: true
+      setting :nontext_inscription_source_fields, default: %i[], reader: true
+      setting :nontext_inscription_target_fields, default: %i[], reader: true
+      setting :text_inscription_source_fields,
+        default: %i[signed inscribed markings],
+        reader: true
+      setting :text_inscription_target_fields,
+        default: %i[inscriptioncontenttype inscriptioncontent],
+        reader: true
+
+      # Intermediate fields containing values to be merged into `comments`
+      #   field
+      #
+      # @return [Array<Symbol]
       setting :comment_fields,
         reader: true,
         default: %i[comment],
         constructor: ->(default) do
           default << :alt_num_comment if Tms::AltNums.for?("Objects")
           default << :title_comment if Tms::Table::List.include?("ObjTitles")
+          default
+        end
+
+      # Intermediate fields containing values to be merged into
+      #   `inventoryStatus` field
+      #
+      # @return [Array<Symbol]
+      setting :status_source_fields,
+        default: [],
+        reader: true,
+        constructor: ->(default) do
+          default << :main_objectstatus if Tms::ObjectStatuses.used?
+          default << :linkedset_objectstatus if Tms::LinkedSetAcq.used?
           default
         end
 
@@ -77,6 +134,7 @@ module Kiba
           }
         },
         reader: true
+
       setting :contentnote_delim, default: "%CR%%CR%", reader: true
       setting :contentnote_sources,
         default: %i[con_refs_p_contentnote con_refs_o_contentnote],
@@ -106,8 +164,6 @@ module Kiba
       #   with arguments
       setting :field_cleaners, default: [], reader: true
       setting :named_coll_fields, default: [], reader: true
-      setting :nontext_inscription_source_fields, default: %i[], reader: true
-      setting :nontext_inscription_target_fields, default: %i[], reader: true
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
       setting :number_cleaner, default: nil, reader: true
@@ -127,12 +183,6 @@ module Kiba
           sourcejob: :objects__number_lookup,
           fieldmap: {targetrecord: :objectnumber}
         },
-        reader: true
-      setting :text_inscription_source_fields,
-        default: %i[signed inscribed markings],
-        reader: true
-      setting :text_inscription_target_fields,
-        default: %i[inscriptioncontenttype inscriptioncontent],
         reader: true
       # TMS fields with associated field-specific transformers defined. Note
       #   these transforms are defined in settings below with the name pattern
