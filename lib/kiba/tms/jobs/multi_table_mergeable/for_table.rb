@@ -7,7 +7,7 @@ module Kiba
         module ForTable
           module_function
 
-          def job(source:, dest:, targettable:, field: :tablename, xforms: [])
+          def job(source:, dest:, targettable:, field: :tablename, xforms: nil)
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: source,
@@ -24,15 +24,15 @@ module Kiba
           # @param table [String]
           # @param field [Symbol]
           # @param xforms [Array] of transform classes
-          def for_table_xforms(table:, field: :tablename, xforms: [])
+          def for_table_xforms(table:, field: :tablename, xforms: nil)
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: field,
                 value: table
-              unless xforms.empty?
-                xforms.each { |xform| transform xform }
-              end
+
+              xforms.each { |xform| transform xform } if xforms
+
               transform Delete::Fields,
                 fields: field
             end

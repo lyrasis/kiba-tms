@@ -10,7 +10,7 @@ module Kiba
         #
         # NOTE that this is designed a little oddly so that it can be
         #   subclassed by client-specific transforms easily
-        class ForObjects
+        class ForObjectsPrepper
           def initialize
             @sources = %i[constatement remarks]
             @targets = %i[note]

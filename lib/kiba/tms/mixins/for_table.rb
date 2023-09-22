@@ -9,6 +9,64 @@ module Kiba
       # For-table jobs split up the overall multi-table-mergeable table (e.g.
       #   AltNums) into separate tables for each mergeable target table (e.g.
       #   alt_nums_for__objects, alt_nums_for__constituents, etc.)
+      #
+      # In client-specific projects, the following settings may be set
+      #   per-for-table, **in the project's dependent config section**
+      #   (i.e. after `Tms.meta_config` has been run, which is what
+      #   causes for tables to be defined. You can't define settings
+      #   on a module that hasn't yet been defined in the
+      #   application!)
+      #
+      # - delete_fields [Array<Symbol>] - list fields to be deleted
+      #   from the specific ForTable that should not be deleted from
+      #   other ForTables from the same source table
+      # - empty_fields [Same format as used in autoconfig of main
+      #   tables] Used to track/flag when a previously empty field
+      #   (perhaps not handled) becomes non-empty after a data update,
+      #   and thus may need attention
+      # - prepper_xforms [nil, Array<#process>] - list of job transforms to
+      #   be applied after rows for target table are isolated, in the
+      #   job that creates the for-table. Can be one or more classes
+      #   meeting implementation criteria for a Kiba transform
+      # - merger_xforms [nil, Array<#process>] - list of job transforms used
+      #   in job where target table is the source, to merge for_table data into
+      #   target table. Can be one or more classes meeting implementation
+      #   criteria for a Kiba transform.
+      # - merge_lookup [Symbol] - full registry entry job key for the
+      #   table that will be used as lookup source for merging this
+      #   ForTable data into target table. By default, this is set to
+      #   the reportable_for type_cleanup_merge job for this ForTable.
+      #   Only override this if specific client project needs to
+      #   further modify the ForTable data after empty type cleanup
+      #   and type cleanup have been applied. Typically this will look
+      #   like creating a custom job in the client project and using
+      #   that job's key in this setting.
+      # - treatment_mergers [Hash{Symbol=>Class}] Override default
+      #   treatment mergers or define custom treatments (and their
+      #   associated transforms) in client-specific project config. Is
+      #   merged into `base_treatment_mergers`. See that setting's
+      #   documentation below for more info.
+      #
+      # The following settings are also created for internal use. It is
+      #   recommended that you NOT override them:
+      #
+      # - source_job_key - The registry entry job key that creates the
+      #   given ForTable to meet criteria for extending `Tableable` on
+      #   a non-TMS-base-table.
+      # - base_treatment_mergers [Hash{Symbol=>Class}] Indicates
+      #   default transform class for each treatment. Automatically
+      #   derived based on treatment mergers defined in
+      #   Kiba::Tms::Transforms::{parentmodule}. To be detected,
+      #   treatment merger classes must be named following the
+      #   pattern: For{TargetTable}TreatmentMerger{treatment
+      #   camelcased}. For example:
+      #   `Tms::Transforms::AltNums::ForObjectsTreatmentMergerOtherNumber`.
+      #   To provide custom transformation for a default treatment,
+      #   the specific treatment can be overridden in client-specific
+      #   `treatment_mergers` setting. That setting is merged into
+      #   this base setting, so keys defined overwrite the base
+      #   definition. Custom/new treatments can also be defined in
+      #   `treatment_mergers`.
       module ForTable
         # Called as part of Tms.meta_config setup
         def define_for_table_modules
@@ -37,8 +95,10 @@ module Kiba
           Tms.registry.import(ns)
         end
 
+        # rubocop:disable Layout/LineLength
         def define_for_table_module(target)
           targetobj = Tms::Table::Obj.new(target)
+          target = targetobj.tablename
           jobkey = "#{table.filekey}_for__#{targetobj.filekey}".to_sym
 
           moddef = <<~MODDEF
@@ -53,6 +113,24 @@ module Kiba
               setting :empty_fields, default: {}, reader: true
               extend Tms::Mixins::Tableable
 
+              setting :prepper_xforms,
+                default: #{default_xforms(target, "Prepper")},
+                reader: true
+              setting :merger_xforms,
+                default: #{default_xforms(target, "Merger")},
+                reader: true
+              setting :merge_lookup,
+                default: :#{table.filekey}_reportable_for__#{targetobj.filekey}_type_cleanup_merge,
+                reader: true
+              setting :base_treatment_mergers,
+                default: #{set_base_treatment_mergers(target)},
+                reader: true
+              setting :treatment_mergers,
+                default: {},
+                reader: true,
+                constructor: ->(default) do
+                  base_treatment_mergers.merge(default)
+                end
               def used?
                 true
               end
@@ -61,6 +139,60 @@ module Kiba
           Tms.module_eval(moddef, __FILE__, __LINE__)
         end
         private :define_for_table_module
+        # rubocop:enable Layout/LineLength
+
+        def xforms_namespace
+          modname = name.to_s.split("::").last
+          return nil unless Tms::Transforms.constants
+            .map(&:to_s)
+            .include?(modname)
+
+          Tms::Transforms.const_get(modname)
+        end
+        private :xforms_namespace
+
+        def default_xforms(targetname, type)
+          modxforms = xforms_namespace
+          return "nil" unless modxforms
+
+          xformname = ["For", targetname, type].join
+          xform = modxforms.constants.map(&:to_s).include?(xformname)
+          return "nil" unless xform
+
+          [modxforms.const_get(xformname)]
+        end
+        private :default_xforms
+
+        def set_base_treatment_mergers(target)
+          modxforms = xforms_namespace
+          return {} unless modxforms
+
+          xform_prefix = "For#{target}TreatmentMerger"
+          mergers = modxforms.constants
+            .map(&:to_s)
+            .select { |xform| xform.start_with?(xform_prefix) }
+          return {} if mergers.empty?
+
+          setup_treatment_mergers(modxforms, xform_prefix, mergers)
+        end
+        private :set_base_treatment_mergers
+
+        def setup_treatment_mergers(modxforms, xform_prefix, mergers)
+          mergers.map { |merger| setup_treatment_merger(xform_prefix, merger) }
+            .to_h
+            .transform_values { |val| modxforms.const_get(val) }
+        end
+        private :setup_treatment_mergers
+
+        def setup_treatment_merger(xform_prefix, merger)
+          treatment = merger.delete_prefix(xform_prefix)
+            .gsub(/([A-Z])/, '_\1')
+            .downcase
+            .delete_prefix("_")
+            .to_sym
+          [treatment, merger]
+        end
+        private :setup_treatment_merger
 
         # @return [String]
         def for_table_module_name(jobkey)
@@ -84,8 +216,8 @@ module Kiba
             mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              targetxform = mod.send(:target_xform, targetobj)
-              params = [ns_name, targetobj, field, targetxform]
+              xforms = mod.send(:default_xforms, targetobj.tablename, "Prepper")
+              params = [ns_name, targetobj, field, xforms]
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
               )
@@ -96,15 +228,6 @@ module Kiba
           end
         end
         private :build_registry_namespace
-
-        # @return [Array<Class>] prepper transform class(es) for the for-table
-        def target_xform(targetobj)
-          sym = "for_#{targetobj.filekey}_prepper".to_sym
-          return [send(sym)].flatten if respond_to?(sym) && !send(sym).nil?
-
-          []
-        end
-        private :target_xform
 
         # Builds a registry entry hash for a reportable-for-job
         #
