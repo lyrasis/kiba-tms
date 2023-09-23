@@ -115,10 +115,16 @@ module Kiba
 
               setting :prepper_xforms,
                 default: #{default_xforms(target, "Prepper")},
-                reader: true
+                reader: true,
+                constructor: ->(default) do
+                  default == "nil" ? nil : default
+                end
               setting :merger_xforms,
                 default: #{default_xforms(target, "Merger")},
-                reader: true
+                reader: true,
+                constructor: ->(default) do
+                  default == "nil" ? nil : default
+                end
               setting :merge_lookup,
                 default: :#{table.filekey}_reportable_for__#{targetobj.filekey}_type_cleanup_merge,
                 reader: true
@@ -203,6 +209,12 @@ module Kiba
         end
         private :for_table_module_name
 
+        # @return [Module]
+        def for_table_module(jobkey)
+          Tms.const_get(for_table_module_name(jobkey))
+        end
+        private :for_table_module
+
         # Defines a registry namespace (e.g. alt_nums_for).
         #   Within it, registers a job for each for-table (e.g.
         #   alt_nums_for__objects)
@@ -216,8 +228,7 @@ module Kiba
             mod = bind.receiver
             targets.each do |target|
               targetobj = Tms::Table::Obj.new(target)
-              xforms = mod.send(:default_xforms, targetobj.tablename, "Prepper")
-              params = [ns_name, targetobj, field, xforms]
+              params = [ns_name, targetobj, field]
               register targetobj.filekey, mod.send(
                 :target_job_hash, *params
               )
@@ -233,20 +244,21 @@ module Kiba
         #
         # @param ns_name [String] e.g. "alt_nums_for"
         # @param targetobj [Tms::Table::Obj]
-        # @param field [Symbol] e.g. "alt_nums_reportable_for__objects"
-        # @param xforms [Array<Class>]
+        # @param field [Symbol] e.g. :tablename
         # @return [Hash]
-        def target_job_hash(ns_name, targetobj, field, xforms)
+        def target_job_hash(ns_name, targetobj, field)
           key = targetobj.filekey
+          for_table_key = "#{ns_name}__#{key}".to_sym
+          for_table_mod = for_table_module(for_table_key)
           {
             path: File.join(Tms.datadir, "working", "#{ns_name}_#{key}.csv"),
             creator: {callee: Tms::Jobs::MultiTableMergeable::ForTable,
                       args: {
                         source: for_table_source_job_key,
-                        dest: "#{ns_name}__#{key}".to_sym,
+                        dest: for_table_key,
+                        for_table_mod: for_table_mod,
                         targettable: targetobj.tablename,
-                        field: field,
-                        xforms: xforms
+                        field: field
                       }},
             tags: for_table_tags(ns_name, targetobj),
             lookup_on: lookup_on_field

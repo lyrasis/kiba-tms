@@ -7,34 +7,41 @@ module Kiba
         module ForTable
           module_function
 
-          def job(source:, dest:, targettable:, field: :tablename, xforms: nil)
+          def job(source:, dest:, targettable:, for_table_mod:,
+            field: :tablename)
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: source,
                 destination: dest
               },
-              transformer: for_table_xforms(
-                table: targettable,
-                field: field,
-                xforms: xforms
-              )
+              transformer: get_xforms(targettable, field, for_table_mod)
             )
+          end
+
+          def get_xforms(targettable, field, mod)
+            base = [base_xforms(table: targettable, field: field)]
+            base << prepper_xforms(mod) if mod.prepper_xforms
+            base
           end
 
           # @param table [String]
           # @param field [Symbol]
-          # @param xforms [Array] of transform classes
-          def for_table_xforms(table:, field: :tablename, xforms: nil)
+          def base_xforms(table:, field: :tablename)
             Kiba.job_segment do
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: field,
                 value: table
 
-              xforms.each { |xform| transform xform } if xforms
-
               transform Delete::Fields,
                 fields: field
+            end
+          end
+
+          # @param xforms [Array] of transform classes
+          def prepper_xforms(mod)
+            Kiba.job_segment do
+              mod.prepper_xforms.each { |xform| transform xform }
             end
           end
         end
