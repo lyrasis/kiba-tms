@@ -19,6 +19,10 @@ module Kiba
         ],
         reader: true
       extend Tms::Mixins::TypeLookupTable
+
+      def mappable_type?
+        false
+      end
     end
   end
 end
