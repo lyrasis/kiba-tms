@@ -9,14 +9,13 @@ module Kiba
 
           KNOWN_TYPES = %w[birth death active]
           def job
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__con_dates,
                 destination: :prep__con_dates,
                 lookup: :tms__constituents
               },
-              transformer: xforms,
-              helper: Tms::Constituents.dates.multisource_normalizer
+              transformer: xforms
             )
           end
 

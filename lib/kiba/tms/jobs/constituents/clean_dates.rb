@@ -8,13 +8,12 @@ module Kiba
           module_function
 
           def job
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__constituents,
                 destination: :constituents__clean_dates
               },
-              transformer: xforms,
-              helper: Tms::Constituents.dates.multisource_normalizer
+              transformer: xforms
             )
           end
 

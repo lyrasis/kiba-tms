@@ -25,11 +25,6 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Append::NilFields,
-                fields: Tms::Constituents.dates
-                  .multisource_normalizer
-                  .get_fields
-
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid datedescription date],
                 target: :combined,
@@ -44,6 +39,7 @@ module Kiba
                 delete_sources: false
 
               transform Tms::Transforms::ConDates::ReducePartialDuplicates
+              transform Clean::EnsureConsistentFields
             end
           end
         end

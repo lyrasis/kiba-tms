@@ -103,8 +103,6 @@ module Kiba
         # whether there is constituent date data to be merged into Constituents
         # set to false if running con_dates__to_merge results in an empty table
         setting :merging, default: true, reader: true
-        setting :multisource_normalizer,
-          default: Kiba::Extend::Utils::MultiSourceNormalizer.new, reader: true
         # custom transform to clean up remarks before any other processing
         setting :initial_remarks_cleaner, default: nil, reader: true
         setting :known_types, default: %w[birth death active], reader: true
