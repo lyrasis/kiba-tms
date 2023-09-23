@@ -222,13 +222,6 @@ module Kiba
                   fieldmap: {tecomp_comment: :te_comment},
                   delim: Tms.delim
               end
-
-              if config.text_entries_merge_xform
-                xform = config.text_entries_merge_xform.new(
-                  text_entries_for__objects
-                )
-                transform { |row| xform.process(row) }
-              end
             end
           end
         end
