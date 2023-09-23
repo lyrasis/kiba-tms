@@ -29,13 +29,6 @@ module Kiba
                 base << lkup
               end
             end
-            if Tms::TextEntries.for?("Objects")
-              base << :text_entries_for__objects
-            end
-            if Tms::AltNums.for?("Objects")
-              base << Tms::AltNumsForObjects.merge_lookup
-            end
-            base << :prep__status_flags if Tms::StatusFlags.for?("Objects")
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
             if config.dimensions_to_merge?
@@ -103,17 +96,6 @@ module Kiba
                   },
                   delim: Tms.delim
                 statusfields << :linkedset_objectstatus
-              end
-
-              unless Tms::Objects.status_source_fields.empty?
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: Tms::Objects.status_source_fields,
-                  target: :objectstatus,
-                  delim: Tms.delim,
-                  delete_sources: true
-                transform Deduplicate::FieldValues,
-                  fields: :objectstatus,
-                  sep: Tms.delim
               end
 
               if Tms::ObjTitles.used?
@@ -212,39 +194,25 @@ module Kiba
                   fields: %i[valuedate measurementunit value dimension]
               end
 
-              if Tms::AltNums.for?("Objects")
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: alt_nums_for__objects,
-                  fieldmap: {
-                    numbervalue: :altnum,
-                    numbertype: :description
-                  },
-                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
-                  delim: Tms.delim,
-                  null_placeholder: "%NULLVALUE%"
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: alt_nums_for__objects,
-                  fieldmap: {alt_num_comment: :remarks},
-                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
-                  delim: Tms.delim
-                transform Prepend::ToFieldValue,
-                  field: :alt_num_comment,
-                  value: "Other number note: "
+              if Tms::AltNums.for?("Objects") &&
+                  Tms::AltNumsForObjects.merger_xforms
+                Tms::AltNumsForObjects.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
 
-              if Tms::StatusFlags.for?("Objects")
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectid,
-                  lookup: prep__status_flags,
-                  fieldmap: {status_flag_inventorystatus: :flaglabel},
-                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i),
-                  delim: Tms.delim,
-                  conditions: ->(_origrow, mergerows) {
-                    mergerows.select { |row| row[:tablename] == "Objects" }
-                  }
-                transform Tms::Transforms::Objects::CombineObjectStatusAndStatusFlags
+              if Tms::StatusFlags.for?("Objects") &&
+                  Tms::StatusFlagsForObjects.merger_xforms
+                Tms::StatusFlagsForObjects.merger_xforms.each do |xform|
+                  transform xform
+                end
+              end
+
+              if Tms::TextEntries.for?("Objects") &&
+                  Tms::TextEntriesForObjects.merger_xforms
+                Tms::TextEntriesForObjects.merger_xforms.each do |xform|
+                  transform xform
+                end
               end
 
               if Tms::ObjComponents.merging_text_entries?
@@ -260,85 +228,6 @@ module Kiba
                   text_entries_for__objects
                 )
                 transform { |row| xform.process(row) }
-              end
-
-              unless config.transformer_fields.empty?
-                xforms = config.transformer_fields
-                  .map { |field| "#{field}_xform".to_sym }
-                  .map { |setting| config.send(setting) }
-                  .compact
-                transform do |row|
-                  xforms.each do |xform|
-                    row = xform.process(row)
-                  end
-                  row
-                end
-              end
-
-              rename_map = {
-                chat: :viewerscontributionnote,
-                culture: :objectproductionpeople,
-                description: :briefdescription,
-                medium: :materialtechniquedescription,
-                notes: :comment,
-                objectcount: :numberofobjects
-              }
-              unless bind.receiver.send(:merges_dimensions?)
-                unless Tms::Dimensions.migrate_secondary_unit_vals
-                  transform do |row|
-                    display = row[:dimensions]
-                    row[:dimensions] = display.sub(/ \(.*\)$/, "")
-                    row
-                  end
-                end
-                rename_map[:dimensions] = :dimensionsummary
-              end
-              custom_handled_fields.each { |field| rename_map.delete(field) }
-              transform Rename::Fields,
-                fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
-
-              transform Delete::DelimiterOnlyFieldValues,
-                fields: %w[contentnote objectproductionnote
-                  objecthistorynote].map { |prefix|
-                          config.send("#{prefix}_sources".to_sym)
-                        }.flatten,
-                delim: Tms.delim,
-                treat_as_null: Tms.nullvalue
-
-              %w[annotation nontext_inscription text_inscription].each do |type|
-                sources = config.send("#{type}_source_fields".to_sym)
-                targets = config.send("#{type}_target_fields".to_sym)
-                if !sources.empty? && !targets.empty?
-                  transform Collapse::FieldsToRepeatableFieldGroup,
-                    sources: sources,
-                    targets: targets,
-                    delim: Tms.delim
-                end
-              end
-
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: Tms::Objects.comment_fields,
-                target: :comment,
-                delim: Tms.delim,
-                delete_sources: true
-
-              unless Tms::Objects.named_coll_fields.empty?
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: Tms::Objects.named_coll_fields,
-                  target: :namedcollection,
-                  delim: Tms.delim,
-                  delete_sources: true
-              end
-
-              %w[
-                contentnote objectproductionnote
-                objecthistorynote
-              ].each do |target|
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: config.send("#{target}_sources".to_sym),
-                  target: target,
-                  delim: config.send("#{target}_delim".to_sym),
-                  delete_sources: true
               end
             end
           end

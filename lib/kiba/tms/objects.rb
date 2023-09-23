@@ -49,6 +49,17 @@ module Kiba
       # @return [Array<#process>]
       setting :field_cleaners, default: [], reader: true
 
+      # TMS fields with associated field-specific transformers defined
+      #   that should be applied in the project. These transforms are
+      #   applied in the `:prep__objects` job, immediately after any
+      #   transforms in the `:field_cleaners` setting have been
+      #   applied. **Each field listed here must correspond to a
+      #   `fieldname_xform` setting defined in the "Default
+      #   field-specific transforms" section below.**
+      #
+      # @return [Array<Symbol>]
+      setting :field_specific_xform_fields, default: [], reader: true
+
       # -----------------------------------------------------------------------
       # Default field-specific transforms
       # -----------------------------------------------------------------------
@@ -108,8 +119,20 @@ module Kiba
         ),
         reader: true
 
+      # @return [Hash{Symbol=>Symbol}]
+      setting :base_field_rename_map, default: {
+                                        chat: :viewerscontributionnote,
+                                        culture: :objectproductionpeople,
+                                        description: :briefdescription,
+                                        medium: :materialtechniquedescription,
+                                        notes: :comment,
+                                        objectcount: :numberofobjects
+                                      },
+        reader: true
+
       # -----------------------------------------------------------------------
       # REPEATABLE FIELD GROUP COLLAPSE CONFIG
+      # -----------------------------------------------------------------------
       #
       # Data from various sources may be merged into intermediate objects table
       #   for later combination into a single repeatable field group.
@@ -258,11 +281,6 @@ module Kiba
           fieldmap: {targetrecord: :objectnumber}
         },
         reader: true
-      # TMS fields with associated field-specific transformers defined. Note
-      #   these transforms are defined in settings below with the name pattern
-      #   `fieldname_xform`
-      setting :transformer_fields, default: [], reader: true
-
       setting :text_entries_merge_xform, default: nil, reader: true
     end
   end
