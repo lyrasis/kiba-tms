@@ -30,6 +30,10 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      def dimensions_to_merge?
+        Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?("Objects")
+      end
+
       # Transforms to clean individual fields. These are run at the
       #   end of the :prep__objects job, so are limited to fields
       #   present in original TMS objects table. The exceptions are:

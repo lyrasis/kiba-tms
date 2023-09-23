@@ -38,7 +38,9 @@ module Kiba
             base << :prep__status_flags if Tms::StatusFlags.for?("Objects")
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
-            base << :dim_item_elem_xrefs_for__objects if merges_dimensions?
+            if config.dimensions_to_merge?
+              base << :dim_item_elem_xrefs_for__objects
+            end
             if Tms::ObjComponents.merging_text_entries?
               base << :obj_components__with_object_numbers
             end
@@ -47,10 +49,6 @@ module Kiba
             end
 
             base
-          end
-
-          def merges_dimensions?
-            Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?("Objects")
           end
 
           def xforms
@@ -195,7 +193,7 @@ module Kiba
                 end
               end
 
-              if bind.receiver.send(:merges_dimensions?)
+              if config.send(:dimensions_to_merge?)
                 transform Delete::Fields, fields: :dimensions
                 transform Merge::MultiRowLookup,
                   lookup: dim_item_elem_xrefs_for__objects,
