@@ -30,6 +30,80 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
+      # Transforms to clean individual fields. These are run at the
+      #   end of the :prep__objects job, so are limited to fields
+      #   present in original TMS objects table. The exceptions are:
+      #
+      # - `:departmentid` will have been deleted (and possibly
+      #   replaced with the value of the `:department_target` setting)
+      # - `:objectstatusid` will have been deleted (and possibly replaced with
+      #   `main_objectstatus`
+      #
+      # Elements should be Kiba-compliant transform classes that do
+      #   not need to be initialized with arguments
+      #
+      # @return [Array<#process>]
+      setting :field_cleaners, default: [], reader: true
+
+      # -----------------------------------------------------------------------
+      # Default field-specific transforms
+      # -----------------------------------------------------------------------
+      # Transformers to transform data in individual source fields or
+      #   sets of source fields.
+      #
+      # If nil, default processing in prep__objects is
+      #   used unless field is otherwise omitted from processing
+      setting :classifications_xform, default: nil, reader: true
+      setting :creditline_xform,
+        default: Tms::Transforms::DeriveFieldPair.new(
+          source: :creditline,
+          newfield: :annotationtype,
+          value: "Credit Line",
+          sourcebecomes: :annotationnote
+        ),
+        reader: true
+      setting :curatorapproved_xform,
+        default: Tms::Transforms::Objects::Curatorapproved.new,
+        reader: true
+      setting :curatorialremarks_xform,
+        default: Kiba::Extend::Transforms::Rename::Field.new(
+          from: :curatorialremarks,
+          to: :curatorialremarks_comment
+        ),
+        reader: true
+      setting :inscribed_xform,
+        default: Tms::Transforms::DeriveFieldPair.new(
+          source: :inscribed,
+          newfield: :inscriptioncontenttype,
+          value: "inscribed",
+          sourcebecomes: :inscriptioncontent
+        ),
+        reader: true
+      setting :markings_xform,
+        default: Tms::Transforms::DeriveFieldPair.new(
+          source: :markings,
+          newfield: :inscriptioncontenttype,
+          value: "",
+          sourcebecomes: :inscriptioncontent
+        ),
+        reader: true
+      setting :medium_xform, default: nil, reader: true
+      setting :onview_xform, default: nil, reader: true
+      setting :paperfileref_xform, default: nil, reader: true
+      setting :publicaccess_xform,
+        default: Tms::Transforms::Objects::Publicaccess.new,
+        reader: true
+      setting :pubreferences_xform, default: nil, reader: true
+      setting :relatedworks_xform, default: nil, reader: true
+      setting :signed_xform,
+        default: Tms::Transforms::DeriveFieldPair.new(
+          source: :signed,
+          newfield: :inscriptioncontenttype,
+          value: "signature",
+          sourcebecomes: :inscriptioncontent
+        ),
+        reader: true
+
       # -----------------------------------------------------------------------
       # REPEATABLE FIELD GROUP COLLAPSE CONFIG
       #
@@ -159,10 +233,6 @@ module Kiba
       #   department_coll_prefix, named_coll_fields
       # other supported values: :dept_namedcollection
       setting :department_target, default: :responsibledepartment, reader: true
-      # Transforms to clean individual fields
-      # Elements should be transform classes that do not need to be initialized
-      #   with arguments
-      setting :field_cleaners, default: [], reader: true
       setting :named_coll_fields, default: [], reader: true
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
@@ -189,62 +259,6 @@ module Kiba
       #   `fieldname_xform`
       setting :transformer_fields, default: [], reader: true
 
-      ############
-      # Transforms
-      ############
-      # Configure transformers to transform data in individual source fields or
-      #   sets of source fields. If nil, default processing in prep__objects is
-      #   used unless field is otherwise omitted from processing
-      setting :classifications_xform, default: nil, reader: true
-      setting :creditline_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :creditline,
-          newfield: :annotationtype,
-          value: "Credit Line",
-          sourcebecomes: :annotationnote
-        ),
-        reader: true
-      setting :curatorapproved_xform,
-        default: Tms::Transforms::Objects::Curatorapproved.new,
-        reader: true
-      setting :curatorialremarks_xform,
-        default: Kiba::Extend::Transforms::Rename::Field.new(
-          from: :curatorialremarks,
-          to: :curatorialremarks_comment
-        ),
-        reader: true
-      setting :inscribed_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :inscribed,
-          newfield: :inscriptioncontenttype,
-          value: "inscribed",
-          sourcebecomes: :inscriptioncontent
-        ),
-        reader: true
-      setting :markings_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :markings,
-          newfield: :inscriptioncontenttype,
-          value: "",
-          sourcebecomes: :inscriptioncontent
-        ),
-        reader: true
-      setting :medium_xform, default: nil, reader: true
-      setting :onview_xform, default: nil, reader: true
-      setting :paperfileref_xform, default: nil, reader: true
-      setting :publicaccess_xform,
-        default: Tms::Transforms::Objects::Publicaccess.new,
-        reader: true
-      setting :pubreferences_xform, default: nil, reader: true
-      setting :relatedworks_xform, default: nil, reader: true
-      setting :signed_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :signed,
-          newfield: :inscriptioncontenttype,
-          value: "signature",
-          sourcebecomes: :inscriptioncontent
-        ),
-        reader: true
       setting :text_entries_merge_xform, default: nil, reader: true
     end
   end

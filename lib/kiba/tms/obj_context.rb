@@ -16,9 +16,13 @@ module Kiba
         default: %i[reign dynasty period],
         reader: true,
         constructor: ->(value) { value - empty_fields.keys }
-      # Transforms to clean individual fields
-      # Elements should be transform classes that do not need to be initialized
-      #   with arguments
+
+      # Transforms to clean individual fields. These are run at the
+      #   end of the :prep__obj_context job. Elements should be
+      #   Kiba-compliant transform classes that do not need to be
+      #   initialized with arguments.
+      #
+      # @return [Array<#process>]
       setting :field_cleaners, default: [], reader: true
     end
   end
