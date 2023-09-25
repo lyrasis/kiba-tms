@@ -98,6 +98,16 @@ module Kiba
         constructor: proc { |value| set_deletes(value) }
       extend Tms::Mixins::Tableable
 
+      # Transforms to be applied in `:prep__obj_accession` job, after
+      #  omitted fields are deleted and general data_cleaner is
+      #  applied. Should be kiba-compliant transform class, requiring
+      #  no initialization parameters
+      #
+      # @return [Array<#process>]
+      setting :initial_cleaner,
+        default: [],
+        reader: true
+
       setting :name_fields,
         default: %i[authorizer initiator],
         reader: true

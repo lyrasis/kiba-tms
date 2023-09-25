@@ -21,6 +21,15 @@ module Kiba
           value << Tms.tms_fields
           value.flatten
         }
+
+      # Kiba-compliant transform class(es) to be run at the end of
+      #   source_job_key job
+      #
+      # @return [Array<#process>]
+      setting :initial_cleaner,
+        default: [],
+        reader: true
+
       # @return [Array<Symbol>] ID and other always-unique fields not treated as
       #   content for reporting, etc.
       setting :non_content_fields,
@@ -43,6 +52,9 @@ module Kiba
               acquisitionnumber]
           transform FilterRows::FieldPopulated, action: :keep,
             field: :objectid
+          unless Tms::OneToOneAcq.initial_cleaner.empty?
+            Tms::OneToOneAcq.initial_cleaner.each { |xform| transform xform }
+          end
         end
       end
     end

@@ -68,6 +68,10 @@ module Kiba
                 fields: %i[objectvalueid],
                 match: "^-1$"
 
+              unless config.initial_cleaner.empty?
+                config.initial_cleaner.each { |xform| transform xform }
+              end
+
               # removes :accessionvalue if equal to the value in a linked
               #   ObjInsurance (valuation) record
               if config.fields.any?(:accessionvalue) &&

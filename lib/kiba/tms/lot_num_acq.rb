@@ -14,6 +14,12 @@ module Kiba
         default: "Acquisition number value(s): ",
         reader: true
 
+      # Kiba-compliant transform class(es), not requiring initialization
+      #   parameters, applied at the beginning of the :lot_num_acq__prep job
+      setting :initial_cleaner,
+        default: [],
+        reader: true
+
       # Indicates what job output to use as the base for non-TMS-table-sourced
       #   modules
       setting :source_job_key, default: :lot_num_acq__rows, reader: true
@@ -42,6 +48,9 @@ module Kiba
             fields: %i[acquisitionlotid registrationsetid]
           transform FilterRows::FieldPopulated, action: :keep,
             field: :acquisitionlot
+          unless Tms::LotNumAcq.initial_cleaner.empty?
+            Tms::LotNumAcq.initial_cleaner.each { |xform| transform xform }
+          end
         end
       end
     end
