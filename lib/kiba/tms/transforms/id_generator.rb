@@ -25,7 +25,7 @@ module Kiba
 
         # @private
         def process(row)
-          id = row[id_source]
+          id = row[id_source].to_s
           @data.key?(id) ? @data[id] << row : @data[id] = [row]
           nil
         end
