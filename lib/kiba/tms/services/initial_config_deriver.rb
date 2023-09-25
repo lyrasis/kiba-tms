@@ -12,7 +12,7 @@ module Kiba
           new(...).call
         end
 
-        def initialize(mod:, mode: verbose,
+        def initialize(mod:, mode: :verbose,
           empty_deriver: EmptyFieldsDeriver,
           mapping_deriver: TypeMappingDeriver,
           known_val_deriver: TypeTableKnownValueDeriver,
