@@ -222,6 +222,7 @@ module Kiba
                   fieldmap: {tecomp_comment: :te_comment},
                   delim: Tms.delim
               end
+              transform Clean::EnsureConsistentFields
             end
           end
         end
