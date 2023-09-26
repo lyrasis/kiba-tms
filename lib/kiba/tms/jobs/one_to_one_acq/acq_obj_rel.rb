@@ -22,6 +22,8 @@ module Kiba
 
           def lookups
             base = []
+            base << :one_to_one_acq__prep
+            base << :acquisitions__ids_final
             unless config.row_treatment == :separate
               base << :one_to_one_acq__acq_num_lookup
             end
@@ -40,13 +42,22 @@ module Kiba
               if config.row_treatment == :separate
                 transform Copy::Field,
                   from: :objectnumber,
-                  to: :item1_id
+                  to: :refnum
               else
                 transform Merge::MultiRowLookup,
                   lookup: one_to_one_acq__acq_num_lookup,
                   keycolumn: :combined,
-                  fieldmap: {item1_id: :acqrefnum}
+                  fieldmap: {refnum: :acqrefnum}
               end
+
+              transform Merge::MultiRowLookup,
+                lookup: one_to_one_acq__prep,
+                keycolumn: :refnum,
+                fieldmap: {increment: :increment}
+              transform Merge::MultiRowLookup,
+                lookup: acquisitions__ids_final,
+                keycolumn: :increment,
+                fieldmap: {item1_id: :acquisitionreferencenumber}
 
               transform Rename::Fields, fieldmap: {
                 objectnumber: :item2_id
@@ -57,7 +68,8 @@ module Kiba
                 item2_type: "collectionobjects"
               }
 
-              transform Delete::Fields, fields: :combined
+              transform Delete::Fields,
+                fields: %i[combined refnum increment]
             end
           end
         end

@@ -146,6 +146,9 @@ module Kiba
               transform Rename::Fields, fieldmap: {
                 set_objectstatus: :objectstatus
               }
+
+              transform Tms::Transforms::AddIncrementingValue,
+                prefix: "linkedset"
             end
           end
         end

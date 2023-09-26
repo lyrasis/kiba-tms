@@ -102,7 +102,8 @@ module Kiba
             ),
             desc: "ObjAccession rows to be processed with :acqnumber "\
               "approach, prepped",
-            tags: %i[acquisitions]
+            tags: %i[acquisitions],
+            lookup_on: :acquisitionreferencenumber
           }
           register :acq_obj_rel, {
             creator: Kiba::Tms::Jobs::AcqNumAcq::AcqObjRel,
@@ -125,6 +126,19 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("acquisitions") do
+          register :ids_final, {
+            creator: Kiba::Tms::Jobs::Acquisitions::IdsFinal,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "acq_ids_final.csv"
+            ),
+            tags: %i[acquisitions],
+            desc: "Compiles refnums and unique ids from all sources; "\
+              "generates unique acquisitionreferencenumber values across "\
+              "sources",
+            lookup_on: :increment
+          }
           register :all, {
             creator: Kiba::Tms::Jobs::Acquisitions::All,
             path: File.join(
@@ -1470,7 +1484,8 @@ module Kiba
             ),
             desc: "ObjAccession rows to be processed with :lotnumber "\
               "approach, prepped",
-            tags: %i[acquisitions]
+            tags: %i[acquisitions],
+            lookup_on: :acquisitionreferencenumber
           }
           register :acq_obj_rel, {
             creator: Kiba::Tms::Jobs::LotNumAcq::AcqObjRel,
@@ -3241,7 +3256,8 @@ module Kiba
             ),
             desc: "ObjAccession rows to be processed with :onetoone "\
               "approach, prepped",
-            tags: %i[acquisitions]
+            tags: %i[acquisitions],
+            lookup_on: :acquisitionreferencenumber
           }
           register :acq_obj_rel, {
             creator: Kiba::Tms::Jobs::OneToOneAcq::AcqObjRel,

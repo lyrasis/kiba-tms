@@ -13,7 +13,9 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :lot_num_acq__obj_rows,
-                destination: :lot_num_acq__acq_valuation_rel
+                destination: :lot_num_acq__acq_valuation_rel,
+                lookup: %i[lot_num_acq__prep
+                  acquisitions__ids_final]
               },
               transformer: xforms
             )
@@ -28,9 +30,17 @@ module Kiba
                 end
               transform Delete::FieldsExcept,
                 fields: %i[acquisitionlot objectvalueid]
-              transform Rename::Fields, fieldmap: {
-                acquisitionlot: :item1_id
-              }
+              transform Merge::MultiRowLookup,
+                lookup: lot_num_acq__prep,
+                keycolumn: :acquisitionlot,
+                fieldmap: {increment: :increment}
+              transform Merge::MultiRowLookup,
+                lookup: acquisitions__ids_final,
+                keycolumn: :increment,
+                fieldmap: {item1_id: :acquisitionreferencenumber}
+              transform Delete::Fields,
+                fields: %i[acquisitionlot increment]
+
               transform Merge::MultiRowLookup,
                 lookup: Tms.get_lookup(
                   jobkey: :valuation_control__all,

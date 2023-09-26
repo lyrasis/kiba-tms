@@ -32,11 +32,11 @@ module Kiba
               transform Deduplicate::Table,
                 field: :combined,
                 delete_field: false
-              transform Tms::Transforms::IdGenerator,
-                id_source: :acquisitionnumber,
-                id_target: :acquisitionreferencenumber,
-                sort_on: :combined,
-                separator: "//"
+              transform Tms::Transforms::AddIncrementingValue,
+                prefix: "acqnum"
+              transform Rename::Field,
+                from: :acquisitionnumber,
+                to: :acquisitionreferencenumber
             end
           end
         end

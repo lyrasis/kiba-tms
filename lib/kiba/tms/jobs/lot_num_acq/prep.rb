@@ -47,6 +47,9 @@ module Kiba
                   find: "%PIPE%",
                   replace: "|"
               end
+
+              transform Tms::Transforms::AddIncrementingValue,
+                prefix: "lotnum"
             end
           end
         end

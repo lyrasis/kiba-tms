@@ -14,7 +14,8 @@ module Kiba
               files: {
                 source: :linked_set_acq__obj_rows,
                 destination: :linked_set_acq__acq_obj_rel,
-                lookup: :linked_set_acq__prep
+                lookup: %i[linked_set_acq__prep
+                  acquisitions__ids_final]
               },
               transformer: xforms
             )
@@ -27,6 +28,10 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: linked_set_acq__prep,
                 keycolumn: :registrationsetid,
+                fieldmap: {increment: :increment}
+              transform Merge::MultiRowLookup,
+                lookup: acquisitions__ids_final,
+                keycolumn: :increment,
                 fieldmap: {item1_id: :acquisitionreferencenumber}
               transform Rename::Field,
                 from: :objectnumber,
@@ -36,7 +41,7 @@ module Kiba
                 item2_type: "collectionobjects"
               }
               transform Delete::Fields,
-                fields: :registrationsetid
+                fields: %i[increment registrationsetid]
             end
           end
         end

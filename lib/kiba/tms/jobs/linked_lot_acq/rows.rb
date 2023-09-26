@@ -22,6 +22,12 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Deduplicate::Table, field: :acquisitionlotid
+
+              transform Tms::Transforms::AddIncrementingValue,
+                prefix: "linkedlot"
+              transform Rename::Field,
+                from: :lotnumber,
+                to: :acquisitionreferencenumber
             end
           end
         end

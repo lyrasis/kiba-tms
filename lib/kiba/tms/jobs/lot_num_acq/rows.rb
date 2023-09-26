@@ -36,6 +36,7 @@ module Kiba
 
               transform Deduplicate::Table,
                 field: :acquisitionlot
+
               unless config.acq_number_treatment == :drop
                 transform Merge::MultiRowLookup,
                   lookup: lot_num_acq__obj_rows,

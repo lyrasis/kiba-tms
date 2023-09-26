@@ -53,6 +53,9 @@ module Kiba
 
               transform Delete::Fields,
                 fields: %i[objectnumber acqrefnum combined]
+
+              transform Tms::Transforms::AddIncrementingValue,
+                prefix: "onetoone"
             end
           end
         end

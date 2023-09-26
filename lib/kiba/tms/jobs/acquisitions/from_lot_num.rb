@@ -13,7 +13,8 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :lot_num_acq__prep,
-                destination: :acquisitions__from_lot_num
+                destination: :acquisitions__from_lot_num,
+                lookup: :acquisitions__ids_final
               },
               transformer: xforms
             )
@@ -24,6 +25,14 @@ module Kiba
               transform Merge::ConstantValue,
                 target: :objaccessiontreatment,
                 value: "lotnumber"
+              transform Delete::Fields,
+                fields: :acquisitionreferencenumber
+              transform Merge::MultiRowLookup,
+                lookup: acquisitions__ids_final,
+                keycolumn: :increment,
+                fieldmap: {
+                  acquisitionreferencenumber: :acquisitionreferencenumber
+                }
             end
           end
         end
