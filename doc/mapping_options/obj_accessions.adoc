@@ -21,6 +21,18 @@ There is one row per object in the system in the ObjAccession table. However, th
 
 The treatments we have identified are detailed below.
 
+[IMPORTANT]
+====
+It is assumed that, if a `:linkedset`, `:linkedlot` or `:lotnumber` approach has been taken, then all accessions info for objects included in those sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
+
+This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary.
+
+The migration will use the accession details from the first encountered row in the set/lot.
+
+We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and the data pattern is not well-supported by the CS data model.
+====
+
+
 === `:linkedset`
 Registration sets containing one or more objects can be linked to an accession lot, which results in population of:
 
@@ -92,15 +104,40 @@ NOTE: It is not currently possible to turn off the addition of the incrementing 
 
 This applies to rows where the ObjAccession `registrationsetid`, `acquisitionlotid`, `acquisitionlot`, and `acquisitionnumber` fields are empty.
 
-There are three treatment options for these rows, set in the `OneToOneAcq.row_treatment` setting. The default treatment is `:grouped`.
+==== settings: `row_treatment`
+There are three treatment options for these rows, set in the `OneToOneAcq.row_treatment` setting.
+
+*The default treatment is `:grouped`.*
 
 The acquisition reference number deriver transformer is set in the `OneToOneAcq.acq_ref_num_deriver` setting. The default acquisition reference number deriver drops the final segment following a `.` in the given object number. Given object number, `2022.23.18`, it will return `2022.23`. Given object number `TMS1008`, it will return `TMS1008`. If necessary, your Migration Specialist will develop a custom acquisition reference number deriver transformer for your data.
 
-==== `:separate`
+Here is sample base data to compare the three possible :onetoone treatments:
+
+....
+| objectnumber | acquisitionsource | acquisitionmethod | acquisitiondate | creditline         |
+|--------------+-------------------+-------------------+-----------------+--------------------|
+|        123.1 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|        123.2 | Someone else      | purchase          |      2020-01-23 | Funds from donor   |
+|        123.3 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|        383.1 | Someone else      | purchase          |      2020-01-23 | Funds from donor   |
+|        383.2 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|        383.3 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|       99.2.1 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|       99.2.2 | Someone else      | purchase          |      2020-01-23 | Funds from donor   |
+|       87.5.1 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+|       87.5.2 | Someone           | gift              |      2015-12-19 | Gift of the artist |
+....
+
+===== `:separate`
 
 One CS Acquisition procedure is created per ObjAccession row. The relevant object is related to the Acquisition procedure. The resulting Acquisition procedure's reference number is the related object's object number.
 
-==== `:grouped`
+Given the above sample data:
+
+* 10 Acquisition records will be created in CollectionSpace. The `:objectnumber` values are used as the `:acquisitionreferencenumber`
+* Each Acquisition record will be linked to the object with its matching objectnumber
+
+===== `:grouped`
 
 The values of all fields except `:objectid` are concatenated (with fieldname labels for each value) into one `:combined` field. One CS Acquisition procedure is created per unique `:combined` value.
 
@@ -110,7 +147,16 @@ All objects represented by rows with that `:combined` value will be linked to th
 
 This option creates fewer Acquisition procedures, with more objects linked to each acquisition, than does the `:onetoone_grouped_with_id` option.
 
-==== `:grouped_with_id`
+Given the above sample data, 2 Acquisition records will be created:
+
+* Acquisition reference number: 123 grp 001
+** *Acquisition data:* source: Someone, acquisition method: gift, date: 2015-12-19, creditline: Gift of the artist
+** Linked to objects: 123.1, 123.3, 383.2, 383.3, 99.2.1, 87.5.1, 87.5.2
+* Acquisition reference number: 123 grp 002
+** *Acquisition data:* source: Someone else, acquisition method: purchase, date: 2020-01-23, creditline: Funds from donor
+** Linked to objects: 123.2, 383.1, 99.2.2
+
+===== `:grouped_with_id`
 
 An Acquisition reference number value is derived from each row's object number. The Acquisition reference number deriver will be customized to your data.
 
@@ -120,14 +166,54 @@ All objects represented by rows with that `:combined` value will be linked to th
 
 This option creates more Acquisition procedures, with fewer objects linked to each acquisition, than does the `:onetoone_grouped` option.
 
-[IMPORTANT]
-====
-It is assumed that, if a `:linkedset`, `:linkedlot` or `:acquisitionlot` approach has been taken, then all accessions info for objects included in those sets or lots is the same. That is, object-specific accession data is not entered for any of the objects.
+Given the above sample data, 2 Acquisition records will be created:
 
-This assumption is based on our understanding of the intended function of AccessionLot and RegistrationSets, derived from analysis of multiple clients' TMS data, and the limited information available in the TMS Data Dictionary.
+* Acquisition reference number: 123 grp 001
+** *Acquisition data:* source: Someone, acquisition method: gift, date: 2015-12-19, creditline: Gift of the artist
+** Linked to objects: 123.1, 123.3
+* Acquisition reference number: 123 grp 002
+** *Acquisition data:* source: Someone else, acquisition method: purchase, date: 2020-01-23, creditline: Funds from donor
+** Linked to objects: 123.2
+* Acquisition reference number: 383 grp 001
+** *Acquisition data:* source: Someone else, acquisition method: purchase, date: 2020-01-23, creditline: Funds from donor
+** Linked to objects: 383.1
+* Acquisition reference number: 383 grp 002
+** *Acquisition data:* source: Someone, acquisition method: gift, date: 2015-12-19, creditline: Gift of the artist
+** Linked to objects: 383.2, 383.3
+* Acquisition reference number: 99.2 grp 001
+** *Acquisition data:* source: Someone, acquisition method: gift, date: 2015-12-19, creditline: Gift of the artist
+** Linked to objects: 99.2.1
+* Acquisition reference number: 99.2 grp 002
+** *Acquisition data:* source: Someone else, acquisition method: purchase, date: 2020-01-23, creditline: Funds from donor
+** Linked to objects: 99.2.2
+* Acquisition reference number: 87.5
+** *Acquisition data:* source: Someone, acquisition method: gift, date: 2015-12-19, creditline: Gift of the artist
+** Linked to objects: 87.5.1, 87.5.2
 
-We can run checks to identify any ObjAccession rows associated with AccessionLot and RegistrationSets that have extra/different info from the rest of the objects in the lot or set. This information can be provided to the client, who can determine how to handle the information in CS post-migration. We are unable to handle it in migration as it is unexpected and the data pattern is not well-supported by the CS data model.
-====
+==== settings: `group_id_uniquifier_separator`
+
+String added between derived acquisition reference number for a group and auto-incrementing digits added to ensure unique reference numbers across acquisition records derived from :onetoone treatment with :grouped or :grouped_with_id row treatment.
+
+Defaults to: " grp "
+
+Considerations: Separated from preceding and subsequent segments by spaces to support keyword searching on "grp". Omitting the spaces, or using punctuation instead, would result in "grp" not being its own separately searchable keyword.
+
+== Ensuring unique CollectionSpace Acquisition reference numbers
+
+Each of the above treatments happens in its own processing silo. This means that we can end up with an Acquisition from a :linkedlot treatment with reference number "87.5", _and_ an an Acquisition from :onetoone treatment with the same reference number value.
+
+This is a problem for ingesting and batch managing Acquisitions in CollectionSpace, so we check for this and use another incremental digit sequence to ensure unique reference number values as needed. Here, we would end up with final reference numbers:
+
+* 87.5 uniq 001
+* 87.5 uniq 002
+
+==== settings: `id_uniquifier_separator`
+
+String added between acquisition reference number and auto-incrementing digits added to ensure unique reference numbers across CollectionSpace acquisition records.
+
+Defaults to: " uniq "
+
+Considerations: Separated from preceding and subsequent segments by spaces to support keyword searching on "uniq". Omitting the spaces, or using punctuation instead, would result in "uniq" not being its own separately searchable keyword.
 
 == Dates in TMS ObjAccessions vs CS Acquisition
 

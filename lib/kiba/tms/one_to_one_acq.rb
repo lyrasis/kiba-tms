@@ -40,8 +40,20 @@ module Kiba
       setting :acq_ref_num_deriver,
         default: Tms::Transforms::OneToOneAcq::AcqRefNumDeriver,
         reader: true
+
+      # See https://github.com/lyrasis/kiba-tms/blob/main/doc/mapping_options/obj_accessions.adoc#onetoone
+      #   for explanation of the available options: :separate, :grouped, and
+      #   :grouped_with_id
+      #
+      # @return [Symbol]
       setting :row_treatment,
         default: :grouped,
+        reader: true
+
+      # If `:row_treatment` is something other than `:separate`, we are likely
+      #    to derive multiple Acquisition records from
+      setting :group_id_uniquifier_separator,
+        default: " grp ",
         reader: true
 
       def select_xform

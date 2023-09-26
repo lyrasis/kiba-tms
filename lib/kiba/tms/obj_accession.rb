@@ -7,6 +7,10 @@ module Kiba
 
       module_function
 
+      setting :id_uniquifier_separator,
+        default: " uniq ",
+        reader: true
+
       # What to do with accessionvalue data
       # - :valuation_control - VC procedure created, linked to Acquisition
       #   procedure, and each linked object

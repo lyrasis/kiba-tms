@@ -46,7 +46,7 @@ module Kiba
               transform Tms::Transforms::IdGenerator,
                 id_source: :acquisitionreferencenumber,
                 id_target: :acquisitionreferencenumber,
-                separator: " uniq "
+                separator: Tms::ObjAccession.id_uniquifier_separator
             end
           end
         end

@@ -34,7 +34,7 @@ module Kiba
                 transform Tms::Transforms::IdGenerator,
                   id_source: :acqrefnum,
                   id_target: :acqrefnum,
-                  separator: " grp "
+                  separator: config.group_id_uniquifier_separator
               end
             end
           end
