@@ -349,6 +349,7 @@ Due to differing data entry practices in TMS and the <<dates-in-tms-objaccession
 Default option:: `%i[authdate approvalisodate1 approvalisodate2]`
 
 With the default option:
+
 * if there is a value in `authdate`, it is mapped to `acquisitionauthorizerdate`
 * if `authdate` is empty and there is a value in `approvalisodate1`, that value is mapped to `acquisitionauthorizerdate`
 * if `authdate` and `approvalisodate1` are empty, and there is a value in `approvalisodate2`, that value is mapped to `acquisitionauthorizerdate`
