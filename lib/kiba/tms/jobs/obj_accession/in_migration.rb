@@ -29,13 +29,12 @@ module Kiba
 
             Kiba.job_segment do
               if bind.receiver.send(:dropping_loanins?)
-                transform FilterRows::FieldEqualTo,
+                transform FilterRows::FieldPopulated,
                   action: :reject,
-                  field: :loanin,
-                  value: "y"
+                  field: :loanin_id
               end
               transform Delete::Fields,
-                fields: :loanin
+                fields: :loanin_id
             end
           end
         end

@@ -308,8 +308,6 @@ Many of the mapping options below will refer to whether the profile support the 
 * publicart
 
 The following profiles do _not_ have the approval field group: botgarden, herbarium, materials.
-
-*_Some of the option names are a little odd now because they were created when the approval group fields were not available in the most common profiles._*
 ====
 
 === :accessionvalue_treatment
@@ -360,6 +358,9 @@ Default option:: `:acquisitionnote` -- map into this note field
 * `:acq_number_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Acquisition number value(s): "
 
 === :auth_date_source_pref
+
+NOTE: This setting is only applied if the client's CollectionSpace domain profile does not include the approval field group in the Acquisition record. If the approval field group is not available, we want to get some relevant date value from TMS into an actual date-formatted field in CollectionSpace. If the approval field group is available, all relevant dates will be recorded in date-formatted fields in CollectionSpace, so we don't need to do this manipulation.
+
 Due to differing data entry practices in TMS and the <<dates-in-tms-objaccessions-vs-cs-acquisition,data model differences in the date table above>> we need to build in flexibility for the source of data mapped to CS `acquisitionauthorizerdate` field.
 
 Default option:: `%i[authdate approvalisodate1 approvalisodate2]`
@@ -388,7 +389,7 @@ Default option if profile does not include approval group fields:: `:acquisition
 
 ==== Related settings if using `:approvalgroup` option
 
-===== `:approval_date_1_status`
+===== `:approvalisodate1_status`
 
 Value used in [.csfield]#approvalStatus# field in approval group row in which date is recorded. This value is added as a controlled term in the "Approval Status" vocabulary
 
@@ -397,7 +398,7 @@ Default option:: "approved"
 .Alternate option(s)
 * Any string requested by client
 
-===== `:approval_date_2_status`
+===== `:approvalisodate2_status`
 
 Value used in [.csfield]#approvalStatus# field in approval group row in which date is recorded. This value is added as a controlled term in the "Approval Status" vocabulary
 
@@ -445,80 +446,106 @@ Default option:: "Subsequent approval date: "
 * Any string requested by client
 
 === :authorizer_org_treatment
-Applies to :authorizer field in ObjAccession table **if name in field has been categorized by client as an Organization name**
+Applies to :authorizer field in ObjAccession table *_if name in field has been categorized by client as an Organization name_*
 
-`:authorizer` field is mapped to CS `:acquisitionauthorizer` field if it is a Person name, but Organization names cannot be used in this field.
+The TMS `:authorizer` field is mapped to CS [.csfield]#acquisitionAuthorizer# field if it is a Person name, but Organization names cannot be used to populate this field.
 
-The option specifies what to do with this data.
+The option specifies what to do with Organization names in TMS `:authorizer`.
 
-Default option:: `:acquisitionnote` -- map into this note field
+Default option if profile includes approval group fields:: `:approvalgroup` -- map organization name into an instance of [.csfield]#approvalGroup# field. The organization name will become a controlled vocabulary term in the Approval Group vocabulary. The [.csfield]#approvalStatus# for the row will be set to `authorized`. The `:authdate` value (if populated) will be copied to the [.csfield]#approvalDate# field in the row
+Default option if profile does not include approval group fields:: `:acquisitionnote` -- map into [.csfield]#acquisitionNote# field
 
 .Alternate options:
-* `:acquisitionprovisos`-- map into this note field
-* `:acquisitionreason` -- map into this note field
+* `:acquisitionprovisos`-- map into [.csfield]#acquisitionProvisos# field
+* `:acquisitionreason` -- map into [.csfield]#acquisitionReason# field
 * `:drop` - do not migrate this information
 
-.Related settings:
-* `:authorizer_org_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorized by (organization name): "
 
-Other options may be developed on client request, if feasible.
+==== Related settings if using `:acquisitionnote` , `:acquisitionprovisos`, or `:acquisitionReason` options
+
+===== `:authorizer_org_prefix`
+
+If treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value.
+
+Default option:: "Authorized by (organization name): "
+
+.Alternate options:
+* Any string requested by client
 
 === :authorizer_note_treatment
-Applies to :authorizer field in ObjAccession table **if name in field has been categorized by client as treated as a note**
+Applies to :authorizer field in ObjAccession table *_if name in field has been categorized by client as treated as a note_*
 
-The option specifies what to do with this data.
+The option specifies what to do with note values in TMS `:authorizer`.
 
-Default option:: `:acquisitionnote` -- map into this note field
+Default option if profile includes approval group fields:: `:approvalgroup` -- map value into an instance of [.csfield]#approvalGroup# field. The value will become a controlled vocabulary term in the Approval Group vocabulary. The [.csfield]#approvalStatus# for the row will be set to `authorized`. The `:authdate` value (if populated) will be copied to the [.csfield]#approvalDate# field in the row
+Default option if profile does not include approval group fields:: `:acquisitionnote` -- map into [.csfield]#acquisitionNote# field
 
 .Alternate options:
 * `:acquisitionprovisos`-- map into this note field
 * `:acquisitionreason` -- map into this note field
 * `:drop` - do not migrate this information
 
-.Related settings:
-* `:authorizer_note_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorizer note: "
+==== Related settings if using `:acquisitionnote` , `:acquisitionprovisos`, or `:acquisitionReason` options
 
-Other options may be developed on client request, if feasible.
+===== `:authorizer_note_prefix`
+
+If treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value.
+
+Default option:: "Authorizer note: "
+
+.Alternate options:
+* Any string requested by client
 
 === :dog_dates_treatment
-Applies to :deedofgiftsentiso and :deedofgiftreceivediso fields in ObjAccession and RegistrationSets tables.
+Applies to `:deedofgiftsentiso` and `:deedofgiftreceivediso` fields in ObjAccession and RegistrationSets tables.
 
-CS does not have structured data fields to record this info. The option specifies which note field this data should be mapped into.
+CS does not have structured data fields specifically to record this info. The option specifies how data in these fields will be used.
+
+note field this data should be mapped into.
 
 "Deed of gift sent: " will be prepended to any :deedofgiftsentiso field values.
 
 "Deed of gift received: " will be prepended to any :deedofgiftreceivediso field values.
 
-Default option:: `:acquisitionnote`
+Default option if profile includes approval group fields:: `:approvalgroup` -- map each value into an instance of [.csfield]#approvalDate# field. The [.csfield]#approvalStatus# for the row will be set to `deed of gift sent` or `deed of gift received`.
+Default option if profile does not include approval group fields:: `:acquisitionnote` -- map into [.csfield]#acquisitionNote# field
 
 .Alternate options:
 * `:acquisitionprovisos`
 * `:drop` - do not migrate this information
 
-Other options may be developed on client request, if feasible.
-
 === :initiation_treatment
 Applies to the :initiator and :initdate fields in the ObjAccession table.
 
-CS does not have structured data fields to record this info. The option specifies which note field this data should be mapped into.
+CS does not have structured data fields specifically to record this info. The option specifies how `:initiator` and `:initdate` field values will be handled.
 
-https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/obj_accession/initiation_note.rb[`Tms::ObjAccession::InitiationNote` ] generates a string with the following pattern:
-
-`{initiation_prefix} {initiator}, {initdate}`
 
 That string is mapped into the field indicated by this option:
 
-Default option:: `:acquisitionreason`
+Default option if profile includes approval group fields:: `:approvalgroup` -- if `:initiator` value is mapped to a Person name, map value into an instance of [.csfield]#approvalIndividual# field. If it was mapped to Organization or Note, it will be mapped to [.csfield]#approvalGroup# and the value will become a controlled vocabulary term in the Approval Group vocabulary. The [.csfield]#approvalStatus# for the row will be set to `initiated`. The `:initdate` value (if populated) will be mapped to the [.csfield]#approvalDate# field in the row
+Default option if profile does not include approval group fields:: `:acquisitionreason` -- map into [.csfield]#acquisitionReason# field
 
 .Alternate options:
 * `:acquisitionnote`
 * `:acquisitionprovisos`
 * `:drop` - do not migrate this information
 
-.Related settings
-* `:initiation_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Initiated: "
+==== Related settings if using `:acquisitionnote` , `:acquisitionprovisos`, or `:acquisitionReason` options
 
-Other options may be developed on client request, if feasible.
+===== `:initiation_prefix`
+
+If treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value.
+
+Default option:: "Initiated: "
+
+.Alternate options:
+* Any string requested by client
+
+===== Note generation
+
+https://github.com/lyrasis/kiba-tms/blob/main/lib/kiba/tms/transforms/obj_accession/initiation_note.rb[`Tms::Transforms::ObjAccession::InitiationNote` ] generates a string with the following pattern:
+
+`{initiation_prefix} {initiator}, {initdate}`
 
 === :loaned_object_treatment
 TMS creates an ObjAccession row for every Object entered, whether it is a loaned object or you ever intend to enter acquisitions-related data for it.

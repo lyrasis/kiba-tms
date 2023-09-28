@@ -2,6 +2,8 @@
 
 module Kiba
   module Tms
+    # Most of the settings in this module are documented at:
+    #   https://github.com/lyrasis/kiba-tms/blob/main/doc/mapping_options/obj_accessions.adoc
     module ObjAccession
       extend Dry::Configurable
 
@@ -9,6 +11,12 @@ module Kiba
 
       setting :id_uniquifier_separator,
         default: " uniq ",
+        reader: true
+
+      # CollectionSpace domain profiles where the Acquisition record contains
+      #   the approval group fields
+      setting :approval_group_profiles,
+        default: %i[core anthro bonsai fcart lhmc publicart],
         reader: true
 
       # What to do with accessionvalue data
@@ -24,44 +32,95 @@ module Kiba
         default: "Original Value",
         reader: true
       setting :approval_date_treatment,
-        default: :acquisitionnote,
+        default: nil,
+        reader: true,
+        constructor: ->(_val) do
+          return :approvalgroup if approval_group_profiles.include?(
+            Tms.cspace_profile
+          )
+
+          :acquisitionnote
+        end
+      setting :approvalisodate1_status,
+        default: "approved",
+        reader: true
+      setting :approvalisodate2_status,
+        default: "approved (subsequent)",
         reader: true
       setting :approval_date_note_format,
         default: :combined,
         reader: true
-      setting :approval_date_combined_prefix,
+      setting :approval_date_note_combined_prefix,
         default: "Approval date(s): ",
         reader: true
-      setting :approval_date_1_prefix,
+      setting :approval_date_note_1_prefix,
         default: "Initial approval date: ",
         reader: true
-      setting :approval_date_2_prefix,
+      setting :approval_date_note_2_prefix,
         default: "Subsequent approval date: ",
         reader: true
       setting :auth_date_source_pref,
-        default: %i[authdate approvalisodate1 approvalisodate2],
-        reader: true
+        default: nil,
+        reader: true,
+        constructor: ->(_val) do
+          return nil if approval_group_profiles.include?(Tms.cspace_profile)
+
+          %i[authdate approvalisodate1 approvalisodate2]
+        end
+
       setting :authorizer_org_treatment,
-        default: :acquisitionnote,
-        reader: true
+        default: nil,
+        reader: true,
+        constructor: ->(_val) do
+          return :approvalgroup if approval_group_profiles.include?(
+            Tms.cspace_profile
+          )
+
+          :acquisitionnote
+        end
       setting :authorizer_org_prefix,
         default: "Authorized by (organization name): ",
         reader: true
+
       setting :authorizer_note_treatment,
         default: :acquisitionnote,
-        reader: true
+        reader: true,
+        constructor: ->(_val) do
+          return :approvalgroup if approval_group_profiles.include?(
+            Tms.cspace_profile
+          )
+
+          :acquisitionnote
+        end
       setting :authorizer_note_prefix,
         default: "Authorizer note: ",
         reader: true
-      setting :dog_dates_treatment,
-        default: :acquisitionnote,
-        reader: true
+
       setting :initiation_treatment,
-        default: :acquisitionreason,
-        reader: true
+        default: nil,
+        reader: true,
+        constructor: ->(_val) do
+          return :approvalgroup if approval_group_profiles.include?(
+            Tms.cspace_profile
+          )
+
+          :acquisitionreason
+        end
       setting :initiation_prefix,
         default: "Initiated: ",
         reader: true
+
+      setting :dog_dates_treatment,
+        default: nil,
+        reader: true,
+        constructor: ->(_val) do
+          return :approvalgroup if approval_group_profiles.include?(
+            Tms.cspace_profile
+          )
+
+          :acquisitionnote
+        end
+
       setting :loaned_object_treatment,
         default: :creditline_to_loanin,
         reader: true
@@ -230,6 +289,52 @@ module Kiba
         value.flatten
       end
       private :set_deletes
+
+      # -----------------------------------------------------------------------
+      # REPEATABLE FIELD GROUP COLLAPSE CONFIG
+      # -----------------------------------------------------------------------
+      #
+      # Data from various sources may be merged into intermediate table
+      #   for later combination into a single repeatable field group.
+      #
+      # The settings in this section define the intermediate fields
+      #   and field group structure used to generate `sources` and
+      #   `targets` parameters for the
+      #   `Collapse::FieldsToRepeatableFieldGroup` transform used to
+      #   do this field group collapsing.
+      #
+      # This assumes intermediate field naming conventions so that the
+      #   source fields values are intermediate field name prefixes
+      #   separated from the remainder of the field name by an
+      #   underscore, and the rest of the field name does not contain
+      #   any underscores. For example, the intermediate fields
+      #   containing approval date 1 data that will become an approval group
+      #   row would be:
+      #
+      # - appdate1_approvalstatus
+      # - appdate1_approvaldate
+      # -----------------------------------------------------------------------
+      setting :approval_source_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(default) do
+          if approval_date_treatment == :approvalgroup
+            default << %i[approvalisodate1 approvalisodate2]
+          end
+          default << :orgauth if authorizer_org_treatment == :approvalgroup
+          default << :noteauth if authorizer_note_treatment == :approvalgroup
+          if initiation_treatment == :approvalgroup
+            default << %i[indivinit orginit noteinit]
+          end
+          if dog_dates_treatment == :approvalgroup
+            default << %i[deedofgiftsentiso deedofgiftreceivediso]
+          end
+          default.flatten
+        end
+      setting :approval_target_fields,
+        default: %i[approvalgroup approvalindividual approvalstatus
+          approvaldate],
+        reader: true
     end
   end
 end

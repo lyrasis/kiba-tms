@@ -112,6 +112,29 @@ module Kiba
               when :drop
                 transform Delete::Fields,
                   fields: :authorizer_org
+              when :approvalgroup
+                transform Rename::Field,
+                  from: :authorizer_org,
+                  to: :orgauth_approvalgroup
+                transform Merge::ConstantValueConditional,
+                  fieldmap: {orgauth_approvalstatus: "authorized"},
+                  condition: ->(row) do
+                    val = row[:orgauth_approvalgroup]
+                    !val.blank?
+                  end
+                transform do |row|
+                  row[:orgauth_approvaldate] = nil
+                  val = row[:orgauth_approvalgroup]
+                  next row if val.blank?
+
+                  authdate = row[:authdate]
+                  row[:orgauth_approvaldate] = if authdate.blank?
+                    "%NULLVALUE%"
+                  else
+                    authdate
+                  end
+                  row
+                end
               else
                 transform Prepend::ToFieldValue,
                   field: :authorizer_org,
@@ -122,23 +145,63 @@ module Kiba
               when :drop
                 transform Delete::Fields,
                   fields: :authorizer_note
+              when :approvalgroup
+                transform Rename::Field,
+                  from: :authorizer_note,
+                  to: :noteauth_approvalgroup
+                transform Merge::ConstantValueConditional,
+                  fieldmap: {noteauth_approvalstatus: "authorized"},
+                  condition: ->(row) do
+                    val = row[:noteauth_approvalgroup]
+                    !val.blank?
+                  end
+                transform do |row|
+                  row[:noteauth_approvaldate] = nil
+                  val = row[:noteauth_approvalgroup]
+                  next row if val.blank?
+
+                  authdate = row[:authdate]
+                  row[:noteauth_approvaldate] = if authdate.blank?
+                    "%NULLVALUE%"
+                  else
+                    authdate
+                  end
+                  row
+                end
               else
                 transform Prepend::ToFieldValue,
                   field: :authorizer_note,
                   value: config.authorizer_note_prefix
               end
 
-              transform Tms::Transforms::ObjAccession::AuthDateSetter
+              if config.auth_date_source_pref
+                transform Tms::Transforms::ObjAccession::AuthDateSetter
+              else
+                transform Rename::Field,
+                  from: :authdate,
+                  to: :acquisitionauthorizerdate
+              end
 
-              if config.fields.any? { |f| f.to_s.start_with?("approvaliso") }
+              approvaldates = config.fields.select do |field|
+                field.to_s.start_with?("approvaliso")
+              end
+              unless approvaldates.empty?
                 case config.approval_date_treatment
                 when :drop
                   transform Delete::Fields,
                     fields: %i[approvalisodate1 approvalisodate2]
+                when :approvalgroup
+                  approvaldates.each do |field|
+                    transform Tms::Transforms::DeriveFieldPair,
+                      source: field,
+                      sourcebecomes: :approvaldate,
+                      newfield: :approvalstatus,
+                      value: config.send("#{field}_status".to_sym)
+                  end
                 else
                   if config.approval_date_note_format == :combined
                     transform CombineValues::FromFieldsWithDelimiter,
-                      sources: %i[approvalisodate1 approvalisodate2],
+                      sources: approvaldates,
                       target: :approvaldate_note,
                       delim: ", ",
                       delete_sources: true
@@ -146,21 +209,103 @@ module Kiba
                       field: :approvaldate_note,
                       value: config.approval_date_note_combined_prefix
                   else
-                    transform Prepend::ToFieldValue,
-                      field: :approvalisodate1,
-                      value: config.approval_date_note_1_prefix
-                    transform Prepend::ToFieldValue,
-                      field: :approvalisodate2,
-                      value: config.approval_date_note_2_prefix
+                    if approvaldates.include?(:approvalisodate1)
+                      transform Prepend::ToFieldValue,
+                        field: :approvalisodate1,
+                        value: config.approval_date_note_1_prefix
+                    end
+
+                    if approvaldates.include?(:approvalisodate2)
+                      transform Prepend::ToFieldValue,
+                        field: :approvalisodate2,
+                        value: config.approval_date_note_2_prefix
+                    end
                   end
                 end
               end
 
-              if config.initiation_treatment == :drop
+              case config.initiation_treatment
+              when :drop
                 transform Delete::Fields,
                   fields: %i[initiator initdate]
+              when :approvalgroup
+                transform Tms::Transforms::MergeUncontrolledName,
+                  field: :initiator
+
+                %w[person org note].each do |type|
+                  prefixes = {
+                    "person" => "indivinit",
+                    "org" => "orginit",
+                    "note" => "noteinit"
+                  }
+                  targets = {
+                    "person" => "approvalindividual",
+                    "org" => "approvalgroup",
+                    "note" => "approvalgroup"
+                  }
+                  targetfield = "#{prefixes[type]}_#{targets[type]}".to_sym
+                  transform Rename::Field,
+                    from: "initiator_#{type}".to_sym,
+                    to: targetfield
+                  transform Merge::ConstantValueConditional,
+                    fieldmap: {
+                      "#{prefixes[type]}_approvalstatus".to_sym => "initiated"
+                    },
+                    condition: ->(row) do
+                      val = row[targetfield]
+                      !val.blank?
+                    end
+                  transform do |row|
+                    datefield = "#{prefixes[type]}_approvaldate".to_sym
+                    row[datefield] = nil
+                    val = row[targetfield]
+                    next row if val.blank?
+
+                    initdate = row[:initdate]
+                    row[datefield] = if initdate.blank?
+                      "%NULLVALUE%"
+                    else
+                      initdate
+                    end
+                    row
+                  end
+                end
               else
                 transform Tms::Transforms::ObjAccession::InitiationNote
+              end
+              transform Delete::Fields,
+                fields: %i[initdate]
+
+              case config.dog_dates_treatment
+              when :drop
+                transform Delete::Fields,
+                  fields: %i[deedofgiftsentiso deedofgiftreceivediso]
+              when :approvalgroup
+                if config.fields.any?(:deedofgiftsentiso)
+                  transform Tms::Transforms::DeriveFieldPair,
+                    source: :deedofgiftsentiso,
+                    sourcebecomes: :approvaldate,
+                    newfield: :approvalstatus,
+                    value: "deed of gift sent"
+                end
+                if config.fields.any?(:deedofgiftreceivediso)
+                  transform Tms::Transforms::DeriveFieldPair,
+                    source: :deedofgiftreceivediso,
+                    sourcebecomes: :approvaldate,
+                    newfield: :approvalstatus,
+                    value: "deed of gift received"
+                end
+              else
+                if config.fields.any?(:deedofgiftsentiso)
+                  transform Prepend::ToFieldValue,
+                    field: :deedofgiftsentiso,
+                    value: "Deed of gift sent: "
+                end
+                if config.fields.any?(:deedofgiftreceivediso)
+                  transform Prepend::ToFieldValue,
+                    field: :deedofgiftreceivediso,
+                    value: "Deed of gift received: "
+                end
               end
 
               if config.valuationnote_treatment == :drop
@@ -170,17 +315,6 @@ module Kiba
                 transform Prepend::ToFieldValue,
                   field: :valuationnotes,
                   value: "Valuation note: "
-              end
-
-              if config.fields.any?(:deedofgiftsentiso)
-                transform Prepend::ToFieldValue,
-                  field: :deedofgiftsentiso,
-                  value: "Deed of gift sent: "
-              end
-              if config.fields.any?(:deedofgiftreceivediso)
-                transform Prepend::ToFieldValue,
-                  field: :deedofgiftreceivediso,
-                  value: "Deed of gift received: "
               end
 
               unless config.proviso_sources.empty?
@@ -211,12 +345,27 @@ module Kiba
                 accessionmethod: :acquisitionmethod
               }
 
-              transform Delete::Fields,
-                fields: %i[authdate]
               transform Clean::RegexpFindReplaceFieldVals,
                 fields: :acquisitionnumber,
                 find: '\|',
                 replace: "%PIPE%"
+
+              transform Delete::EmptyFieldGroups,
+                groups: [
+                  %i[approvalisodate1_approvalstatus
+                    approvalisodate1_approvaldate],
+                  %i[approvalisodate2_approvalstatus
+                    approvalisodate2_approvaldate],
+                  %i[deedofgiftsentiso_approvalstatus
+                    deedofgiftsentiso_approvaldate],
+                  %i[deedofgiftreceivediso_approvalstatus
+                    deedofgiftreceivediso_approvaldate]
+                ], delim: "|"
+
+              transform Collapse::FieldsToRepeatableFieldGroup,
+                sources: config.approval_source_fields,
+                targets: config.approval_target_fields,
+                delim: Tms.delim
             end
           end
         end
