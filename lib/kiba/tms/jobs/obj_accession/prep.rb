@@ -21,13 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[
-              objects__numbers_cleaned
-            ]
-            if Tms::AccessionMethods.used? &&
-                config.fields.any?(Tms::AccessionMethods.id_field)
-              base << :prep__accession_methods
-            end
+            base = []
             if Tms::Currencies.used? &&
                 config.fields.any?(Tms::Currencies.id_field)
               base << :prep__currencies
@@ -39,7 +33,7 @@ module Kiba
                 config.fields.any?(:objectvalueid)
               base << :tms__obj_insurance
             end
-            base
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -94,24 +88,6 @@ module Kiba
                   row
                 end
               end
-
-              transform Merge::MultiRowLookup,
-                lookup: objects__numbers_cleaned,
-                keycolumn: :objectid,
-                fieldmap: {objectnumber: :objectnumber}
-
-              transform Merge::MultiRowLookup,
-                lookup: objects__numbers_cleaned,
-                keycolumn: :objectid,
-                fieldmap: {creditline: :creditline}
-
-              if accmeth.used? && config.fields.any?(accmeth.id_field)
-                transform Merge::MultiRowLookup,
-                  lookup: prep__accession_methods,
-                  keycolumn: accmeth.id_field,
-                  fieldmap: {accmeth.type_field => accmeth.type_field}
-              end
-              transform Delete::Fields, fields: accmeth.id_field
 
               if curr.used? && config.fields.any?(curr.id_field)
                 transform Merge::MultiRowLookup,
@@ -168,14 +144,14 @@ module Kiba
                       delete_sources: true
                     transform Prepend::ToFieldValue,
                       field: :approvaldate_note,
-                      value: config.approval_date_combined_prefix
+                      value: config.approval_date_note_combined_prefix
                   else
                     transform Prepend::ToFieldValue,
                       field: :approvalisodate1,
-                      value: config.approval_date_1_prefix
+                      value: config.approval_date_note_1_prefix
                     transform Prepend::ToFieldValue,
                       field: :approvalisodate2,
-                      value: config.approval_date_2_prefix
+                      value: config.approval_date_note_2_prefix
                   end
                 end
               end

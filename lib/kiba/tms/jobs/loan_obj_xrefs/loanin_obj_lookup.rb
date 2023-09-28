@@ -9,8 +9,6 @@ module Kiba
 
           def job
             return unless config.used?
-            return if Tms::ObjAccession.loaned_object_treatment ==
-              :as_acquisitions
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -34,7 +32,7 @@ module Kiba
                 action: :keep,
                 field: :in
               transform Delete::FieldsExcept,
-                fields: :objectid
+                fields: %i[objectid loanid]
             end
           end
         end

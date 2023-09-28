@@ -52,6 +52,9 @@ module Kiba
                   delim: " - ",
                   prepend_source_field_name: true,
                   delete_sources: false
+                transform FilterRows::FieldPopulated,
+                  action: :keep,
+                  field: :combined
               end
             end
           end

@@ -20,10 +20,7 @@ module Kiba
           end
 
           def xforms
-            bind = binding
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
               transform Delete::Fields,
                 fields: %i[objectvalueid combined]
             end

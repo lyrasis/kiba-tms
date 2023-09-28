@@ -12,9 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :tms__obj_accession,
-                destination: :obj_accession__in_migration,
-                lookup: lookups
+                source: :obj_accession__initial_prep,
+                destination: :obj_accession__in_migration
               },
               transformer: xforms
             )
@@ -25,28 +24,18 @@ module Kiba
             true if lot == :creditline_to_loanin || lot == :drop
           end
 
-          def lookups
-            base = []
-            if dropping_loanins?
-              base << :loan_obj_xrefs__loanin_obj_lookup
-            end
-            base
-          end
-
           def xforms
             bind = binding
 
             Kiba.job_segment do
               if bind.receiver.send(:dropping_loanins?)
-                transform Merge::MultiRowLookup,
-                  lookup: loan_obj_xrefs__loanin_obj_lookup,
-                  keycolumn: :objectid,
-                  fieldmap: {loanin: :objectid}
-                transform FilterRows::FieldPopulated,
+                transform FilterRows::FieldEqualTo,
                   action: :reject,
-                  field: :loanin
-                transform Delete::Fields, fields: :loanin
+                  field: :loanin,
+                  value: "y"
               end
+              transform Delete::Fields,
+                fields: :loanin
             end
           end
         end

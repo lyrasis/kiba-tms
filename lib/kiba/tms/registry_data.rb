@@ -80,6 +80,16 @@ module Kiba
             desc: "ObjAccession rows to be processed with :acqnumber approach",
             tags: %i[acquisitions]
           }
+          register :combined, {
+            creator: Kiba::Tms::Jobs::AcqNumAcq::Combined,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "acq_num_acq_combined.csv"
+            ),
+            desc: ":obj_rows, with :combined field added",
+            tags: %i[acquisitions]
+          }
           register :rows, {
             creator: Kiba::Tms::Jobs::AcqNumAcq::Rows,
             path: File.join(
@@ -147,7 +157,13 @@ module Kiba
               "acq_all.csv"
             ),
             tags: %i[acquisitions],
-            desc: "Compiles acquisitions from all treatments"
+            desc: "Compiles acquisitions from all treatments",
+            dest_special_opts: {
+              initial_headers: %i[
+                acquisitionreferencenumber
+                objaccessiontreatment acquisitionmethod creditline
+              ]
+            }
           }
           register :obj_rels, {
             creator: Kiba::Tms::Jobs::Acquisitions::ObjRels,
@@ -1109,7 +1125,8 @@ module Kiba
           register :prep, {
             creator: Kiba::Tms::Jobs::Loansin::Prep,
             path: File.join(Kiba::Tms.datadir, "working", "loansin__prep.csv"),
-            tags: %i[loans loansin]
+            tags: %i[loans loansin],
+            lookup_on: :loanid
           }
           register :cspace, {
             creator: Kiba::Tms::Jobs::Loansin::Cspace,
@@ -2673,6 +2690,33 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("obj_accession") do
+          register :initial_prep, {
+            creator: Kiba::Tms::Jobs::ObjAccession::InitialPrep,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "obj_accession_initial_prep.csv"
+            ),
+            tags: %i[obj_accessions setup],
+            desc: "Prepares data enough for loans report to be meaningful: "\
+              "merges in object numbers and accession methods. Flags objects "\
+              "linked to loans in through the LoanObjXrefs table."
+          }
+          register :loans_in, {
+            creator: Kiba::Tms::Jobs::ObjAccession::LoansIn,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "obj_accession_loans_in.csv"
+            ),
+            tags: %i[obj_accessions setup],
+            desc: "Rows for objects linked to loansin via LoanObjXrefs table. "\
+              "Merges in data fields from :loansin__prep for comparison",
+            dest_special_opts: {
+              initial_headers: %i[acquisitionlot acquisitionnumber objectnumber
+                loanin_loaninnumber accessionmethod creditline]
+            }
+          }
           register :in_migration, {
             creator: Kiba::Tms::Jobs::ObjAccession::InMigration,
             path: File.join(
@@ -2681,8 +2725,8 @@ module Kiba
               "obj_accession_in_migration.csv"
             ),
             tags: %i[obj_accessions setup],
-            desc: "Removes rows for objects linked to loansin, if configured "\
-              "to do so. Otherwise passes through all rows."
+            desc: "Removes rows for objects not linked to loansin, if "\
+              "configured to do so. Otherwise passes through all rows."
           }
           register :linked_lot, {
             creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,

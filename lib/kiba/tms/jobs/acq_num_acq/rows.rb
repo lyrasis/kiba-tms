@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :acq_num_acq__obj_rows,
+                source: :acq_num_acq__combined,
                 destination: :acq_num_acq__rows
               },
               transformer: xforms
@@ -20,15 +20,9 @@ module Kiba
           end
 
           def xforms
-            bind = binding
-
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
-              if config.omitting_fields?
-                transform Delete::Fields, fields: config.omitted_fields
-              end
-              transform CombineValues::FullRecord, target: :combined
+              transform Delete::Fields,
+                fields: %i[objectnumber objectid]
               transform Deduplicate::Table,
                 field: :combined,
                 delete_field: false

@@ -14,7 +14,7 @@ module Kiba
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[acquisitionlotid registrationsetid acquisitionlot
-          objectid objectnumber objectvalueid],
+          objectvalueid],
         reader: true,
         constructor: proc { |value|
           value << Tms::ObjAccession.delete_fields
@@ -24,7 +24,7 @@ module Kiba
       # @return [Array<Symbol>] ID and other always-unique fields not treated as
       #   content for reporting, etc.
       setting :non_content_fields,
-        default: %i[acquisitionnumber],
+        default: %i[acquisitionnumber objectnumber objectid],
         reader: true
       extend Tms::Mixins::Tableable
 
