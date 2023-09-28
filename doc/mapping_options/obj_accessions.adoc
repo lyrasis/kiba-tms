@@ -11,7 +11,7 @@ ifdef::env-github[]
 :imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
 endif::[]
 
-=  Mapping options for ObjAccession, AccessionLot, and RegistrationSets tables
+=  Mapping settings for ObjAccession, AccessionLot, and RegistrationSets tables
 
 toc::[]
 
@@ -217,7 +217,7 @@ Considerations: Separated from preceding and subsequent segments by spaces to su
 
 == Dates in TMS ObjAccessions vs CS Acquisition
 
-As you can see from the table below, there are only two TMS ObjAccessions date fields that have a clear one-to-one mapping to the CS acquisition procedure.
+As you can see from the table below, there are only two TMS ObjAccessions date fields that have an unambiguous one-to-one mapping to the CS acquisition procedure.
 
 How to handle the other date values, if they appear in a client's data, is controlled by the <<mapping-options,mapping options>> described below.
 
@@ -287,13 +287,29 @@ NOTE: Some "No longer in use" TMS fields are included because we sometimes find 
 |===
 
 
-== Mapping options
+== Mapping settings
 
 [NOTE]
 ====
-The RegistrationSets and AccessionLot tables contain fields that appear in ObjAccession. The field handling specified for such fields in ObjAccession cascades to RegistrationSets and AccessionLot.
+The RegistrationSets and AccessionLot tables contain fields that also appear in ObjAccession. The field handling specified for such fields in ObjAccession cascades to RegistrationSets and AccessionLot.
 
 That is, you cannot opt to have :accessionvalue information treated differently for rows being processed as Registration Sets vs. one-to-one acquisition/object relations.
+====
+
+[NOTE]
+====
+Many of the mapping options below will refer to whether the profile support the approval field group. As of CollectionSpace version 7.2 (September 2023), this field group is present in the following community supported domain profiles:
+
+* core
+* anthro
+* bonsai
+* fcart
+* lhmc
+* publicart
+
+The following profiles do _not_ have the approval field group: botgarden, herbarium, materials.
+
+*_Some of the option names are a little odd now because they were created when the approval group fields were not available in the most common profiles._*
 ====
 
 === :accessionvalue_treatment
@@ -340,7 +356,7 @@ Default option:: `:acquisitionnote` -- map into this note field
 * `:acquisitionreason`
 * `:drop` - do not migrate this information
 
-.Related options
+.Related settings
 * `:acq_number_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Acquisition number value(s): "
 
 === :auth_date_source_pref
@@ -363,19 +379,70 @@ The TMS `:authdate` field is mapped to CS `:acquisitionauthorizerdate` field, bu
 
 This option specifies what to do with approval date data.
 
-Default option:: `:acquisitionnote` -- map into this note field
+Default option if profile includes approval group fields:: `:approvalgroup` -- map each date value into an instance of [.csfield]#approvalDate# field
+Default option if profile does not include approval group fields:: `:acquisitionnote` -- map into [.csfield]#acquisitionNote# field
 
 .Alternate options
-* `:acquisitionprovisos`-- map into this note field
+* `:acquisitionprovisos`-- map into [.csfield]#acquisitionProvisos# field
 * `:drop` - do not migrate this information
 
-.Related options:
-* `:approval_date_note_format` -- if treatment involves mapping the value(s) to a note, should it be one combined note or two separate note values. Default: `:combined`. Alternate value(s): `:separate` (This option is useful if data entry practice means these two date fields have been used to record dates with different meanings that should be labeled differently)
-* `:approval_date_combined_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:combined`, this is the string prepended to the value to clarify the meaning of the value. Default: "Approval date(s): "
-* `:approval_date_1_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate1`. Default: "Initial approval date: "
-* `:approval_date_2_prefix` -- if treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate2`. Default: "Subsequent approval date: "
+==== Related settings if using `:approvalgroup` option
 
-Other options may be developed on client request, if feasible.
+===== `:approval_date_1_status`
+
+Value used in [.csfield]#approvalStatus# field in approval group row in which date is recorded. This value is added as a controlled term in the "Approval Status" vocabulary
+
+Default option:: "approved"
+
+.Alternate option(s)
+* Any string requested by client
+
+===== `:approval_date_2_status`
+
+Value used in [.csfield]#approvalStatus# field in approval group row in which date is recorded. This value is added as a controlled term in the "Approval Status" vocabulary
+
+Default option:: "approved (subsequent)"
+
+.Alternate option(s)
+* Any string requested by client
+
+==== Related settings if using `:acquisitionnote` or `:acquisitionprovisos` options
+
+===== `:approval_date_note_format`
+
+If treatment involves mapping the value(s) to a note, should it be one combined note or two separate note values.
+
+Default option:: `:combined`.
+
+.Alternate option(s)
+* `:separate` - This option is useful if data entry practice means these two date fields have been used to record dates with different meanings that should be labeled differently
+
+===== `:approval_date_note_combined_prefix`
+
+If treatment involves mapping the value to a note, and `:approval_date_note_format` is `:combined`, this is the string prepended to the combined value to clarify the meaning of the value.
+
+Default option:: "Approval date(s): "
+
+.Alternate option(s)
+* Any string requested by client
+
+===== `:approval_date_note_1_prefix`
+
+If treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate1`.
+
+Default option:: "Initial approval date: "
+
+.Alternate option(s)
+* Any string requested by client
+
+===== `:approval_date_note_2_prefix`
+
+If treatment involves mapping the value to a note, and `:approval_date_note_format` is `:separate`, this is the string prepended to the value to clarify the meaning of the value of `:approvalisodate2`.
+
+Default option:: "Subsequent approval date: "
+
+.Alternate option(s)
+* Any string requested by client
 
 === :authorizer_org_treatment
 Applies to :authorizer field in ObjAccession table **if name in field has been categorized by client as an Organization name**
@@ -391,7 +458,7 @@ Default option:: `:acquisitionnote` -- map into this note field
 * `:acquisitionreason` -- map into this note field
 * `:drop` - do not migrate this information
 
-.Related options:
+.Related settings:
 * `:authorizer_org_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorized by (organization name): "
 
 Other options may be developed on client request, if feasible.
@@ -408,7 +475,7 @@ Default option:: `:acquisitionnote` -- map into this note field
 * `:acquisitionreason` -- map into this note field
 * `:drop` - do not migrate this information
 
-.Related options:
+.Related settings:
 * `:authorizer_note_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Authorizer note: "
 
 Other options may be developed on client request, if feasible.
@@ -448,7 +515,7 @@ Default option:: `:acquisitionreason`
 * `:acquisitionprovisos`
 * `:drop` - do not migrate this information
 
-.Related options
+.Related settings
 * `:initiation_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Initiated: "
 
 Other options may be developed on client request, if feasible.
@@ -458,7 +525,7 @@ TMS creates an ObjAccession row for every Object entered, whether it is a loaned
 
 This setting controls how to handle data in the ObjAccession (and related tables) for Objects that are linked to Loans In.
 
-Default option:: `:creditline_to_loanin` -- unique ObjAccession `creditline` values for all objects linked to a given Loan In are gathered, and mapped into the Loan In record. Currently this data maps as a `loanStatusNote` value, with the `loanStatusType` value set to `Credit line`. Rows for these objects are removed from ObjAccession before transforming that data into CS Acquisition procedures.
+Default option:: `:creditline_to_loanin` -- unique Object `creditline` values for all objects linked to a given Loan In are gathered, and mapped into the Loan In record's Credit Line field. Rows for these objects are removed from ObjAccession before transforming that data into CS Acquisition procedures.
 
 .Alternate options:
 * `:drop` - ObjAccession rows for objects linked to Loans In are removed from the ObjAccession table before we start creating CS Acquisition procedures
@@ -529,7 +596,7 @@ Default option:: `:acquisitionprovisos`
 * `:acquisitionnote`
 * `:drop` - do not migrate this information
 
-.Related options
+.Related settings
 * `:percentowned_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Percent owned: "
 
 Other options may be developed on client request, if feasible.
@@ -561,7 +628,7 @@ Default option:: `:acquisitionnote`
 * `:acquisitionprovisos`
 * `:drop` - do not migrate this information
 
-.Related options
+.Related settings
 * `:valuationnote_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Valuation note: "
 
 Other options may be developed on client request, if feasible.
