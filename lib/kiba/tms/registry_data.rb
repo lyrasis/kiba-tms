@@ -8,6 +8,7 @@ module Kiba
       def register
         register_supplied_files
         register_prep_files
+        register_sample_files if Tms.migration_status == :dev
         Tms::NameCompile.register_uncontrolled_name_compile_jobs
         Tms::Utils::ForTableJobRegistrar.call
         Kiba::Extend::Utils::IterativeCleanupJobRegistrar.call
@@ -45,6 +46,28 @@ module Kiba
         end
       end
       private_class_method :register_supplied_files
+
+      def register_sample_files
+        Kiba::Tms.registry.namespace("sample") do
+          dirpath = File.join(Kiba::Tms.datadir, "sample")
+          Dir.children(dirpath).select { |file|
+            File.extname(file) == ".csv"
+          }.each do |csvfile|
+            base = csvfile.delete_suffix(".csv")
+            key = base.to_sym
+            modname = base.split("_").map(&:capitalize).join("")
+            mod = Tms.const_get(modname)
+
+            register key, {
+              path: File.join(dirpath, csvfile),
+              supplied: true,
+              tags: [key, :sample],
+              lookup_on: mod.cs_record_id_field
+            }
+          end
+        end
+      end
+      private_class_method :register_sample_files
 
       def register_files
         Kiba::Tms.registry.namespace("report") do
@@ -164,6 +187,17 @@ module Kiba
                 objaccessiontreatment acquisitionmethod creditline
               ]
             }
+          }
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::Acquisitions::ForIngest,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "acq_for_ingest.csv"
+            ),
+            tags: %i[acquisitions],
+            desc: "Removes non-ingestable fields. If migration is in dev, "\
+            "applies sample if sample has been selected"
           }
           register :obj_rels, {
             creator: Kiba::Tms::Jobs::Acquisitions::ObjRels,

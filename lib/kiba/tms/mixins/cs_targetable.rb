@@ -18,6 +18,45 @@ module Kiba
           define_used_method(mod)
         end
 
+        def sampleable?
+          return false unless respond_to?(:cs_record_id_field)
+
+          Tms.registry.key?(sample_job_key)
+        end
+
+        def sample_job_key
+          rectype = name.to_s
+            .split("::")
+            .last
+            .downcase
+          "sample__#{rectype}".to_sym
+        end
+
+        def sample_lookup
+          Tms.get_lookup(
+            jobkey: sample_job_key,
+            column: cs_record_id_field
+          )
+        end
+
+        def sample_xforms
+          bind = binding
+
+          Kiba.job_segment do
+            config = bind.receiver
+
+            transform Merge::MultiRowLookup,
+              lookup: config.sample_lookup,
+              keycolumn: config.cs_record_id_field,
+              fieldmap: {insample: config.cs_record_id_field}
+            transform FilterRows::FieldPopulated,
+              action: :keep,
+              field: :insample
+            transform Delete::Fields,
+              fields: :insample
+          end
+        end
+
         def self.define_used_method(mod)
           return if mod.respond_to?(:used?)
 

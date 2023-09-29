@@ -183,6 +183,9 @@ module Kiba
     #   will be retained, but converted to `DROPPED FROM MIGRATION` so that any
     #   inadvertent effects of dropping the names may be caught. When `prod`,
     #   the names just won't be merged into any data
+    # - If there are any supplied jobs registered by
+    #   `RegistryData.register_sample_files`, the sample will be selected
+    #   in the final `for_ingest` job for each target record type
     # Expected values: :dev, :prod
     setting :migration_status, default: :dev, reader: true
 
