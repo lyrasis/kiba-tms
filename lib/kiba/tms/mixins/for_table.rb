@@ -256,6 +256,7 @@ module Kiba
                       args: {
                         source: for_table_source_job_key,
                         dest: for_table_key,
+                        main_mod: self,
                         for_table_mod: for_table_mod,
                         targettable: targetobj.tablename,
                         field: field

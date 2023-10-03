@@ -55,11 +55,6 @@ module Kiba
                 transform config.description_cleaner
               end
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[tablename description],
-                target: :lookupkey,
-                delim: " ",
-                delete_sources: false
               transform Clean::EnsureConsistentFields
             end
           end
