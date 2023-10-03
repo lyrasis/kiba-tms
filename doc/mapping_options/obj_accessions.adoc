@@ -296,9 +296,10 @@ The RegistrationSets and AccessionLot tables contain fields that also appear in 
 That is, you cannot opt to have :accessionvalue information treated differently for rows being processed as Registration Sets vs. one-to-one acquisition/object relations.
 ====
 
+.Support for approval field group
 [NOTE]
 ====
-Many of the mapping options below will refer to whether the profile support the approval field group. As of CollectionSpace version 7.2 (September 2023), this field group is present in the following community supported domain profiles:
+[[approval-field-group-profiles]]Many of the mapping options below will refer to whether the profile support the approval field group. As of CollectionSpace version 7.2 (September 2023), this field group is present in the following community supported domain profiles:
 
 * core
 * anthro
@@ -659,3 +660,57 @@ Default option:: `:acquisitionnote`
 * `:valuationnote_prefix` -- if treatment involves mapping the value to a note, this is the string prepended to the value to clarify the meaning of the value. Default: "Valuation note: "
 
 Other options may be developed on client request, if feasible.
+
+=== `TextEntries` merge treatments
+
+The TMS `TextEntries` table stores text values of different types for merge into various target tables, including ``ObjAccession`.
+
+Your Migration Specialist will let you know about any custom cleanup and preparation of these values prior to merging them into `ObjAccession`. Usually this involves some handling of any `:purpose` and `:remarks` values that may have been recorded for individual text entries. Typically we combine these values into the `:textentry` field so that we have one main content field to merge.
+
+Constituent names associated with text entries will have been merged in as `:org_author` and `:person_author` fields prior to merge into `ObjAccession`.
+
+Each `:texttype` must be assigned a treatment, which is used to merge the text entry into the `ObjAccession` data as shaped for CollectionSpace. The available treatments are:
+
+==== drop
+
+Text entries with this treatment assigned to their `:texttype` will be omitted from the migration.
+
+==== acq_note
+
+[[text_entry_acq_note]]Text entries with this treatment assigned to their `:texttype` will be merged into [.csfield]#acquisitionNote#.
+
+The text entry data is transformed into a note value following this pattern:
+
+Capitalized `:texttype`: `:textentry` --`:person_author`, `:org_author`, `:textdate`
+
+Multiple values in the target field are separated by 2 carriage returns.
+
+==== approval_group
+
+IMPORTANT: This treatment can only be used if <<approval-field-group-profiles,your domain profile supports the approval field group in the CollectionSpace Acquisition record>>.
+
+Text entries with this treatment assigned to their `:texttype` will be merged into the CollectionSpace Acquisition  approval fields with the following mappings:
+
+* `:texttype` ➡️ [.csfield]#approvalStatus#
+* `:textentry` ➡️ [.csfield]#approvalNote#
+* `:textdate` ➡️ [.csfield]#approvalDate#
+* `:person_author` ➡️ [.csfield]#approvalIndividual#
+* `:org_author` ➡️ [.csfield]#approvalGroup#
+
+Values mapped to the [.csfield]#approvalGroup# field will be added to the Approval Group term list.
+
+==== proviso_note
+
+Text entries with this treatment assigned to their `:texttype` will be merged into [.csfield]#acquisitionProvisos#.
+
+The <<text_entry_acq_note,acq_note note pattern described above>> is used for this note as well.
+
+Multiple values in the target field are separated by 2 carriage returns.
+
+==== reason_note
+
+Text entries with this treatment assigned to their `:texttype` will be merged into [.csfield]#acquisitionReason#.
+
+The <<text_entry_acq_note,acq_note note pattern described above>> is used for this note as well.
+
+Multiple values in the target field are separated by 2 carriage returns.
