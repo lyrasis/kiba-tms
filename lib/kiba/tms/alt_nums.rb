@@ -22,8 +22,8 @@ module Kiba
       setting :initial_cleaner, default: nil, reader: true
       setting :description_cleaner, default: nil, reader: true
 
-      # The merge treatment to be applied to altnum values with no assigned
-      #   type value
+      # The merge-into-objects treatment to be applied to altnum
+      #   values with no assigned type value
       setting :for_objects_untyped_default_treatment,
         default: "other_number",
         reader: true
