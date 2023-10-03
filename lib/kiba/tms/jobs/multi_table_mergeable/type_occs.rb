@@ -45,6 +45,8 @@ module Kiba
                     conditions: ->(_r, rows) do
                       rows.reject { |row| row[field].blank? }
                     end
+                  transform Delete::Fields,
+                    fields: mergemod.additional_occurrence_ct_fields
                 end
               end
 
@@ -62,7 +64,6 @@ module Kiba
 
               transform Delete::Fields,
                 fields: [mergemod.mergeable_value_field,
-                  mergemod.additional_occurrence_ct_fields,
                   :recordid, :sort, :targetrecord].flatten
             end
           end

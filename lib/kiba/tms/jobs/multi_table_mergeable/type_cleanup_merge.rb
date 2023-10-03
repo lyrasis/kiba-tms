@@ -72,8 +72,10 @@ module Kiba
                 sources: [:typenote, mod.note_field],
                 target: mod.note_field,
                 delim: "; "
-              transform Delete::Fields,
-                fields: mod.type_field
+              unless origtypefield == newtypefield
+                transform Delete::Fields,
+                  fields: origtypefield
+              end
             end
           end
 

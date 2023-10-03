@@ -36,7 +36,8 @@ module Kiba
         # @param target [Module]
         # @return [Boolean]
         def target_ids_mergeable?(target)
-          true if target.record_num_merge_config
+          true if target.respond_to?(:record_num_merge_config) &&
+            target.record_num_merge_config
         end
 
         # Defines a registry namespace (e.g. alt_nums_reportable_for).

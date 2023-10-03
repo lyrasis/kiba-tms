@@ -181,6 +181,8 @@ module Kiba
         private :for_table_cleanup_module_string
 
         def added_occ_fields
+          return [] unless respond_to?(:additional_occurrence_ct_fields)
+
           additional_occurrence_ct_fields.map do |field|
             ":occs_with_#{field}"
           end.join(", ")

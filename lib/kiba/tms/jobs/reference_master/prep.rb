@@ -70,9 +70,10 @@ module Kiba
               end
 
               if Tms::TextEntries.for?("ReferenceMaster")
-                if Tms::TextEntries.for_reference_master_merge
-                  transform Tms::TextEntries.for_reference_master_merge,
-                    lookup: text_entries_for__reference_master
+                if Tms::TextEntriesForReferenceMaster.merger_xforms
+                  Tms::TextEntriesForReferenceMaster.merger_xforms.each { |xform|
+                    transform xform
+                  }
                 else
                   transform Merge::MultiRowLookup,
                     lookup: text_entries_for__reference_master,
