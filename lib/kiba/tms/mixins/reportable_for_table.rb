@@ -113,7 +113,7 @@ module Kiba
                 source: reportable_job,
                 dest: no_type_job,
                 mod: mod,
-                tags: tags)
+                tags: [tags, :empty_types, :reports].flatten)
               puts "Register job: #{no_type_job}" if Tms.debug?
             end
           end
