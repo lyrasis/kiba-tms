@@ -66,6 +66,13 @@ module Kiba
                 config.initial_cleaner.each { |xform| transform xform }
               end
 
+              if Tms::TextEntries.for?("ObjAccession") &&
+                  Tms::TextEntriesForObjAccession.merger_xforms
+                Tms::TextEntriesForObjAccession.merger_xforms.each do |xform|
+                  transform xform
+                end
+              end
+
               # removes :accessionvalue if equal to the value in a linked
               #   ObjInsurance (valuation) record
               if config.fields.any?(:accessionvalue) &&

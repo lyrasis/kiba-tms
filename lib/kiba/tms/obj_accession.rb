@@ -228,6 +228,7 @@ module Kiba
         if valuationnote_treatment == field
           base << :valuationnotes
         end
+        base << :te_proviso_note if Tms::TextEntries.for?("ObjAccession")
         base.flatten
       end
 
@@ -261,6 +262,7 @@ module Kiba
         if valuationnote_treatment == field
           base << :valuationnotes
         end
+        base << :te_acquisition_note if Tms::TextEntries.for?("ObjAccession")
         base.flatten
       end
 
@@ -329,12 +331,16 @@ module Kiba
           if dog_dates_treatment == :approvalgroup
             default << %i[deedofgiftsentiso deedofgiftreceivediso]
           end
+          default << :te if Tms::TextEntries.for?("ObjAccession")
           default.flatten
         end
       setting :approval_target_fields,
         default: %i[approvalgroup approvalindividual approvalstatus
           approvaldate],
-        reader: true
+        reader: true,
+        constructor: ->(val) do
+          val << :approvalnote if Tms::TextEntries.for?("ObjAccession")
+        end
     end
   end
 end

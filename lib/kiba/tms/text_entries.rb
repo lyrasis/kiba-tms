@@ -30,6 +30,15 @@ module Kiba
       setting :initial_cleaner, default: nil, reader: true
 
       setting :type_field, default: :texttype, reader: true
+      setting :type_field_target, default: type_field, reader: true
+      setting :mergeable_value_field, default: :textentry, reader: true
+      setting :note_field, default: :textentry, reader: true
+
+      # The merge-into-objects treatment to be applied to altnum
+      #   values with no assigned type value
+      setting :for_obj_accession_untyped_default_treatment,
+        default: "acq_note",
+        reader: true
 
       extend Tms::Mixins::MultiTableMergeable
     end
