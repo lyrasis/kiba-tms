@@ -41,7 +41,6 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              accmeth = Tms::AccessionMethods
               curr = Tms::Currencies
 
               transform Tms::Transforms::DeleteTmsFields

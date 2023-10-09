@@ -32,7 +32,6 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              custom_handled_fields = config.custom_map_fields
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?

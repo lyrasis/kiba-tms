@@ -49,7 +49,6 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              custom_handled_fields = config.custom_map_fields
 
               if Tms::ConRefs.for?("Objects")
                 if config.con_ref_name_merge_rules
