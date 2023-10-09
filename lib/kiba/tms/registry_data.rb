@@ -3217,6 +3217,15 @@ module Kiba
               "does not contain external table id) such as AltNums and "\
               "ConRefs"
           }
+          register :shape, {
+            creator: Kiba::Tms::Jobs::Objects::Shape,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "objects_shape.csv"
+            ),
+            tags: %i[objects]
+          }
           register :dates, {
             creator: Kiba::Tms::Jobs::Objects::Dates,
             path: File.join(

@@ -26,8 +26,8 @@ module Kiba
               config = bind.receiver.send(:config)
               custom_handled_fields = config.custom_map_fields
 
-              unless config.transformer_fields.empty?
-                xforms = config.transformer_fields
+              unless config.field_specific_xform_fields.empty?
+                xforms = config.field_specific_xform_fields
                   .map { |field| "#{field}_xform".to_sym }
                   .map { |setting| config.send(setting) }
                   .compact
@@ -47,7 +47,7 @@ module Kiba
                 notes: :comment,
                 objectcount: :numberofobjects
               }
-              unless bind.receiver.send(:merges_dimensions?)
+              unless config.dimensions_to_merge?
                 unless Tms::Dimensions.migrate_secondary_unit_vals
                   transform do |row|
                     display = row[:dimensions]
