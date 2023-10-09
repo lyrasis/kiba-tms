@@ -271,6 +271,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("collectionobjects") do
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::Collectionobjects::ForIngest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "objects.csv"),
+            tags: %i[collectionobjects ingest]
+          }
+        end
+
         Kiba::Tms.registry.namespace("cond_line_items") do
           register :to_conservation, {
             creator: Kiba::Tms::Jobs::CondLineItems::ToConservation,
