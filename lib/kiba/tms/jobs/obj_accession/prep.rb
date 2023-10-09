@@ -372,6 +372,10 @@ module Kiba
                 sources: config.approval_source_fields,
                 targets: config.approval_target_fields,
                 delim: Tms.delim
+
+              unless config.post_prep_cleaner.empty?
+                config.post_prep_cleaner.each { |xform| transform xform }
+              end
             end
           end
         end

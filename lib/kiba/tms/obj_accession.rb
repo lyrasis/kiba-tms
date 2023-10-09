@@ -171,6 +171,15 @@ module Kiba
         default: [],
         reader: true
 
+      # Transforms to be applied as the final step of the
+      #  `:prep__obj_accession` job. Should be kiba-compliant
+      #  transform class, requiring no initialization parameters
+      #
+      # @return [Array<#process>]
+      setting :post_prep_cleaner,
+        default: [],
+        reader: true
+
       setting :name_fields,
         default: %i[authorizer initiator],
         reader: true
