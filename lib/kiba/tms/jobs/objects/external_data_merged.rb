@@ -56,11 +56,9 @@ module Kiba
                     into: config,
                     keycolumn: :objectid
                 end
-                if Tms::ConRefsForObjects.merger_xforms
-                  Tms::ConRefsForObjects.merger_xforms.each { |xform|
-                    transform xform
-                  }
-                end
+                Tms::ConRefsForObjects.merger_xforms&.each { |xform|
+                  transform xform
+                }
               end
 
               if Tms::ObjectNames.used?
