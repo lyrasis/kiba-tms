@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module Acquisitions
-        module ObjRels
+      module RelsAcqObj
+        module ForIngest
           module_function
 
           def job
@@ -13,9 +13,9 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
-                destination: :acquisitions__obj_rels
+                destination: :rels_acq_obj__for_ingest
               },
-              transformer: xforms
+              transformer: get_xforms
             )
           end
 
@@ -37,6 +37,12 @@ module Kiba
               base << :one_to_one_acq__acq_obj_rel
             end
             base
+          end
+
+          def get_xforms
+            return [xforms] unless config.sampleable?
+
+            [config.sample_xforms, xforms]
           end
 
           def xforms

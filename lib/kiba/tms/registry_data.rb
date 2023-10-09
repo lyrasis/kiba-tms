@@ -199,16 +199,6 @@ module Kiba
             desc: "Removes non-ingestable fields. If migration is in dev, "\
             "applies sample if sample has been selected"
           }
-          register :obj_rels, {
-            creator: Kiba::Tms::Jobs::Acquisitions::ObjRels,
-            path: File.join(
-              Kiba::Tms.datadir,
-              "working",
-              "acq_obj_rels.csv"
-            ),
-            tags: %i[acquisitions objects nhr],
-            desc: "Compiles acquisition-object nhrs from all treatments"
-          }
           register :from_acq_num, {
             creator: Kiba::Tms::Jobs::Acquisitions::FromAcqNum,
             path: File.join(
@@ -3960,6 +3950,20 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
               "reg_set_acq_obj_rels.csv"),
             tags: %i[nhr acquisitions objects]
+          }
+        end
+
+        Kiba::Tms.registry.namespace("rels_acq_obj") do
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::RelsAcqObj::ForIngest,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "ingest",
+              "rels_acq_obj.csv"
+            ),
+            tags: %i[acquisitions objects nhr],
+            desc: "Compiles acquisition-object nhrs from all treatments and "\
+              "prepares for ingest"
           }
         end
 
