@@ -12,6 +12,10 @@ module Kiba
         default: %i[displayed],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :type_field,
+        default: :element,
+        reader: true
       extend Tms::Mixins::MultiTableMergeable
     end
   end

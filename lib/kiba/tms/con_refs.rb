@@ -20,6 +20,7 @@ module Kiba
         default: :con_refs__type_match,
         reader: true
       setting :split_on_column, default: :role_type, reader: true
+      setting :type_field, default: :role, reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       def auto_generate_target_tables
