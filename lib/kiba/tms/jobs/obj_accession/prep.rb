@@ -327,21 +327,21 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.proviso_sources,
                   target: :acquisitionprovisos,
-                  delim: "\n",
+                  delim: "%CR%%CR%",
                   delete_sources: true
               end
               unless config.note_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.note_sources,
                   target: :acquisitionnote,
-                  delim: "\n",
+                  delim: "%CR%%CR%",
                   delete_sources: true
               end
               unless config.reason_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.reason_sources,
                   target: :acquisitionreason,
-                  delim: "\n",
+                  delim: "%CR%%CR%",
                   delete_sources: true
               end
 
