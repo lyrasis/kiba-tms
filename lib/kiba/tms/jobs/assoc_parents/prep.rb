@@ -46,7 +46,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__relationships,
                   keycolumn: :relationshipid,
-                  fieldmap: {relationship: :relationship_label}
+                  fieldmap: {relationship: :relation2}
               end
               transform Delete::Fields, fields: :relationshipid
             end
