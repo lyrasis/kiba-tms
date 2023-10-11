@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module MediaFiles
-        # Generates :mediafileuri value in :media_files__cspace. Assumes there
+        # Generates :mediafileuri value in :media_files__shaped. Assumes there
         #   is a :media_files__file_path_lookup
         class UriGenerator
           def initialize
