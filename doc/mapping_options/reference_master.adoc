@@ -1,0 +1,61 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: https://raw.githubusercontent.com/lyrasis/kiba-tms/main/doc/img
+endif::[]
+
+= TMS ReferenceMaster data (CollectionSpace Citation authority terms)
+
+This page covers options for migrating data from the following tables in TMS:
+
+* ReferenceMaster
+* AltNums (for merge into ReferenceMaster)
+* ConRefs (for merge into ReferenceMaster)
+* TextEntries (for merge into ReferenceMaster)
+
+The TMS ReferenceMaster table stores structured data on bibliographic references used elsewhere in the system.
+
+Data from the TMS ReferenceMaster table is mapped to terms in the CollectionSpace Citation authority.
+
+toc::[]
+
+== `ReferenceMaster` mapping options
+
+=== `:citation_note_value_separator`
+
+[[citationnotevalueseparator]]String used to separate multiple values mapped to [.csfield]#citationNote#.
+
+Default: [.value]#%CR%%CR%# (expands to two newlines in a row when data is prepared for ingest)
+
+Other options: Any text requested by client.
+
+== `AltNums` merge treatments
+
+todo
+
+== `ConRefs` merge treatments
+
+todo
+
+== `TextEntries` merge treatments
+
+=== `citation_note_typed`
+
+A note value is derived from each `TextEntries` row with this treatment. The note value combines the text entry value itself, plus any date, author, or additional information populated in `TextEntries`.
+
+The `:texttype` value is prepended to the note value as a label.
+
+The labeled note is mapped to CollectionSpace Citation [.csfield]#citationNote#. Multiple note values mapped into this field are separated by the value of the <<citationnotevalueseparator,`:citation_note_value_separator` option>>.
+
+=== `citation_note_untyped`
+
+A note value is derived from each `TextEntries` row with this treatment. The note value combines the text entry value itself, plus any date, author, or additional information populated in `TextEntries`.
+
+The note is mapped to CollectionSpace Citation [.csfield]#citationNote#. Multiple note values mapped into this field are separated by the value of the <<citationnotevalueseparator,`:citation_note_value_separator` option>>.
