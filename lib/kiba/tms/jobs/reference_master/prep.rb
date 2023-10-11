@@ -25,9 +25,6 @@ module Kiba
             base = []
             base << :prep__ref_formats if Tms::RefFormats.used?
             base << :prep__dd_languages if Tms::DDLanguages.used?
-            if Tms::TextEntries.for?("ReferenceMaster")
-              base << :text_entries_for__reference_master
-            end
             base
           end
 
@@ -69,18 +66,21 @@ module Kiba
                 end
               end
 
-              if Tms::TextEntries.for?("ReferenceMaster")
-                if Tms::TextEntriesForReferenceMaster.merger_xforms
-                  Tms::TextEntriesForReferenceMaster.merger_xforms.each { |xform|
-                    transform xform
-                  }
-                else
-                  transform Merge::MultiRowLookup,
-                    lookup: text_entries_for__reference_master,
-                    keycolumn: :referenceid,
-                    fieldmap: {termfullcitation: :textentry}
+              if Tms::TextEntries.for?("ReferenceMaster") &&
+                  Tms::TextEntriesForReferenceMaster.merger_xforms
+                Tms::TextEntriesForReferenceMaster.merger_xforms.each do |xform|
+                  transform xform
                 end
               end
+
+              unless config.citation_note_sources.empty?
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.citation_note_sources,
+                  target: :citationnote,
+                  delim: config.citation_note_value_separator
+
+              end
+              transform Clean::EnsureConsistentFields
             end
           end
         end

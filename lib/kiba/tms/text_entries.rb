@@ -34,10 +34,13 @@ module Kiba
       setting :mergeable_value_field, default: :textentry, reader: true
       setting :note_field, default: :textentry, reader: true
 
-      # The merge-into-objects treatment to be applied to altnum
+      # The merge-into-objects treatment to be applied to
       #   values with no assigned type value
       setting :for_obj_accession_untyped_default_treatment,
         default: "acq_note",
+        reader: true
+      setting :for_reference_master_untyped_default_treatment,
+        default: "citation_note_untyped",
         reader: true
 
       extend Tms::Mixins::MultiTableMergeable

@@ -7,6 +7,14 @@ module Kiba
 
       module_function
 
+      setting :citation_note_value_separator, default: "%CR%%CR%", reader: true
+
+      # @return [Array<Symbol>] fields whose values will be combined into
+      #   citationNote field value
+      setting :citation_note_sources,
+        default: %i[notes boilertext],
+        reader: true
+
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[alphaheading sortnumber publicaccess
