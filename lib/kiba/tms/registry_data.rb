@@ -192,8 +192,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::Acquisitions::ForIngest,
             path: File.join(
               Kiba::Tms.datadir,
-              "working",
-              "acq_for_ingest.csv"
+              "ingest",
+              "acquisitions.csv"
             ),
             tags: %i[acquisitions],
             desc: "Removes non-ingestable fields. If migration is in dev, "\
