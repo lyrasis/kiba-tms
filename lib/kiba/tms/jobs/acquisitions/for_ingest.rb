@@ -32,6 +32,8 @@ module Kiba
 
               transform Delete::FieldsExcept,
                 fields: config.cs_fields[Tms.cspace_profile]
+
+              transform Tms.final_data_cleaner
             end
           end
         end

@@ -25,7 +25,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              # passthrough
+              transform Tms.final_data_cleaner
             end
           end
         end
