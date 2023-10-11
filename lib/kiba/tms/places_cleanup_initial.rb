@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
-# Config module setting up initial place cleanup. This module should
-#   NOT necessarily be used as a model for setting up
-#   IterativeCleanupable. It was converted to use the mixin as a
-#   proof-of-concept that the mixin approach could handle a high level
-#   of weird custom stuff. In particular, the custom pre/post transforms
-#   defined are way over-complicated, to keep from having to completely rebuild
-#   the test data set for place cleanup.
+# Config module setting up initial place cleanup. Initial place
+#   cleanup involves mapping the very many fields that may appear in
+#   TMS place data to text strings that can be ingested as place
+#   authority terms in CollectionSpace.
+#
+# NOTE: This module should NOT necessarily be used as a model for
+#   setting up IterativeCleanupable. It was converted to use the mixin
+#   as a proof-of-concept that the mixin approach could handle a high
+#   level of weird custom stuff. In particular, the custom pre/post
+#   transforms defined are way over-complicated, to keep from having
+#   to completely rebuild the test data set for place cleanup.
 module Kiba
   module Tms
     module PlacesCleanupInitial
