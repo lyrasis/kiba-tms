@@ -3,8 +3,8 @@
 module Kiba
   module Tms
     module Jobs
-      module MediaFiles
-        module Cspace
+      module Media
+        module ForIngest
           module_function
 
           def job
@@ -13,10 +13,16 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :media_files__migrating,
-                destination: :media_files__cspace
+                destination: :media__for_ingest
               },
-              transformer: xforms
+              transformer: get_xforms
             )
+          end
+
+          def get_xforms
+            return [xforms] unless config.sampleable?
+
+            [config.sample_xforms, xforms]
           end
 
           def xforms
@@ -24,14 +30,15 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              csfields = config.media_handling_fields
 
               transform do |row|
                 row.keys.each do |field|
-                  row.delete(field) unless csfields.any?(field)
+                  row.delete(field) unless config.cs_fields.include?(field)
                 end
                 row
               end
+
+              transform Tms.final_data_cleaner
             end
           end
         end

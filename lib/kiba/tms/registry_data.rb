@@ -1557,6 +1557,19 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("media") do
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::Media::ForIngest,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "ingest",
+              "media.csv"
+            ),
+            desc: "Removes non-CS fields",
+            tags: %i[media_files media ingest]
+          }
+        end
+
         Kiba::Tms.registry.namespace("media_files") do
           register :aws_ls, {
             supplied: true,
@@ -1657,17 +1670,6 @@ module Kiba
               %i[fullpath rend_renditionnumber file_entered_date filedate
                 rend_renditiondate rend_mediatype rend_quality rend_remarks]
             }
-          }
-          register :cspace, {
-            creator: Kiba::Tms::Jobs::MediaFiles::Cspace,
-            path: File.join(
-              Kiba::Tms.datadir,
-              "working",
-              "media_files_cspace.csv"
-            ),
-            # desc: "Removes non-CS fields",
-            desc: "Removes non-CS fields",
-            tags: %i[media_files media]
           }
           register :id_lookup, {
             creator: Kiba::Tms::Jobs::MediaFiles::IdLookup,

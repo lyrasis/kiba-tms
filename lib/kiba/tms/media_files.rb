@@ -55,9 +55,24 @@ module Kiba
         reader: true
 
       # Fields from MediaRenditions to merge into MediaFiles. Merged in field
-      #   names are prefixed with "mr_"
+      #   names are prefixed with "rend_"
       setting :rendition_merge_fields,
         default: [],
+        reader: true
+
+      # String prepended to the CollectionSpace Media identificationNumber
+      #   value. Defaults to "MR" because the number generator in the Media
+      #   procedure suggests this prefix.
+      setting :id_prefix, default: "MR", reader: true
+
+      setting :rename_field_map,
+        default: {
+          checksum: :checksumvalue,
+          filedate: :dategroup,
+          ms_publishto: :publishto,
+          rend_mediamasterid: :mediamasterid,
+          rend_mediatype: :type
+        },
         reader: true
 
       # Client-specific transform(s) to clean up prepped data. Run at the end
@@ -97,22 +112,6 @@ module Kiba
       #  TMS data was stored prior to being uploaded to S3
       setting :tms_path_bases,
         default: [],
-        reader: true
-
-      # All ingestable data fields for CS media ingest
-      setting :media_handling_fields,
-        default: %i[identificationnumber title publishto name mimetype length
-          externalurl measuredpart dimensionsummary dimension
-          measuredbypersonlocal measuredbyorganizationlocal
-          measurementmethod value measurementunit valuequalifier
-          valuedate measuredpartnote checksumvalue checksumtype
-          checksumdate contributorpersonlocal
-          contributororganizationlocal creatorpersonlocal
-          creatororganizationlocal language publisherpersonlocal
-          publisherorganizationlocal relation copyrightstatement type
-          coverage dategroup source subject rightsholderpersonlocal
-          rightsholderorganizationlocal description alttext
-          mediafileuri],
         reader: true
 
       # Prefix added to S3 bucket file path to create a URI from which the file

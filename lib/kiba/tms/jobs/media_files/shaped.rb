@@ -40,14 +40,7 @@ module Kiba
                   rend_renditiondate]
               transform Tms::Transforms::DeleteTimestamps,
                 fields: :filedate
-
-              transform Rename::Fields, fieldmap: {
-                checksum: :checksumvalue,
-                filedate: :dategroup,
-                ms_publishto: :publishto,
-                rend_mediamasterid: :mediamasterid,
-                rend_mediatype: :type
-              }
+              transform Rename::Fields, fieldmap: config.rename_field_map
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.description_sources,
                 target: :description,
