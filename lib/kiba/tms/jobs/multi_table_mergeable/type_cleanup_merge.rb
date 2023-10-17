@@ -36,7 +36,7 @@ module Kiba
           end
 
           def get_xforms(lookups, mod, targetmod)
-            if cleanup_module(mod, targetmod).cleanup_done?
+            if cleanup_module(mod, targetmod)&.cleanup_done?
               [merge_xforms(lookups, mod), always_xforms]
             else
               [noclean_xforms(mod), always_xforms]
@@ -46,7 +46,11 @@ module Kiba
           def cleanup_module(mod, targetmod)
             modname = mod.name.to_s.split("::").last
             targetname = targetmod.name.to_s.split("::").last
-            Tms.const_get("#{modname}For#{targetname}TypeCleanup")
+            mod = Tms.const_get("#{modname}For#{targetname}TypeCleanup")
+          rescue NameError
+            nil
+          else
+            mod
           end
 
           def merge_xforms(lookups, mod)
