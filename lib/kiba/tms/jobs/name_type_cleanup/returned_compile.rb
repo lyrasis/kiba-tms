@@ -38,9 +38,16 @@ module Kiba
                 row
               end
 
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[correctname correctauthoritytype constituentid
+                  cleanupid],
+                target: :combined,
+                delete_sources: false,
+                delim: " -- "
+
               transform Deduplicate::Table,
-                field: :cleanupid,
-                delete_field: false
+                field: :combined,
+                delete_field: true
               transform Clean::EnsureConsistentFields
             end
           end

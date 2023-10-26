@@ -31,7 +31,7 @@ module Kiba
       #   any further processing is done
       setting :returned_cleaner, default: nil, reader: true
 
-      # List of provided worksheets, most recent first. Assumes they are in the
+      # List of provided worksheets, oldest-to-newest. Assumes they are in the
       #   client project directory/to_client subdir
       setting :provided_worksheets,
         default: [],
@@ -42,7 +42,7 @@ module Kiba
           end
         }
 
-      # List of returned worksheets, most recent first. Assumes they are in the
+      # List of returned worksheets, oldest-to-newest. Assumes they are in the
       #   client project directory/supplied subdir
       setting :returned_files,
         default: [],
