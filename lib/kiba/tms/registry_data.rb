@@ -1919,7 +1919,7 @@ module Kiba
                 args: {reltype: reltype, value: typevalue}
               },
               path: File.join(Kiba::Tms.datadir, "working",
-                "name_compile_uniq_split_#{reltype}.csv"),
+                "names_compiled_uniq_split_#{reltype}.csv"),
               desc: "Rows from :name_compile__unique with `relation_type` "\
                 "value: #{typevalue}. Derives two fingerprint fields, one "\
                 "of editable field values, and one of non-editable field "\
@@ -1946,7 +1946,7 @@ module Kiba
               path: File.join(
                 Kiba::Tms.datadir,
                 "working",
-                "name_compile_previous_worksheet_compile.csv"
+                "names_compiled_previous_worksheet_compile.csv"
               ),
               tags: %i[names cleanup],
               desc: "- Joins completed supplied worksheets\n"\
@@ -1971,7 +1971,7 @@ module Kiba
               path: File.join(
                 Kiba::Tms.datadir,
                 "working",
-                "name_compile_returned_compile.csv"
+                "names_compiled_returned_compiled.csv"
               ),
               tags: %i[names cleanup],
               desc: "- Joins completed cleanup worksheets\n"\
@@ -1997,7 +1997,7 @@ module Kiba
                   args: {reltype: reltype, value: typevalue}
                 },
                 path: File.join(Kiba::Tms.datadir, "working",
-                  "name_compile_returned_split_#{reltype}.csv"),
+                  "names_compiled_returned_split_#{reltype}.csv"),
                 desc: "Rows from returned worksheet with `relation_type` "\
                   "value: #{typevalue}.\n"\
                   "- Reverts any edited non-editable field to original value\n"\
@@ -2010,7 +2010,7 @@ module Kiba
               path: File.join(
                 Kiba::Tms.datadir,
                 "working",
-                "name_compile_returned_checked.csv"
+                "names_compiled_returned_checked.csv"
               ),
               tags: %i[names cleanup],
               desc: "Recompiles returned rows after checking split files "\
@@ -2022,7 +2022,7 @@ module Kiba
               path: File.join(
                 Kiba::Tms.datadir,
                 "working",
-                "name_compile_returned_to_merge.csv"
+                "names_compiled_returned_to_merge.csv"
               ),
               tags: %i[names cleanup],
               desc: "Removes fingerprint field"

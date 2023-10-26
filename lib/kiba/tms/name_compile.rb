@@ -294,7 +294,7 @@ module Kiba
         {
           path: File.join(Tms.datadir,
             "working",
-            "#{ns_name}_#{tablemod.filekey}.csv"),
+            "names_compiled_from_#{tablemod.filekey}.csv"),
           creator: {callee: Tms::Jobs::NameCompile::ForUncontrolledNameTable,
                     args: {
                       mod: tablemod
