@@ -49,6 +49,8 @@ module Kiba
             bind = binding
 
             Kiba.job_segment do
+              job = bind.receiver
+
               transform Tms::Transforms::NameCompile::SelectConPersonWithInst
 
               transform Append::ToFieldValue,
@@ -58,7 +60,7 @@ module Kiba
                 target: :termsource,
                 value: "TMS Constituents.person_with_institution"
 
-              treatment = bind.receiver.send(:treatment)
+              treatment = job.send(:treatment)
               if treatment == :variant
                 transform Merge::ConstantValue,
                   target: :relation_type, value: "variant term"
@@ -73,7 +75,7 @@ module Kiba
                   mode: :main
               end
 
-              if bind.receiver.send(:ntc_needed?)
+              if job.send(:ntc_needed?)
                 transform Tms::Transforms::NameTypeCleanup::MergeCorrectData,
                   lookup: name_type_cleanup__for_con_person_with_inst
                 transform Tms::Transforms::NameTypeCleanup::ExplodeMultiNames
