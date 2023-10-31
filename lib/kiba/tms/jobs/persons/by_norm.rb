@@ -29,18 +29,25 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              ambig = Tms::Services::Constituents::Undisambiguator.new
+
               transform Delete::FieldsExcept,
                 fields: %i[name prefnormorig contype]
               transform Deduplicate::Table,
                 field: :prefnormorig
+              transform do |row|
+                row[:ambig] = ambig.call(row[:name])
+                row
+              end
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: :name,
+                source: :ambig,
                 target: :namenorm
               transform Merge::MultiRowLookup,
                 lookup: persons__brief,
                 keycolumn: :namenorm,
                 fieldmap: {finalname: :termdisplayname}
-              transform Delete::Fields, fields: :namenorm
+              transform Delete::Fields,
+                fields: %i[namenorm ambig]
               transform Rename::Field, from: :prefnormorig, to: :norm
               transform Deduplicate::FieldValues,
                 fields: %i[name],

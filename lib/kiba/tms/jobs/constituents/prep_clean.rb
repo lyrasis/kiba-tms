@@ -53,10 +53,11 @@ module Kiba
                 transform Copy::Field,
                   from: :constituenttype,
                   to: :contype
+                transform Tms::Transforms::Names::NormalizeContype
                 transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
                   source: prefname,
                   target: :norm
-                transform Tms::Transforms::Names::NormalizeContype
+                transform Tms::Transforms::NameCompile::DisambiguateConstituentDuplicates
                 transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
                 transform do |row|
                   id = row[:constituentid]
@@ -80,6 +81,8 @@ module Kiba
               else
                 transform Copy::Field, from: :norm, to: :prefnormorig
                 transform Copy::Field, from: :nonprefnorm, to: :nonprefnormorig
+
+                transform Tms::Transforms::NameCompile::DisambiguateConstituentDuplicates
               end
             end
           end

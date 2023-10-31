@@ -20,7 +20,7 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # transform run at the beginning of prep__constituents to force
+      # Custom transform run at the beginning of prep__constituents to force
       #   client-specific changes to TMS source data
       setting :prep_transform_pre, default: nil, reader: true
       # field to use as initial/preferred form
@@ -31,6 +31,20 @@ module Kiba
       # Whether to retain value in :var_name_field as a variant name in CS
       #   person/org record
       setting :include_flipped_as_variant, default: false, reader: true
+
+      # We do not deduplicate names from Constituents. Since these names
+      #   will be referenced by ID from many places in the migration, we
+      #   need to keep all rows except for those being dropped. Clients
+      #   also need to see the duplicate values so they can
+      #   disambiguate them if appropriate. HOWEVER, we cannot bulk ingest or
+      #   manage actual duplicate name strings in CollectionSpace. So, we need
+      #   to add some value to the end of identical names that remain in the
+      #   same authority vocabulary at the time of ingest. That's what this
+      #   setting is. The `%int%` will be replaced with the TMS Constituent ID,
+      #   so we don't have to worry about order changing, etc.
+      setting :duplicate_disambiguation_string,
+        default: " (duplicate %int%)",
+        reader: true
 
       # Fields to retain in :constituents__by_* jobs. These jobs are for use in
       #   name compilation process. The resulting tables should not be used as

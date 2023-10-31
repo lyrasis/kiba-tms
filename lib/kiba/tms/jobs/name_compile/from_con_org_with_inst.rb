@@ -29,6 +29,7 @@ module Kiba
               config = job.send(:config)
               treatment = config.source_treatment[job.send(:jobkey)]
               prefname = Tms::Constituents.preferred_name_field
+              ambig = Tms::Services::Constituents::Undisambiguator.new
 
               transform FilterRows::WithLambda,
                 action: :keep,
@@ -49,7 +50,9 @@ module Kiba
               if Tms::NameTypeCleanup.done
                 transform FilterRows::WithLambda,
                   action: :reject,
-                  lambda: ->(row) { row[prefname] == row[:institution] }
+                  lambda: ->(row) do
+                    ambig.call(row[prefname]) == row[:institution]
+                  end
               end
 
               if treatment == :variant

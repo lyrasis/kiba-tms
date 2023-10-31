@@ -30,6 +30,8 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              ambig = Tms::Services::Constituents::Undisambiguator.new
+
               prefname = Tms::Constituents.preferred_name_field
 
               transform FilterRows::WithLambda,
@@ -38,8 +40,12 @@ module Kiba
                   contype = row[:contype]
                   contype && contype.start_with?("Person")
                 end
+              transform do |row|
+                row[:ambig] = ambig.call(row[prefname])
+                row
+              end
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: prefname,
+                source: :ambig,
                 target: :prefnormorig
               transform Rename::Field, from: prefname, to: :name
               transform Delete::FieldsExcept,

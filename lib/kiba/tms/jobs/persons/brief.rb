@@ -19,6 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              ambig = Tms::Services::Constituents::Undisambiguator.new
               transform Tms::Transforms::Names::RemoveDropped
 
               transform FilterRows::WithLambda,
@@ -32,12 +33,18 @@ module Kiba
               transform Rename::Field,
                 from: :name,
                 to: :termdisplayname
+              transform do |row|
+                row[:undisambig] = ambig.call(row[:termdisplayname])
+                row
+              end
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,
-                source: :termdisplayname,
+                source: :undisambig,
                 target: :norm
               transform Deduplicate::Table,
                 field: :norm,
                 delete_field: false
+              transform Delete::Fields,
+                fields: :undisambig
             end
           end
         end

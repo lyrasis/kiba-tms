@@ -19,6 +19,11 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              ambig = Tms::Services::Constituents::Undisambiguator.new
+              normer = Kiba::Extend::Utils::StringNormalizer.new(
+                mode: :cspaceid
+              )
+
               transform FilterRows::FieldEqualTo,
                 action: :keep,
                 field: :relation_type,
@@ -27,10 +32,20 @@ module Kiba
                 action: :keep,
                 field: :contype
               transform Tms::Transforms::Names::NormalizeContype
+
+              # remove auto-added duplicate disambiguator from Constituent
+              #   terms so we can deduplicate non-Constituent terms against them
+              transform do |row|
+                row[:dedupenorm] = normer.call(
+                  ambig.call(row[:name])
+                )
+                row
+              end
+
               transform Delete::FieldsExcept,
-                fields: %i[fingerprint contype_norm norm termsource]
+                fields: %i[fingerprint contype_norm dedupenorm norm termsource]
               transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[contype_norm norm],
+                sources: %i[contype_norm dedupenorm],
                 target: :combined,
                 delim: " ",
                 delete_sources: false
