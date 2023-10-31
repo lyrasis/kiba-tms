@@ -2370,6 +2370,16 @@ module Kiba
                 "constituent names that are not literally duplicates",
             tags: %i[names con]
           }
+          if Tms::NameTypeCleanup.migration_added_names
+            register :from_migration_added, {
+              creator:
+              Kiba::Tms::Jobs::NameCompile::FromMigrationAdded,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "names_compiled_from_migration_added.csv"),
+              desc: "Names manually added to name type cleanup worksheet(s)",
+              tags: %i[names]
+            }
+          end
         end
 
         Kiba::Tms.registry.namespace("name_type_cleanup") do

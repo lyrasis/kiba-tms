@@ -17,17 +17,54 @@ module Kiba
             )
           end
 
+          def normalizer
+            return @normalizer if instance_variable_defined?(:@normalizer)
+
+            @normalizer = Kiba::Extend::Utils::StringNormalizer.new(
+              mode: :cspaceid
+            )
+          end
+
           def xforms
             bind = binding
 
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
+              job = bind.receiver
+              config = job.send(:config)
+              normer = job.send(:normalizer)
 
               transform config.returned_cleaner if config.returned_cleaner
 
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[correctname correctauthoritytype]
+
+              # prepare any migration-added names
+              transform do |row|
+                name = row[:name]
+                type = row[:authoritytype]
+                next row unless name.blank? && type.blank?
+
+                corrname = row[:correctname]
+                normname = normer.call(corrname)
+                corrtype = row[:correctauthoritytype]
+                contype = if corrtype == "p"
+                  "Person"
+                elsif corrtype == "o"
+                  "Organization"
+                end
+                row[:name] = corrname
+                row[:authoritytype] = contype
+                row[:termsource] = "MigrationAdded"
+                nameid = "ma_#{normname}"
+                row[:constituentid] = nameid
+                row[:cleanupid] = nameid
+                row[:prefnormorig] = normname
+                row[:namemergenorm] = normname
+                row[:contype] = contype
+                row[:corrfingerprint] = "#{contype} #{normname}"
+                row
+              end
 
               # this can be taken out if we ever do a TMS migration where this
               #   process isn't changing any more during the migration!

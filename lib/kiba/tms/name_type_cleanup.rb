@@ -27,6 +27,15 @@ module Kiba
       setting :done, default: false, reader: true,
         constructor: proc { !returned_files.empty? }
 
+      # @return [Boolean] whether client or Migration Specialist has manually
+      #   added names in returned worksheets. These should be added by
+      #   populating only the :correctname and :correctauthoritytype fields
+      #   in the worksheet. The :returned_compile job handles deriving other
+      #   worksheet fields from these values. The value of this setting is
+      #   used to determine whether a job to compile these names will be used
+      #   as a source for NameCompile
+      setting :migration_added_names, default: false, reader: true
+
       # Optional client-specific transform to clean returned worksheet before
       #   any further processing is done
       setting :returned_cleaner, default: nil, reader: true

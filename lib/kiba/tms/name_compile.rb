@@ -46,12 +46,14 @@ module Kiba
           name_compile__from_assoc_parents_for_con
         ],
         reader: true,
-        constructor: proc { |value|
-          if uncontrolled_name_source_tables.empty?
-            value
-          else
-            value + [:name_compile__from_uncontrolled_name_tables]
+        constructor: proc { |base|
+          unless uncontrolled_name_source_tables.empty?
+            base << :name_compile__from_uncontrolled_name_tables
           end
+          if Tms::NameTypeCleanup.migration_added_names
+            base << :name_compile__from_migration_added
+          end
+          base.select { |job| Kiba::Extend::Job.output?(job) }
         }
 
       # potential sources not included by default:
