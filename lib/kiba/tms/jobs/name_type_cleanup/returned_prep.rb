@@ -68,6 +68,17 @@ module Kiba
                 row
               end
 
+              # drop rows that are Constituents with correctauthoritytype = d
+              transform do |row|
+                cat = row[:correctauthoritytype]
+                next row unless cat == "d"
+
+                src = row[:termsource]
+                unless /^TMS Constituents\.(?:persons|orgs)$/.match?(src)
+                  row
+                end
+              end
+
               transform Delete::FieldsExcept,
                 fields: %i[correctname authoritytype correctauthoritytype
                   constituentid origname termsource cleanupid]
