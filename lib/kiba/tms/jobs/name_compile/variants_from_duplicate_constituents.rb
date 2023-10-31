@@ -8,14 +8,22 @@ module Kiba
           module_function
 
           def job
+            the_source = get_source
+            return unless the_source
+
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :constituents__duplicates,
+                source: the_source,
                 destination: :name_compile__variants_from_duplicate_constituents,
                 lookup: :constituents__for_compile
               },
               transformer: xforms
             )
+          end
+
+          def get_source
+            key = :constituents__duplicates
+            key if Kiba::Extend::Job.output?(key)
           end
 
           def xforms
