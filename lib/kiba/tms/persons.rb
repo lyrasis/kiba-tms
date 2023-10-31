@@ -33,6 +33,31 @@ module Kiba
           value << :termprefforlang if Tms::Names.set_term_pref_for_lang
           value
         end
+      setting :cs_fields,
+        default: {
+          fcart: %i[
+            termdisplayname termname termqualifier termstatus termtype termflag
+            termlanguage termprefforlang salutation title forename middlename
+            surname nameadditions initials termsourcecitationlocal
+            termsourcecitationworldcat termsourcedetail termsourceid
+            termsourcenote gender occupation schoolorstyle group nationality
+            namenote birthdategroup birthplace deathdategroup deathplace bionote
+            email emailtype telephonenumber telephonenumbertype faxnumber
+            faxnumbertype webaddress webaddresstype addressplace1 addressplace2
+            addressmunicipality addressstateorprovince addresspostcode
+            addresscountry addresstype declinedtoanswerpronoun suppliedpronoun
+            userestrictionpronoun declinedtoanswergender suppliedgender
+            userestrictiongender declinedtoanswerrace suppliedrace
+            userestrictionrace declinedtoanswerethnicity suppliedethnicity
+            userestrictionethnicity declinedtoanswersexuality suppliedsexuality
+            userestrictionsexuality declinedtoanswerbirthplace
+            suppliedbirthplace userestrictionbirthplace
+            declinedtoanswerbirthdate suppliedstructuredbirthdategroup
+            userestrictionbirthdate informationauthor informationdate
+            informationuserestriction otherinformation
+          ]
+        },
+        reader: true
     end
   end
 end

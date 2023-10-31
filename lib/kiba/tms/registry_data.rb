@@ -3590,6 +3590,12 @@ module Kiba
             tags: %i[persons cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]}
           }
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::Persons::ForIngest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "persons.csv"),
+            tags: %i[persons ingest]
+          }
           register :brief, {
             creator: Kiba::Tms::Jobs::Persons::Brief,
             path: File.join(Kiba::Tms.datadir, "working", "persons_brief.csv"),
