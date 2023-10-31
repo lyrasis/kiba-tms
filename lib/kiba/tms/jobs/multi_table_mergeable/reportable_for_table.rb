@@ -21,7 +21,8 @@ module Kiba
           def lookups(config)
             base = []
 
-            if config.respond_to?(:record_num_merge_config)
+            if config.respond_to?(:record_num_merge_config) &&
+                !config.record_num_merge_config.blank?
               base << config.record_num_merge_config[:sourcejob]
             end
 
