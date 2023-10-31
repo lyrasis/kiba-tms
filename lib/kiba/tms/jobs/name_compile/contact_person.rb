@@ -34,6 +34,15 @@ module Kiba
                 lookup: persons__by_norm,
                 keycolumn: :personnorm,
                 fieldmap: {person: :name}
+              # Move :related_term value to :person if :person is blank after
+              #   lookup
+              transform do |row|
+                person = row[:person]
+                next row unless person.blank?
+
+                row[:person] = row[:related_term]
+                row
+              end
             end
           end
         end

@@ -9,7 +9,7 @@ module Kiba
 
           def initialize(lookup:)
             fieldmap = {
-              contactname: :related_term,
+              contactname: :person,
               contactrole: :related_role
             }
             @xforms = [
