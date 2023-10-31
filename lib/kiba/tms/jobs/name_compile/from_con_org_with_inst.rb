@@ -11,8 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__for_compile,
-                destination: jobkey,
-                lookup: lookups
+                destination: jobkey
               },
               transformer: xforms
             )
@@ -20,12 +19,6 @@ module Kiba
 
           def jobkey
             :name_compile__from_con_org_with_inst
-          end
-
-          def lookups
-            base = []
-            base << :constituents__by_all_norms if Tms::NameTypeCleanup.done
-            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms
