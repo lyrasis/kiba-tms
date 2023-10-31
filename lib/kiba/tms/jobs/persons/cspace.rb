@@ -112,13 +112,13 @@ module Kiba
               if lookups.any?(:con_geography__for_authority) &&
                   Tms::ConGeography.auth_merger
                 transform Tms::ConGeography.auth_merger,
-                  auth: :org,
+                  auth: :person,
                   lookup: con_geography__for_authority
               end
               if lookups.any?(:con_geography__for_non_authority) &&
                   Tms::ConGeography.non_auth_merger
                 transform Tms::ConGeography.non_auth_merger,
-                  auth: :org,
+                  auth: :person,
                   lookup: con_geography__for_non_authority
               end
 
