@@ -6,10 +6,13 @@ module Kiba
       module NameCompile
         class DeriveVariantName
           include RowEvenable
-          # @param mode [:alt, :main] whether deriving from ConAltNames or Constituents row
-          # @param from [:nil, :inst, :nameparts] only relevant for organizations, since we may want to
-          #   derive either an organization or a person variant name from an organization. In a person
-          #   row, deriving from name parts would result in the already-existing person name
+          # @param mode [:alt, :main] whether deriving from ConAltNames or
+          #   Constituents row
+          # @param from [:nil, :inst, :nameparts] only relevant for
+          #   organizations, since we may want to derive either an
+          #   organization or a person variant name from an
+          #   organization. In a person row, deriving from name parts
+          #   would result in the already-existing person name
           def initialize(mode:, from: nil)
             @mode = mode
             @from = from
@@ -36,8 +39,8 @@ module Kiba
 
           private
 
-          attr_reader :mode, :from, :authtypefield, :namefield, :relbuilder, :personbuilder,
-            :authtype, :rows
+          attr_reader :mode, :from, :authtypefield, :namefield, :relbuilder,
+            :personbuilder, :authtype, :rows
 
           def deletefields
             todelete = if authtype == "Person"

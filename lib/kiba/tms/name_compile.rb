@@ -133,9 +133,12 @@ module Kiba
         reader: true
 
       # What categories of terms will be deduplicated in name compilation
-      # :main is always deduplicated: contype_norm + normalized form of name
-      # :variant: contype_norm + name + variant_term + variant_qualifier should be unique
-      # :related: contype_norm + name + relation_type + related_term + related_role should be unique
+      # :main is always deduplicated or disambiguated:
+      #   contype_norm + normalized form of name
+      # :variant: contype_norm + name + variant_term + variant_qualifier
+      #   should be unique
+      # :related: contype_norm + name + relation_type + related_term +
+      #   related_role should be unique
       # :note: contype_norm + name + relation_type + note_text should be unique
       setting :deduplicate_categories,
         default: %i[variant related note],

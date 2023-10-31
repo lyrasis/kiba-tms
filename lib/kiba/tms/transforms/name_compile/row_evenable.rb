@@ -4,12 +4,14 @@ module Kiba
   module Tms
     module Transforms
       module NameCompile
-        # Mixin module to ensure all rows emitted by a transform have the same fields
+        # Mixin module to ensure all rows emitted by a transform have
+        # the same fields
         #
         # ## Implementation notes
         #
-        # Classes mixing this module in should define `@rows = []` in constructor. `:rows` must
-        #   be an `attr_reader`. The `:process` method should push rows to `:rows` and end by
+        # Classes mixing this module in should define `@rows = []` in
+        #   constructor. `:rows` must be an `attr_reader`. The
+        #   `:process` method should push rows to `:rows` and end by
         #   returning nil.
         module RowEvenable
           def close

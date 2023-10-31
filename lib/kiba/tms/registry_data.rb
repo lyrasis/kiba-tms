@@ -257,7 +257,8 @@ module Kiba
             creator: Kiba::Tms::Jobs::ClassificationNotations::IdsUsed,
             path: File.join(Kiba::Tms.datadir, "reference",
               "classification_notation_ids_used.csv"),
-            desc: "Extracts list of unique classification notation ids in used TermMasterThes rows",
+            desc: "Extracts list of unique classification notation ids in "\
+              "used TermMasterThes rows",
             lookup_on: :primarycnid,
             tags: %i[termdata terms reference]
           }
