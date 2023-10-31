@@ -68,6 +68,23 @@ module Kiba
           value << :termprefforlang if Tms::Names.set_term_pref_for_lang
           value
         end
+
+      setting :cs_fields,
+        default: {
+          fcart: %i[
+            termdisplayname termname termqualifier termstatus termtype termflag
+            termlanguage termprefforlang mainbodyname additionstoname
+            termsourcecitationlocal termsourcecitationworldcat termsourcedetail
+            termsourceid termsourcenote organizationrecordtype foundingdategroup
+            foundingplace dissolutiondategroup group function historynote
+            contactname contactrole contactdategroup contactenddategroup
+            contactstatus email emailtype telephonenumber telephonenumbertype
+            faxnumber faxnumbertype webaddress webaddresstype addressplace1
+            addressplace2 addressmunicipality addressstateorprovince
+            addresspostcode addresscountry addresstype
+          ]
+        },
+        reader: true
     end
   end
 end

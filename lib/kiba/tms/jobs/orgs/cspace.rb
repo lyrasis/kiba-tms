@@ -162,7 +162,6 @@ module Kiba
               transform Delete::DelimiterOnlyFieldValues,
                 treat_as_null: Tms.nullvalue
               transform Delete::EmptyFields, usenull: true
-              transform Tms.final_data_cleaner if Tms.final_data_cleaner
             end
           end
         end

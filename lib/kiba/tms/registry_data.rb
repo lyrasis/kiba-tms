@@ -3413,6 +3413,12 @@ module Kiba
             tags: %i[orgs cspace],
             dest_special_opts: {initial_headers: %i[termdisplayname]}
           }
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::Orgs::ForIngest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "organizations.csv"),
+            tags: %i[orgs ingest]
+          }
           register :brief, {
             creator: Kiba::Tms::Jobs::Orgs::Brief,
             path: File.join(Kiba::Tms.datadir, "working", "orgs_brief.csv"),
