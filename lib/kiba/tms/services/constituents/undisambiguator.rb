@@ -14,6 +14,7 @@ module Kiba
 
           def call(name)
             return name unless pattern
+            return name if name.blank?
 
             name.sub(pattern, "")
           end

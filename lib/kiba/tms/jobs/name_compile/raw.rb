@@ -34,9 +34,9 @@ module Kiba
               transform Rename::Field,
                 from: Tms::Constituents.preferred_name_field,
                 to: :name
-              transform FilterRows::FieldPopulated,
+              transform FilterRows::AllFieldsPopulated,
                 action: :keep,
-                field: :contype
+                fields: %i[contype name]
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[constituentid contype name relation_type
                   termsource],

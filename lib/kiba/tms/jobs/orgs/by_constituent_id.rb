@@ -11,8 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :constituents__orgs,
-                destination: :orgs__by_constituentid,
-                lookup: :orgs__brief
+                destination: :orgs__by_constituentid
               },
               transformer: xforms
             )
@@ -20,12 +19,13 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              prefname = Tms::Constituents.preferred_name_field
+
               transform Delete::FieldsExcept,
-                fields: %i[constituentid norm]
-              transform Merge::MultiRowLookup,
-                lookup: orgs__brief,
-                keycolumn: :norm,
-                fieldmap: {name: :termdisplayname}
+                fields: [:constituentid, prefname]
+              transform Rename::Field,
+                from: prefname,
+                to: :name
               transform Tms::Transforms::Names::CleanExplodedId
             end
           end
