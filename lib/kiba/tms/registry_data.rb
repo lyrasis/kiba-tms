@@ -243,12 +243,23 @@ module Kiba
         # end
 
         Kiba::Tms.registry.namespace("associations") do
-          register :missing_values, {
-            creator: Kiba::Tms::Jobs::Associations::MissingValues,
-            path: File.join(Kiba::Tms.datadir, "reports",
-              "associations_missing_values.csv"),
-            desc: "One of the involved ids could not be mapped to a value, human-readable relationship cannot be created.",
-            tags: %i[associations reports]
+          register :in_migration, {
+            creator: Kiba::Tms::Jobs::Associations::InMigration,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "associations_in_migration.csv"),
+            desc: "Drops omitted types",
+            tags: %i[associations]
+          }
+          register :not_in_migration, {
+            creator: Kiba::Tms::Jobs::Associations::NotInMigration,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "associations_not_in_migration.csv"),
+            desc: "Report of omitted types",
+            tags: %i[associations postmigcleanup],
+            dest_special_opts: {
+              initial_headers: %i[tablename dropreason relationtype rel1 rel2
+                val1 val2]
+            }
           }
         end
 

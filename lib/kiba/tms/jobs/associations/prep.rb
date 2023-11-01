@@ -53,22 +53,51 @@ module Kiba
                     rel1: :relation1,
                     rel2: :relation2
                   }
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: %i[rel1 rel2],
+                  target: :relationtype,
+                  delete_sources: false,
+                  delim: "/"
+
+                transform Append::NilFields,
+                  fields: %i[dropreason]
+                transform Merge::ConstantValue,
+                  target: :drop,
+                  value: "n"
+
+                unless config.omitted_types.empty?
+                  tables = config.omitted_types.keys
+                  # Flag omitted types
+                  transform do |row|
+                    table = row[:tablename]
+                    next row unless tables.include?(table)
+
+                    reltype = row[:relationtype]
+                    next row unless config.omitted_types[table].include?(
+                      reltype
+                    )
+
+                    row[:drop] = "y"
+                    row[:dropreason] = "omitted relation type"
+                    row
+                  end
+                end
               end
               transform Delete::Fields, fields: :relationshipid
 
-              conlkup = ->(config) {
-                return nil unless config.target_tables.any?("Constituents")
+              transform Tms::Transforms::Associations::LookupVals
 
-                names__by_constituentid
-              }
-              objlkup = ->(config) {
-                return nil unless config.target_tables.any?("Objects")
+              # Flag dropping because of missing values
+              transform do |row|
+                drop = row[:drop]
+                next row if drop == "y"
 
-                objects__number_lookup
-              }
-              transform Tms::Transforms::Associations::LookupVals,
-                con_lookup: conlkup.call(config),
-                obj_lookup: objlkup.call(config)
+                if row[:val1].blank? || row[:val2].blank?
+                  row[:drop] = "y"
+                  row[:dropreason] = "missing value"
+                end
+                row
+              end
             end
           end
         end

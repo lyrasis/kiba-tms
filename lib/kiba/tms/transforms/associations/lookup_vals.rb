@@ -4,61 +4,50 @@ module Kiba
   module Tms
     module Transforms
       module Associations
-        # Merges human-readable values for ids 1 & 2 into row
+        # Merges human-readable values for ids into rows
         class LookupVals
-          include Kiba::Extend::Transforms::SingleWarnable
-
-          def initialize(con_lookup: nil,
-            obj_lookup: nil,
-            tablefield: :tablename)
-            @con_lookup = con_lookup
-            @obj_lookup = obj_lookup
+          def initialize(tablefield: :tablename)
             @tablefield = tablefield
-            @prefname = :prefname
-            setup_single_warning
+            @processors = set_up_processors
           end
 
-          # @private
           def process(row)
             [1, 2].each do |n|
-              target = "val#{n}".to_sym
-              row[target] = nil
-              idval = row["id#{n}".to_sym]
-              next if idval.blank?
-
-              do_lookup(idval, target, row)
+              row["val#{n}".to_sym] = nil
+              row["type#{n}".to_sym] = nil
             end
-
+            table = row[tablefield]
+            processors[table].process(row) if processors.key?(table)
             row
           end
 
           private
 
-          attr_reader :con_lookup, :obj_lookup, :tablefield, :prefname
+          attr_reader :tablefield, :processors, :prefname
 
-          def do_lookup(id, target, row)
-            case row[tablefield]
-            when "Constituents"
-              lookup_con(id, target, row)
-            when "Objects"
-              lookup_obj(id, target, row)
-            else
-              add_single_warning("#{self.class.name}: Unhandled table")
-            end
+          def set_up_processors
+            Tms::Associations.target_tables
+              .map { |table| set_up_processor(table) }
+              .to_h
+              .compact
           end
 
-          def lookup_con(id, target, row)
-            matches = con_lookup[id]
-            return if matches.blank?
-
-            row[target] = matches.first[prefname]
+          def set_up_processor(table)
+            xform = Tms::Transforms::Associations.const_get(
+              "LookupVals#{table}"
+            ).new
+          rescue
+            warn(
+              "WARNING: No Tms::Transforms::Associations::LookupVals#{table} "\
+                "transform"
+            )
+            [table, nil]
+          else
+            [table, xform]
           end
 
-          def lookup_obj(id, target, row)
-            matches = obj_lookup[id]
-            return if matches.blank?
-
-            row[target] = matches.first[:objectnumber]
+          def do_lookups(row)
+            [1, 2].each { |n| do_lookup(row, n) }
           end
         end
       end

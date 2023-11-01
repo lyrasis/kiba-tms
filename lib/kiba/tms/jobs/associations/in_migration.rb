@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module Associations
-        module ToTableSplit
+        module InMigration
           module_function
 
           def job
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__associations,
-                destination: :associations__to_table_split
+                destination: :associations__in_migration
               },
               transformer: xforms
             )
@@ -21,10 +21,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::AllFieldsPopulated,
+              transform FilterRows::FieldEqualTo,
                 action: :keep,
-                fields: %i[val1 val2]
-              transform Tms::Transforms::Associations::Explode
+                field: :drop,
+                value: "n"
+              transform Delete::Fields,
+                fields: %i[drop dropreason]
             end
           end
         end

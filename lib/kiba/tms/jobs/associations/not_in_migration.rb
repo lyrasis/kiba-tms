@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module Associations
-        module MissingValues
+        module NotInMigration
           module_function
 
           def job
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__associations,
-                destination: :associations__missing_values
+                destination: :associations__not_in_migration
               },
               transformer: xforms
             )
@@ -21,9 +21,12 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::AllFieldsPopulated,
-                action: :reject,
-                fields: %i[val1 val2]
+              transform FilterRows::FieldEqualTo,
+                action: :keep,
+                field: :drop,
+                value: "y"
+              transform Delete::Fields,
+                fields: %i[associationid drop id1 id2]
             end
           end
         end
