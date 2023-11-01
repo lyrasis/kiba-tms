@@ -53,6 +53,10 @@ module Kiba
           if Tms::NameTypeCleanup.migration_added_names
             base << :name_compile__from_migration_added
           end
+          if Tms::Associations.used? &&
+              Tms::Associations.for?("Constituents")
+            base << :name_compile__from_associations
+          end
           base.select { |job| Kiba::Extend::Job.output?(job) }
         }
 

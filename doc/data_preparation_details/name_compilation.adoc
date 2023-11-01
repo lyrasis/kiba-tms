@@ -242,3 +242,15 @@ See documentation on term sources for details on how rows are derived.
 ==== Normalized name string (ex: jontwilson)
 
 Normalized form of name extracted from an uncontrolled name field in a non-Constituents table.
+
+==== Assoc + number + . + number + . + number (ex: Assoc123.7653.876)
+
+This should never be the constituentid for a `_main term`.
+
+It indicates that the values in `name` and `related_term` came from the Associations table (rows for constituents).
+
+The first number is the `:associationid` value of the row from which the name compilation row was derived.
+
+The second number is the `id1` or `id2` value from which the `name` was derived.
+
+The third number is the `id1` or `id2` value from which the `related_term` was derived.

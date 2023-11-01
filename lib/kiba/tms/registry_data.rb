@@ -2241,6 +2241,13 @@ module Kiba
             desc: "Names extracted from AssocParents (for constituents) table",
             tags: %i[names assoc_parents]
           }
+          register :from_associations, {
+            creator: Kiba::Tms::Jobs::NameCompile::FromAssociations,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "names_compiled_from_associations.csv"),
+            desc: "Names extracted from Associations (for constituents) table",
+            tags: %i[names associations]
+          }
           register :from_reference_master, {
             creator: Kiba::Tms::Jobs::NameCompile::FromReferenceMaster,
             path: File.join(Kiba::Tms.datadir, "working",
