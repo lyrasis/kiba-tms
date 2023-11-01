@@ -258,7 +258,18 @@ module Kiba
             tags: %i[associations postmigcleanup],
             dest_special_opts: {
               initial_headers: %i[tablename dropreason relationtype rel1 rel2
-                val1 val2]
+                val1 val2 type1 type2]
+            }
+          }
+          register :unmigrated_field_values, {
+            creator: Kiba::Tms::Jobs::Associations::UnmigratedFieldValues,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "associations_unmigrated_field_values.csv"),
+            desc: "Report of omitted types",
+            tags: %i[associations postmigcleanup],
+            dest_special_opts: {
+              initial_headers: %i[tablename relationtype rel1 rel2
+                val1 val2 type1 type2]
             }
           }
         end
