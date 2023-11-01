@@ -72,8 +72,23 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: %i[org person],
                 target: :prefname,
-                delim: " ",
+                delim: Tms.delim,
                 delete_sources: false
+              # Populate contype field
+              transform do |row|
+                base = []
+                org = row[:org]
+                unless org.blank?
+                  org.split(Tms.delim).length.times { base << "Organization" }
+                end
+                person = row[:person]
+                unless person.blank?
+                  person.split(Tms.delim).length.times { base << "Person" }
+                end
+                row[:contype] = base.join(Tms.delim)
+                row
+              end
+
               transform Deduplicate::Table,
                 field: :constituentid,
                 delete_field: false
