@@ -18,6 +18,10 @@ module Kiba
       extend Tms::Mixins::Tableable
 
       setting :type_field, default: :thesxreftype, reader: true
+      setting :mergeable_value_field, default: :termused, reader: true
+      setting :additional_occurrence_ct_fields,
+        default: %i[remarks],
+        reader: true
       extend Tms::Mixins::MultiTableMergeable
 
       # Mappings for :thesxreftableid field values. Listed in data dictionary
