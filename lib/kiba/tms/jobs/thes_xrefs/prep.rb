@@ -45,6 +45,8 @@ module Kiba
                   action: :reject,
                   field: :active,
                   value: "0"
+                transform Delete::Fields,
+                  fields: :active
               end
               transform Tms.data_cleaner if Tms.data_cleaner
 
