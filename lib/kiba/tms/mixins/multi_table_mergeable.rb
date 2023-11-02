@@ -183,6 +183,7 @@ module Kiba
           set_target_table_type_cleanup_needed_setting(mod)
           set_target_table_empty_type_cleanup_needed_setting(mod)
           set_record_num_merge_config_setting(mod)
+          autoset_type_field_target(mod)
           set_checkable(mod)
           mod.extend(Tms::Mixins::ForTable)
           mod.extend(Tms::Mixins::ReportableForTable)
@@ -447,6 +448,19 @@ module Kiba
           )
         end
         private_class_method :set_record_num_merge_config_setting
+
+        def self.autoset_type_field_target(mod)
+          return if mod.respond_to?(:type_field_target)
+          return unless mod.respond_to?(:type_field) && mod.type_field
+
+          mod.module_eval(
+            "setting :type_field_target, "\
+              "default: :#{mod.type_field}, reader: true",
+            __FILE__,
+            __LINE__ - 3
+          )
+        end
+        private_class_method :autoset_type_field_target
 
         # METHODS USED BY METHODS USED FOR EXTENDING
         def self.checkable_as_needed(mod)
