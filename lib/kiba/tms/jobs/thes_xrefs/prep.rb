@@ -48,6 +48,12 @@ module Kiba
               end
               transform Tms.data_cleaner if Tms.data_cleaner
 
+              transform Replace::FieldValueWithStaticMapping,
+                source: :thesxreftableid,
+                target: :thesxreftable,
+                mapping: Tms::ThesXrefs.table_aliases,
+                delete_source: true
+
               transform Tms::Transforms::DeleteTimestamps,
                 fields: :entereddate
 

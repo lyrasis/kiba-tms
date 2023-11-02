@@ -7,16 +7,31 @@ module Kiba
 
       module_function
 
+      # As with ObjLocations, it appears that inactive here is a way to mark
+      #   erroneous/accidental entries
+      setting :drop_inactive, default: true, reader: true
+
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[removedloginid removeddate],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :type_field, default: :thesxreftype, reader: true
       extend Tms::Mixins::MultiTableMergeable
 
-      # As with ObjLocations, it appears that inactive here is a way to mark
-      #   erroneous/accidental entries
-      setting :drop_inactive, default: true, reader: true
+      # Mappings for :thesxreftableid field values. Listed in data dictionary
+      #   as TableIDs for the ThesXrefs Physical Table
+      setting :table_aliases, default: {
+                                "343" => "Attributes",
+                                "346" => "Geography",
+                                "358" => "Statuses",
+                                "361" => "Locations",
+                                "469" => "StatusInact",
+                                "604" => "GeoInact",
+                                "650" => "AttrInact"
+                              },
+        reader: true
 
       # pass in client-specific transform classes to prepare thes_xrefs rows for
       #   merging
