@@ -70,11 +70,16 @@ module Kiba
                 %i[objlocationid objectnumber locationid]
               },
               terms: {
-                initial_headers: %i[termid prefterm termtype term thesaurus_name
-                  termsource sourcetermid]
+                initial_headers: %i[termid termused termpreferred termtype
+                  thesaurus_name termsource sourcetermid]
               },
               text_entries: {
                 initial_headers: %i[tablename recordid]
+              },
+              thes_xrefs: {
+                initial_headers: %i[tablename recordid thesxreftable
+                  thesxreftype termused termpreferred
+                  remarks]
               }
             }
           end

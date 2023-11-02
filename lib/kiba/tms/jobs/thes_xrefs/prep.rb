@@ -19,7 +19,7 @@ module Kiba
           end
 
           def lookups
-            base = [:terms__preferred]
+            base = [:prep__terms]
             base << :prep__thes_xref_types if Tms::ThesXrefTypes.used?
             if Tms::ClassificationNotations.used?
               base << :prep__classification_notations
@@ -70,8 +70,15 @@ module Kiba
 
               transform Merge::MultiRowLookup,
                 keycolumn: :termid,
-                lookup: terms__preferred,
-                fieldmap: {term: :term}
+                lookup: prep__terms,
+                fieldmap: {
+                  termused: :termused,
+                  termpreferred: :termpreferred
+                }
+
+              transform FilterRows::AnyFieldsPopulated,
+                action: :keep,
+                fields: %i[termused termpreferred]
 
               if lookups.any?(:prep__classification_notations)
                 transform Merge::MultiRowLookup,

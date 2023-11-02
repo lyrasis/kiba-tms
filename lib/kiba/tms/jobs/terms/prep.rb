@@ -17,6 +17,7 @@ module Kiba
                   term_master_thes__used_in_xrefs
                   classification_notations__used
                   tms__thesaurus_bases
+                  terms__preferred
                 ]
               },
               transformer: xforms
@@ -45,7 +46,6 @@ module Kiba
                   termsource: :termsource,
                   sourcetermid: :sourcetermid
                 }
-              transform Delete::Fields, fields: :termmasterid
 
               transform Merge::MultiRowLookup,
                 keycolumn: :primarycnid,
@@ -68,14 +68,13 @@ module Kiba
                 }
               transform Delete::Fields, fields: :cn_thesaurusbaseid
 
-              transform do |row|
-                row[:prefterm] = nil
-                pref = row.fetch(:preferredtermid, nil)
-                id = row.fetch(:termid, nil)
-
-                row[:prefterm] = "y" if pref == id
-                row
-              end
+              transform Rename::Field,
+                from: :term,
+                to: :termused
+              transform Merge::MultiRowLookup,
+                lookup: terms__preferred,
+                keycolumn: :preferredtermid,
+                fieldmap: {termpreferred: :term}
             end
           end
         end

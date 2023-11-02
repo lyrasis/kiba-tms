@@ -4058,7 +4058,7 @@ module Kiba
           }
           register :preferred, {
             creator: Kiba::Tms::Jobs::Terms::Preferred,
-            path: File.join(Kiba::Tms.datadir, "working",
+            path: File.join(Kiba::Tms.datadir, "reference",
               "terms_preferred.csv"),
             lookup_on: :termid,
             tags: %i[termdata terms]

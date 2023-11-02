@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :prep__terms,
+                source: :tms__terms,
                 destination: :terms__preferred
               },
               transformer: xforms
@@ -19,8 +19,16 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform FilterRows::FieldPopulated, action: :keep,
-                field: :prefterm
+              pref_term_ids = Tms.get_lookup(
+                jobkey: :term_master_thes__used_in_xrefs,
+                column: :preferredtermid
+              ).keys
+
+              transform do |row|
+                next unless pref_term_ids.include?(row[:termid])
+
+                row
+              end
             end
           end
         end
