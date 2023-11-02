@@ -11,8 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__term_master_thes,
-                destination: :term_master_thes__used_in_xrefs,
-                lookup: :terms__used_in_xrefs
+                destination: :term_master_thes__used_in_xrefs
               },
               transformer: xforms
             )
@@ -20,11 +19,15 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              lookup = Tms.get_lookup(
+                jobkey: :terms__used_in_xrefs,
+                column: :termmasterid
+              )
               transform do |row|
-                tmid = row.fetch(:termmasterid, nil)
+                tmid = row[:termmasterid]
                 next if tmid.blank?
 
-                next row if terms__used_in_xrefs.key?(tmid)
+                next row if lookup.key?(tmid)
               end
             end
           end
