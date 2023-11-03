@@ -4,9 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module ThesXrefs
-        class ForConstituentsTreatmentMergerBirthFoundingPlace
-          include Tms::Transforms::ValueAppendable
-
+        class ForConstituentsTreatmentMergerBirthFoundingPlace < GroupedFieldExtract
           def initialize
             @target_base = "term_birth_founding_place_"
             @source_mapping = {
@@ -14,24 +12,6 @@ module Kiba
               termused: "used",
               remarks: "note"
             }
-          end
-
-          def process(row, mergerow)
-            source_mapping.each do |srcfield, targetsuffix|
-              handle_field(row, mergerow, srcfield, targetsuffix)
-            end
-            row
-          end
-
-          private
-
-          attr_reader :target_base, :source_mapping
-
-          def handle_field(row, mergerow, source, targetsuffix)
-            fieldval = mergerow[source]
-            val = fieldval.blank? ? "%NULLVALUE%" : fieldval
-            target = "#{target_base}#{targetsuffix}".to_sym
-            append_value(row, target, val, Tms.delim)
           end
         end
       end
