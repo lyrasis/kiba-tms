@@ -99,7 +99,11 @@ module Kiba
               end
 
               def fingerprint_flag_ignore_fields
-                [:#{type_field_target}]
+                if type_field == type_field_target
+                  []
+                else
+                  [:#{type_field_target}]
+                end
               end
 
               def orig_fingerprint_fields
