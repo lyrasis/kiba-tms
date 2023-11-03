@@ -14,20 +14,33 @@ module Kiba
 
         # Methods to set source fields and delimiters for the different parts.
         #   Override in including classes as necessary
+
+        # @return [String] delimiter to join multiple sources into body of note
         def body_delim
           ": "
         end
 
+        # @return [Array<Symbol>] fields whose values are joined into the body
+        #   value
         def body_source_fields
           %i[remarks textentry]
         end
 
+        # @return [String] delimiter to join multiple sources into a prefix
+        #   string
         def prefix_delim
           ", "
         end
 
+        # @return [Array<Symbol>] fields whose values are joined into the prefix
+        #   value
         def prefix_source_fields
           %i[purpose textdate]
+        end
+
+        # @return [String] delimiter to prepend prefix to rest of note value
+        def prefixed_delim
+          ": "
         end
 
         # Methods that combine/aggregate the others methods into usable final
@@ -49,10 +62,24 @@ module Kiba
           )
         end
 
-        def textentry(row)
+        def prefixed_body(row)
+          thebody = body(row)
+          return "" if thebody.blank?
+
           safe_join(
-            vals: [prefix(row), body(row)],
-            delim: ": "
+            vals: [prefix(row), thebody],
+            delim: prefixed_delim
+          )
+        end
+        alias_method :textentry, :prefixed_body
+
+        def labeled_body(row, label)
+          thebody = body(row)
+          return "" if thebody.blank?
+
+          safe_join(
+            vals: [label, thebody],
+            delim: prefixed_delim
           )
         end
 

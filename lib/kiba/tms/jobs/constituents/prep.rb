@@ -42,6 +42,13 @@ module Kiba
                 fields: %i[defaultdisplaybioid],
                 match: "-1"
 
+              if Tms::ThesXrefs.for?(config.table_name) &&
+                  Tms::ThesXrefsForConstituents.merger_xforms
+                Tms::ThesXrefsForConstituents.merger_xforms.each do |xform|
+                  transform xform
+                end
+              end
+
               transform Tms::Transforms::Constituents::PrefFromNonPref
 
               if Tms::ConTypes.used?
@@ -171,6 +178,8 @@ module Kiba
                   from: :isprivate,
                   to: :is_private_collector
               end
+
+              transform Clean::EnsureConsistentFields
             end
           end
         end
