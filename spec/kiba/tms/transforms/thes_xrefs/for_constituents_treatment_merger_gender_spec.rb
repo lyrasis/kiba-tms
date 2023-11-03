@@ -14,20 +14,15 @@ RSpec.describe Kiba::Tms::Transforms::ThesXrefs::ForConstituentsTreatmentMergerG
     context "when no target value" do
       let(:row) { {} }
 
-      context "with term and remarks" do
-        let(:mergerow) {
-          {termpreferred: "b", remarks: "a", thesxreftype: "ca"}
-        }
-        let(:expected) { {term_gender: "b", term_gender_note: "Ca note: a"} }
-
-        it "returns expected row" do
-          expect(result).to eq(expected)
+      context "with null source" do
+        let(:mergerow) { {thesxreftype: "a", termused: "b"} }
+        let(:expected) do
+          {
+            term_gender_label: "a",
+            term_gender: "b",
+            term_gender_note: "%NULLVALUE%"
+          }
         end
-      end
-
-      context "with term only" do
-        let(:mergerow) { {termpreferred: "b", thesxreftype: "c"} }
-        let(:expected) { {term_gender: "b"} }
 
         it "returns expected row" do
           expect(result).to eq(expected)
@@ -36,14 +31,21 @@ RSpec.describe Kiba::Tms::Transforms::ThesXrefs::ForConstituentsTreatmentMergerG
     end
 
     context "when existing target value" do
-      let(:row) { {term_gender: "b", term_gender_note: "foo"} }
+      let(:row) do
+        {
+          term_gender_label: "a",
+          term_gender: "b",
+          term_gender_note: "%NULLVALUE%"
+        }
+      end
 
       context "with term only" do
-        let(:mergerow) { {termpreferred: "d", remarks: "e", thesxreftype: "f"} }
+        let(:mergerow) { {thesxreftype: "c", termused: "d", remarks: "e"} }
         let(:expected) do
           {
+            term_gender_label: "a|c",
             term_gender: "b|d",
-            term_gender_note: "foo%CR%%CR%F note: e"
+            term_gender_note: "%NULLVALUE%|e"
           }
         end
 

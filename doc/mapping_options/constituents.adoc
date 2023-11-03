@@ -224,7 +224,10 @@ Logic is the same as for `birth_founding_place`, but mapping into `deathPlace` f
 
 ==== Initial processing
 
-The `:termpreferred` value from rows with this treatment will be mapped to `Constituents` `:term_gender`. If there is a `:remarks` value, it is prepared via the following pattern and the result is mapped to `Constituents` `:term_gender_note`.
+The `:termpreferred` value from rows with this treatment will be mapped to `Constituents` `:term_gender`. The `:remarks` value is mapped to `Constituents` `:term_gender_note`. The `:thesxreftype` value is mapped to `Consitutents` `:term_gender_label`.
+
+*TECHNICAL NOTE:* `:term_gender`, `:term_gender__note`, and `:term_gender_label` must be merged in like a repeatable field group for subsequent processing to be possible.
+
 
 Pattern: `{thesxreftype value} note: {remarks value}`
 
