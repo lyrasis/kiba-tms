@@ -4,17 +4,14 @@ module Kiba
   module Tms
     module Transforms
       module Associations
-        class LookupValsObjects < LookupVals
+        class LookupValsObjects
+          include Lookupable
+
           def initialize
             @lookup = Tms.get_lookup(
               jobkey: :objects__number_lookup,
               column: :objectid
             )
-          end
-
-          def process(row)
-            do_lookups(row)
-            row
           end
 
           private

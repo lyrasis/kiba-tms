@@ -42,13 +42,6 @@ module Kiba
                 fields: %i[defaultdisplaybioid],
                 match: "-1"
 
-              if Tms::ThesXrefs.for?(config.table_name) &&
-                  Tms::ThesXrefsForConstituents.merger_xforms
-                Tms::ThesXrefsForConstituents.merger_xforms.each do |xform|
-                  transform xform
-                end
-              end
-
               transform Tms::Transforms::Constituents::PrefFromNonPref
 
               if Tms::ConTypes.used?
@@ -94,7 +87,9 @@ module Kiba
                 casesensitive: false
 
               transform Tms::Transforms::Constituents::FlagInconsistentOrgNames
-              transform Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
+              transform(
+                Tms::Transforms::Constituents::CleanRedundantOrgNameDetails
+              )
 
               # tag rows as to whether they do or do not actually contain any
               #   name data
@@ -118,7 +113,7 @@ module Kiba
                   lookup: con_dates__to_merge,
                   keycolumn: :constituentid,
                   fieldmap: {datenote: :datenote},
-                  delim: "%CR%%CR%",
+                  delim: Tms.notedelim,
                   sorter: Lookup::RowSorter.new(on: :condateid, as: :to_i)
               end
 
@@ -137,14 +132,9 @@ module Kiba
               end
 
               unless config.date_append_to_type == :none
-                transform Kiba::Tms::Transforms::Constituents::AppendDatesToNames
-              end
-
-              if Tms::AltNums.for?(config.table_name) &&
-                  Tms::AltNumsForConstituents.merger_xforms
-                Tms::AltNumsForConstituents.merger_xforms.each do |xform|
-                  transform xform
-                end
+                transform(
+                  Kiba::Tms::Transforms::Constituents::AppendDatesToNames
+                )
               end
 
               transform Kiba::Extend::Transforms::Cspace::NormalizeForID,

@@ -78,10 +78,22 @@ module Kiba
                   action: :keep,
                   field: prefname
                 transform Sort::ByFieldValue, field: :constituentid
+                transform do |row|
+                  cid = row[:constituentid]
+                  row[:normid] = if cid["exploded"]
+                    cid.sub(/_exploded.*$/, "")
+                  else
+                    cid
+                  end
+                  row
+                end
+
               else
                 transform Copy::Field, from: :norm, to: :prefnormorig
                 transform Copy::Field, from: :nonprefnorm, to: :nonprefnormorig
-
+                transform Copy::Field,
+                  from: :constituentid,
+                  to: :normid
                 transform Tms::Transforms::NameCompile::DisambiguateConstituentDuplicates
               end
             end

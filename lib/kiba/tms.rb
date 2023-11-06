@@ -58,6 +58,7 @@ module Kiba
         default: nil,
         reader: true,
         constructor: ->(_val) { File.join(datadir, tmsdir) }
+      setting :blank_jobs, default: %i[], reader: true
     end
 
     def loader
@@ -270,20 +271,22 @@ module Kiba
     # @param jobkey [Symbol]
     # @param column [Symbol] keycolumn on which to lookup
     def get_lookup(jobkey:, column:)
-      reg = Tms.registry.resolve(jobkey)
-      path = reg.path
-      unless File.exist?(path)
-        Kiba::Extend::Command::Run.job(jobkey)
-      end
+      return nil if Tms.blank_jobs.include?(jobkey)
+      return nil unless job_output?(jobkey)
+
       Kiba::Extend::Utils::Lookup.csv_to_hash(
-        file: path,
+        file: Tms.registry.resolve(jobkey).path,
         keycolumn: column
       )
     end
 
     # @param jobkey [Symbol]
     def job_output?(jobkey)
-      Kiba::Extend::Job.output?(jobkey)
+      return false if Tms.blank_jobs.include?(jobkey)
+
+      result = Kiba::Extend::Job.output?(jobkey)
+      Tms.blank_jobs << jobkey unless result == true
+      result
     end
   end
 end

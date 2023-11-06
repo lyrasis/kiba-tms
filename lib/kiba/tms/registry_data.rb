@@ -676,6 +676,26 @@ module Kiba
               Generates new :norm field
             TXT
           }
+          register :early_lookup, {
+            creator: Kiba::Tms::Jobs::Constituents::PrepClean,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "constituents_prepped_clean.csv"
+            ),
+            tags: %i[con],
+            lookup_on: :normid,
+            desc: "Alias to prep_clean, with different lookup_on"
+          }
+          register :merge_external_tables, {
+            creator: Kiba::Tms::Jobs::Constituents::MergeExternalTables,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "constituents_merge_external_tables.csv"
+            ),
+            tags: %i[con]
+          }
           register :by_norm, {
             creator: Kiba::Tms::Jobs::Constituents::ByNorm,
             path: File.join(

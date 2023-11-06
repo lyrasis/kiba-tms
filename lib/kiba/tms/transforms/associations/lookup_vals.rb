@@ -35,19 +35,15 @@ module Kiba
           def set_up_processor(table)
             xform = Tms::Transforms::Associations.const_get(
               "LookupVals#{table}"
-            ).new
-          rescue
+            )
+          rescue => err
             warn(
               "WARNING: No Tms::Transforms::Associations::LookupVals#{table} "\
                 "transform"
             )
             [table, nil]
           else
-            [table, xform]
-          end
-
-          def do_lookups(row)
-            [1, 2].each { |n| do_lookup(row, n) }
+            [table, xform.new]
           end
         end
       end

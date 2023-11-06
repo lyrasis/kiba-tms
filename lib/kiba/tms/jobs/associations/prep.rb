@@ -23,13 +23,7 @@ module Kiba
           def lookups
             base = []
             base << :prep__relationships if Tms::Relationships.used?
-            if config.target_tables.any?("Constituents")
-              base << :names__by_constituentid
-            end
-            if config.target_tables.any?("Objects")
-              base << :objects__number_lookup
-            end
-            base
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
