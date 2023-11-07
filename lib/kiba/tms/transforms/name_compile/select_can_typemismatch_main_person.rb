@@ -5,7 +5,6 @@ module Kiba
     module Transforms
       module NameCompile
         class SelectCanTypemismatchMainPerson
-          # @private
           def process(row)
             return unless eligible?(row)
 
