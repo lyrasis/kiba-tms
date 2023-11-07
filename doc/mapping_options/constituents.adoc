@@ -145,9 +145,9 @@ constituents_with_multiple_address.csv:: Address data for names that will have m
 
 == `ThesXrefs` merge treatments
 
-The TMS `ThesXrefs` table stores terms/values of different types for merge into various target tables, including ``Constituents`.
+The TMS `ThesXrefs` table stores terms/values of different types for merge into various target tables, including `Constituents`.
 
-Your Migration Specialist will let you know about any custom cleanup and preparation of these values prior to merging them into `Consituents`. Usually this involves some handling of any ``:remarks` values that may have been recorded for individual xrefs.
+Your Migration Specialist will let you know about any custom cleanup and preparation of these values prior to merging them into `Consituents`. Usually this involves some handling of any `:remarks` values that may have been recorded for individual xrefs.
 
 Each `:thesxreftype` must be assigned a treatment, which is used to merge the term values into the `Constituents` data as shaped for CollectionSpace. Multiple values are merged into a single Constituent record in order of the `:displayorder` value for `ThesXrefs` row. The available treatments are:
 
