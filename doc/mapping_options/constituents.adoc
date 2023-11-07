@@ -157,7 +157,7 @@ Rows with this treatment assigned to their `:thesxreftype` will be omitted from 
 
 === birth_founding_place
 
-==== Initial processing
+*Initial processing*
 
 The `:termpreferred` value from rows with this treatment will be mapped to `Constituents` `:term_birth_founding_place_preferred`. The `:termused` value is mapped to `Constituents` `:term_birth_founding_place_used`. The `:remarks` value is mapped to `Constituents` `:term_birth_founding_place_note`.
 
@@ -165,87 +165,72 @@ NOTE: Any birth_founding_place info that may have been merged in from `ConGeogra
 
 *TECHNICAL NOTE:* `:term_birth_founding_place_preferred`, `:term_birth_founding_place_used`, and `:term_birth_founding_place_note` must be merged in like a repeatable field group for subsequent processing to be possible.
 
-==== Person processing
+*Person processing*
 
-===== If `Person` `birthPlace` field is authority controlled
+.If `Person` `birthPlace` field is authority controlled
+* The first `:term_birth_founding_place_preferred` value will be mapped to `birthPlace` field. If there is a `:term_birth_founding_place_note` value associated with first value, it is mapped to `:term_note_birthplace` with prefix [.value]#Birth place field value note:#.
+* If there are more than one `:term_birth_founding_place_used` values, the first (represented by the preferred term mapped to `birthPlace`) is discarded. Subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent birth place(s):#, which is mapped to `:term_note_birthplace` field
 
-The first `:term_birth_founding_place_preferred` value will be mapped to `birthPlace` field.
+.If `Person` `birthPlace` field is free text
+* The first `:term_birth_founding_place_used` value will be mapped to `birthPlace` field. If there is an associated `:term_birth_founding_place_note` value, it will be appended to the `birthPlace` field, separated by " -- ".
+* If there are more than one `:term_birth_founding_place_used` values, subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent birth place(s):#, which is mapped to `:term_note_birthplace` field.
 
-If there are more than one `:term_birth_founding_place_used` values, the first (represented by the preferred term mapped to `birthPlace`) is discarded. Subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent birth place(s):#, which is mapped to `bioNote` field.
+.Regardless of `birthPlace` authority controlled/free text status
+* If any birthPlace info was merged in from `ConGeography`, the first value from that data will be mapped to `birthPlace`, and all `:term_birth_founding_place_used` values prepared and mapped as a note string as described above.
+* Any `:term_note_birthplace` values are mapped to `bioNote` field.
 
-===== If `Person` `birthPlace` field is free text
+*Organization processing*
 
-The first `:term_birth_founding_place_used` value will be mapped to `birthPlace` field.
-
-If there are more than one `:term_birth_founding_place_used` values, subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent birth place(s):#, which is mapped to `bioNote` field.
-
-===== Regardless of `birthPlace` authority controlled/free text status
-
-If any birthPlace info was merged in from `ConGeography`, the first value from that data will be mapped to `birthPlace`, and all `:term_birth_founding_place_used` values prepared and mapped as a note string as described above.
-
-Any `:term_birth_founding_place_note` values are concatenated into a string separated by "; ". The whole string is prepended with label [.value]#Birth place note(s):# and mapped to `bioNote` field.
-
-==== Organization processing
-
-===== If `Organization` `foundingPlace` field is authority controlled
-
-The first `:term_birth_founding_place_preferred` value will be mapped to `foundingPlace` field.
-
-If there are more than one `:term_birth_founding_place_used` values, the first (represented by the preferred term mapped to `foundingPlace`) is discarded. Subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent founding place(s):#, which is mapped to `historyNote` field.
-
-===== If `Organization` `foundingPlace` field is free text
-
-The first `:term_birth_founding_place_used` value will be mapped to `foundingPlace` field.
-
-If there are more than one `:term_birth_founding_place_used` values, subsequent values are concatenated into a note string with prefix label: [.value]#Subsequent founding place(s):#, which is mapped to `historyNote` field.
-
-===== Regardless of `foundingPlace` authority controlled/free text status
-
-If any foundingPlace info was merged in from `ConGeography`, the first value from that data will be mapped to `foundingPlace`, and all `:term_birth_founding_place_used` values prepared and mapped as a note string as described above.
-
-Any `:term_birth_founding_place_note` values are concatenated into a string separated by "; ". The whole string is prepended with label [.value]#Founding place note(s):# and mapped to `historyNote` field.
+This is handled the same as for Person, but with mappings to `foundingPlace`, and `historyNote` fields, with note labels reflecting founding place.
 
 === death_dissolution_place
 
-==== Initial processing
+*Initial processing*
 This is handled the same  as `birth_founding_place`, but "death_dissolution" in the target `Constituent` fields instead of "birth_founding".
 
-==== Organization processing
+*Organization processing*
 
 Organization records do not have a `dissolutionPlace` field, so any `:term_death_dissolution_place_used` values are concatenated into a string separated by "; ". The whole string is prepended with label [.value]#Dissolution place(s):# and mapped to `historyNote` field.
 
 Any `:term_death_dissolution_place_note` values are concatenated into a string separated by "; ". The whole string is prepended with label [.value]#Dissolution place note(s):# and mapped to `historyNote` field.
 
-==== Person processing
+*Person processing*
 
 Logic is the same as for `birth_founding_place`, but mapping into `deathPlace` field, and tweaking note field labels to say "death" instead of "birth".
 
 === gender
 
-==== Initial processing
+*Initial processing*
 
 The `:termpreferred` value from rows with this treatment will be mapped to `Constituents` `:term_gender`. The `:remarks` value is mapped to `Constituents` `:term_gender_note`. The `:thesxreftype` value is mapped to `Consitutents` `:term_gender_label`.
 
-*TECHNICAL NOTE:* `:term_gender`, `:term_gender__note`, and `:term_gender_label` must be merged in like a repeatable field group for subsequent processing to be possible.
+*TECHNICAL NOTE:* `:term_gender`, `:term_gender_note`, and `:term_gender_label` must be merged in like a repeatable field group for subsequent processing to be possible.
 
+*Person processing*
 
-Pattern: `{thesxreftype value} note: {remarks value}`
+.If there is one `:term_gender` value for the person
+* `:term_gender` value is mapped to `Person` `gender` field
+* If there is a `:term_gender_note` value, it is transformed as per the pattern `{term_gender_label} note on Gender field value: {term_gender_note}`, and mapped to the `:term_note_gender` field
 
-==== Person processing
+.If there is more than one `:term_gender` value for the same person
+* Term, note, and label values are split into "preceding" and "final" groups for processing. The "preceding" group can have any number of values.
+* All "preceding" values are mapped to the `:term_note_gender` field, transformed as per the pattern `{term_gender_label} note: {term_gender} -- {term_gender_note}`
+* Final `:term_gender` value mapped to the `Person` `gender` field.
+* Final `:term_gender_note` value, if any, is transformed as per the pattern `{term_gender_label} note on Gender field value: {term_gender_note}`, and mapped to the `:term_note_gender` field
 
-Final `:term_gender` value mapped to the `Person` `gender` field. Any preceding values are concatenated into a note with the label: [.value]#Previous gender(s):#. This note will be treated like `:term_gender_note`.
+`:term_note_gender` value will be mapped to the `Person` `bioNote` field.
 
-`:term_gender_note` value will be mapped to the `Person` `bioNote` field.
+*Organization processing*
 
-==== Organization processing
+All values will be treated as "preceding" values are in persons with more than one `term_gender` value.
 
-`:term_gender` value(s) will be concatenated into a note string with the prefix [.value]#Gender(s):#. This value and any `:term_gender_note` values will be mapped to `Organization` `historyNote` field.
+`:term_note_gender` values will be mapped to `Organization` `historyNote` field.
 
 If any such values are present, your Migration Specialist will likely flag them for post-migration review, since Organizations are not expected to have gender.
 
 === nationality
 
-==== Initial processing
+*Initial processing*
 
 The `:termused` value from rows with this treatment will be mapped to `Constituents` `:term_nationality`. The `:remarks` value is mapped to `Constituents` `:term_nationality_note`. The `:thesxreftype` value is mapped to `Consitutents` `:term_nationality_label`.
 
@@ -253,43 +238,40 @@ NOTE: Any nationality info that may have been merged in from `ConGeography` will
 
 *TECHNICAL NOTE:* `:term_nationality`, `:term_nationality__note`, and `:term_nationality_label` must be merged in like a repeatable field group for subsequent processing to be possible.
 
-==== Person processing
+*Person processing*
 
-===== If there is no `Person` `nationality` value from other data sources
-
-The first `:term_nationality_used` and `:term_nationality_note` values will be concatenated (with " -- " as separator) and mapped to `nationality` field.
-
-If there are more than one `:term_nationality_used` values, subsequent values are combined and mapped to `bioNote` following the pattern:
+.If there is no `Person` `nationality` value from other data sources
+* The first `:term_nationality_used` and `:term_nationality_note` values will be concatenated (with " -- " as separator) and mapped to `nationality` field.
+* If there are more than one `:term_nationality_used` values, subsequent values are combined and mapped to `bioNote` following the pattern:
 
 `{term_nationality_label value} note: {term_nationality_used} -- {term_nationality_note}`
 
-===== If there is a `Person` `nationality` value from another data source
+.If there is a `Person` `nationality` value from another data source
+* All values are combined following the pattern described above and mapped to `bioNote`.
 
-All values are combined following the pattern described above and mapped to `bioNote`.
-
-==== Organization processing
+*Organization processing*
 
 All values are combined following the pattern described above and mapped to `historyNote`.
 
 === plain_note
 
-==== Initial processing
+*Initial processing*
 
 The following pattern is mapped into `Constituents` `:term_plain_note` field:
 
 `Untyped note: {termused value} -- {remarks value}`
 
-==== Person processing
+*Person processing*
 
 `:term_plain_note` is mapped into `nameNote`.
 
-==== Organization processing
+*Organization processing*
 
 `:term_plain_note` is mapped into `historyNote`.
 
 === type_labeled_internal_note_*
 
-==== Initial processing
+*Initial processing*
 
 The `*` is a free value that will be treated as part of the intermediate field group name, to ensure all values of the same category will appear together in a logical group in the target note field.
 
@@ -309,25 +291,25 @@ Your Migration Specialist will list any `:termused` values that trigger the seco
 
 NOTE: Currently all fields in CollectionSpace authority term records are private---only viewable by your staff in the CollectionSpace web application. The public/private distinction here is just in the type of information expected to be recorded in the target fields. For instance, if we ever added Person/Organization authority publishing to the CollectionSpace public browser, we would likely include `bioNote` in the public display, but not `nameNote`.
 
-==== Person processing
+*Person processing*
 
 These notes will be mapped to `nameNote`.
 
-==== Organization processing
+*Organization processing*
 
 Organization does not currently have an internal facing note field, so these must be mapped to `historyNote`.
 
 
 === type_labeled_public_note_*
 
-==== Initial processing
+*Initial processing*
 
 Same as for type_labeled_internal_note_* treatment.
 
-==== Person processing
+*Person processing*
 
 Values map to `bioNote`
 
-==== Organization processing
+*Organization processing*
 
 Values map to `historyNote`.
