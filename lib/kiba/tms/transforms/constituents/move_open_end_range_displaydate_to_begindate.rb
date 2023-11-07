@@ -34,7 +34,7 @@ module Kiba
 
           def add_note(row, val)
             note = "Birth date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, "%CR%%CR%")
+            append_value(row, :datenote, note, Tms.notedelim)
           end
 
           def compare(row, val, begindate)

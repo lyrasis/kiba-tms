@@ -7,7 +7,8 @@ module Kiba
 
       module_function
 
-      setting :citation_note_value_separator, default: "%CR%%CR%", reader: true
+      setting :citation_note_value_separator, default: Tms.notedelim,
+        reader: true
 
       # @return [Array<Symbol>] fields whose values will be combined into
       #   citationNote field value

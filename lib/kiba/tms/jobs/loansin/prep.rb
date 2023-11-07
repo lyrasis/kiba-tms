@@ -182,7 +182,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.note_source_fields,
                 target: :loaninnote,
-                delim: "%CR%%CR%",
+                delim: Tms.notedelim,
                 delete_sources: true
 
               transform Tms::Transforms::InsuranceIndemnityNote
@@ -190,7 +190,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.conditions_source_fields,
                 target: :loaninconditions,
-                delim: "%CR%%CR%",
+                delim: Tms.notedelim,
                 delete_sources: true
 
               if Tms::ConRefs.for?("Loansin")

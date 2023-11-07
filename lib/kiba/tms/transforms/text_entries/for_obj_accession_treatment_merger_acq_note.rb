@@ -9,7 +9,7 @@ module Kiba
 
           def initialize
             @target = :te_acquisition_note
-            @delim = "%CR%%CR%"
+            @delim = Tms.notedelim
           end
 
           def process(row, mergerow)

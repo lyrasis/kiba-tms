@@ -68,7 +68,7 @@ module Kiba
                     }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
-                  delim: "%CR%"
+                  delim: Tms.notedelim
               end
 
               transform Clean::RegexpFindReplaceFieldVals,
@@ -129,7 +129,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.bionote_sources,
                   target: :bionote,
-                  delim: "%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
               unless config.group_sources.empty?
@@ -143,7 +143,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.namenote_sources,
                   target: :namenote,
-                  delim: "%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
 

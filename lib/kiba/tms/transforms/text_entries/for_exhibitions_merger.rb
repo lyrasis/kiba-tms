@@ -12,7 +12,7 @@ module Tms
             lookup: lookup,
             keycolumn: :exhibitionid,
             fieldmap: {text_entry: :text_entry},
-            delim: "%CR%"
+            delim: Tms.notedelim
           )
         end
 

@@ -136,7 +136,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.historynote_sources,
                   target: :historynote,
-                  delim: "%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
 

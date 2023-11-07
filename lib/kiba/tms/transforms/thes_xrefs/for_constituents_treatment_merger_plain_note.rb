@@ -11,7 +11,7 @@ module Kiba
             @target = :term_plain_note
             @body_source_fields = %i[termused remarks]
             @body_delim = " -- "
-            @note_delim = "%CR%%CR%"
+            @note_delim = Tms.notedelim
             @label = "Untyped note"
           end
 

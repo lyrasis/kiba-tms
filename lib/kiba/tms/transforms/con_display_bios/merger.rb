@@ -21,7 +21,7 @@ module Kiba
                     disp && disp == "1"
                   end
                 end,
-                delim: "%CR%"
+                delim: Tms.notedelim
               )
             ]
             if Tms::ConDisplayBios.migrate_non_displayed
@@ -35,7 +35,7 @@ module Kiba
                     disp && disp == "0"
                   end
                 end,
-                delim: "%CR%"
+                delim: Tms.notedelim
               )
             end
           end

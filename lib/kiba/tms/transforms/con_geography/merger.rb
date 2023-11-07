@@ -11,7 +11,7 @@ module Kiba
             @auth = auth
             @lookup = lookup
             @id = :constituentid
-            @notedelim = "%CR%"
+            @notedelim = Tms.notedelim
             case auth
             when :person
               @fields = %i[birthplace geo_birthnote deathplace geo_deathnote
@@ -131,7 +131,7 @@ module Kiba
             if existing.nil?
               row[:geo_foundingnote] = natnote
             else
-              row[:geo_foundingnote] << "%CR%#{natnote}"
+              row[:geo_foundingnote] << "#{Tms.notedelim}#{natnote}"
             end
             row
           end

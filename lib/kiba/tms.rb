@@ -47,6 +47,7 @@ module Kiba
       setting :tmsdir, default: "tms", reader: true
       setting :delim, default: Kiba::Extend.delim, reader: true
       setting :sgdelim, default: Kiba::Extend.sgdelim, reader: true
+      setting :notedelim, default: "%CR%%CR%", reader: true
       setting :nullvalue, default: "%NULLVALUE%", reader: true
       # File registry - best to just leave this as-is
       setting :registry, default: Kiba::Extend.registry, reader: true

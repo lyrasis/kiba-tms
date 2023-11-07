@@ -109,10 +109,10 @@ module Kiba
                   fieldmap: {insindnote: :insindnote},
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
                   null_placeholder: Tms.nullvalue,
-                  delim: "%CR%%CR%"
+                  delim: Tms.notedelim
                 transform Delete::EmptyFieldValues,
                   fields: :insindnote,
-                  delim: "%CR%%CR%",
+                  delim: Tms.notedelim,
                   usenull: true
               end
 

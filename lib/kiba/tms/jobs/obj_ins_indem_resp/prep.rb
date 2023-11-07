@@ -87,7 +87,7 @@ module Kiba
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: ins_ind_fields,
                 target: :combined,
-                delim: "%CR%%CR%",
+                delim: Tms.notedelim,
                 delete_sources: false
             end
           end

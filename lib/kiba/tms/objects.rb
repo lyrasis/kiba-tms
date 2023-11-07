@@ -236,7 +236,7 @@ module Kiba
         },
         reader: true
 
-      setting :contentnote_delim, default: "%CR%%CR%", reader: true
+      setting :contentnote_delim, default: Tms.notedelim, reader: true
       setting :contentnote_sources,
         default: %i[con_refs_p_contentnote con_refs_o_contentnote],
         reader: true
@@ -264,12 +264,12 @@ module Kiba
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
       setting :number_cleaner, default: nil, reader: true
-      setting :objectproductionnote_delim, default: "%CR%%CR%", reader: true
+      setting :objectproductionnote_delim, default: Tms.notedelim, reader: true
       setting :objectproductionnote_sources,
         default: %i[con_refs_p_objectproductionnote
           con_refs_o_objectproductionnote],
         reader: true
-      setting :objecthistorynote_delim, default: "%CR%%CR%", reader: true
+      setting :objecthistorynote_delim, default: Tms.notedelim, reader: true
       setting :objecthistorynote_sources,
         default: %i[con_refs_p_objecthistorynote
           con_refs_o_objecthistorynote],

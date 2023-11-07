@@ -53,12 +53,12 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           expected = {
             constituentid: "1",
             birthplace: "London",
-            geo_birthnote: "Additional birth place: Londre%CR%"\
+            geo_birthnote: "Additional birth place: Londre#{Tms.notedelim}"\
               "Additional birth place: Londontown",
             deathplace: "Paris",
-            geo_deathnote: "Additional death place: Montmartre%CR%"\
+            geo_deathnote: "Additional death place: Montmartre#{Tms.notedelim}"\
               "Additional death place: Madrid",
-            geo_note: "Variant birthplaces%CR%Disputed deathplaces",
+            geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces",
             nationality: "English"
           }
           expect(result).to eq(expected)
@@ -174,13 +174,13 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           expected = {
             constituentid: "1",
             foundingplace: "London",
-            geo_foundingnote: "Additional founding place: Londre%CR%"\
-              "Additional founding place: Londontown%CR%"\
+            geo_foundingnote: "Additional founding place: Londre#{Tms.notedelim}"\
+              "Additional founding place: Londontown#{Tms.notedelim}"\
               "Nationality: English",
-            geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-              "Additional dissolution place: Montmartre%CR%"\
+            geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+              "Additional dissolution place: Montmartre#{Tms.notedelim}"\
               "Additional dissolution place: Madrid",
-            geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
           }
           expect(result).to eq(expected)
         end
@@ -195,13 +195,13 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             expected = {
               constituentid: "1",
               foundingplace: "London",
-              geo_foundingnote: "Additional founding place: Londre%CR%"\
-                "Additional founding place: Londontown%CR%"\
+              geo_foundingnote: "Additional founding place: Londre#{Tms.notedelim}"\
+                "Additional founding place: Londontown#{Tms.notedelim}"\
                 "Nationality: English",
-              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-                "Additional dissolution place: Montmartre%CR%"\
+              geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+                "Additional dissolution place: Montmartre#{Tms.notedelim}"\
                 "Additional dissolution place: Madrid",
-              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+              geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
             }
             expect(result).to eq(expected)
           end
@@ -217,13 +217,13 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             expected = {
               constituentid: "1",
               foundingplace: "English",
-              geo_foundingnote: "Founding place: London%CR%"\
-                "Additional founding place: Londre%CR%"\
+              geo_foundingnote: "Founding place: London#{Tms.notedelim}"\
+                "Additional founding place: Londre#{Tms.notedelim}"\
                 "Additional founding place: Londontown",
-              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-                "Additional dissolution place: Montmartre%CR%"\
+              geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+                "Additional dissolution place: Montmartre#{Tms.notedelim}"\
                 "Additional dissolution place: Madrid",
-              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+              geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
             }
             expect(result).to eq(expected)
           end
@@ -238,12 +238,12 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
           expected = {
             constituentid: "1",
             foundingplace: "London",
-            geo_foundingnote: "Additional founding place: Londre%CR%"\
+            geo_foundingnote: "Additional founding place: Londre#{Tms.notedelim}"\
               "Additional founding place: Londontown",
-            geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-              "Additional dissolution place: Montmartre%CR%"\
+            geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+              "Additional dissolution place: Montmartre#{Tms.notedelim}"\
               "Additional dissolution place: Madrid",
-            geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+            geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
           }
           expect(result).to eq(expected)
         end
@@ -258,12 +258,12 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             expected = {
               constituentid: "1",
               foundingplace: "London",
-              geo_foundingnote: "Additional founding place: Londre%CR%"\
+              geo_foundingnote: "Additional founding place: Londre#{Tms.notedelim}"\
                 "Additional founding place: Londontown",
-              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-                "Additional dissolution place: Montmartre%CR%"\
+              geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+                "Additional dissolution place: Montmartre#{Tms.notedelim}"\
                 "Additional dissolution place: Madrid",
-              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+              geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
             }
             expect(result).to eq(expected)
           end
@@ -279,13 +279,13 @@ RSpec.describe Kiba::Tms::Transforms::ConGeography::Merger do
             expected = {
               constituentid: "1",
               foundingplace: nil,
-              geo_foundingnote: "Founding place: London%CR%"\
-                "Additional founding place: Londre%CR%"\
+              geo_foundingnote: "Founding place: London#{Tms.notedelim}"\
+                "Additional founding place: Londre#{Tms.notedelim}"\
                 "Additional founding place: Londontown",
-              geo_dissolutionnote: "Dissolution place: Paris%CR%"\
-                "Additional dissolution place: Montmartre%CR%"\
+              geo_dissolutionnote: "Dissolution place: Paris#{Tms.notedelim}"\
+                "Additional dissolution place: Montmartre#{Tms.notedelim}"\
                 "Additional dissolution place: Madrid",
-              geo_note: "Variant birthplaces%CR%Disputed deathplaces"
+              geo_note: "Variant birthplaces#{Tms.notedelim}Disputed deathplaces"
             }
             expect(result).to eq(expected)
           end

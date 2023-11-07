@@ -201,7 +201,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: notefields,
                   target: :loanoutnote,
-                  delim: "%CR%%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
 
@@ -212,7 +212,7 @@ module Kiba
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: conditionsfields,
                   target: :specialconditionsofloan,
-                  delim: "%CR%%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
 

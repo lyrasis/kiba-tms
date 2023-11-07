@@ -12,7 +12,7 @@ module Kiba
             @labelsource = :thesxreftype
             @termsource = :termused
             @notesource = :remarks
-            @notedelim = "%CR%%CR%"
+            @notedelim = Tms.notedelim
             @omittable_terms = Tms::ThesXrefs.constituents_omit_terms
           end
 

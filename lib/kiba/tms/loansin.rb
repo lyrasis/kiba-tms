@@ -50,7 +50,7 @@ module Kiba
       setting :remarks_treatment, default: :statusnote, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform to split
       #   remarks field data into separate status notes
-      setting :remarks_delim, default: "%CR%%CR%", reader: true
+      setting :remarks_delim, default: Tms.notedelim, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform as the
       #   constant value for status on derived status notes
       setting :remarks_status, default: "Note", reader: true

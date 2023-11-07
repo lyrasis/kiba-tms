@@ -62,8 +62,9 @@ module Kiba
           def note(row)
             val = [entry(row), remarks(row)].compact
             return nil if val.empty?
+            return val.first if val.length == 1
 
-            (val.length == 1) ? val.first : val.join("%CR%%CR%REMARKS ON NOTE: ")
+            val.join("#{Tms.notedelim}REMARKS ON NOTE: ")
           end
 
           def purpose_type_for_label(row)

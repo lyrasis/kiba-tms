@@ -43,7 +43,7 @@ RSpec.describe Kiba::Tms::Transforms::ThesXrefs::ForConstituentsTreatmentMergerT
 
       let(:mergerow) { {thesxreftype: "d", termused: "e", remarks: "f"} }
       let(:expected) do
-        {term_internal_note_misc: "a: b -- c%CR%%CR%d: e -- f"}
+        {term_internal_note_misc: "a: b -- c#{Tms.notedelim}d: e -- f"}
       end
 
       it "returns expected row" do

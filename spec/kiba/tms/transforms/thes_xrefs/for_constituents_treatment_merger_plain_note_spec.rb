@@ -38,7 +38,9 @@ RSpec.describe Kiba::Tms::Transforms::ThesXrefs::ForConstituentsTreatmentMergerP
         let(:mergerow) { {termused: "a"} }
 
         it "returns expected row" do
-          expect(result).to eq({term_plain_note: "foo%CR%%CR%Untyped note: a"})
+          expect(result).to eq(
+            {term_plain_note: "foo#{Tms.notedelim}Untyped note: a"}
+          )
         end
       end
     end

@@ -51,7 +51,7 @@ module Kiba
 
           def add_note(row, type, val)
             note = "#{type.to_s.capitalize} date from TMS displayDate: #{val}"
-            append_value(row, :datenote, note, "%CR%%CR%")
+            append_value(row, :datenote, note, Tms.notedelim)
           end
 
           def eligible?(dd)

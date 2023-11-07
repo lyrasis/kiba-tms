@@ -62,7 +62,7 @@ module Kiba
                 sources: %i[estimatelow estimatehigh proceedsrcvdisodate
                   reportisodate],
                 target: :displosalnote,
-                delim: "%CR%",
+                delim: Tms.notedelim,
                 delete_sources: true
             end
           end

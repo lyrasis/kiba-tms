@@ -29,7 +29,7 @@ module Kiba
             @notemerger = Merge::MultiRowLookup.new(
               lookup: lookup,
               keycolumn: :constituentid,
-              delim: "%CR%",
+              delim: Tms.notedelim,
               fieldmap: {
                 email_web_namenote: :description
               }

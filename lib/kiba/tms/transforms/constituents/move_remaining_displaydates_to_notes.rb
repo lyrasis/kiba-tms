@@ -17,7 +17,7 @@ module Kiba
             return row unless eligible?(dd)
 
             note = "Unparseable date info from TMS displayDate: #{dd}"
-            append_value(row, :datenote, note, "%CR%%CR%")
+            append_value(row, :datenote, note, Tms.notedelim)
             row[source] = nil
             row
           end
