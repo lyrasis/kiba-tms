@@ -33,6 +33,17 @@ module Kiba
           value << :termprefforlang if Tms::Names.set_term_pref_for_lang
           value
         end
+
+      def birthplace_controlled?
+        trueprofiles = [:lhmc]
+        true if trueprofiles.include?(Tms.cspace_profile)
+      end
+
+      def deathplace_controlled?
+        trueprofiles = [:lhmc]
+        true if trueprofiles.include?(Tms.cspace_profile)
+      end
+
       setting :cs_fields,
         default: {
           fcart: %i[

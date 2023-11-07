@@ -68,7 +68,7 @@ module Kiba
                     }
                   end,
                   fieldmap: {rel_name_bio_note: :note_text},
-                  delim: "%CR%"
+                  delim: Tms.notedelim
               end
 
               if lookups.any?(:name_compile__contact_person)
@@ -122,6 +122,13 @@ module Kiba
                 transform Tms::ConGeography.non_auth_merger,
                   auth: :org,
                   lookup: con_geography__for_non_authority
+              end
+
+              if Tms::ThesXrefs.for?("Constituents")
+                transform(
+                  Tms::Transforms::ThesXrefs::ForConstituentsPostProcessor,
+                  authtype: :org
+                )
               end
 
               transform Rename::Fields, fieldmap: {

@@ -8,7 +8,8 @@ module Kiba
         # @param vals [Array]
         # @param delim [String]
         def safe_join(vals:, delim:)
-          vals.reject(&:blank?)
+          vals.map { |val| (val == "%NULLVALUE%") ? nil : val }
+            .reject(&:blank?)
             .join(delim)
         end
 
@@ -103,6 +104,16 @@ module Kiba
           return if vals.empty?
 
           "--#{vals.join(", ")}"
+        end
+
+        # Methods that create combinable sub-methods from given parts, not
+        #   set variables/defined methods in including class
+        def build_body(*partvals)
+          safe_join(vals: partvals, delim: body_delim)
+        end
+
+        def labeled_value(label, value)
+          safe_join(vals: [label, value], delim: prefixed_delim)
         end
       end
     end

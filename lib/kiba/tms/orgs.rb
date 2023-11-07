@@ -69,6 +69,11 @@ module Kiba
           value
         end
 
+      def foundingplace_controlled?
+        trueprofiles = [:publicart]
+        true if trueprofiles.include?(Tms.cspace_profile)
+      end
+
       setting :cs_fields,
         default: {
           fcart: %i[

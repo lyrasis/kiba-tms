@@ -122,6 +122,13 @@ module Kiba
                   lookup: con_geography__for_non_authority
               end
 
+              if Tms::ThesXrefs.for?("Constituents")
+                transform(
+                  Tms::Transforms::ThesXrefs::ForConstituentsPostProcessor,
+                  authtype: :person
+                )
+              end
+
               transform Delete::Fields,
                 fields: %i[constituentid]
 
