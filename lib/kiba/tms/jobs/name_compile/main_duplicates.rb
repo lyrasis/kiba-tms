@@ -21,10 +21,9 @@ module Kiba
           end
 
           def sources
-            %i[name_compile__untyped_main_duplicates
-              name_compile__typed_main_duplicates].select do |src|
-              Tms.job_output?(src)
-            end
+            base = %i[name_compile__untyped_main_duplicates
+              name_compile__typed_main_duplicates]
+            base.select { |jobkey| Tms.job_output?(jobkey) }
           end
 
           def xforms

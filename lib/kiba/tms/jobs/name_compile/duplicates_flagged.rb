@@ -53,7 +53,9 @@ module Kiba
             bind = binding
 
             Kiba.job_segment do
-              if bind.receiver.send(:lookups).any?(
+              job = bind.receiver
+
+              if job.send(:lookups).any?(
                 :name_compile__main_duplicates
               )
                 transform Merge::MultiRowLookup,
@@ -65,7 +67,7 @@ module Kiba
                   }
               end
 
-              if bind.receiver.send(:lookup_eligible?, :variant)
+              if job.send(:lookup_eligible?, :variant)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__variant_duplicates,
                   keycolumn: :fingerprint,
@@ -75,7 +77,7 @@ module Kiba
                   }
               end
 
-              if bind.receiver.send(:lookup_eligible?, :related)
+              if job.send(:lookup_eligible?, :related)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__related_duplicates,
                   keycolumn: :fingerprint,
@@ -85,7 +87,7 @@ module Kiba
                   }
               end
 
-              if bind.receiver.send(:lookup_eligible?, :note)
+              if job.send(:lookup_eligible?, :note)
                 transform Merge::MultiRowLookup,
                   lookup: name_compile__note_duplicates,
                   keycolumn: :fingerprint,
