@@ -62,14 +62,16 @@ module Kiba
         default: {internal: [], public: []},
         reader: true
 
+      # @param table [String] the target table name
+      # @param type [:internal, :public]
       def note_source_fields(table:, type:)
-        typesym = type.to_sym
-        treatments = "#{table}_treatments_used".to_sym
-        basefieldname = "type_labeled_#{typesym}_note"
+        treatments = "#{table.downcase}_treatments_used".to_sym
+        basefieldname = "type_labeled_#{type}_note".to_sym
         return [] unless send(treatments).include?(basefieldname)
 
-        send("#{table}_note_suffixes".to_sym)[typesym].map do |suffix|
-          "#{basefieldname}_#{suffix}".to_sym
+        base = basefieldname.to_s.sub("type_labeled", "term")
+        send("#{table.downcase}_note_suffixes".to_sym)[type].map do |suffix|
+          "#{base}_#{suffix}".to_sym
         end
       end
 
@@ -87,6 +89,43 @@ module Kiba
       # pass in client-specific transform classes to merge thes_xrefs rows into
       #   target tables
       setting :for_loans_merge, default: nil, reader: true
+
+      def set_note_sources
+        if for?("Constituents")
+          set_org_sources
+          set_person_sources
+        end
+      end
+
+      def set_org_sources
+        note_source_fields(
+          table: "Constituents", type: :public
+        ).each { |field| Tms::Orgs.historynote_sources << field }
+        %i[term_note_nationality term_note_foundingplace
+          term_note_dissolutionplace term_plain_note
+          term_note_gender].each do |field|
+          Tms::Orgs.historynote_sources << field
+        end
+        note_source_fields(
+          table: "Constituents", type: :internal
+        ).each { |field| Tms::Orgs.historynote_sources << field }
+      end
+      private_class_method :set_org_sources
+
+      def set_person_sources
+        note_source_fields(
+          table: "Constituents", type: :public
+        ).each { |field| Tms::Persons.bionote_sources << field }
+        %i[term_note_nationality term_note_birthplace
+          term_note_deathplace term_note_gender].each do |field|
+          Tms::Persons.bionote_sources << field
+        end
+        note_source_fields(
+          table: "Constituents", type: :internal
+        ).each { |field| Tms::Persons.namenote_sources << field }
+        Tms::Persons.namenote_sources << :term_plain_note
+      end
+      private_class_method :set_person_sources
     end
   end
 end

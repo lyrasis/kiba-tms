@@ -234,6 +234,7 @@ module Kiba
       end
       Tms::Utils::ForTableEmptyTypeCleanupExtender.call
       Tms::Utils::ForTableTypeCleanupExtender.call
+      Tms::ThesXrefs.set_note_sources
     end
 
     def for_merge_into(tablename)
