@@ -13,9 +13,19 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # Whether or not ObjComponents is used to record information about actual
-      #   object components (sub-objects). Either way TMS table provides linkage
-      #   to Locations through ObjComponents
+      # The ObjComponents table includes one row for every Objects
+      #   row. TMS provides linkage of Objects to ObjLocations through
+      #   the ObjComponents table.
+      #
+      # TMS may ALSO include additional rows (linked to, but having
+      #   different object numbers than, rows in the Objects table)
+      #   that represent actual components of objects in the Objects
+      #   table. If this is true, we also need to generate Object
+      #   records from the actual component rows of ObjComponents
+      #
+      # @return [Boolean] whether or not ObjComponents is used to
+      #   record information about actual object components
+      #   (sub-objects).
       setting :actual_components, default: false, reader: true
 
       setting :inactive_mapping,
