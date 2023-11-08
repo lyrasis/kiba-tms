@@ -59,7 +59,7 @@ module Kiba
           end
 
           def do_singleval_person_processing(row, vals)
-            row[maintarget] = vals[eligiblefield][0]
+            row[maintarget] = vals[eligiblefield][0].downcase
             add_field_note(row, vals)
           end
 
