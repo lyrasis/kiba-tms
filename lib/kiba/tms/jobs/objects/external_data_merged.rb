@@ -29,8 +29,11 @@ module Kiba
                 base << lkup
               end
             end
+            base << :prep__object_levels if Tms::ObjectLevels.used?
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
+            base << :prep__object_statuses if Tms::ObjectStatuses.used?
+            base << :prep__object_types if Tms::ObjectTypes.used?
             if config.dimensions_to_merge?
               base << :dim_item_elem_xrefs_for__objects
             end
@@ -40,8 +43,7 @@ module Kiba
             if Tms::LinkedSetAcq.used?
               base << :linked_set_acq__object_statuses
             end
-
-            base
+            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -60,6 +62,33 @@ module Kiba
                   transform xform
                 }
               end
+
+              if Tms::ObjectLevels.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__object_levels,
+                  keycolumn: Tms::ObjectLevels.id_field,
+                  fieldmap: {objectlevel: Tms::ObjectLevels.type_field}
+              end
+              transform Delete::Fields,
+                fields: Tms::ObjectLevels.id_field
+
+              if Tms::ObjectTypes.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__object_types,
+                  keycolumn: Tms::ObjectTypes.id_field,
+                  fieldmap: {objecttype: Tms::ObjectTypes.type_field}
+              end
+              transform Delete::Fields,
+                fields: Tms::ObjectTypes.id_field
+
+              if Tms::ObjectStatuses.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__object_statuses,
+                  keycolumn: Tms::ObjectStatuses.id_field,
+                  fieldmap: {objectstatus: Tms::ObjectStatuses.type_field}
+              end
+              transform Delete::Fields,
+                fields: Tms::ObjectStatuses.id_field
 
               if Tms::ObjectNames.used?
                 transform Rename::Field,
