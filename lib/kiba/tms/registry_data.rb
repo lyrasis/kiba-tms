@@ -511,6 +511,20 @@ module Kiba
               "constituents table. If preferred name field = alphasort, move "\
               "org names from displayname to alphasort."
           }
+          register :remarks_dropped, {
+            creator: Kiba::Tms::Jobs::ConAltNames::RemarksDropped,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "con_alt_names_remarks_dropped.csv"),
+            tags: %i[con postmigcleanup],
+            desc: "Due to the CollectionSpace data model and the complexity "\
+              "of the name processing in the migration, remarks made on "\
+              "individual alternate names in TMS are dropped in the "\
+              "migration. This report contains the remarks that were dropped, "\
+              "in case you wish to deal with them manually, post-migration.",
+            dest_special_opts: {
+              initial_headers: %i[name name_type altname remarks]
+            }
+          }
         end
 
         Kiba::Tms.registry.namespace("con_dates") do
