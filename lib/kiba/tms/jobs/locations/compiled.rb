@@ -30,8 +30,7 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              transform Append::NilFields,
-                fields: config.multi_source_normalizer.get_fields
+              transform Clean::EnsureConsistentFields
 
               transform Count::MatchingRowsInLookup,
                 lookup: obj_locations__fulllocid_lookup,

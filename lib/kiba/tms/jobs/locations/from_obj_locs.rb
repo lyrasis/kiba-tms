@@ -12,14 +12,13 @@ module Kiba
               Tms::ObjLocations.temptext_mapping_done &&
               Tms::ObjLocations.adds_sublocations
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_locations__unique_prep,
                 destination: :locs__from_obj_locs,
                 lookup: :prep__locations
               },
-              transformer: xforms,
-              helper: Tms::Locations.multi_source_normalizer
+              transformer: xforms
             )
           end
 

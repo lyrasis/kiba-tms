@@ -64,9 +64,6 @@ module Kiba
             File.join(Kiba::Tms.datadir, "supplied", filename)
           end
         }
-      setting :multi_source_normalizer,
-        default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
-        reader: true
 
       def authority_vocab_mapping
         if authorities.any?(:offsite)

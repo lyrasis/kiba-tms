@@ -8,13 +8,12 @@ module Kiba
           module_function
 
           def job
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__locations,
                 destination: :locs__from_locations
               },
-              transformer: xforms,
-              helper: Tms::Locations.multi_source_normalizer
+              transformer: xforms
             )
           end
 
