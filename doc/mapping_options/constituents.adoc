@@ -133,9 +133,6 @@ Your migration specialist will let you know if any of these defaults have been o
 
 Let your migration specialist know if you want to change any of the settings.
 
-
-
-
 === Reports that may be provided for review
 
 con_address_countries_clean_review.csv:: Addresses with country values that cannot be exactly or cleanly mapped to CS countries vocabulary. Will require custom `ConAddress.config.country_remappings` settings.
