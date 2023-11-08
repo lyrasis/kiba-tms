@@ -237,10 +237,22 @@ module Kiba
           }
         end
 
-        # Kiba::Tms.registry.namespace("alt_nums") do
-        #   # Handled by MultiTableMergeable and config transforms.
-        #   # Do `thor jobs tagged alt_nums to see all jobs`
-        # end
+        Kiba::Tms.registry.namespace("alt_nums") do
+          # Handled by MultiTableMergeable and config transforms.
+          # Do `thor jobs tagged alt_nums to see all jobs`
+          register :for_objects_dropping_data, {
+            creator: Kiba::Tms::Jobs::AltNums::ForObjectsDroppingData,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "alt_nums_for_objects_dropping_data.csv"),
+            desc: "Rows with other number treatment that have data other "\
+            "than the altnum value and type",
+            tags: %i[alt_nums postmigcleanup],
+            dest_special_opts: {
+              initial_headers: %i[object_number other_number_value
+                orig_alt_number_type]
+            }
+          }
+        end
 
         Kiba::Tms.registry.namespace("associations") do
           register :in_migration, {
