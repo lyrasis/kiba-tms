@@ -3549,7 +3549,8 @@ module Kiba
               "packages_migrating.csv"),
             tags: %i[packages],
             desc: "Removes :omitting. If client decisions are done, merges "\
-              "those in. If not, blank are dropped"
+              "those in. If not, blank are dropped",
+            lookup_on: :packageid
           }
           register :shaped, {
             creator: Kiba::Tms::Jobs::Packages::Shaped,
