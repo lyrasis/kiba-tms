@@ -13,18 +13,10 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :objects__numbers_cleaned,
-                destination: :prep__objects,
-                lookup: lookups
+                destination: :prep__objects
               },
               transformer: xforms
             )
-          end
-
-          def lookups
-            base = []
-            base << :prep__departments if Tms::Departments.used?
-            base << :prep__object_statuses if Tms::ObjectStatuses.used?
-            base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
           def xforms
@@ -42,33 +34,6 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: "-1"
-
-              if Tms::Departments.used?
-                transform Merge::MultiRowLookup,
-                  keycolumn: :departmentid,
-                  lookup: prep__departments,
-                  fieldmap: {
-                    config.department_target => :department
-                  },
-                  delim: Tms.delim
-                if config.department_coll_prefix
-                  transform Prepend::ToFieldValue,
-                    field: config.department_target,
-                    value: config.department_coll_prefix
-                end
-              end
-              transform Delete::Fields, fields: :departmentid
-
-              if Tms::ObjectStatuses.used?
-                transform Merge::MultiRowLookup,
-                  keycolumn: :objectstatusid,
-                  lookup: prep__object_statuses,
-                  fieldmap: {
-                    main_objectstatus: :objectstatus
-                  },
-                  delim: Tms.delim
-              end
-              transform Delete::Fields, fields: :objectstatusid
 
               unless config.field_cleaners.empty?
                 config.field_cleaners.each { |cleaner| transform cleaner }

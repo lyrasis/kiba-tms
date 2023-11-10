@@ -24,42 +24,27 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              custom_handled_fields = config.custom_map_fields
+              rename_map = config.rename_map
 
-              unless config.field_specific_xform_fields.empty?
-                xforms = config.field_specific_xform_fields
-                  .map { |field| "#{field}_xform".to_sym }
-                  .map { |setting| config.send(setting) }
-                  .compact
-                transform do |row|
-                  xforms.each do |xform|
-                    row = xform.process(row)
-                  end
-                  row
-                end
-              end
+              transform Tms::Transforms::Objects::FieldXforms
 
-              rename_map = {
-                chat: :viewerscontributionnote,
-                culture: :objectproductionpeople,
-                description: :briefdescription,
-                medium: :materialtechniquedescription,
-                notes: :comment,
-                objectcount: :numberofobjects
-              }
+              # This needs to be done before Rename::Fields
               unless config.dimensions_to_merge?
                 unless Tms::Dimensions.migrate_secondary_unit_vals
-                  transform do |row|
-                    display = row[:dimensions]
-                    row[:dimensions] = display.sub(/ \(.*\)$/, "")
-                    row
-                  end
+                  transform(
+                    Tms::Transforms::Dimensions::DeleteSecondaryUnitVals,
+                    field: :dimensions
+                  )
                 end
-                rename_map[:dimensions] = :dimensionsummary
               end
-              custom_handled_fields.each { |field| rename_map.delete(field) }
-              transform Rename::Fields,
-                fieldmap: rename_map.merge(Tms::Objects.custom_rename_fieldmap)
+
+              transform Rename::Fields, fieldmap: rename_map
+
+              if Tms::Departments.used? && config.department_coll_prefix
+                transform Prepend::ToFieldValue,
+                  field: config.department_target,
+                  value: config.department_coll_prefix
+              end
 
               transform Delete::DelimiterOnlyFieldValues,
                 fields: %w[contentnote objectproductionnote
@@ -103,6 +88,10 @@ module Kiba
                   target: target,
                   delim: config.send("#{target}_delim".to_sym),
                   delete_sources: true
+              end
+
+              unless config.post_shape_xforms.empty?
+                config.post_shape_xforms.each { |xform| transform xform }
               end
             end
           end

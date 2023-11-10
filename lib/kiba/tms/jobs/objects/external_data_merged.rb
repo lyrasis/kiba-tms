@@ -22,13 +22,8 @@ module Kiba
 
           def lookups
             base = []
+            base << :prep__departments if Tms::Departments.used?
             base << :prep__obj_context if Tms::ObjContext.used?
-            if Tms::Objects.classifications_xform
-              %i[prep__classifications
-                prep__classification_xrefs].each do |lkup|
-                base << lkup
-              end
-            end
             base << :prep__object_levels if Tms::ObjectLevels.used?
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
@@ -51,6 +46,23 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
+
+              if config.classifications_merge_xform
+                transform config.classifications_merge_xform
+              else
+                transform Delete::Fields, fields: Tms::Classifications.id_field
+              end
+
+              if Tms::Departments.used?
+                transform Merge::MultiRowLookup,
+                  keycolumn: :departmentid,
+                  lookup: prep__departments,
+                  fieldmap: {
+                    department: :department
+                  },
+                  delim: Tms.delim
+              end
+              transform Delete::Fields, fields: :departmentid
 
               if Tms::ConRefs.for?("Objects")
                 if config.con_ref_name_merge_rules
@@ -85,7 +97,7 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: prep__object_statuses,
                   keycolumn: Tms::ObjectStatuses.id_field,
-                  fieldmap: {objectstatus: Tms::ObjectStatuses.type_field}
+                  fieldmap: {main_objectstatus: Tms::ObjectStatuses.type_field}
               end
               transform Delete::Fields,
                 fields: Tms::ObjectStatuses.id_field

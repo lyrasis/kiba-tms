@@ -10,8 +10,8 @@ module Kiba
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[
-          sortnumber textsearchid accountability injurisdiction
-          searchobjectnumber sortsearchnumber
+          sortnumber sortnumber2 textsearchid accountability injurisdiction
+          onview searchobjectnumber sortsearchnumber
           usernumber1 usernumber2 usernumber3 usernumber4
           istemplate isvirtual
         ],
@@ -49,26 +49,33 @@ module Kiba
       # @return [Array<#process>]
       setting :field_cleaners, default: [], reader: true
 
-      # TMS fields with associated field-specific transformers defined
-      #   that should be applied in the project. These transforms are
-      #   applied in the `:prep__objects` job, immediately after any
-      #   transforms in the `:field_cleaners` setting have been
-      #   applied. **Each field listed here must correspond to a
-      #   `fieldname_xform` setting defined in the "Default
-      #   field-specific transforms" section below.**
-      #
-      # @return [Array<Symbol>]
-      setting :field_specific_xform_fields, default: [], reader: true
+      # @return [#process] transform to merge Classifications and
+      #   ClassificationXRefs in if they are used
+      setting :classifications_merge_xform,
+        default: Tms::Transforms::Objects::Classifications,
+        reader: true
 
+      # @return [#process] custom transform to handle merged-in classifications
+      #   fields
+      setting :classifications_shape_xform, default: nil, reader: true
+
+      # @return [Array<#process>] run in order at the end of
+      #   :objects__shape job
+      setting :post_shape_xforms, default: [], reader: true
       # -----------------------------------------------------------------------
       # Default field-specific transforms
       # -----------------------------------------------------------------------
+      # @param field [Symbol]
+      def field_xform_for?(field)
+        methodname = "#{field}_xform".to_sym
+        return true if respond_to?(methodname) && send(methodname)
+      end
+
       # Transformers to transform data in individual source fields or
       #   sets of source fields.
       #
       # If nil, default processing in prep__objects is
       #   used unless field is otherwise omitted from processing
-      setting :classifications_xform, default: nil, reader: true
       setting :creditline_xform,
         default: Tms::Transforms::DeriveFieldPair.new(
           source: :creditline,
@@ -103,7 +110,21 @@ module Kiba
         ),
         reader: true
       setting :medium_xform, default: nil, reader: true
-      setting :onview_xform, default: nil, reader: true
+      setting :objectcount_xform,
+        default: Tms::Transforms::Objects::Objectcount.new,
+        reader: true
+      setting :objectnumber2_type, default: "object number 2", reader: true
+      setting :objectnumber2_xform,
+        default: Tms::Transforms::Objects::Objectnumber2.new,
+        reader: true
+      # @return [String] othernumbertype value assigned to any :objectnumber2
+      #   values added to othernumber field group
+      setting :onview_xform,
+        default: Kiba::Extend::Transforms::Delete::Fields.new(fields: :onview),
+        reader: true
+      # setting :othernumber_type_xform,
+      #   default: Clean::DowncaseFieldValues.new(fields: :othernumber_type),
+      #   reader: true
       setting :paperfileref_xform, default: nil, reader: true
       setting :publicaccess_xform,
         default: Tms::Transforms::Objects::Publicaccess.new,
@@ -120,15 +141,21 @@ module Kiba
         reader: true
 
       # @return [Hash{Symbol=>Symbol}]
-      setting :base_field_rename_map, default: {
-                                        chat: :viewerscontributionnote,
-                                        culture: :objectproductionpeople,
-                                        description: :briefdescription,
-                                        medium: :materialtechniquedescription,
-                                        notes: :comment,
-                                        objectcount: :numberofobjects
-                                      },
-        reader: true
+      setting :base_field_rename_map,
+        default: {
+          chat: :viewerscontributionnote,
+          culture: :objectproductionpeople,
+          description: :briefdescription,
+          medium: :materialtechniquedescription,
+          notes: :comment,
+          objectcount: :numberofobjects
+        },
+        reader: true,
+        constructor: ->(default) do
+          return default if dimensions_to_merge?
+
+          default.merge({dimensions: :dimensionsummary})
+        end
 
       # -----------------------------------------------------------------------
       # REPEATABLE FIELD GROUP COLLAPSE CONFIG
@@ -240,10 +267,10 @@ module Kiba
       setting :contentnote_sources,
         default: %i[con_refs_p_contentnote con_refs_o_contentnote],
         reader: true
-      # Default mapping will be skipped, fields will be left as-is in
-      #   :objects__prep job for handling in client project
+      # Default mapping will be skipped, fields will be left as-is for handling
+      #   in client project
       setting :custom_map_fields, default: [], reader: true
-      # will be merged into `Rename::Fields` fieldmap
+      # will be merged into :base_field_rename_map
       setting :custom_rename_fieldmap, default: {}, reader: true
       # Custom transform used in :objects__dates. Must be a transform
       #   class without arguments
@@ -282,6 +309,15 @@ module Kiba
         },
         reader: true
       setting :text_entries_merge_xform, default: nil, reader: true
+
+      def rename_map
+        tmp = {}
+        custom = custom_map_fields
+        base_field_rename_map.each do |from, to|
+          tmp[from] = to unless custom.include?(from)
+        end
+        tmp.merge(custom_rename_fieldmap)
+      end
     end
   end
 end
