@@ -124,6 +124,10 @@ module Kiba
       setting :cratenumber_lvl,
         default: :loc12,
         reader: true
+      # @return [String] value appended to fulllocid when source field
+      #   is blank
+      setting :fulllocid_placeholder, default: "nil", reader: true
+
       # Which fields in obj_locations need to be concatenated with the location
       #   value to create additional location values (and thus need a unique id
       #   added to look them up)

@@ -2953,10 +2953,17 @@ module Kiba
           }
           register :problem_components, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponents,
-            path: File.join(Kiba::Tms.datadir, "reports",
+            path: File.join(Kiba::Tms.datadir, "working",
               "obj_components_problem.csv"),
             tags: %i[obj_components reports postmigcleanup],
             lookup_on: :componentid
+          }
+          register :problem_components_with_loc_merged, {
+            creator:
+            Kiba::Tms::Jobs::ObjComponents::ProblemComponentsWithLocMerged,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "obj_components_problem.csv"),
+            tags: %i[obj_components postmigcleanup]
           }
           register :problem_component_lmi, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
