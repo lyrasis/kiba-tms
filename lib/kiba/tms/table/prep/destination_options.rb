@@ -71,7 +71,7 @@ module Kiba
               },
               terms: {
                 initial_headers: %i[termid termused termpreferred termtype
-                  thesaurus_name termsource sourcetermid]
+                  termsource sourcetermid]
               },
               text_entries: {
                 initial_headers: %i[tablename recordid]

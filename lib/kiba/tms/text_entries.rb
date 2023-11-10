@@ -42,6 +42,9 @@ module Kiba
       setting :for_reference_master_untyped_default_treatment,
         default: "citation_note_untyped",
         reader: true
+      setting :for_term_master_thes_untyped_default_treatment,
+        default: "term_note_untyped",
+        reader: true
 
       extend Tms::Mixins::MultiTableMergeable
     end

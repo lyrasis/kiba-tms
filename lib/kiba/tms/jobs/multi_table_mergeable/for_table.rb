@@ -47,12 +47,13 @@ module Kiba
 
           def lookupkey_xforms(field, main_mod)
             Kiba.job_segment do
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: [field, main_mod.type_field],
-                target: :lookupkey,
-                delim: " ",
-                delete_sources: false
-
+              if main_mod.respond_to?(:type_field)
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: [field, main_mod.type_field],
+                  target: :lookupkey,
+                  delim: " ",
+                  delete_sources: false
+              end
               transform Delete::Fields,
                 fields: field
             end

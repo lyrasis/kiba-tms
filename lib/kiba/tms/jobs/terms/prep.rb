@@ -15,9 +15,8 @@ module Kiba
                 lookup: %i[
                   prep__term_types
                   term_master_thes__used_in_xrefs
-                  classification_notations__used
-                  tms__thesaurus_bases
                   terms__preferred
+                  prep__dd_languages
                 ]
               },
               transformer: xforms
@@ -28,11 +27,18 @@ module Kiba
             Kiba.job_segment do
               transform Tms::Transforms::DeleteTmsFields
               transform Delete::Fields, fields: %i[displayorder systemgenerated]
+
               transform Merge::MultiRowLookup,
                 keycolumn: :termtypeid,
                 lookup: prep__term_types,
                 fieldmap: {termtype: :termtype}
               transform Delete::Fields, fields: :termtypeid
+
+              transform Merge::MultiRowLookup,
+                lookup: prep__dd_languages,
+                keycolumn: :languageid,
+                fieldmap: {language: :language}
+              transform Delete::Fields, fields: :languageid
 
               transform Merge::MultiRowLookup,
                 keycolumn: :termmasterid,
@@ -47,26 +53,11 @@ module Kiba
                   sourcetermid: :sourcetermid
                 }
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :primarycnid,
-                lookup: classification_notations__used,
-                fieldmap: {
-                  cn: :cn,
-                  cn_nodedepth: :nodedepth,
-                  cn_children: :children,
-                  cn_rootleveltmid: :rootleveltmid,
-                  cn_thesaurusbaseid: :thesaurusbaseid
-                }
-              transform Delete::Fields, fields: :primarycnid
+              if Tms::TextEntries.for?("TermMasterThes")
+                transform Tms::Transforms::TextEntries::ForTermMasterThesMerger
+              end
 
-              transform Merge::MultiRowLookup,
-                keycolumn: :cn_thesaurusbaseid,
-                lookup: tms__thesaurus_bases,
-                fieldmap: {
-                  thesaurus_name: :thesaurusbase,
-                  thesaurus_version: :installedversion
-                }
-              transform Delete::Fields, fields: :cn_thesaurusbaseid
+              transform Delete::Fields, fields: :primarycnid
 
               transform Rename::Field,
                 from: :term,
@@ -75,6 +66,7 @@ module Kiba
                 lookup: terms__preferred,
                 keycolumn: :preferredtermid,
                 fieldmap: {termpreferred: :term}
+              transform Clean::EnsureConsistentFields
             end
           end
         end
