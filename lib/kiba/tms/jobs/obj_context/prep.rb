@@ -13,7 +13,8 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :tms__obj_context,
-                destination: :prep__obj_context
+                destination: :prep__obj_context,
+                lookup: :objects__number_lookup
               },
               transformer: xforms
             )
@@ -34,6 +35,11 @@ module Kiba
                 action: :reject,
                 field: :objectid,
                 value: "-1"
+
+              transform Merge::MultiRowLookup,
+                lookup: objects__number_lookup,
+                keycolumn: :objectid,
+                fieldmap: {objectnumber: :objectnumber}
 
               transform Tms.data_cleaner if Tms.data_cleaner
 

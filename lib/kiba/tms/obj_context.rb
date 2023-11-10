@@ -24,6 +24,15 @@ module Kiba
       #
       # @return [Array<#process>]
       setting :field_cleaners, default: [], reader: true
+
+      # Used in reportable for_table jobs
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :prep__obj_context,
+          fieldmap: {
+            targetrecord: :objectnumber
+          }
+        }, reader: true
     end
   end
 end
