@@ -48,11 +48,10 @@ module Kiba
               transform Rename::Field, from: :id, to: :recordid
 
               unless Tms::Dimensions.migrate_secondary_unit_vals
-                transform do |row|
-                  display = row[:displaydimensions]
-                  row[:displaydimensions] = display.sub(/ \(.*\)$/, "")
-                  row
-                end
+                transform(
+                  Tms::Transforms::Dimensions::DeleteSecondaryUnitVals,
+                  field: :displaydimensions
+                )
               end
 
               if Tms::DimensionElements.used?
