@@ -9,12 +9,10 @@ end
 RSpec.describe Kiba::Tms::Transforms::ObjLocations::AddFulllocid do
   after(:each) { Tms::ObjLocations.reset_config }
 
-  subject(:xform) { described_class.new(mode: mode) }
+  subject(:xform) { described_class.new }
   let(:result) { input.map { |row| xform.process(row)[:fulllocid] } }
 
   context "when mode = hier", skip: "Verify with project data" do
-    let(:mode) { :hier }
-
     context "without temptext mapping done" do
       before(:each) do
         Kiba::Tms::ObjLocations.config.temptext_mapping_done = false

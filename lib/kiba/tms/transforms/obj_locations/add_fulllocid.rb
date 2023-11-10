@@ -5,10 +5,11 @@ module Kiba
     module Transforms
       module ObjLocations
         class AddFulllocid
-          def initialize(mode: :hier)
+          def initialize
+            @mode = Tms::ObjLocations.fulllocid_mode
             @target = :fulllocid
             @fields = set_fields(mode)
-            @placeholder = "nil"
+            @placeholder = Tms::ObjLocations.fulllocid_placeholder
             @delim = Tms.delim
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
               fields: fields,
@@ -30,8 +31,8 @@ module Kiba
 
           private
 
-          attr_reader :target, :fields, :temp_fields, :placeholder, :delim,
-            :getter, :ttgetter
+          attr_reader :mode, :target, :fields, :temp_fields, :placeholder,
+            :delim, :getter, :ttgetter
 
           def field_vals(row)
             getter.call(row)

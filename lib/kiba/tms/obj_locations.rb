@@ -103,9 +103,6 @@ module Kiba
       #   only one name recorded, or the same name recorded for all rows, or
       #   the client does not care about retaining the roles, set to false
       setting :note_from_role_names, default: true, reader: true
-      setting :temptext_note_targets,
-        default: [],
-        reader: true
 
       # Settings related to extracting Location authority terms
       setting :adds_sublocations,
@@ -124,6 +121,11 @@ module Kiba
       setting :cratenumber_lvl,
         default: :loc12,
         reader: true
+
+      # @return [:hier, Symbol] whether to use :fulllocid_fields or
+      #   :fulllocid_fields_hier to build fulllocid value
+      setting :fulllocid_mode, default: :hier, reader: true
+
       # @return [String] value appended to fulllocid when source field
       #   is blank
       setting :fulllocid_placeholder, default: "nil", reader: true
@@ -162,6 +164,10 @@ module Kiba
       #   location authority hierarchy. Used for post-mapping build of fullocid.
       #   Does not include note field mappings
       setting :temptext_target_fields,
+        default: [],
+        reader: true
+      # Note field mappings for temptext
+      setting :temptext_note_targets,
         default: [],
         reader: true
 
