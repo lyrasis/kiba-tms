@@ -84,9 +84,12 @@ module Kiba
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[estimatehigh estimatelow netsaleamount],
                 match: '^\.0000$'
+              transform Copy::Field,
+                from: :objectnumber,
+                to: :objnumforid
               transform Tms::Transforms::IdGenerator,
                 prefix: "EX",
-                id_source: :objectnumber,
+                id_source: :objnumforid,
                 id_target: :exitnumber,
                 sort_on: :deaccessionid,
                 sort_type: :i,
