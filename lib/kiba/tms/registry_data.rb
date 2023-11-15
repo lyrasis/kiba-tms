@@ -4191,22 +4191,16 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("works") do
-          register :compiled, {
-            creator: Kiba::Tms::Jobs::Works::Compiled,
-            path: File.join(Kiba::Tms.datadir, "working", "works_compiled.csv"),
-            tags: %i[works]
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::Works::Lookup,
+            path: File.join(Kiba::Tms.datadir, "working", "works_lookup.csv"),
+            tags: %i[works],
+            lookup_on: :work
           }
-          register :from_object_departments, {
-            creator: Kiba::Tms::Jobs::Works::FromObjectDepartments,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "works_from_obj_depts.csv"),
-            tags: %i[works]
-          }
-          register :from_object_period, {
-            creator: Kiba::Tms::Jobs::Works::FromObjectPeriod,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "works_from_obj_period.csv"),
-            tags: %i[works]
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::Works::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest", "works.csv"),
+            tags: %i[works ingest]
           }
         end
       end
