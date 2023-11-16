@@ -77,67 +77,77 @@ module Kiba
       # If nil, default processing in prep__objects is
       #   used unless field is otherwise omitted from processing
       setting :creditline_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :creditline,
-          newfield: :annotationtype,
-          value: "Credit Line",
-          sourcebecomes: :annotationnote
-        ),
+        default: {
+          Tms::Transforms::DeriveFieldPair => {
+            source: :creditline,
+            newfield: :annotationtype,
+            value: "Credit Line",
+            sourcebecomes: :annotationnote
+          }
+        },
         reader: true
       setting :curatorapproved_xform,
-        default: Tms::Transforms::Objects::Curatorapproved.new,
+        default: {Tms::Transforms::Objects::Curatorapproved =>
+                  {positivestatus: "curator approved"}},
         reader: true
       setting :curatorialremarks_xform,
-        default: Kiba::Extend::Transforms::Rename::Field.new(
-          from: :curatorialremarks,
-          to: :curatorialremarks_comment
-        ),
+        default: {
+          Rename::Field => {
+            from: :curatorialremarks,
+            to: :curatorialremarks_comment
+          }
+        },
         reader: true
       setting :inscribed_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :inscribed,
-          newfield: :inscriptioncontenttype,
-          value: "inscribed",
-          sourcebecomes: :inscriptioncontent
-        ),
+        default: {
+          Tms::Transforms::DeriveFieldPair => {
+            source: :inscribed,
+            newfield: :inscriptioncontenttype,
+            value: "inscribed",
+            sourcebecomes: :inscriptioncontent
+          }
+        },
         reader: true
       setting :markings_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :markings,
-          newfield: :inscriptioncontenttype,
-          value: "",
-          sourcebecomes: :inscriptioncontent
-        ),
+        default: {
+          Tms::Transforms::DeriveFieldPair => {
+            source: :markings,
+            newfield: :inscriptioncontenttype,
+            value: "",
+            sourcebecomes: :inscriptioncontent
+          }
+        },
         reader: true
-      setting :medium_xform, default: nil, reader: true
+      setting :medium_xform, default: {}, reader: true
       setting :objectcount_xform,
-        default: Tms::Transforms::Objects::Objectcount.new,
+        default: {Tms::Transforms::Objects::Objectcount => nil},
         reader: true
-      setting :objectnumber2_type, default: "object number 2", reader: true
-      setting :objectnumber2_xform,
-        default: Tms::Transforms::Objects::Objectnumber2.new,
-        reader: true
+
       # @return [String] othernumbertype value assigned to any :objectnumber2
       #   values added to othernumber field group
+      setting :objectnumber2_type, default: "object number 2", reader: true
+      setting :objectnumber2_xform,
+        default: {Tms::Transforms::Objects::Objectnumber2 => nil},
+        reader: true
+
       setting :onview_xform,
-        default: Kiba::Extend::Transforms::Delete::Fields.new(fields: :onview),
+        default: {Delete::Fields => {fields: :onview}},
         reader: true
-      # setting :othernumber_type_xform,
-      #   default: Clean::DowncaseFieldValues.new(fields: :othernumber_type),
-      #   reader: true
-      setting :paperfileref_xform, default: nil, reader: true
+      setting :paperfileref_xform, default: {}, reader: true
       setting :publicaccess_xform,
-        default: Tms::Transforms::Objects::Publicaccess.new,
+        default: {Tms::Transforms::Objects::Publicaccess => nil},
         reader: true
-      setting :pubreferences_xform, default: nil, reader: true
-      setting :relatedworks_xform, default: nil, reader: true
+      setting :pubreferences_xform, default: {}, reader: true
+      setting :relatedworks_xform, default: {}, reader: true
       setting :signed_xform,
-        default: Tms::Transforms::DeriveFieldPair.new(
-          source: :signed,
-          newfield: :inscriptioncontenttype,
-          value: "signature",
-          sourcebecomes: :inscriptioncontent
-        ),
+        default: {
+          Tms::Transforms::DeriveFieldPair => {
+            source: :signed,
+            newfield: :inscriptioncontenttype,
+            value: "signature",
+            sourcebecomes: :inscriptioncontent
+          }
+        },
         reader: true
 
       # @return [Hash{Symbol=>Symbol}]

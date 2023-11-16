@@ -5,11 +5,11 @@ module Kiba
     module Transforms
       module Objects
         class Curatorapproved
-          def initialize
+          def initialize(positivestatus:)
             @source = :curatorapproved
             @target = :recordstatus
             @mapping = {
-              "1" => "approved",
+              "1" => positivestatus,
               "0" => nil
             }
           end

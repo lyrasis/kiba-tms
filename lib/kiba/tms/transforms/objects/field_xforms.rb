@@ -22,15 +22,16 @@ module Kiba
           attr_reader :rowct, :config, :xforms
 
           def set_xforms(row)
-            row.keys.each { |field| set_xform(field) }
+            row.keys.each { |field| set_field_xforms(field) }
             @xforms.flatten!
             @rowct = 1
           end
 
-          def set_xform(field)
+          def set_field_xforms(field)
             return unless config.field_xform_for?(field)
 
             @xforms << config.send("#{field}_xform".to_sym)
+              .map { |klass, args| args ? klass.new(**args) : klass.new }
           end
         end
       end
