@@ -16,6 +16,11 @@ module Kiba
       setting :for_constituents_untyped_default_treatment,
         default: :plain_note,
         reader: true
+      # Treatment applied to rows for merge into Objects when
+      #   :thesxreftype is blank
+      setting :for_objects_untyped_default_treatment,
+        default: :term_field,
+        reader: true
 
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,

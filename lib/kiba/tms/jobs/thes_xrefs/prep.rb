@@ -21,9 +21,6 @@ module Kiba
           def lookups
             base = [:prep__terms]
             base << :prep__thes_xref_types if Tms::ThesXrefTypes.used?
-            if Tms::ClassificationNotations.used?
-              base << :prep__classification_notations
-            end
             base.select { |job| Tms.job_output?(job) }
           end
 
@@ -75,7 +72,9 @@ module Kiba
                 lookup: prep__terms,
                 fieldmap: {
                   termused: :termused,
-                  termpreferred: :termpreferred
+                  termpreferred: :termpreferred,
+                  termtype: :termtype,
+                  termsource: :termsource
                 }
 
               transform FilterRows::AnyFieldsPopulated,

@@ -253,6 +253,14 @@ module Kiba
                 end
               end
 
+              if Tms::ThesXrefs.used? &&
+                  Tms::ThesXrefs.for?("Objects") &&
+                  Tms::ThesXrefsForObjects.merger_xforms
+                Tms::ThesXrefsForObjects.merger_xforms.each do |xform|
+                  transform xform
+                end
+              end
+
               if Tms::ObjComponents.merging_text_entries?
                 transform Merge::MultiRowLookup,
                   keycolumn: :objectid,
