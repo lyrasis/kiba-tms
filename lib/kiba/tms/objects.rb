@@ -12,8 +12,8 @@ module Kiba
         default: %i[
           sortnumber sortnumber2 textsearchid accountability injurisdiction
           onview searchobjectnumber sortsearchnumber
-          usernumber1 usernumber2 usernumber3 usernumber4
           istemplate isvirtual
+          usernumber4
         ],
         reader: true,
         constructor: ->(value) { value + date_fields }
