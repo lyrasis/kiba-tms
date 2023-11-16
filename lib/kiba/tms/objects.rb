@@ -56,6 +56,16 @@ module Kiba
         default: Tms::Transforms::Objects::Classifications,
         reader: true
 
+      # -=-=-=-=-=-=-=-=-=-=-
+      # EXTENAL DATA MERGE SETTINGS
+      # -=-=-=-=-=-=-=-=-=-=-
+
+      # @return [Hash{Class => Hash, nil}] run in order at the end of
+      #   :objects__external_data_merged job. Key is a Kiba compliant
+      #   transform class. Value is nil (no initialization params for
+      #   class) or Hash of initialization params
+      setting :post_merge_xforms, default: {}, reader: true
+
       # @return [#process] custom transform to handle merged-in classifications
       #   fields
       setting :classifications_shape_xform, default: nil, reader: true

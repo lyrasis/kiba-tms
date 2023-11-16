@@ -189,6 +189,12 @@ module Kiba
                   fieldmap: {tecomp_comment: :te_comment},
                   delim: Tms.delim
               end
+
+              unless config.post_merge_xforms.empty?
+                transform Tms::Transforms::List,
+                  xforms: config.post_merge_xforms
+              end
+
               transform Clean::EnsureConsistentFields
             end
           end
