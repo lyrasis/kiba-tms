@@ -34,14 +34,15 @@ module Kiba
         Tms::DimItemElemXrefs.used? && Tms::DimItemElemXrefs.for?("Objects")
       end
 
+      # -=-=-=-=-=-=-=-=-=-=-
+      # PREP SETTINGS
+      # -=-=-=-=-=-=-=-=-=-=-
+
       # Transforms to clean individual fields. These are run at the
       #   end of the :prep__objects job, so are limited to fields
-      #   present in original TMS objects table. The exceptions are:
-      #
-      # - `:departmentid` will have been deleted (and possibly
-      #   replaced with the value of the `:department_target` setting)
-      # - `:objectstatusid` will have been deleted (and possibly replaced with
-      #   `main_objectstatus`
+      #   present in original TMS objects table. The exceptions are
+      #   any fields ending with `id`, which will have had values
+      #   merged in from their respective lookup tables.
       #
       # Elements should be Kiba-compliant transform classes that do
       #   not need to be initialized with arguments
@@ -296,7 +297,6 @@ module Kiba
       # If setting to :dept_namedcollection, see also the following configs:
       #   department_coll_prefix, named_coll_fields
       # other supported values: :dept_namedcollection
-      setting :department_target, default: :responsibledepartment, reader: true
       setting :named_coll_fields, default: [], reader: true
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table

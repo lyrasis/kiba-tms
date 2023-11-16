@@ -22,13 +22,8 @@ module Kiba
 
           def lookups
             base = []
-            base << :prep__departments if Tms::Departments.used?
-            base << :prep__obj_context if Tms::ObjContext.used?
-            base << :prep__object_levels if Tms::ObjectLevels.used?
             base << :prep__object_names if Tms::ObjectNames.used?
             base << :prep__obj_titles if Tms::ObjTitles.used?
-            base << :prep__object_statuses if Tms::ObjectStatuses.used?
-            base << :prep__object_types if Tms::ObjectTypes.used?
             if config.dimensions_to_merge?
               base << :dim_item_elem_xrefs_for__objects
             end
@@ -47,23 +42,6 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              if config.classifications_merge_xform
-                transform config.classifications_merge_xform
-              else
-                transform Delete::Fields, fields: Tms::Classifications.id_field
-              end
-
-              if Tms::Departments.used?
-                transform Merge::MultiRowLookup,
-                  keycolumn: :departmentid,
-                  lookup: prep__departments,
-                  fieldmap: {
-                    department: :department
-                  },
-                  delim: Tms.delim
-              end
-              transform Delete::Fields, fields: :departmentid
-
               if Tms::ConRefs.for?("Objects")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
@@ -74,33 +52,6 @@ module Kiba
                   transform xform
                 }
               end
-
-              if Tms::ObjectLevels.used?
-                transform Merge::MultiRowLookup,
-                  lookup: prep__object_levels,
-                  keycolumn: Tms::ObjectLevels.id_field,
-                  fieldmap: {objectlevel: Tms::ObjectLevels.type_field}
-              end
-              transform Delete::Fields,
-                fields: Tms::ObjectLevels.id_field
-
-              if Tms::ObjectTypes.used?
-                transform Merge::MultiRowLookup,
-                  lookup: prep__object_types,
-                  keycolumn: Tms::ObjectTypes.id_field,
-                  fieldmap: {objecttype: Tms::ObjectTypes.type_field}
-              end
-              transform Delete::Fields,
-                fields: Tms::ObjectTypes.id_field
-
-              if Tms::ObjectStatuses.used?
-                transform Merge::MultiRowLookup,
-                  lookup: prep__object_statuses,
-                  keycolumn: Tms::ObjectStatuses.id_field,
-                  fieldmap: {main_objectstatus: Tms::ObjectStatuses.type_field}
-              end
-              transform Delete::Fields,
-                fields: Tms::ObjectStatuses.id_field
 
               if Tms::ObjectNames.used?
                 transform Rename::Field,

@@ -42,7 +42,7 @@ module Kiba
 
               if Tms::Departments.used? && config.department_coll_prefix
                 transform Prepend::ToFieldValue,
-                  field: config.department_target,
+                  field: :department,
                   value: config.department_coll_prefix
               end
 
