@@ -46,6 +46,10 @@ module Kiba
                   value: config.department_coll_prefix
               end
 
+              if config.objectname_shape_xform
+                transform config.objectname_shape_xform
+              end
+
               unless config.cataloged_shape_xforms.empty?
                 transform Tms::Transforms::List,
                   xforms: config.cataloged_shape_xforms

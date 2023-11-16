@@ -74,6 +74,21 @@ module Kiba
       #   fields
       setting :classifications_shape_xform, default: nil, reader: true
 
+      # @return [Boolean] whether objectname values are extracted to
+      #   concept/nomenclature authority vocabulary
+      setting :objectname_controlled, default: false, reader: true
+      # @return [nil, #process] custom objectname (and grouped field)
+      #   cleaner for a specific client project. Generally this will
+      #   move substrings like "(?)" from the object name value to the object
+      #   name note field, but it can do whatever needs to happen to prepare
+      #   the :objectname values for extraction, normalization, and load
+      #   as authority terms. Should be a Kiba-compliant transform class that
+      #   does not take initialization parameters.
+      setting :objectname_controlled_cleaner, default: nil, reader: true
+      setting :objectname_shape_xform,
+        default: Tms::Transforms::Objects::Objectname,
+        reader: true
+
       setting :cataloged_treatment, default: :annotation, reader: true
       # Handles :cataloguer and :catalogueisodate, mapping to an annotation
       #   field group line.
