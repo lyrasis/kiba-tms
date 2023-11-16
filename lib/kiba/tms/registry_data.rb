@@ -315,6 +315,24 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("concept_nomenclature") do
+          register :extract, {
+            creator: Kiba::Tms::Jobs::ConceptNomenclature::Extract,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "concept_nomenclature_extract.csv"),
+            desc: "Extracts unique strings used as objectname, normalizes",
+            tags: %i[concepts nomenclature],
+            lookup_on: :objectname
+          }
+          register :for_ingest, {
+            creator: Kiba::Tms::Jobs::ConceptNomenclature::ForIngest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "concept_nomenclature.csv"),
+            desc: "Extracts unique strings used as objectname",
+            tags: %i[concepts nomenclature]
+          }
+        end
+
         Kiba::Tms.registry.namespace("cond_line_items") do
           register :to_conservation, {
             creator: Kiba::Tms::Jobs::CondLineItems::ToConservation,
