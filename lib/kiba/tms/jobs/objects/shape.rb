@@ -83,7 +83,7 @@ module Kiba
               unless Tms::Objects.named_coll_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: Tms::Objects.named_coll_fields,
-                  target: :namedcollection,
+                  target: :namedcollection_raw,
                   delim: Tms.delim,
                   delete_sources: true
               end
