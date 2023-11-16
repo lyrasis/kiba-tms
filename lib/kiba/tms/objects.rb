@@ -203,10 +203,8 @@ module Kiba
       # @return [Hash{Symbol=>Symbol}]
       setting :base_field_rename_map,
         default: {
-          chat: :viewerscontributionnote,
           culture: :objectproductionpeople,
           description: :briefdescription,
-          medium: :materialtechniquedescription,
           notes: :comment,
           objectcount: :numberofobjects
         },
