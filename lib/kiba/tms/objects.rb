@@ -351,10 +351,7 @@ module Kiba
         constructor: ->(value) { value - empty_fields.keys }
       # Necessary if :department_target = :dept_namedcollection. Should be a
       #   String value if populated
-      setting :department_coll_prefix, default: nil, reader: true
-      # If setting to :dept_namedcollection, see also the following configs:
-      #   department_coll_prefix, named_coll_fields
-      # other supported values: :dept_namedcollection
+      setting :department_coll_prefix, default: "", reader: true
       setting :named_coll_fields, default: [], reader: true
       # client-specific transform to clean/alter object number values prior to
       #   doing anything else with Objects table
