@@ -66,13 +66,14 @@ module Kiba
       #   class) or Hash of initialization params
       setting :post_merge_xforms, default: {}, reader: true
 
+      # -=-=-=-=-=-=-=-=-=-=-
+      # SHAPE SETTINGS
+      # -=-=-=-=-=-=-=-=-=-=-
+
       # @return [#process] custom transform to handle merged-in classifications
       #   fields
       setting :classifications_shape_xform, default: nil, reader: true
 
-      # @return [Array<#process>] run in order at the end of
-      #   :objects__shape job
-      setting :post_shape_xforms, default: [], reader: true
       setting :cataloged_treatment, default: :annotation, reader: true
       # Handles :cataloguer and :catalogueisodate, mapping to an annotation
       #   field group line.
@@ -91,8 +92,13 @@ module Kiba
           base
         end
 
+      # @return [Hash{Class => Hash, nil}] run in order at the end of
+      #   :objects__shape job. Key is a Kiba compliant transform class. Value
+      #   is nil (no initialization params for class) or Hash of initialization
+      #   params
+      setting :post_shape_xforms, default: {}, reader: true
       # -----------------------------------------------------------------------
-      # Default field-specific transforms
+      # Default field-specific shape transforms
       # -----------------------------------------------------------------------
       # @param field [Symbol]
       def field_xform_for?(field)

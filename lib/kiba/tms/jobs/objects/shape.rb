@@ -96,7 +96,8 @@ module Kiba
               end
 
               unless config.post_shape_xforms.empty?
-                config.post_shape_xforms.each { |xform| transform xform }
+                transform Tms::Transforms::List,
+                  xforms: config.post_shape_xforms
               end
             end
           end
