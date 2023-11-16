@@ -3348,6 +3348,15 @@ module Kiba
             ),
             tags: %i[objects]
           }
+          register :authorities_merged, {
+            creator: Kiba::Tms::Jobs::Objects::AuthoritiesMerged,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "objects_authorities_merged.csv"
+            ),
+            tags: %i[objects]
+          }
           register :dates, {
             creator: Kiba::Tms::Jobs::Objects::Dates,
             path: File.join(

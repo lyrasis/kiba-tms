@@ -10,7 +10,7 @@ module Kiba
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :objects__shape,
+                source: :objects__authorities_merged,
                 destination: :collectionobjects__for_ingest
               },
               transformer: get_xforms
