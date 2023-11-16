@@ -54,12 +54,17 @@ module Kiba
               end
 
               if Tms::ObjectNames.used?
+                addfields = %i[
+                  obj_objectnametype obj_objectnamelanguage
+                  obj_objectnamenote
+                ].map { |field| [field, "%NULLVALUE%"] }
+                  .to_h
                 transform Rename::Field,
                   from: :objectname,
                   to: :obj_objectname
-                transform Append::NilFields,
-                  fields: %i[obj_objectnametype obj_objectnamelanguage
-                    obj_objectnamenote]
+                transform Merge::ConstantValues,
+                  constantmap: addfields
+
                 transform Merge::MultiRowLookup,
                   lookup: prep__object_names,
                   keycolumn: :objectid,
@@ -69,7 +74,8 @@ module Kiba
                     on_objectnamelanguage: :language,
                     on_objectnamenote: :remarks
                   },
-                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i)
+                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
+                  null_placeholder: "%NULLVALUE%"
                 transform Tms::Transforms::ClearContainedFields,
                   a: :obj_objectname,
                   b: :on_objectname,
