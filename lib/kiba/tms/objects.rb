@@ -338,7 +338,6 @@ module Kiba
         default: %i[con_refs_p_objecthistorynote
           con_refs_o_objecthistorynote],
         reader: true
-      setting :period_target, default: nil, reader: true
       setting :record_num_merge_config,
         default: {
           sourcejob: :objects__number_lookup,

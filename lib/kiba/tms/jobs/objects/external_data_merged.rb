@@ -126,51 +126,7 @@ module Kiba
               end
 
               if Tms::ObjContext.used?
-                contexts = Tms::ObjContext.content_fields
-                contexts_merged = []
-
-                if contexts.any?(:culture)
-                  transform Merge::MultiRowLookup,
-                    keycolumn: :objectid,
-                    lookup: prep__obj_context,
-                    fieldmap: {
-                      culture: :culture
-                    },
-                    delim: Tms.delim
-                  contexts_merged << :culture
-                end
-
-                if contexts.any?(:period)
-                  transform Merge::MultiRowLookup,
-                    keycolumn: :objectid,
-                    lookup: prep__obj_context,
-                    fieldmap: {
-                      period: :period
-                    },
-                    delim: Tms.delim
-                  contexts_merged << :period
-                end
-
-                if contexts.any?(:n_signed)
-                  transform Merge::MultiRowLookup,
-                    keycolumn: :objectid,
-                    lookup: prep__obj_context,
-                    fieldmap: {
-                      nsigned_inscriptioncontent: :n_signed
-                    },
-                    constantmap: {
-                      nsigned_inscriptioncontenttype: "signed"
-                    },
-                    delim: Tms.delim
-                  contexts_merged << :n_signed
-                  config.text_inscription_source_fields << :nsigned
-                end
-
-                contexts_todo = contexts - contexts_merged
-                unless contexts_todo.empty?
-                  warn("Handle merging ObjContext fields: "\
-                       "#{contexts_todo.join(", ")}")
-                end
+                transform Tms::Transforms::ObjContext::MergeXforms
               end
 
               if config.send(:dimensions_to_merge?)
