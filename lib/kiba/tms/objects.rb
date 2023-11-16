@@ -63,6 +63,24 @@ module Kiba
       # @return [Array<#process>] run in order at the end of
       #   :objects__shape job
       setting :post_shape_xforms, default: [], reader: true
+      setting :cataloged_treatment, default: :annotation, reader: true
+      # Handles :cataloguer and :catalogueisodate, mapping to an annotation
+      #   field group line.
+      setting :cataloged_shape_xforms,
+        default: {},
+        reader: true,
+        constructor: ->(base) do
+          case cataloged_treatment
+          when :annotation
+            base.merge({Tms::Transforms::Objects::Cataloged => nil})
+          when :delete
+            base.merge({
+              Delete::Fields => {fields: %i[cataloguer catalogueisodate]}
+            })
+          end
+          base
+        end
+
       # -----------------------------------------------------------------------
       # Default field-specific transforms
       # -----------------------------------------------------------------------
@@ -195,15 +213,23 @@ module Kiba
       setting :annotation_source_fields,
         default: %i[creditline],
         reader: true,
-        constructor: ->(default) do
+        constructor: ->(base) do
           if Tms::AltNums.for_objects_annotation_treatments_used
-            default << :altnum
+            base << :altnum
           end
-          default
+          base << :cat if cataloged_treatment == :annotation
+          base
         end
       setting :annotation_target_fields,
         default: %i[annotationtype annotationnote],
-        reader: true
+        reader: true,
+        constructor: ->(base) do
+          if cataloged_treatment == :annotation
+            base << %i[annotationauthor annotationdate]
+          end
+          base.flatten
+        end
+
       setting :nontext_inscription_source_fields, default: %i[], reader: true
       setting :nontext_inscription_target_fields, default: %i[], reader: true
       setting :text_inscription_source_fields,

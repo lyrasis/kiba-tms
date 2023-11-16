@@ -46,6 +46,11 @@ module Kiba
                   value: config.department_coll_prefix
               end
 
+              unless config.cataloged_shape_xforms.empty?
+                transform Tms::Transforms::List,
+                  xforms: config.cataloged_shape_xforms
+              end
+
               transform Delete::DelimiterOnlyFieldValues,
                 fields: %w[contentnote objectproductionnote
                   objecthistorynote].map { |prefix|
