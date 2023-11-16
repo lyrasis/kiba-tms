@@ -261,6 +261,7 @@ module Kiba
         reader: true,
         constructor: ->(default) do
           default << :main_objectstatus if Tms::ObjectStatuses.used?
+          default << :statusflag if Tms::StatusFlags.used?
           default << :linkedset_objectstatus if Tms::LinkedSetAcq.used?
           default
         end

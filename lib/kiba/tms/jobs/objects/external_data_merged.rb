@@ -33,6 +33,9 @@ module Kiba
             if Tms::LinkedSetAcq.used?
               base << :linked_set_acq__object_statuses
             end
+            if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
+              base << :status_flags_for__objects
+            end
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
@@ -196,11 +199,16 @@ module Kiba
                 end
               end
 
-              if Tms::StatusFlags.for?("Objects") &&
-                  Tms::StatusFlagsForObjects.merger_xforms
-                Tms::StatusFlagsForObjects.merger_xforms.each do |xform|
-                  transform xform
-                end
+              if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
+                transform Merge::MultiRowLookup,
+                  lookup: status_flags_for__objects,
+                  keycolumn: :objectid,
+                  fieldmap: {statusflag: :flaglabel},
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(
+                    on: :sort, as: :to_i
+                  ),
+                  multikey: true
               end
 
               if Tms::TextEntries.for?("Objects") &&
