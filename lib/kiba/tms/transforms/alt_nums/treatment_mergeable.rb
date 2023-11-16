@@ -6,6 +6,8 @@ module Kiba
       module AltNums
         # Used in job that has an objects table as its source
         module TreatmentMergeable
+          include Tms::Transforms::ValueAppendable
+
           def altnum(row)
             row[Tms::AltNums.mergeable_value_field]
           end

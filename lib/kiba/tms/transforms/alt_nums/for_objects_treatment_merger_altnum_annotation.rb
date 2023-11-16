@@ -9,8 +9,12 @@ module Kiba
           include TreatmentMergeable
 
           def initialize
-            @numtarget = :altnum_annotationnote
-            @typetarget = :altnum_annotationtype
+            prefix = "altnum"
+            datafields = %i[annotationnote annotationtype]
+            @numtarget = "#{prefix}_#{datafields[0]}".to_sym
+            @typetarget = "#{prefix}_#{datafields[1]}".to_sym
+            padfields = Tms::Objects.annotation_target_fields - datafields
+            @padfields = padfields.map { |field| "#{prefix}_#{field}".to_sym }
             @delim = Tms.delim
             @note_builder = ->(mergerow) do
               build_note(mergerow, %i[numtype remarks dates])
@@ -19,34 +23,19 @@ module Kiba
 
           def process(row, mergerow)
             type = Tms::AltNums.for_objects_altnum_annotation_type
+            note = note_builder.call(mergerow)
+            append_value(row, typetarget, type, delim)
+            append_value(row, numtarget, note, delim)
+            padfields.each do |field|
+              append_value(row, field, "%NULLVALUE%", delim)
+            end
 
-            fresh?(row) ? add(row, mergerow, type) : append(row, mergerow, type)
             row
           end
 
           private
 
-          attr_reader :numtarget, :typetarget, :delim, :note_builder
-
-          def fresh?(row)
-            true unless row.keys.include?(numtarget)
-          end
-
-          def add(row, mergerow, type)
-            row[typetarget] = type
-            row[numtarget] = note_builder.call(mergerow)
-            row
-          end
-
-          def append(row, mergerow, type)
-            row[typetarget] = [row[typetarget], type].join(delim)
-
-            row[numtarget] = [
-              row[numtarget],
-              note_builder.call(mergerow)
-            ].join(delim)
-            row
-          end
+          attr_reader :numtarget, :typetarget, :padfields, :delim, :note_builder
         end
       end
     end

@@ -19,29 +19,14 @@ module Kiba
             typeval = numtype(mergerow)
             type = typeval.blank? ? "%NULLVALUE%" : typeval
 
-            fresh?(row) ? add(row, num, type) : append(row, num, type)
+            append_value(row, typetarget, type, delim)
+            append_value(row, numtarget, num, delim)
             row
           end
 
           private
 
           attr_reader :numtarget, :typetarget, :delim
-
-          def fresh?(row)
-            true unless row.keys.include?(numtarget)
-          end
-
-          def add(row, num, type)
-            row[numtarget] = num
-            row[typetarget] = type
-            row
-          end
-
-          def append(row, num, type)
-            row[numtarget] = [row[numtarget], num].join(delim)
-            row[typetarget] = [row[typetarget], type].join(delim)
-            row
-          end
         end
       end
     end
