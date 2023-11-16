@@ -278,8 +278,9 @@ module Kiba
         reader: true,
         default: %i[comment],
         constructor: ->(default) do
-          default << :alt_num_comment if Tms::AltNums.for?("Objects")
-          default << :title_comment if Tms::Table::List.include?("ObjTitles")
+          default << :alt_num_comment if Tms::AltNums.used? &&
+            Tms::AltNums.for?("Objects")
+          default << :title_comment if Tms::ObjTitles.used?
           default
         end
 
