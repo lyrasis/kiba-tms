@@ -26,7 +26,7 @@ module Kiba
       # Used in reportable for_table jobs
       setting :record_num_merge_config,
         default: {
-          sourcejob: :reference_master__prep_clean,
+          sourcejob: :reference_master__prep,
           fieldmap: {targetrecord: :title}
         }, reader: true
 

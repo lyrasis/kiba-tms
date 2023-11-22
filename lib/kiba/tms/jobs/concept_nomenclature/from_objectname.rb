@@ -4,16 +4,16 @@ module Kiba
   module Tms
     module Jobs
       module ConceptNomenclature
-        module Extract
+        module FromObjectname
           module_function
 
           def job
-            return unless Tms::Objects.objectname_controlled
+            return if Tms::Objects.objectname_controlled_source_fields.empty?
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :objects__shape,
-                destination: :concept_nomenclature__extract
+                source: :prep__objects,
+                destination: :concept_nomenclature__from_objectname
               },
               transformer: xforms
             )
@@ -29,17 +29,9 @@ module Kiba
               transform Explode::RowsFromMultivalField,
                 field: :objectname,
                 delim: Tms.delim
-              transform Cspace::NormalizeForID,
-                source: :objectname,
-                target: :norm
-              transform Replace::NormWithMostFrequentlyUsedForm,
-                normfield: :norm,
-                nonnormfield: :objectname,
-                target: :preferredform
-              transform Deduplicate::Table,
-                field: :objectname
-              transform Delete::Fields,
-                fields: :norm
+              transform Merge::ConstantValue,
+                target: :termsourcedetail,
+                value: "TMS Objects.objectname"
             end
           end
         end

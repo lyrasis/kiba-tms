@@ -36,6 +36,10 @@ module Kiba
             if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
               base << :status_flags_for__objects
             end
+            if Tms::ObjGeography.used?
+              base << :prep__obj_geography
+              base << :places__final_cleaned_lookup
+            end
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
@@ -56,18 +60,10 @@ module Kiba
                 }
               end
 
+              transform Rename::Field,
+                from: :objectname,
+                to: :obj_objectname
               if Tms::ObjectNames.used?
-                addfields = %i[
-                  obj_objectnametype obj_objectnamelanguage
-                  obj_objectnamenote
-                ].map { |field| [field, "%NULLVALUE%"] }
-                  .to_h
-                transform Rename::Field,
-                  from: :objectname,
-                  to: :obj_objectname
-                transform Merge::ConstantValues,
-                  constantmap: addfields
-
                 transform Merge::MultiRowLookup,
                   lookup: prep__object_names,
                   keycolumn: :objectid,
@@ -79,10 +75,6 @@ module Kiba
                   },
                   sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
                   null_placeholder: "%NULLVALUE%"
-                transform Tms::Transforms::ClearContainedFields,
-                  a: :obj_objectname,
-                  b: :on_objectname,
-                  delim: Tms.delim
               end
 
               if Tms::LinkedSetAcq.used?
@@ -190,12 +182,55 @@ module Kiba
                   delim: Tms.delim
               end
 
+              if Tms::ObjGeography.used?
+                transform Merge::MultiRowLookup,
+                  lookup: prep__obj_geography,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    place_made_orig_combined: :orig_combined
+                  },
+                  conditions: ->(_r, rows) do
+                    rows.select { |row| row[:geocode] == "Place Made" }
+                  end
+                transform Merge::MultiRowLookup,
+                  lookup: prep__obj_geography,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    other_place_orig_combined: :orig_combined
+                  },
+                  conditions: ->(_r, rows) do
+                    rows.reject { |row| row[:geocode] == "Place Made" }
+                  end
+
+                transform Merge::MultiRowLookup,
+                  lookup: places__final_cleaned_lookup,
+                  keycolumn: :place_made_orig_combined,
+                  fieldmap: {
+                    made_assocplace: :place,
+                    made_assocplacenote: :note
+                  },
+                  null_placeholder: "%NULLVALUE%",
+                  constantmap: {made_assocplacetype: "place made"},
+                  multikey: true
+                transform Merge::MultiRowLookup,
+                  lookup: places__final_cleaned_lookup,
+                  keycolumn: :other_place_orig_combined,
+                  fieldmap: {
+                    other_assocplace: :place,
+                    other_assocplacenote: :note
+                  },
+                  constantmap: {other_assocplacetype: "%NULLVALUE%"},
+                  multikey: true
+                transform Delete::Fields,
+                  fields: %i[place_made_orig_combined other_place_orig_combined]
+              end
+
+              transform Clean::EnsureConsistentFields
+
               unless config.post_merge_xforms.empty?
                 transform Tms::Transforms::List,
                   xforms: config.post_merge_xforms
               end
-
-              transform Clean::EnsureConsistentFields
             end
           end
         end

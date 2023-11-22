@@ -5,9 +5,8 @@ module Kiba
     module Transforms
       module Objects
         class Curatorapproved
-          def initialize(positivestatus:)
+          def initialize(positivestatus: "curator approved")
             @source = :curatorapproved
-            @target = :recordstatus
             @mapping = {
               "1" => positivestatus,
               "0" => nil
@@ -15,14 +14,16 @@ module Kiba
           end
 
           def process(row)
-            row[target] = mapping[row[source]]
-            row.delete(source)
+            val = row[source]
+            return row if val.blank?
+
+            row[source] = mapping[val]
             row
           end
 
           private
 
-          attr_reader :source, :target, :mapping
+          attr_reader :source, :mapping
         end
       end
     end

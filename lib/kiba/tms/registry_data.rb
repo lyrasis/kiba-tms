@@ -315,21 +315,108 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace("concept_nomenclature") do
-          register :extract, {
-            creator: Kiba::Tms::Jobs::ConceptNomenclature::Extract,
+        Kiba::Tms.registry.namespace("concept_associated") do
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::ConceptAssociated::Lookup,
             path: File.join(Kiba::Tms.datadir, "working",
-              "concept_nomenclature_extract.csv"),
-            desc: "Extracts unique strings used as objectname, normalizes",
+              "concept_associated_lookup.csv"),
+            tags: %i[concepts associated],
+            lookup_on: :termused,
+            desc: "Preferred term is in :use field"
+          }
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::ConceptAssociated::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "concept_associated.csv"),
+            tags: %i[concepts associated ingest]
+          }
+        end
+
+        if Tms::ConceptEthnographicCulture.used?
+          Kiba::Tms.registry.namespace("concept_ethnographic_culture") do
+            case Tms.cspace_profile
+            when :fcart
+              Tms::ConceptEthnographicCulture.compile_sources.each do |field|
+                register "from_#{field}".to_sym, {
+                  creator: {
+                    callee:
+                    Kiba::Tms::Jobs::ConceptEthnographicCulture::FromObjMergePrep,
+                    args: {field: field}
+                  },
+                  path: File.join(Kiba::Tms.datadir, "working",
+                    "concept_ethculture_from_#{field}.csv"),
+                  tags: %i[concepts ethnographic_culture]
+                }
+              end
+            end
+            register :lookup, {
+              creator: Kiba::Tms::Jobs::ConceptEthnographicCulture::Lookup,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "concept_ethculture_lookup.csv"),
+              tags: %i[concepts ethnographic_culture],
+              lookup_on: :culture
+            }
+            register :ingest, {
+              creator: Kiba::Tms::Jobs::ConceptEthnographicCulture::Ingest,
+              path: File.join(Kiba::Tms.datadir, "ingest",
+                "concept_ethnographic_culture.csv"),
+              tags: %i[concepts ethnographic_culture ingest]
+            }
+          end
+        end
+
+        Kiba::Tms.registry.namespace("concept_material") do
+          register :from_papersupport, {
+            creator: Kiba::Tms::Jobs::ConceptMaterial::FromPapersupport,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "concept_material_from_papersupport.csv"),
+            tags: %i[concepts material]
+          }
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::ConceptMaterial::Lookup,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "concept_material_lookup.csv"),
+            tags: %i[concepts material],
+            lookup_on: :material
+          }
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::ConceptMaterial::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "concept_material.csv"),
+            tags: %i[concepts material ingest]
+          }
+        end
+
+        Kiba::Tms.registry.namespace("concept_nomenclature") do
+          register :from_objectname, {
+            creator: Kiba::Tms::Jobs::ConceptNomenclature::FromObjectname,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "concept_nomenclature_from_objectname.csv"),
+            tags: %i[concepts nomenclature]
+          }
+          if Tms::ObjectNames.used? &&
+              Tms::Objects.objectname_controlled_source_fields.include?(:on)
+            register :from_object_names_table, {
+              creator:
+              Tms::Jobs::ConceptNomenclature::FromObjectNamesTable,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "concept_nomenclature_from_objectnames_table.csv"),
+              tags: %i[concepts nomenclature]
+            }
+          end
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::ConceptNomenclature::Lookup,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "concept_nomenclature_lookup.csv"),
             tags: %i[concepts nomenclature],
             lookup_on: :objectname
           }
-          register :for_ingest, {
-            creator: Kiba::Tms::Jobs::ConceptNomenclature::ForIngest,
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::ConceptNomenclature::Ingest,
             path: File.join(Kiba::Tms.datadir, "ingest",
               "concept_nomenclature.csv"),
             desc: "Extracts unique strings used as objectname",
-            tags: %i[concepts nomenclature]
+            tags: %i[concepts nomenclature ingest]
           }
         end
 
@@ -3339,6 +3426,18 @@ module Kiba
               "does not contain external table id) such as AltNums and "\
               "ConRefs"
           }
+          register :merged_data_prep, {
+            creator: Kiba::Tms::Jobs::Objects::MergedDataPrep,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "objects_merged_data_prep.csv"
+            ),
+            tags: %i[objects],
+            desc: "Applies cleaners and shapers to external data merged in, "\
+              "which need to be made consistent with other fields for the "\
+              "subsequent :objects__shape job"
+          }
           register :shape, {
             creator: Kiba::Tms::Jobs::Objects::Shape,
             path: File.join(
@@ -3513,6 +3612,14 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working", "orgs_by_norm.csv"),
             desc: "Org authority values (:name) lookup by normalized value",
             lookup_on: :norm,
+            tags: %i[orgs]
+          }
+          register :by_norm_word, {
+            creator: Kiba::Tms::Jobs::Orgs::ByNormWord,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "orgs_by_norm_word.csv"),
+            desc: "For scoring uncategorized terms for term categorization",
+            lookup_on: :normword,
             tags: %i[orgs]
           }
           register :cspace, {
@@ -3697,6 +3804,14 @@ module Kiba
               "persons_by_norm.csv"),
             desc: "Person authority values (:name) lookup by normalized value",
             lookup_on: :norm,
+            tags: %i[persons]
+          }
+          register :by_norm_word, {
+            creator: Kiba::Tms::Jobs::Persons::ByNormWord,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "persons_by_norm_word.csv"),
+            desc: "For scoring uncategorized terms into term type",
+            lookup_on: :normword,
             tags: %i[persons]
           }
           register :cspace, {
@@ -3967,6 +4082,35 @@ module Kiba
                 "place_final_cleaned_lookup.csv"),
               tags: %i[places],
               lookup_on: :norm_combined
+            }
+            register :authority_lookup, {
+              creator: Kiba::Tms::Jobs::Places::AuthorityLookup,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "place_authority_lookup.csv"),
+              tags: %i[places],
+              lookup_on: :place
+            }
+            register :ingest, {
+              creator: Kiba::Tms::Jobs::Places::Ingest,
+              path: File.join(Kiba::Tms.datadir, "ingest",
+                "places.csv"),
+              tags: %i[places ingest]
+            }
+            register :by_norm_segment, {
+              creator: Kiba::Tms::Jobs::Places::ByNormSegment,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "places_by_norm_segment.csv"),
+              tags: %i[places],
+              lookup_on: :normsegment,
+              desc: "Used to match/score uncategorized terms against places"
+            }
+            register :by_norm_word, {
+              creator: Kiba::Tms::Jobs::Places::ByNormWord,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "places_by_norm_word.csv"),
+              tags: %i[places],
+              lookup_on: :normword,
+              desc: "Used to match/score uncategorized terms against places"
             }
           end
         end

@@ -3,17 +3,17 @@
 module Kiba
   module Tms
     module Jobs
-      module ConceptNomenclature
-        module ForIngest
+      module Places
+        module Ingest
           module_function
 
           def job
-            return unless Tms::Objects.objectname_controlled
+            return unless config.final_cleanup_done
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :concept_nomenclature__extract,
-                destination: :concept_nomenclature__for_ingest
+                source: :places__authority_lookup,
+                destination: :places__ingest
               },
               transformer: xforms
             )
@@ -22,11 +22,11 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Delete::FieldsExcept,
-                fields: :preferredform
+                fields: :use
               transform Deduplicate::Table,
-                field: :preferredform
+                field: :use
               transform Rename::Field,
-                from: :preferredform,
+                from: :use,
                 to: :termdisplayname
             end
           end

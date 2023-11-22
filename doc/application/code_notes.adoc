@@ -13,6 +13,12 @@ endif::[]
 
 = Code notes
 
+== TODO
+
+* Make ConXrefs (ConRefs) behave like standard MultiTableMergeable with type treatments
+* `places` namespace compilation and cleanup should be set up to use built-in iterative cleanup, and to generate `places__ingest` whether cleanup has been done or not
+* ObjGeography merge in Jobs::Objects::ExternalDataMerged is client-specific and needs to be generalized
+
 == Code organization
 Under `/lib/kiba/tms`:
 

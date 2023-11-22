@@ -81,6 +81,7 @@ module Kiba
             obj_context: :objectid,
             obj_dates: :objectid,
             obj_deaccession: :deaccessionid,
+            obj_geography: :objectid,
             obj_inc_purposes: :inpurposeid,
             obj_ins_indem_resp: :objinsindemrespid,
             obj_locations: :objlocationid,

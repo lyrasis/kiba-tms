@@ -12,7 +12,7 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :objects__external_data_merged,
+                source: :objects__merged_data_prep,
                 destination: :objects__shape
               },
               transformer: xforms
@@ -40,14 +40,11 @@ module Kiba
 
               transform Rename::Fields, fieldmap: rename_map
 
+              # Start section preparing fields for later combination
               if Tms::Departments.used? && config.department_coll_prefix
                 transform Prepend::ToFieldValue,
                   field: :department,
                   value: config.department_coll_prefix
-              end
-
-              if config.objectname_shape_xform
-                transform config.objectname_shape_xform
               end
 
               unless config.cataloged_shape_xforms.empty?
@@ -55,15 +52,60 @@ module Kiba
                   xforms: config.cataloged_shape_xforms
               end
 
-              transform Delete::DelimiterOnlyFieldValues,
-                fields: %w[contentnote objectproductionnote
-                  objecthistorynote].map { |prefix|
-                          config.send("#{prefix}_sources".to_sym)
-                        }.flatten,
-                delim: Tms.delim,
-                treat_as_null: Tms.nullvalue
+              case config.catrais_treatment
+              when :referencenote
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: {catrais: :catrais_referencenote},
+                  constant_target: :catrais_reference,
+                  constant_value: "%NULLVALUE%"
+              when :delete
+                transform Delete::Fields,
+                  fields: :catrais
+              end
 
-              %w[annotation nontext_inscription text_inscription].each do |type|
+              case config.curatorapproved_treatment
+              when :invstatus
+                transform Tms::Transforms::Objects::Curatorapproved
+              when :delete
+                transform Delete::Fields, fields: :curatorapproved
+              end
+
+              case config.exhibitions_treatment
+              when :usage
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: {exhibitions: :exh_usagenote},
+                  constant_target: :exh_usage,
+                  constant_value: "exhibition"
+              when :delete
+                transform Delete::Fields,
+                  fields: :exhibitions
+              end
+
+              case config.paperfileref_treatment
+              when :referencenote
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: {paperfileref: :paper_referencenote},
+                  constant_target: :paper_reference,
+                  constant_value: "%NULLVALUE%"
+              when :delete
+                transform Delete::Fields,
+                  fields: :paperfileref
+              end
+
+              case config.pubreferences_treatment
+              when :referencenote
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: {pubreferences: :pubref_referencenote},
+                  constant_target: :pubref_reference,
+                  constant_value: "%NULLVALUE%"
+              when :delete
+                transform Delete::Fields,
+                  fields: :pubreferences
+              end
+              # End section preparing fields for later combination
+
+              %w[annotation assocplace material nontext_inscription
+                objectname reference text_inscription usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
@@ -74,11 +116,14 @@ module Kiba
                 end
               end
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: Tms::Objects.comment_fields,
-                target: :comment,
-                delim: Tms.delim,
-                delete_sources: true
+              %w[comment inventorystatus
+                contentconceptconceptassociated].each do |target|
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.send("#{target}_sources".to_sym),
+                  target: target.to_sym,
+                  delim: Tms.delim,
+                  delete_sources: true
+              end
 
               unless Tms::Objects.named_coll_fields.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
@@ -88,13 +133,21 @@ module Kiba
                   delete_sources: true
               end
 
-              %w[
-                contentnote objectproductionnote
-                objecthistorynote
-              ].each do |target|
+              notefields = %w[
+                contentnote contentdescription
+                objectproductionnote objecthistorynote
+              ]
+              transform Delete::DelimiterOnlyFieldValues,
+                fields: notefields.map { |prefix|
+                  config.send("#{prefix}_sources".to_sym)
+                }.flatten,
+                delim: Tms.delim,
+                treat_as_null: Tms.nullvalue
+
+              notefields.each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
-                  target: target,
+                  target: target.to_sym,
                   delim: config.send("#{target}_delim".to_sym),
                   delete_sources: true
               end

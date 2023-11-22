@@ -46,7 +46,8 @@ module Kiba
                 value: "-1"
 
               unless config.field_cleaners.empty?
-                config.field_cleaners.each { |cleaner| transform cleaner }
+                transform Tms::Transforms::List,
+                  xforms: config.field_cleaners
               end
 
               if config.classifications_merge_xform

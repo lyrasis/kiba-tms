@@ -38,3 +38,17 @@ Controls how values from ObjectNameTypes table _that are used in migrating data_
 Values not used in migrating data are not added to CS.
 
 Default:: none, as this is very client-specific.
+
+=== `TextEntries` merge treatments
+
+The TMS `TextEntries` table stores text values of different types for merge into various target tables, including `Objects`.
+
+Your Migration Specialist will let you know about any custom cleanup and preparation of these values prior to merging them into `Objects`. Usually this involves some handling of any `:purpose` and `:remarks` values that may have been recorded for individual text entries. Typically we combine these values into the `:textentry` field so that we have one main content field to merge.
+
+Constituent names associated with text entries will have been merged in as `:org_author` and `:person_author` fields prior to merge into `Objects`.
+
+Each `:texttype` must be assigned a treatment, which is used to merge the text entry into the `Objects` data as shaped for CollectionSpace. The available treatments are:
+
+==== drop
+
+Text entries with this treatment assigned to their `:texttype` will be omitted from the migration.
