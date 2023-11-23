@@ -31,9 +31,9 @@ module Kiba
             unless config.named_coll_fields.empty?
               base << :works__lookup
             end
-            if config.assocplace_controlled? &&
-                !config.assocplace_source_fields.empty?
-              base << :places__authority_lookup
+            if config.assocpeople_controlled? &&
+                !config.assocpeople_source_fields.empty?
+              base << :concept_ethnographic_culture__lookup
             end
             unless config.contentconceptconceptassociated_sources.empty?
               base << :concept_associated__lookup
@@ -101,10 +101,28 @@ module Kiba
                   fields: :namedcollection_raw
               end
 
+              if config.assocpeople_controlled? &&
+                  !config.assocpeople_source_fields.empty?
+                transform Merge::MultiRowLookup,
+                  lookup: concept_ethnographic_culture__lookup,
+                  keycolumn: :assocpeople,
+                  fieldmap: {assocpeople_use: :use},
+                  multikey: true
+                transform Delete::Fields,
+                  fields: :assocpeople
+                transform Rename::Field,
+                  from: :assocpeople_use,
+                  to: :assocpeople
+                transform Deduplicate::GroupedFieldValues,
+                  on_field: :assocpeople,
+                  grouped_fields: %i[assocpeopletype assocpeoplenote],
+                  delim: Tms.delim
+              end
+
               if config.assocplace_controlled? &&
                   !config.assocplace_source_fields.empty?
                 transform Merge::MultiRowLookup,
-                  lookup: places__authority_lookup,
+                  lookup: config.place_authority_lookup,
                   keycolumn: :assocplace,
                   fieldmap: {assocplace_use: :use},
                   multikey: true

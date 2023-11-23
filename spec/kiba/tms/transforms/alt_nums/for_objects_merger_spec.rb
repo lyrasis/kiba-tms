@@ -59,7 +59,9 @@ RSpec.describe Kiba::Tms::Transforms::AltNums::ForObjectsMerger do
                     "numtype: Loan number|numtype: Loan number",
                     altnum_annotationnote:
                     "L99.4.30 (numtype note; A remark; 2016-07-08 -)|"\
-                      "L2005.50.13 (2005-08-09 - 2005-09-10)"}
+                      "L2005.50.13 (2005-08-09 - 2005-09-10)",
+                    altnum_annotationauthor: "%NULLVALUE%|%NULLVALUE%",
+                    altnum_annotationdate: "%NULLVALUE%|%NULLVALUE%"}
         expect(result).to eq(expected)
       end
     end
@@ -72,7 +74,9 @@ RSpec.describe Kiba::Tms::Transforms::AltNums::ForObjectsMerger do
                     "alternate number|alternate number",
                     altnum_annotationnote:
                     "6510200360 (Former number)|660807088 (Former number; "\
-                   "another note; 2015-03-20 -)"}
+                   "another note; 2015-03-20 -)",
+                    altnum_annotationauthor: "%NULLVALUE%|%NULLVALUE%",
+                    altnum_annotationdate: "%NULLVALUE%|%NULLVALUE%"}
         expect(result).to eq(expected)
       end
     end

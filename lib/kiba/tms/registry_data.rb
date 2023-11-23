@@ -4290,12 +4290,25 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("term_master_geo") do
+          register :used_in_xrefs, {
+            creator: Kiba::Tms::Jobs::TermMasterGeo::UsedInXrefs,
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "term_master_geo_used_in_xrefs.csv"),
+            desc: "TermMasterGeo table rows referenced by Terms referenced "\
+              "in ThesXrefs",
+            lookup_on: :termmasterid,
+            tags: %i[termdata terms reference]
+          }
+        end
+
         Kiba::Tms.registry.namespace("term_master_thes") do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::TermMasterThes::UsedInXrefs,
             path: File.join(Kiba::Tms.datadir, "reference",
               "term_master_thes_used_in_xrefs.csv"),
-            desc: "TermMasterThes table rows referenced by Terms referenced in ThesXrefs",
+            desc: "TermMasterThes table rows referenced by Terms referenced "\
+              "in ThesXrefs",
             lookup_on: :termmasterid,
             tags: %i[termdata terms reference]
           }

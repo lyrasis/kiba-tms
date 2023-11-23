@@ -369,6 +369,13 @@ module Kiba
         default: %i[assocplace assocplacetype assocplacenote],
         reader: true
 
+      setting :contentother_source_fields,
+        default: %i[],
+        reader: true
+      setting :contentother_target_fields,
+        default: %i[contentother contentothertype],
+        reader: true
+
       setting :objectname_source_fields,
         default: %i[obj],
         reader: true,
@@ -585,6 +592,20 @@ module Kiba
       # @return [Array<Regexp>] used in cleaning/shaping fields that get
       #   extracted to ethnographic_culture authority
       setting :ethculture_uncertainty_patterns, default: [], reader: true
+
+      # @return [Symbol] full job key from which to look up place
+      #   values in :objects__authorities_merged job. If place
+      #   processing has been split into multiple processes in a
+      #   client project, this may need to be customized. The job
+      #   should have lookup_on set to :place, and should return the
+      #   correct :use value
+      setting :place_authority_lookup_job,
+        default: :places__authority_lookup,
+        reader: true
+
+      def place_authority_lookup
+        Tms.get_lookup(jobkey: place_authority_lookup_job, column: :place)
+      end
 
       # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
       #   needed

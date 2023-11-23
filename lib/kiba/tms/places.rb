@@ -297,7 +297,8 @@ module Kiba
       # More technical settings
       # ------------------------------------------------------------------------
 
-      # Array of registry entries to use as sources for :places__compiled
+      # Array of registry entries to use as sources for :places__compile --
+      #   this is compilation for initial review/cleanup
       #
       # IMPLEMENTATION NOTE: Jobs used as sources here should provide the
       #   following fields:

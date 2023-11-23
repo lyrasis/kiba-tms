@@ -32,6 +32,7 @@ module Kiba
                 field: :objectname
               transform Delete::Fields,
                 fields: :norm
+              transform Clean::EnsureConsistentFields
             end
           end
         end

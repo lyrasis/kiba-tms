@@ -104,8 +104,9 @@ module Kiba
               end
               # End section preparing fields for later combination
 
-              %w[annotation assocplace material nontext_inscription
-                objectname reference text_inscription usage].each do |type|
+              %w[annotation assocpeople assocplace contentother material
+                nontext_inscription objectname reference text_inscription
+                usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?

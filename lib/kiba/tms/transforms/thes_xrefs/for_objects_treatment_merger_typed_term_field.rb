@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Transforms
       module ThesXrefs
-        class ForObjectsTreatmentMergerTypeField
+        class ForObjectsTreatmentMergerTypedTermField
           include Tms::Transforms::ValueAppendable
 
           def initialize
@@ -12,7 +12,8 @@ module Kiba
             @source_mapping = {
               termused: "used",
               termpreferred: "preferred",
-              termsource: "source"
+              termsource: "source",
+              remarks: "note"
             }
           end
 
