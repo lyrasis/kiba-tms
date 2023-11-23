@@ -137,6 +137,7 @@ module Kiba
               notefields = %w[
                 contentnote contentdescription
                 objectproductionnote objecthistorynote
+                physicaldescription
               ]
               transform Delete::DelimiterOnlyFieldValues,
                 fields: notefields.map { |prefix|
