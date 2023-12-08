@@ -104,9 +104,11 @@ module Kiba
               end
               # End section preparing fields for later combination
 
-              %w[annotation assocpeople assocplace contentother material
-                nontext_inscription objectname reference text_inscription
-                usage].each do |type|
+              # Collapse repeatable field groups with values from multiple
+              #   sources
+              %w[annotation assocobject assocpeople assocplace contentother
+                material nontext_inscription objectname reference
+                text_inscription usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
@@ -117,6 +119,7 @@ module Kiba
                 end
               end
 
+              # Compile repeatable field values from multiple sources
               %w[comment inventorystatus
                 contentconceptconceptassociated].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
@@ -126,18 +129,23 @@ module Kiba
                   delete_sources: true
               end
 
-              unless Tms::Objects.named_coll_fields.empty?
+              # Compile unauthorized namedcollection values from multiple
+              #   sources. Separate because target field name is odd.
+              #   Authorized term values merged in by :authorities_merged job.
+              unless Tms::Objects.namedcollection_sources.empty?
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: Tms::Objects.named_coll_fields,
+                  sources: Tms::Objects.namedcollection_sources,
                   target: :namedcollection_raw,
                   delim: Tms.delim,
                   delete_sources: true
               end
 
+              # Compile note fields (or other non-grouped fields) with
+              #   field-specific delimiter value configured
               notefields = %w[
                 contentnote contentdescription
                 objectproductionnote objecthistorynote
-                physicaldescription
+                physicaldescription viewerspersonalexperience
               ]
               transform Delete::DelimiterOnlyFieldValues,
                 fields: notefields.map { |prefix|

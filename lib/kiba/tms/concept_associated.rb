@@ -9,7 +9,7 @@ module Kiba
 
       # @return [Array<Symbol>] full keys of jobs that compile works
       #   values from separate sources. Each job should set the
-      #   unnormalized work term value in :concept field. Optionally,
+      #   unnormalized term value in :termpreferred field. Optionally,
       #   other term field values can be set. Rows in source jobs should
       #   NOT be deduplicated, because the compilation job will
       #   normalize to the most frequently used form of each term.

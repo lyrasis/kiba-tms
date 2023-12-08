@@ -188,7 +188,10 @@ module Kiba
     # - If there are any supplied jobs registered by
     #   `RegistryData.register_sample_files`, the sample will be selected
     #   in the final `for_ingest` job for each target record type
-    # Expected values: :dev, :prod
+    # - Some prep jobs will retain otherwise deleted rows if the status is
+    #   :prelim. Can be used to create initial reports for decisions about
+    #   migrating inactive values or not
+    # Expected values: :prelim, :dev, :prod
     setting :migration_status, default: :dev, reader: true
 
     # Used to keep track of multi-table-merge work. Organized by target table.

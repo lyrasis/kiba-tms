@@ -33,6 +33,11 @@ module Kiba
                 field: :termdisplayname,
                 value: Tms::Names.dropped_name_indicator
 
+              unless Tms.migration_status == :prod
+                transform Rename::Field,
+                  from: :termsource,
+                  to: :termsourcedetail
+              end
               transform Delete::FieldsExcept,
                 fields: config.cs_fields[Tms.cspace_profile]
 

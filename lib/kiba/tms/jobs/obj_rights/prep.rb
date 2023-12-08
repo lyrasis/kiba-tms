@@ -12,9 +12,12 @@ module Kiba
               files: {
                 source: :tms__obj_rights,
                 destination: :prep__obj_rights,
-                lookup: :prep__obj_rights_types
+                lookup: %i[
+                  prep__obj_rights_types
+                  objects__number_lookup
+                ]
               },
-              transformer: xforms
+              transformer: [xforms, config.prep_end_xforms].compact
             )
           end
 
@@ -31,6 +34,11 @@ module Kiba
               transform Tms.data_cleaner if Tms.data_cleaner
 
               transform Delete::EmptyFields
+
+              transform Merge::MultiRowLookup,
+                lookup: objects__number_lookup,
+                keycolumn: :objectid,
+                fieldmap: {objectnumber: :objectnumber}
 
               transform Merge::MultiRowLookup,
                 lookup: prep__obj_rights_types,

@@ -12,10 +12,9 @@ module Kiba
       end
       extend Tms::Mixins::Tableable
 
-      setting :date_or_chronology_fields,
-        default: %i[reign dynasty period],
-        reader: true,
-        constructor: ->(value) { value - empty_fields.keys }
+      setting :date_fields,
+        default: %i[],
+        reader: true
 
       # Transforms to clean individual fields. These are run at the
       #   end of the :prep__obj_context job. Elements should be

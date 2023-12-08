@@ -49,6 +49,14 @@ Constituent names associated with text entries will have been merged in as `:org
 
 Each `:texttype` must be assigned a treatment, which is used to merge the text entry into the `Objects` data as shaped for CollectionSpace. The available treatments are:
 
-==== drop
+==== `drop`
 
 Text entries with this treatment assigned to their `:texttype` will be omitted from the migration.
+
+==== `color`
+
+Prepend "Color note: ". Map to `physicalDescription`.
+
+==== `note_comment`
+
+Mapped to intermediate field that will be combined with

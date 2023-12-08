@@ -7,6 +7,16 @@ module Kiba
 
       module_function
 
+      # @return [Array<Symbol>] removed from the rest of the object
+      #   data processing by default for special date processing that
+      #   includes combination/comparison with data in ObjDates table
+      #   (if applicable) and any ObjContext fields that contain only
+      #   actual date data
+      setting :date_fields,
+        default: %i[dated datebegin dateend beginisodate endisodate],
+        reader: true,
+        constructor: ->(value) { value - empty_fields.keys }
+
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[
@@ -38,6 +48,10 @@ module Kiba
       # PREP SETTINGS
       # -=-=-=-=-=-=-=-=-=-=-
 
+      # client-specific transform to clean/alter object number values prior to
+      #   doing anything else with Objects table
+      setting :number_cleaner, default: nil, reader: true
+
       # Transforms to clean individual fields. These are run at the
       #   end of the :prep__objects job, so are limited to fields
       #   present in original TMS objects table. The exceptions are
@@ -59,32 +73,20 @@ module Kiba
       # EXTENAL DATA MERGE SETTINGS
       # -=-=-=-=-=-=-=-=-=-=-
 
-      # @return [Hash{Class => Hash, nil}] run in order at the end of
-      #   :objects__external_data_merged job. Key is a Kiba compliant
-      #   transform class. Value is nil (no initialization params for
-      #   class) or Hash of initialization params
-      setting :post_merge_xforms, default: {}, reader: true
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :post_merge_xforms, default: nil, reader: true
 
       # -=-=-=-=-=-=-=-=-=-=-
       # MERGED DATA PREP SETTINGS
       # -=-=-=-=-=-=-=-=-=-=-
-      # @return [Hash{Class => Hash, nil}] run in order at the beginning of
-      #   :objects__merged_data_prep job. Key is a Kiba compliant
-      #   transform class. Value is nil (no initialization params for
-      #   class) or Hash of initialization params
-      setting :merged_data_cleaners, default: [], reader: true
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :merged_data_cleaners, default: nil, reader: true
 
-      # @return [Hash{Class => Hash, nil}] run in order, after any
-      #   :merged_data_cleaners. Key is a Kiba compliant transform
-      #   class. Value is nil (no initialization params for class) or
-      #   Hash of initialization params
-      setting :merged_data_shapers, default: [], reader: true
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :merged_data_shapers, default: nil, reader: true
 
-      # @return [Hash{Class => Hash, nil}] run in order, at the end of
-      #   the :objects__merged_data_prep job. Key is a Kiba compliant
-      #   transform class. Value is nil (no initialization params for
-      #   class) or Hash of initialization params
-      setting :post_merged_prep_xforms, default: [], reader: true
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :post_merged_prep_xforms, default: nil, reader: true
 
       # -=-=-=-=-=-=-=-=-=-=-
       # SHAPE SETTINGS
@@ -94,14 +96,21 @@ module Kiba
       #   fields
       setting :classifications_shape_xform, default: nil, reader: true
 
+      # @return [nil, String] added to beginning of department field values if
+      #   provided. May be desired if department values are being mapped to
+      #   namedcollection field
+      setting :department_coll_prefix, default: nil, reader: true
+
       setting :objectname_controlled_source_fields,
         default: %i[],
         reader: true
+
       setting :objectname_uncontrolled_source_fields,
         default: %i[],
         reader: true
+
       # Used by xforms to programmatically determine target field for
-      #   material values
+      #   objectname values
       def objectname_base_for(field)
         if objectname_controlled_source_fields.include?(field)
           :objectnamecontrolled
@@ -122,6 +131,7 @@ module Kiba
       # @return [:annotation, :delete] Other treatments may be developed in
       #  the future
       setting :cataloged_treatment, default: :annotation, reader: true
+
       # Handles :cataloguer and :catalogueisodate, mapping to an annotation
       #   field group line.
       setting :cataloged_shape_xforms,
@@ -163,16 +173,20 @@ module Kiba
       setting :material_controlled_source_fields,
         default: %i[],
         reader: true
+
       setting :material_uncontrolled_source_fields,
         default: %i[],
         reader: true
+
       # @return [Proc] that takes one argument (String), and, when called,
       #   returns true/falsey. Used in shaping material values.
       setting :material_is_note,
         default: ->(value) { value.length > 58 },
         reader: true
+
       # @return [Array<Regexp>]
       setting :material_uncertainty_patterns, default: [], reader: true
+
       # Used by xforms to programmatically determine target field for
       #   material values
       def material_base_for(field)
@@ -202,6 +216,7 @@ module Kiba
       #   is nil (no initialization params for class) or Hash of initialization
       #   params
       setting :post_shape_xforms, default: {}, reader: true
+
       # -----------------------------------------------------------------------
       # Default field-specific shape transforms
       # -----------------------------------------------------------------------
@@ -343,6 +358,9 @@ module Kiba
             base << :altnum
           end
           base << :cat if cataloged_treatment == :annotation
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
           base
         end
       setting :annotation_target_fields,
@@ -354,6 +372,19 @@ module Kiba
           end
           base.flatten
         end
+
+      setting :assocobject_source_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
+          base
+        end
+      setting :assocobject_target_fields,
+        default: %i[assocobject assocobjecttype assocobjectnote],
+        reader: true
 
       setting :assocpeople_source_fields,
         default: %i[],
@@ -371,7 +402,13 @@ module Kiba
 
       setting :contentother_source_fields,
         default: %i[],
-        reader: true
+        reader: true,
+        constructor: ->(base) do
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
+          base
+        end
       setting :contentother_target_fields,
         default: %i[contentother contentothertype],
         reader: true
@@ -445,6 +482,9 @@ module Kiba
           base << :catrais if catrais_treatment == :referencenote
           base << :paper if paperfileref_treatment == :referencenote
           base << :pubref if pubreferences_treatment == :referencenote
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
           base
         end
       setting :reference_target_fields,
@@ -458,9 +498,14 @@ module Kiba
           if Tms::ObjContext.content_fields.include?(:n_signed)
             base << :nsigned
           end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
+          base
         end
       setting :text_inscription_target_fields,
-        default: %i[inscriptioncontenttype inscriptioncontent],
+        default: %i[inscriptioncontenttype inscriptioncontent
+          inscriptioncontentinterpretation],
         reader: true
 
       setting :usage_source_fields,
@@ -469,6 +514,9 @@ module Kiba
         constructor: ->(base) do
           if exhibitions_treatment == :usage
             base << :exh
+          end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
           end
           base
         end
@@ -487,6 +535,8 @@ module Kiba
           default << :alt_num_comment if Tms::AltNums.used? &&
             Tms::AltNums.for?("Objects")
           default << :title_comment if Tms::ObjTitles.used?
+          default << :te_comment if Tms::TextEntries.used? &&
+            Tms::TextEntries.for?("Objects")
           default
         end
 
@@ -498,13 +548,25 @@ module Kiba
 
       setting :contentnote_delim, default: Tms.notedelim, reader: true
       setting :contentnote_sources,
-        default: %i[con_refs_p_contentnote con_refs_o_contentnote],
-        reader: true
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::ConXrefs.used? && Tms::ConRefs.for?("Objects")
+            base << %i[con_refs_p_contentnote
+              con_refs_o_contentnote]
+          end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_contentnote
+          end
+          base.flatten
+        end
 
       setting :contentdescription_delim, default: Tms.notedelim, reader: true
       setting :contentdescription_sources,
         default: %i[],
         reader: true
+
+      setting :namedcollection_sources, default: [], reader: true
 
       setting :objecthistorynote_delim, default: Tms.notedelim, reader: true
       setting :objecthistorynote_sources,
@@ -514,6 +576,9 @@ module Kiba
           if Tms::ConXrefs.used? && Tms::ConRefs.for?("Objects")
             base << %i[con_refs_p_objecthistorynote
               con_refs_o_objecthistorynote]
+          end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_objecthistorynote
           end
           base.flatten
         end
@@ -530,7 +595,21 @@ module Kiba
             base << %i[con_refs_p_objectproductionnote
               con_refs_o_objectproductionnote]
           end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_objectproductionnote
+          end
           base.flatten
+        end
+
+      setting :physicaldescription_delim, default: Tms.notedelim, reader: true
+      setting :physicaldescription_sources,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_physicaldescription
+          end
+          base
         end
 
       # Intermediate fields containing values to be merged into
@@ -546,6 +625,19 @@ module Kiba
           default << :statusflag if Tms::StatusFlags.used?
           default << :linkedset_objectstatus if Tms::LinkedSetAcq.used?
           default
+        end
+
+      setting :viewerspersonalexperience_delim,
+        default: Tms.notedelim,
+        reader: true
+      setting :viewerspersonalexperience_sources,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_viewerspersonalexperience
+          end
+          base
         end
 
       # -=-=-=-=-=-=-=-=-=-=-
@@ -607,6 +699,18 @@ module Kiba
         Tms.get_lookup(jobkey: place_authority_lookup_job, column: :place)
       end
 
+      # -=-=-=-=-=-=-=-=-=-=-
+      # DATE HANDLING SETTINGS
+      # -=-=-=-=-=-=-=-=-=-=-
+
+      # @return [nil, Proc] Kiba.job_segment to be run before
+      #   Objects::DatePrep xforms
+      setting :date_prep_initial_cleaners, default: nil, reader: true
+
+      # @return [nil, Proc] Kiba.job_segment to be run after
+      #   Objects::DatePrep xforms
+      setting :date_prep_final_cleaners, default: nil, reader: true
+
       # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
       #   needed
       setting :con_ref_name_merge_rules,
@@ -642,28 +746,12 @@ module Kiba
         },
         reader: true
 
-      # Custom transform used in :objects__dates. Must be a transform
-      #   class without arguments
-      setting :date_field_cleaner, default: nil, reader: true
-      # Removed in :prep__objects, handled separately in :objects__dates
-      setting :date_fields,
-        default: %i[dated datebegin dateend beginisodate endisodate],
-        reader: true,
-        constructor: ->(value) { value - empty_fields.keys }
-      # Necessary if :department_target = :dept_namedcollection. Should be a
-      #   String value if populated
-      setting :department_coll_prefix, default: "", reader: true
-      setting :named_coll_fields, default: [], reader: true
-      # client-specific transform to clean/alter object number values prior to
-      #   doing anything else with Objects table
-      setting :number_cleaner, default: nil, reader: true
       setting :record_num_merge_config,
         default: {
           sourcejob: :objects__number_lookup,
           fieldmap: {targetrecord: :objectnumber}
         },
         reader: true
-      setting :text_entries_merge_xform, default: nil, reader: true
     end
   end
 end

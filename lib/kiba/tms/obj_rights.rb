@@ -15,6 +15,15 @@ module Kiba
         default: %i[objrightsid],
         reader: true
       extend Tms::Mixins::Tableable
+
+      setting :record_num_merge_config,
+        default: {
+          sourcejob: :objects__number_lookup,
+          fieldmap: {targetrecord: :objectnumber}
+        },
+        reader: true
+
+      setting :prep_end_xforms, default: nil, reader: true
     end
   end
 end

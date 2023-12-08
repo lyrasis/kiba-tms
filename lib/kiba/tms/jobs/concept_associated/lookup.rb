@@ -53,6 +53,7 @@ module Kiba
                 to: :use
               transform Deduplicate::Table,
                 field: :termused
+              transform Clean::EnsureConsistentFields
             end
           end
         end

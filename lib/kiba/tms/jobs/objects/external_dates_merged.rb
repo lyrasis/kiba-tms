@@ -4,7 +4,7 @@ module Kiba
   module Tms
     module Jobs
       module Objects
-        module Dates
+        module ExternalDatesMerged
           module_function
 
           def job
@@ -20,22 +20,23 @@ module Kiba
             )
           end
 
+          def lookups
+            base = []
+            base << :obj_context__dates if Tms::ObjContext.used? &&
+              !Tms::ObjContext.date_fields.empty?
+            base << :prep__obj_dates if Tms::ObjDates.used?
+            base.select { |job| Tms.job_output?(job) }
+          end
+
           def content_fields
             base = config.date_fields.dup
-            if lookups.any?(:obj_context__periods)
-              base << Tms::ObjContext.date_or_chronology_fields
+            if lookups.any?(:obj_context__dates)
+              base << Tms::ObjContext.date_fields
             end
             if lookups.any?(:prep__obj_dates)
               base << Tms::ObjDates.content_fields
             end
             base.flatten
-          end
-
-          def lookups
-            base = []
-            base << :obj_context__periods if Tms::ObjContext.used?
-            base << :prep__obj_dates if Tms::ObjDates.used?
-            base.select { |job| Tms.job_output?(job) }
           end
 
           def xforms

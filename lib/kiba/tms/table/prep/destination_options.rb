@@ -62,6 +62,9 @@ module Kiba
                 %i[path filename rend_renditionnumber filesize memorysize
                   rend_mediatype]
               },
+              obj_dates: {
+                initial_headers: %i[objectnumber active eventtype]
+              },
               obj_incoming: {
                 initial_headers: proc { Tms::ObjIncoming.fields }
               },

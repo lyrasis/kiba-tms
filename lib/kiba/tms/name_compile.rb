@@ -24,6 +24,12 @@ module Kiba
         constructor: proc { |value|
           value.select { |name| Tms.const_get(name).used? }
         }
+
+      # @return [Array<Symbol>] job keys for other name sources specific to
+      #   a given project
+      setting :custom_sources, default: [], reader: true
+
+      # @return [Array<Symbol>] job keys used as sources in name compilation
       setting :sources,
         default: %i[
           name_compile__from_con_person_plain
@@ -57,7 +63,9 @@ module Kiba
               Tms::Associations.for?("Constituents")
             base << :name_compile__from_associations
           end
-          base.select { |job| Kiba::Extend::Job.output?(job) }
+          base << custom_sources
+          base.flatten
+            .select { |job| Kiba::Extend::Job.output?(job) }
         }
 
       # potential sources not included by default:

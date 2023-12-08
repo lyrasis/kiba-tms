@@ -286,6 +286,40 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("chronology_era") do
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::ChronologyEra::Lookup,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "chronology_era_lookup.csv"),
+            tags: %i[chronology eras],
+            lookup_on: :termused,
+            desc: "Preferred term is in :use field"
+          }
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::ChronologyEra::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "chronology_era.csv"),
+            tags: %i[chronology eras ingest]
+          }
+        end
+
+        Kiba::Tms.registry.namespace("chronology_event") do
+          register :lookup, {
+            creator: Kiba::Tms::Jobs::ChronologyEvent::Lookup,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "chronology_event_lookup.csv"),
+            tags: %i[chronology events],
+            lookup_on: :termused,
+            desc: "Preferred term is in :use field"
+          }
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::ChronologyEvent::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "chronology_event.csv"),
+            tags: %i[chronology events ingest]
+          }
+        end
+
         Kiba::Tms.registry.namespace("classification_notations") do
           register :ids_used, {
             creator: Kiba::Tms::Jobs::ClassificationNotations::IdsUsed,
@@ -336,7 +370,7 @@ module Kiba
           Kiba::Tms.registry.namespace("concept_ethnographic_culture") do
             case Tms.cspace_profile
             when :fcart
-              Tms::ConceptEthnographicCulture.compile_sources.each do |field|
+              Tms::ConceptEthnographicCulture.compile_fields.each do |field|
                 register "from_#{field}".to_sym, {
                   creator: {
                     callee:
@@ -3119,13 +3153,47 @@ module Kiba
         end
 
         Kiba::Tms.registry.namespace("obj_context") do
-          register :periods, {
-            creator: Kiba::Tms::Jobs::ObjContext::Periods,
+          register :dates, {
+            creator: Kiba::Tms::Jobs::ObjContext::Dates,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_context_periods.csv"),
+              "obj_context_dates.csv"),
             tags: %i[obj_context dates objects],
-            desc: "Only populated :period values, looked up by objectid",
+            desc: "Only rows with values in fields categorized as date "\
+              "fields, looked up by objectid",
             lookup_on: :objectid
+          }
+        end
+
+        Kiba::Tms.registry.namespace("obj_dates") do
+          # This job only runs if Tms.migration_status == :prelim
+          register :inactive, {
+            creator: Kiba::Tms::Jobs::ObjDates::Inactive,
+            path: File.join(Kiba::Tms.datadir, "to_client",
+              "obj_dates_inactive.csv"),
+            tags: %i[obj_dates prelim reports],
+            desc: "Supports decision of whether to include inactive rows in "\
+              "the migration. Populates :check column on inactive rows where "\
+              "Objects.dated does not equal ObjDates.datetext to focus review",
+            dest_special_opts: {
+              initial_headers: %i[objectnumber check active
+                main_object_dated_value]
+            }
+          }
+          register :uniq, {
+            creator: Kiba::Tms::Jobs::ObjDates::Uniq,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_dates_uniq.csv"),
+            tags: %i[obj_dates],
+            desc: "Unique date values for Emendate processing"
+          }
+          register :all_uniq, {
+            creator: Kiba::Tms::Jobs::ObjDates::AllUniq,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_dates_all_uniq.csv"),
+            tags: %i[obj_dates],
+            desc: "Unique date values from ObjDates, Objects.dated, and "\
+              "other sources as configured in ObjDates.all_sources, for "\
+              "Emendate processing"
           }
         end
 
@@ -3394,6 +3462,15 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("obj_rights") do
+          register :external_data_merged, {
+            creator: Kiba::Tms::Jobs::ObjRights::ExternalDataMerged,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_rights_external_data_merged.csv"),
+            tags: %i[obj_rights]
+          }
+        end
+
         Kiba::Tms.registry.namespace("obj_titles") do
           register :note_review, {
             creator: Kiba::Tms::Jobs::ObjTitles::NoteReview,
@@ -3456,18 +3533,28 @@ module Kiba
             ),
             tags: %i[objects]
           }
-          register :dates, {
-            creator: Kiba::Tms::Jobs::Objects::Dates,
+          register :date_prep, {
+            creator: Kiba::Tms::Jobs::Objects::DatePrep,
             path: File.join(
               Kiba::Tms.datadir,
               "working",
-              "objects_dates.csv"
+              "objects_date_prep.csv"
             ),
             lookup_on: :objectid,
             tags: %i[objects],
-            desc: "Handle processing of date fields from TMS Objects "\
-              "table, as well as ObjDates table if used. The date "\
-              "fields are removed from Objects by prep"
+            desc: "Handle initial processing and cleanup of date fields from "\
+              "TMS Objects table. The affected date fields are removed from "\
+              "the main objects processing by Objects::Prep"
+          }
+          register :dated_uniq, {
+            creator: Kiba::Tms::Jobs::Objects::DatedUniq,
+            path: File.join(
+              Kiba::Tms.datadir,
+              "working",
+              "objects_dated_uniq.csv"
+            ),
+            tags: %i[objects],
+            desc: "Unique values of :dated field, for Emendate processing"
           }
           register :numbers_cleaned, {
             creator: Kiba::Tms::Jobs::Objects::NumbersCleaned,

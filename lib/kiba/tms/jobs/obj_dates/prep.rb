@@ -16,29 +16,36 @@ module Kiba
                 destination: :prep__obj_dates,
                 lookup: lookups
               },
-              transformer: xforms
+              transformer: [
+                narrow,
+                config.prep_initial_cleaners,
+                xforms,
+                config.prep_final_cleaners
+              ].compact
             )
           end
 
           def lookups
             %i[
-              objects__numbers_cleaned
+              objects__number_lookup
             ]
           end
 
-          def xforms
+          def narrow
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              if config.drop_inactive
-                transform FilterRows::FieldEqualTo,
-                  action: :keep,
-                  field: :active,
-                  value: "1"
+              unless Tms.migration_status == :prelim
+                unless config.migrate_inactive
+                  transform FilterRows::FieldEqualTo,
+                    action: :keep,
+                    field: :active,
+                    value: "1"
+                end
+                transform Delete::Fields, fields: :active
               end
-              transform Delete::Fields, fields: :active
 
               transform Tms::Transforms::DeleteTmsFields
 
@@ -62,8 +69,13 @@ module Kiba
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: config.content_fields
+            end
+          end
+
+          def xforms
+            Kiba.job_segment do
               transform Merge::MultiRowLookup,
-                lookup: objects__numbers_cleaned,
+                lookup: objects__number_lookup,
                 keycolumn: :objectid,
                 fieldmap: {objectnumber: :objectnumber}
               transform FilterRows::FieldPopulated,

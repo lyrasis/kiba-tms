@@ -18,7 +18,7 @@ endif::[]
 * Make ConXrefs (ConRefs) behave like standard MultiTableMergeable with type treatments
 * `places` namespace compilation and cleanup should be set up to use built-in iterative cleanup, and to generate `places__ingest` whether cleanup has been done or not
 * ObjGeography merge in Jobs::Objects::ExternalDataMerged is client-specific and needs to be generalized
-
+* Merging in authorized form of person/org name as TextEntries author needed to be removed from :prep__text_entries. This (maybe) orphans `Tms::Transforms::Constituents::Merger` and where text entry author fields are mapped to org/person-controlled fields, more detailed merge needs to be introduced later in processing. (This was causing a dependency loop, since constituents have text entries, but preparing text entries for merge into constituents requires text entries to be prepped. Might be fixable by moving merge of text entries into constituents *after* the name compilation/categorization/cleanup processing?)
 == Code organization
 Under `/lib/kiba/tms`:
 

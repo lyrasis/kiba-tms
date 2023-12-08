@@ -39,6 +39,12 @@ module Kiba
       setting :for_obj_accession_untyped_default_treatment,
         default: "acq_note",
         reader: true
+      setting :for_objects_untyped_default_treatment,
+        default: "viewers_personal_exp_untyped",
+        reader: true
+      setting :for_obj_rights_untyped_default_treatment,
+        default: "right_note",
+        reader: true
       setting :for_reference_master_untyped_default_treatment,
         default: "citation_note_untyped",
         reader: true

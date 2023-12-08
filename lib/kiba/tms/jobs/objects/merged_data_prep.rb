@@ -15,31 +15,17 @@ module Kiba
                 source: :objects__external_data_merged,
                 destination: :objects__merged_data_prep
               },
-              transformer: xforms
+              transformer: [
+                config.merged_data_cleaners,
+                config.merged_data_shapers,
+                config.post_merged_prep_xforms,
+                consistent
+              ].compact
             )
           end
 
-          def xforms
-            bind = binding
-
+          def consistent
             Kiba.job_segment do
-              config = bind.receiver.send(:config)
-
-              unless config.merged_data_cleaners.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.merged_data_cleaners
-              end
-
-              unless config.merged_data_shapers.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.merged_data_shapers
-              end
-
-              unless config.post_merged_prep_xforms.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.post_merged_prep_xforms
-              end
-
               transform Clean::EnsureConsistentFields
             end
           end

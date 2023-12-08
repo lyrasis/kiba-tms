@@ -23,25 +23,33 @@ module Kiba
         reader: true
       extend Tms::Mixins::Tableable
 
-      # Whether to remove rows marked inactive from migration. If true, only
-      #   rows with :active == 1 will be kept.
-      setting :drop_inactive, default: false, reader: true
+      # @return [Boolean] Whether to keep rows marked inactive from
+      #   migration. If false, only rows with :active == 1 will be
+      #   kept in migration statuses :dev and :prod. Defaults to false
+      #   because initial data review indicates inactive rows appear
+      #   to have been replaced by corrected active rows or values in
+      #   Objects.dated field
+      #
+      # TIP: set Tms.migration_status to :prelim and run obj_dates__inactive
+      #   job for a report to support deciding how to set this option
+      setting :migrate_inactive, default: false, reader: true
 
-      # # Project-specific transforms to prepare ConGeography data for merge
-      # #   into person and org records.
-      # #
-      # # To be compatible with the default mergers, the cleaner should add the
-      # #   following fields to each row:
-      # #
-      # # - :type - allowed values: birth, death, blank
-      # # - :mergeable - the value (with any necessary prefix) to merge
-      # setting :cleaner,
-      #   default: nil,
-      #   reader: true
+      # @return [nil, Proc] Kiba.job_segment to be run before
+      #   ObjDates::Prep xforms
+      setting :prep_initial_cleaners, default: nil, reader: true
 
-      # setting :merger,
-      #   default: Tms::Transforms::ConGeography::PersonMerger,
-      #   reader: true
+      # @return [nil, Proc] Kiba.job_segment to be run after
+      #   ObjDates::Prep xforms
+      setting :prep_final_cleaners, default: nil, reader: true
+
+      # @return [Array<Symbol>] jobs to be compiled into final list of unique
+      #   date values for Emendate processing
+      setting :all_sources,
+        default: %i[
+          obj_dates__uniq
+          objects__dated_uniq
+        ],
+        reader: true
     end
   end
 end

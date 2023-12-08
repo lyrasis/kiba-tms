@@ -48,7 +48,8 @@ module Kiba
           end
 
           def authors(row)
-            parts = [row[:person_author], row[:org_author]].compact
+            parts = [row[:authorname]].compact
+            # parts = [row[:person_author], row[:org_author]].compact
             return nil if parts.empty?
 
             parts.join(", ")

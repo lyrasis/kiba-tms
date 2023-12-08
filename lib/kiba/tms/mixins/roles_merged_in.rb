@@ -15,6 +15,10 @@ module Kiba
       #
       # ## Implementation details
       #
+      # This module is mixed into all config ConRefs target tables'
+      #   config modules by Tms::Utils::ConRefTargetExtender in
+      #   Tms.meta_config.
+      #
       # Modules/classes mixing this in must:
       #
       # extend Tms::Mixins::RolesMergedIn

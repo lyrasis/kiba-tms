@@ -12,18 +12,11 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: sources,
+                source: config.compile_sources,
                 destination: :concept_ethnographic_culture__lookup
               },
               transformer: xforms
             )
-          end
-
-          def sources
-            config.compile_sources
-              .map do |field|
-                "concept_ethnographic_culture__from_#{field}".to_sym
-              end
           end
 
           def xforms

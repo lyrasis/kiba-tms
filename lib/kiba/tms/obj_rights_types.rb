@@ -15,6 +15,10 @@ module Kiba
         default: ["ObjRights.#{id_field}"],
         reader: true
       extend Tms::Mixins::TypeLookupTable
+
+      def default_mapping_treatment
+        :downcase
+      end
     end
   end
 end

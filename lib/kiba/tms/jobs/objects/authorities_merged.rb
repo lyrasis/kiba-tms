@@ -28,7 +28,7 @@ module Kiba
             unless config.material_controlled_source_fields.empty?
               base << :concept_material__lookup
             end
-            unless config.named_coll_fields.empty?
+            unless config.namedcollection_sources.empty?
               base << :works__lookup
             end
             if config.assocpeople_controlled? &&
@@ -91,7 +91,7 @@ module Kiba
                   fields: config.material_target_fields
               end
 
-              unless Tms::Objects.named_coll_fields.empty?
+              unless Tms::Objects.namedcollection_sources.empty?
                 transform Merge::MultiRowLookup,
                   lookup: works__lookup,
                   keycolumn: :namedcollection_raw,

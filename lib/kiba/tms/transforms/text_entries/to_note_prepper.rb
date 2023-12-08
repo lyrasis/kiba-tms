@@ -29,13 +29,16 @@ module Tms
         end
 
         def author(row)
-          author_val = [
-            row[:person_author],
-            row[:org_author]
-          ].reject { |author| author.blank? }
-          return nil if author_val.empty?
+          author_val = row[:authorname]
+          return nil if author_val.blank?
+          # author_val = [
+          #   row[:person_author],
+          #   row[:org_author]
+          # ].reject { |author| author.blank? }
+          # return nil if author_val.empty?
+          # author_val.join(", ")
 
-          author_val.join(", ")
+          author_val
         end
 
         def combine_label_and_note(row, label)

@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[names__by_constituentid]
+            base = %i[tms__constituents]
             base << :prep__text_types if Tms::TextTypes.used
             base << :prep__text_statuses if Tms::TextStatuses.used
             base.select { |job| Tms.job_output?(job) }
@@ -68,13 +68,18 @@ module Kiba
               end
               transform Delete::Fields, fields: :textstatusid
 
-              transform Tms::Transforms::Constituents::Merger,
-                lookup: names__by_constituentid,
+              transform Merge::MultiRowLookup,
+                lookup: tms__constituents,
                 keycolumn: :authorconid,
-                targets: {
-                  org_author: :org,
-                  person_author: :person
-                }
+                fieldmap: {authorname: :displayname}
+
+              # transform Tms::Transforms::Constituents::Merger,
+              #   lookup: names__by_constituentid,
+              #   keycolumn: :authorconid,
+              #   targets: {
+              #     org_author: :org,
+              #     person_author: :person
+              #   }
             end
           end
         end

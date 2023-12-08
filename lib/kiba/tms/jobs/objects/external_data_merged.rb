@@ -16,30 +16,34 @@ module Kiba
                 destination: :objects__external_data_merged,
                 lookup: lookups
               },
-              transformer: xforms
+              transformer: [
+                # xforms,
+                config.post_merge_xforms,
+                consistency
+              ].compact
             )
           end
 
           def lookups
             base = []
-            base << :prep__object_names if Tms::ObjectNames.used?
-            base << :prep__obj_titles if Tms::ObjTitles.used?
-            if config.dimensions_to_merge?
-              base << :dim_item_elem_xrefs_for__objects
-            end
-            if Tms::ObjComponents.merging_text_entries?
-              base << :obj_components__with_object_numbers
-            end
-            if Tms::LinkedSetAcq.used?
-              base << :linked_set_acq__object_statuses
-            end
-            if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
-              base << :status_flags_for__objects
-            end
-            if Tms::ObjGeography.used?
-              base << :prep__obj_geography
-              base << :places__final_cleaned_lookup
-            end
+            # base << :prep__object_names if Tms::ObjectNames.used?
+            # base << :prep__obj_titles if Tms::ObjTitles.used?
+            # if config.dimensions_to_merge?
+            #   base << :dim_item_elem_xrefs_for__objects
+            # end
+            # if Tms::ObjComponents.merging_text_entries?
+            #   base << :obj_components__with_object_numbers
+            # end
+            # if Tms::LinkedSetAcq.used?
+            #   base << :linked_set_acq__object_statuses
+            # end
+            # if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
+            #   base << :status_flags_for__objects
+            # end
+            # if Tms::ObjGeography.used?
+            #   base << :prep__obj_geography
+            #   base << :places__final_cleaned_lookup
+            # end
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 
@@ -224,13 +228,12 @@ module Kiba
                 transform Delete::Fields,
                   fields: %i[place_made_orig_combined other_place_orig_combined]
               end
+            end
+          end
 
+          def consistency
+            Kiba.job_segment do
               transform Clean::EnsureConsistentFields
-
-              unless config.post_merge_xforms.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.post_merge_xforms
-              end
             end
           end
         end
