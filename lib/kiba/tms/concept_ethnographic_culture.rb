@@ -26,7 +26,9 @@ module Kiba
             %i[]
           when :fcart
             [Tms::Objects.assoceventpeople_sources,
-              Tms::Objects.assocpeople_sources,
+              Tms::Objects.assocpeople_source_fields.map do |field|
+                "#{field}_assocpeople".to_sym
+              end,
               Tms::Objects.contentpeople_sources].flatten
               .uniq
           end

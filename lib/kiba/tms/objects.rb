@@ -101,7 +101,7 @@ module Kiba
       #   namedcollection field
       setting :department_coll_prefix, default: nil, reader: true
 
-      setting :objectname_controlled_source_fields,
+      setting :objectnamecontrolled_source_fields,
         default: %i[],
         reader: true
 
@@ -112,7 +112,7 @@ module Kiba
       # Used by xforms to programmatically determine target field for
       #   objectname values
       def objectname_base_for(field)
-        if objectname_controlled_source_fields.include?(field)
+        if objectnamecontrolled_source_fields.include?(field)
           :objectnamecontrolled
         elsif objectname_uncontrolled_source_fields.include?(field)
           :objectname
@@ -132,21 +132,23 @@ module Kiba
       #  the future
       setting :cataloged_treatment, default: :annotation, reader: true
 
-      # Handles :cataloguer and :catalogueisodate, mapping to an annotation
-      #   field group line.
+      # @return [nil, Proc] Kiba.job_segment to handle :cataloguer and
+      #   :catalogueisodate, mapping to an annotation field group
+      #   line.
       setting :cataloged_shape_xforms,
-        default: {},
+        default: nil,
         reader: true,
         constructor: ->(base) do
           case cataloged_treatment
           when :annotation
-            base.merge!({Tms::Transforms::Objects::Cataloged => nil})
+            Kiba.job_segment do
+              transform Tms::Transforms::Objects::Cataloged
+            end
           when :delete
-            base.merge!({
-              Delete::Fields => {fields: %i[cataloguer catalogueisodate]}
-            })
+            Kiba.job_segment do
+              transform Delete::Fields, fields: %i[cataloguer catalogueisodate]
+            end
           end
-          base
         end
 
       # :referencenote maps each value to :catrais_referencenote, setting
@@ -170,7 +172,7 @@ module Kiba
       #  the future
       setting :exhibitions_treatment, default: :usage, reader: true
 
-      setting :material_controlled_source_fields,
+      setting :materialcontrolled_source_fields,
         default: %i[],
         reader: true
 
@@ -190,7 +192,7 @@ module Kiba
       # Used by xforms to programmatically determine target field for
       #   material values
       def material_base_for(field)
-        if material_controlled_source_fields.include?(field)
+        if materialcontrolled_source_fields.include?(field)
           :materialcontrolled
         elsif material_uncontrolled_source_fields.include?(field)
           :material
@@ -211,10 +213,8 @@ module Kiba
       #  the future
       setting :pubreferences_treatment, default: :referencenote, reader: true
 
-      # @return [Hash{Class => Hash, nil}] run in order at the end of
-      #   :objects__shape job. Key is a Kiba compliant transform class. Value
-      #   is nil (no initialization params for class) or Hash of initialization
-      #   params
+      # @return [nil, Proc] Kiba.job_segment of transforms run at the end of
+      #   :objects__shape job.
       setting :post_shape_xforms, default: {}, reader: true
 
       # -----------------------------------------------------------------------
@@ -236,7 +236,7 @@ module Kiba
           Tms::Transforms::DeriveFieldPair => {
             source: :creditline,
             newfield: :annotationtype,
-            value: "Credit Line",
+            value: "credit line",
             sourcebecomes: :annotationnote
           }
         },
@@ -349,6 +349,10 @@ module Kiba
       #
       # - creditline_annotationtype
       # - creditline_annotationnote
+      #
+      # Fields that have been configured with separate main_field,
+      #   grouped_fields, and target_fields settings are ready to be
+      #   be deduplicated on the main_field value
       # -----------------------------------------------------------------------
       setting :annotation_source_fields,
         default: %i[creditline],
@@ -363,14 +367,21 @@ module Kiba
           end
           base
         end
-      setting :annotation_target_fields,
-        default: %i[annotationtype annotationnote],
+      setting :annotation_main_field, default: :annotationnote, reader: true
+      setting :annotation_grouped_fields,
+        default: %i[annotationtype],
         reader: true,
         constructor: ->(base) do
           if cataloged_treatment == :annotation
             base << %i[annotationauthor annotationdate]
           end
           base.flatten
+        end
+      setting :annotation_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [annotation_main_field, annotation_grouped_fields].flatten
         end
 
       setting :assocobject_source_fields,
@@ -382,23 +393,44 @@ module Kiba
           end
           base
         end
-      setting :assocobject_target_fields,
-        default: %i[assocobject assocobjecttype assocobjectnote],
+      setting :assocobject_main_field, default: :assocobject, reader: true
+      setting :assocobject_grouped_fields,
+        default: %i[assocobjecttype assocobjectnote],
         reader: true
+      setting :assocobject_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [assocobject_main_field, assocobject_grouped_fields].flatten
+        end
 
       setting :assocpeople_source_fields,
         default: %i[],
         reader: true
-      setting :assocpeople_target_fields,
-        default: %i[assocpeople assocpeopletype assocpeoplenote],
+      setting :assocpeople_main_field, default: :assocpeople, reader: true
+      setting :assocpeople_grouped_fields,
+        default: %i[assocpeopletype assocpeoplenote],
         reader: true
+      setting :assocpeople_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [assocpeople_main_field, assocpeople_grouped_fields].flatten
+        end
 
       setting :assocplace_source_fields,
         default: %i[],
         reader: true
-      setting :assocplace_target_fields,
-        default: %i[assocplace assocplacetype assocplacenote],
+      setting :assocplace_main_field, default: :assocplace, reader: true
+      setting :assocplace_grouped_fields,
+        default: %i[assocplacetype assocplacenote],
         reader: true
+      setting :assocplace_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [assocplace_main_field, assocplace_grouped_fields].flatten
+        end
 
       setting :contentother_source_fields,
         default: %i[],
@@ -409,70 +441,126 @@ module Kiba
           end
           base
         end
-      setting :contentother_target_fields,
-        default: %i[contentother contentothertype],
+      setting :contentother_main_field, default: :contentother, reader: true
+      setting :contentother_grouped_fields,
+        default: %i[contentothertype],
         reader: true
+      setting :contentother_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [contentother_main_field, contentother_grouped_fields].flatten
+        end
 
       setting :objectname_source_fields,
         default: %i[obj],
         reader: true,
         constructor: ->(base) do
-          unless objectname_controlled_source_fields.empty?
-            base << objectname_controlled_source_fields
+          unless objectnamecontrolled_source_fields.empty?
+            base << objectnamecontrolled_source_fields
           end
           unless objectname_uncontrolled_source_fields.empty?
             base << objectname_uncontrolled_source_fields
           end
           base.flatten
         end
+      setting :objectname_main_field,
+        default: :objectname,
+        reader: true,
+        constructor: ->(base) do
+          return base if objectnamecontrolled_source_fields.empty?
+
+          :objectnamecontrolled
+        end
+      setting :objectname_grouped_fields,
+        default: %i[objectnamecurrency objectnamelanguage objectnamelevel
+          objectnamenote objectnamesystem objectnametype],
+        reader: true,
+        constructor: ->(base) do
+          if objectname_main_field == :objectnamecontrolled &&
+              !objectname_uncontrolled_source_fields.empty?
+            base << :objectname
+          end
+          base
+        end
       setting :objectname_target_fields,
         default: %i[],
         reader: true,
         constructor: ->(base) do
-          unless objectname_source_fields.empty?
-            base << %i[objectnamecurrency objectnamelanguage objectnamelevel
-              objectnamenote objectnamesystem objectnametype]
-          end
-          unless objectname_controlled_source_fields.empty?
-            base << :objectnamecontrolled
-          end
-          unless objectname_uncontrolled_source_fields.empty?
-            base << :objectname
-          end
-          base.flatten
+          [objectname_main_field, objectname_grouped_fields].flatten
         end
 
       setting :material_source_fields,
         default: %i[],
         reader: true,
         constructor: ->(base) do
-          unless material_controlled_source_fields.empty?
-            base << material_controlled_source_fields
+          unless materialcontrolled_source_fields.empty?
+            base << materialcontrolled_source_fields
           end
           unless material_uncontrolled_source_fields.empty?
             base << material_uncontrolled_source_fields
           end
           base.flatten
         end
+      setting :material_main_field,
+        default: :material,
+        reader: true,
+        constructor: ->(base) do
+          return base if materialcontrolled_source_fields.empty?
+
+          :materialcontrolled
+        end
+      setting :material_grouped_fields,
+        default: %i[materialcomponent materialcomponentnote
+          materialname materialsource],
+        reader: true,
+        constructor: ->(base) do
+          if material_main_field == :materialcontrolled &&
+              !material_uncontrolled_source_fields.empty?
+            base << :material
+          end
+          base
+        end
       setting :material_target_fields,
         default: %i[],
         reader: true,
         constructor: ->(base) do
-          unless material_source_fields.empty?
-            base << %i[materialcomponent materialcomponentnote
-              materialname materialsource]
-          end
-          unless material_controlled_source_fields.empty?
-            base << :materialcontrolled
-          end
-          unless material_uncontrolled_source_fields.empty?
-            base << :material
-          end
-          base.flatten
+          [material_main_field, material_grouped_fields].flatten
         end
 
       setting :nontext_inscription_source_fields, default: %i[], reader: true
-      setting :nontext_inscription_target_fields, default: %i[], reader: true
+      setting :nontext_inscription_main_field,
+        default: :inscriptiondescription,
+        reader: true
+      setting :nontext_inscription_grouped_fields,
+        default: %i[inscriptiondescriptiontype
+          inscriptiondescriptioninterpretation],
+        reader: true
+      setting :nontext_inscription_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [
+            nontext_inscription_main_field,
+            nontext_inscription_grouped_fields
+          ].flatten
+        end
+
+      setting :othernumber_source_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::AltNums.used? && Tms::AltNums.for?("Objects")
+            base << :altnum
+          end
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te
+          end
+          base
+        end
+      setting :othernumber_target_fields,
+        default: %i[numbervalue numbertype],
+        reader: true
 
       setting :reference_source_fields,
         default: %i[],
@@ -503,10 +591,21 @@ module Kiba
           end
           base
         end
-      setting :text_inscription_target_fields,
-        default: %i[inscriptioncontenttype inscriptioncontent
-          inscriptioncontentinterpretation],
+      setting :text_inscription_main_field,
+        default: :inscriptioncontent,
         reader: true
+      setting :text_inscription_grouped_fields,
+        default: %i[inscriptioncontenttype inscriptioncontentinterpretation],
+        reader: true
+      setting :text_inscription_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [
+            text_inscription_main_field,
+            text_inscription_grouped_fields
+          ].flatten
+        end
 
       setting :usage_source_fields,
         default: %i[],
@@ -520,32 +619,23 @@ module Kiba
           end
           base
         end
-      setting :usage_target_fields,
-        default: %i[usage usagenote],
+      setting :usage_main_field, default: :usagenote, reader: true
+      setting :usage_grouped_fields,
+        default: %i[usage],
         reader: true
-
-      # Intermediate fields containing values to be merged into `comments`
-      #   field
-      #
-      # @return [Array<Symbol]
-      setting :comment_sources,
+      setting :usage_target_fields,
+        default: %i[],
         reader: true,
-        default: %i[notes curatorialremarks],
-        constructor: ->(default) do
-          default << :alt_num_comment if Tms::AltNums.used? &&
-            Tms::AltNums.for?("Objects")
-          default << :title_comment if Tms::ObjTitles.used?
-          default << :te_comment if Tms::TextEntries.used? &&
-            Tms::TextEntries.for?("Objects")
-          default
+        constructor: ->(base) do
+          [usage_main_field, usage_grouped_fields].flatten
         end
 
-      # Intermediate fields to be concatenated into contentconcept field
-      #   controlled by concept/associated authority vocabulary
-      setting :contentconceptconceptassociated_sources,
-        default: %i[],
-        reader: true
-
+      # -----------------------------------------------------------------------
+      # NON-REPEATABLE FIELD COLLAPSE CONFIG
+      # These have a delim setting for each field, since how a client may
+      #   want multiple values in a single note field to be separated may need
+      #   to be custom-configured
+      # -----------------------------------------------------------------------
       setting :contentnote_delim, default: Tms.notedelim, reader: true
       setting :contentnote_sources,
         default: %i[],
@@ -612,6 +702,66 @@ module Kiba
           base
         end
 
+      setting :viewerspersonalexperience_delim,
+        default: Tms.notedelim,
+        reader: true
+      setting :viewerspersonalexperience_sources,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
+            base << :te_viewerspersonalexperience
+          end
+          base
+        end
+
+      # -----------------------------------------------------------------------
+      # REPEATABLE FIELD COLLAPSE CONFIG
+      # Simple repeatable field values collapsed from multiple sources. Delim
+      #   will always be the application/project delim setting
+      # -----------------------------------------------------------------------
+      # Intermediate fields containing values to be merged into
+      #   :assoceventpeople and treated as controlled terms
+      setting :assoceventpeople_sources, default: [], reader: true
+
+      # @return [Array<Symbol] Intermediate fields containing values
+      #   to be merged into `comments` field
+      setting :comment_sources,
+        reader: true,
+        default: %i[notes curatorialremarks],
+        constructor: ->(default) do
+          default << :alt_num_comment if Tms::AltNums.used? &&
+            Tms::AltNums.for?("Objects")
+          default << :title_comment if Tms::ObjTitles.used?
+          default << :te_comment if Tms::TextEntries.used? &&
+            Tms::TextEntries.for?("Objects")
+          default
+        end
+
+      # Intermediate fields to be concatenated into contentconcept field
+      #   controlled by concept/associated authority vocabulary
+      setting :contentconceptconceptassociated_sources,
+        default: %i[],
+        reader: true
+
+      setting :contenteventchronologyevent_sources,
+        default: [],
+        reader: true
+      setting :contenteventchronologyera_sources,
+        default: [],
+        reader: true
+      setting :contentorganizationorganizationlocal_sources,
+        default: [],
+        reader: true
+
+      # Intermediate fields containing values to be merged into
+      #   :contentpeople
+      setting :contentpeople_sources, default: [], reader: true
+
+      setting :contentpersonpersonlocal_sources,
+        default: [],
+        reader: true
+
       # Intermediate fields containing values to be merged into
       #   `inventoryStatus` field
       #
@@ -627,19 +777,6 @@ module Kiba
           default
         end
 
-      setting :viewerspersonalexperience_delim,
-        default: Tms.notedelim,
-        reader: true
-      setting :viewerspersonalexperience_sources,
-        default: %i[],
-        reader: true,
-        constructor: ->(base) do
-          if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
-            base << :te_viewerspersonalexperience
-          end
-          base
-        end
-
       # -=-=-=-=-=-=-=-=-=-=-
       # AUTHORITY MERGE SETTINGS
       # -=-=-=-=-=-=-=-=-=-=-
@@ -648,37 +785,22 @@ module Kiba
         true if %i[fcart].include?(Tms.cspace_profile)
       end
 
-      # Intermediate fields containing values to be merged into
-      #   :assoceventpeople and treated as controlled terms
-      setting :assoceventpeople_sources, default: [], reader: true
-
       def assocpeople_controlled?
         true if %i[fcart].include?(Tms.cspace_profile)
       end
 
-      # Intermediate fields containing values to be merged into
-      #   :assoceventpeople
-      setting :assocpeople_sources,
-        default: [],
-        reader: true,
-        constructor: ->(_x) do
-          return [] unless assocpeople_controlled?
-
-          assocpeople_source_fields.map do |field|
-            "#{field}_assocpeople".to_sym
-          end
-        end
+      def assocplace_controlled?
+        true if %i[fcart lhmc].include?(Tms.cspace_profile)
+      end
 
       def contentpeople_controlled?
         true if %i[fcart].include?(Tms.cspace_profile)
       end
 
-      # Intermediate fields containing values to be merged into
-      #   :contentpeople
-      setting :contentpeople_sources, default: [], reader: true
-
-      def assocplace_controlled?
-        true if %i[fcart lhmc].include?(Tms.cspace_profile)
+      def reference_controlled?
+        true if %i[core anthro fcart lhmc herbarium bonsai].include?(
+          Tms.cspace_profile
+        )
       end
 
       # @return [Array<Regexp>] used in cleaning/shaping fields that get

@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return unless Tms::Objects.material_controlled_source_fields
+            return unless Tms::Objects.materialcontrolled_source_fields
               .include?(:papersupport)
 
             Kiba::Extend::Jobs::Job.new(

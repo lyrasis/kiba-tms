@@ -15,7 +15,7 @@ module Kiba
           end
 
           def process(row)
-            merge_rows = lookup[row[:objectid]]
+            merge_rows = lookup[row[:objrightsid]]
             return row unless merge_rows
 
             merge_rows.sort_by { |r| r[:sort].to_i }

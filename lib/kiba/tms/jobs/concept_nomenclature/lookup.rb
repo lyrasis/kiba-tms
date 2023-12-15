@@ -8,7 +8,7 @@ module Kiba
           module_function
 
           def job
-            return if Tms::Objects.objectname_controlled_source_fields.empty?
+            return if Tms::Objects.objectnamecontrolled_source_fields.empty?
 
             Kiba::Extend::Jobs::Job.new(
               files: {

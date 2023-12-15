@@ -13,7 +13,11 @@ module Kiba
                 source: :prep__obj_rights,
                 destination: :obj_rights__external_data_merged
               },
-              transformer: xforms
+              transformer: [
+                xforms,
+                config.merge_end_xforms,
+                consistent
+              ].compact
             )
           end
 
@@ -34,13 +38,17 @@ module Kiba
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
                     into: config,
-                    keycolumn: :objectid
+                    keycolumn: :objrightsid
                 end
                 Tms::ConRefsForObjRights.merger_xforms&.each { |xform|
                   transform xform
                 }
               end
+            end
+          end
 
+          def consistent
+            Kiba.job_segment do
               transform Clean::EnsureConsistentFields
             end
           end

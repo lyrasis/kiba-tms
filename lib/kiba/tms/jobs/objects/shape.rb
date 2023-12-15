@@ -15,7 +15,11 @@ module Kiba
                 source: :objects__merged_data_prep,
                 destination: :objects__shape
               },
-              transformer: xforms
+              transformer: [
+                config.cataloged_shape_xforms,
+                xforms,
+                config.post_shape_xforms
+              ].compact
             )
           end
 
@@ -45,11 +49,6 @@ module Kiba
                 transform Prepend::ToFieldValue,
                   field: :department,
                   value: config.department_coll_prefix
-              end
-
-              unless config.cataloged_shape_xforms.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.cataloged_shape_xforms
               end
 
               case config.catrais_treatment
@@ -107,7 +106,7 @@ module Kiba
               # Collapse repeatable field groups with values from multiple
               #   sources
               %w[annotation assocobject assocpeople assocplace contentother
-                material nontext_inscription objectname reference
+                material nontext_inscription objectname othernumber reference
                 text_inscription usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
@@ -116,12 +115,20 @@ module Kiba
                     sources: sources,
                     targets: targets,
                     delim: Tms.delim
+
+                  main = "#{type}_main_field".to_sym
+                  grpd = "#{type}_grouped_fields".to_sym
+                  if config.respond_to?(main) && config.respond_to?(grpd)
+                    transform Deduplicate::GroupedFieldValues,
+                      on_field: config.send(main),
+                      grouped_fields: config.send(grpd),
+                      delim: Tms.delim
+                  end
                 end
               end
 
               # Compile repeatable field values from multiple sources
-              %w[comment inventorystatus
-                contentconceptconceptassociated].each do |target|
+              %w[comment inventorystatus].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
                   target: target.to_sym,
@@ -129,13 +136,16 @@ module Kiba
                   delete_sources: true
               end
 
-              # Compile unauthorized namedcollection values from multiple
-              #   sources. Separate because target field name is odd.
-              #   Authorized term values merged in by :authorities_merged job.
-              unless Tms::Objects.namedcollection_sources.empty?
+              # Compile raw terms mapped to repeating
+              # authority-controlled fields. Authorized term values
+              # merged in by :authorities_merged job.
+              %w[contentconceptconceptassociated
+                contenteventchronologyera contenteventchronologyevent
+                contentorganizationorganizationlocal contentpeople
+                contentpersonpersonlocal namedcollection].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
-                  sources: Tms::Objects.namedcollection_sources,
-                  target: :namedcollection_raw,
+                  sources: config.send("#{target}_sources".to_sym),
+                  target: "#{target}_raw".to_sym,
                   delim: Tms.delim,
                   delete_sources: true
               end
@@ -160,11 +170,6 @@ module Kiba
                   target: target.to_sym,
                   delim: config.send("#{target}_delim".to_sym),
                   delete_sources: true
-              end
-
-              unless config.post_shape_xforms.empty?
-                transform Tms::Transforms::List,
-                  xforms: config.post_shape_xforms
               end
             end
           end

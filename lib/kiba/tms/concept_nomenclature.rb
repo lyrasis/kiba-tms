@@ -17,10 +17,10 @@ module Kiba
         default: [],
         reader: true,
         constructor: ->(base) do
-          if Tms::Objects.objectname_controlled_source_fields.include?(:obj)
+          if Tms::Objects.objectnamecontrolled_source_fields.include?(:obj)
             base << :concept_nomenclature__from_objectname
           end
-          if Tms::Objects.objectname_controlled_source_fields.include?(:on)
+          if Tms::Objects.objectnamecontrolled_source_fields.include?(:on)
             base << :concept_nomenclature__from_object_names_table
           end
           base.flatten

@@ -17,7 +17,8 @@ module Kiba
                 lookup: lookups
               },
               transformer: [
-                # xforms,
+                xforms,
+                Tms::ObjRights.merge_xforms,
                 config.post_merge_xforms,
                 consistency
               ].compact
@@ -26,24 +27,25 @@ module Kiba
 
           def lookups
             base = []
-            # base << :prep__object_names if Tms::ObjectNames.used?
-            # base << :prep__obj_titles if Tms::ObjTitles.used?
-            # if config.dimensions_to_merge?
-            #   base << :dim_item_elem_xrefs_for__objects
-            # end
-            # if Tms::ObjComponents.merging_text_entries?
-            #   base << :obj_components__with_object_numbers
-            # end
-            # if Tms::LinkedSetAcq.used?
-            #   base << :linked_set_acq__object_statuses
-            # end
-            # if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
-            #   base << :status_flags_for__objects
-            # end
-            # if Tms::ObjGeography.used?
-            #   base << :prep__obj_geography
-            #   base << :places__final_cleaned_lookup
-            # end
+            base << :prep__object_names if Tms::ObjectNames.used?
+            base << :prep__obj_titles if Tms::ObjTitles.used?
+            if config.dimensions_to_merge?
+              base << :dim_item_elem_xrefs_for__objects
+            end
+            if Tms::ObjComponents.merging_text_entries?
+              base << :obj_components__with_object_numbers
+            end
+            if Tms::LinkedSetAcq.used?
+              base << :linked_set_acq__object_statuses
+            end
+            if Tms::StatusFlags.used? && Tms::StatusFlags.for?("Objects")
+              base << :status_flags_for__objects
+            end
+            if Tms::ObjGeography.used?
+              base << :prep__obj_geography
+              base << :places__final_cleaned_lookup
+            end
+            base << Tms::ObjRights.merge_lookup if Tms::ObjRights.merge_xforms
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
 

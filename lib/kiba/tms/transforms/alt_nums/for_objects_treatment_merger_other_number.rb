@@ -9,8 +9,8 @@ module Kiba
           include TreatmentMergeable
 
           def initialize
-            @numtarget = :othernumber_value
-            @typetarget = :othernumber_type
+            @numtarget = :altnum_numbervalue
+            @typetarget = :altnum_numbertype
             @delim = Tms.delim
           end
 

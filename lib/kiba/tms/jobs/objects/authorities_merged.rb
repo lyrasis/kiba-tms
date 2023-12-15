@@ -4,6 +4,8 @@ module Kiba
   module Tms
     module Jobs
       module Objects
+        # Person and Organization authorities do not need to be looked up/merged
+        #   because authorized form of those names were merged in initially
         module AuthoritiesMerged
           module_function
 
@@ -22,15 +24,6 @@ module Kiba
 
           def lookups
             base = []
-            unless config.objectname_controlled_source_fields.empty?
-              base << :concept_nomenclature__lookup
-            end
-            unless config.material_controlled_source_fields.empty?
-              base << :concept_material__lookup
-            end
-            unless config.namedcollection_sources.empty?
-              base << :works__lookup
-            end
             if config.assocpeople_controlled? &&
                 !config.assocpeople_source_fields.empty?
               base << :concept_ethnographic_culture__lookup
@@ -38,8 +31,31 @@ module Kiba
             unless config.contentconceptconceptassociated_sources.empty?
               base << :concept_associated__lookup
             end
+            unless config.contenteventchronologyera_sources.empty?
+              base << :chronology_era__lookup
+            end
+            unless config.contenteventchronologyevent_sources.empty?
+              base << :chronology_event__lookup
+            end
+            if config.contentpeople_controlled? &&
+                !config.contentpeople_sources.empty?
+              base << :concept_ethnographic_culture__lookup
+            end
+            unless config.materialcontrolled_source_fields.empty?
+              base << :concept_material__lookup
+            end
+            unless config.namedcollection_sources.empty?
+              base << :works__lookup
+            end
+            unless config.objectnamecontrolled_source_fields.empty?
+              base << :concept_nomenclature__lookup
+            end
             base.uniq
               .select { |job| Kiba::Extend::Job.output?(job) }
+          end
+
+          def get_lookup(field)
+            dict[field]
           end
 
           def xforms
@@ -49,108 +65,85 @@ module Kiba
               job = bind.receiver
               config = job.send(:config)
 
-              unless config.objectname_controlled_source_fields.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: concept_nomenclature__lookup,
-                  keycolumn: :objectnamecontrolled,
-                  fieldmap: {objectnamecontrolled_use: :use},
-                  delim: Tms.delim,
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :objectnamecontrolled
-                transform Rename::Field,
-                  from: :objectnamecontrolled_use,
-                  to: :objectnamecontrolled
-                grpd = config.objectname_target_fields - [:objectnamecontrolled]
-                transform Deduplicate::GroupedFieldValues,
-                  on_field: :objectnamecontrolled,
-                  grouped_fields: grpd,
-                  delim: Tms.delim
-                transform Warn::UnevenFields,
-                  fields: config.objectname_target_fields
+              lookup_by_field = {
+                assocpeople: -> do
+                               send(:concept_ethnographic_culture__lookup)
+                             end,
+                assocplace: -> { config.place_authority_lookup },
+                contentconceptconceptassociated: -> do
+                                                   send(:concept_associated__lookup)
+                                                 end,
+                contenteventchronologyera: -> { send(:chronology_era__lookup) },
+                contenteventchronologyevent: -> do
+                  send(:chronology_event__lookup)
+                end,
+                contentpeople: -> do
+                                 send(:concept_ethnographic_culture__lookup)
+                               end,
+                materialcontrolled: -> { send(:concept_material__lookup) },
+                namedcollection: -> { send(:works__lookup) },
+                objectnamecontrolled: -> { send(:concept_nomenclature__lookup) }
+              }
+
+              # Terms in repeatable field groups configured for deduplication
+              %i[assocpeople assocplace materialcontrolled
+                objectnamecontrolled].each do |field|
+                contmeth = "#{field}_controlled?".to_sym
+                next if config.respond_to?(contmeth) &&
+                  !config.send(contmeth)
+
+                source_fields = config.send("#{field}_source_fields".to_sym)
+                merged_field = "#{field}_use".to_sym
+                grouplabel = case field.to_s.end_with?("controlled")
+                when true
+                  field.to_s.sub("controlled", "").to_sym
+                else
+                  field
+                end
+                main_field = config.send("#{grouplabel}_main_field".to_sym)
+                grpd_fields = config.send("#{grouplabel}_grouped_fields".to_sym)
+
+                unless source_fields.empty?
+                  transform Merge::MultiRowLookup,
+                    lookup: lookup_by_field[field].call,
+                    keycolumn: field,
+                    fieldmap: {merged_field => :use},
+                    multikey: true
+                  transform Delete::Fields,
+                    fields: field
+                  transform Rename::Field,
+                    from: merged_field,
+                    to: field
+                  transform Deduplicate::GroupedFieldValues,
+                    on_field: main_field,
+                    grouped_fields: grpd_fields,
+                    delim: Tms.delim
+                end
               end
 
-              unless config.material_controlled_source_fields.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: concept_material__lookup,
-                  keycolumn: :materialcontrolled,
-                  fieldmap: {materialcontrolled_use: :use},
-                  delim: Tms.delim,
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :materialcontrolled
-                transform Rename::Field,
-                  from: :materialcontrolled_use,
-                  to: :materialcontrolled
-                grpd = config.material_target_fields - [:materialcontrolled]
-                transform Deduplicate::GroupedFieldValues,
-                  on_field: :materialcontrolled,
-                  grouped_fields: grpd,
-                  delim: Tms.delim
-                transform Warn::UnevenFields,
-                  fields: config.material_target_fields
-              end
+              # Terms in repeatable fields
+              %i[
+                contentconceptconceptassociated
+                contenteventchronologyera
+                contenteventchronologyevent
+                contentpeople
+                namedcollection
+              ].each do |field|
+                sources = config.send("#{field}_sources".to_sym)
+                orig_field = "#{field}_raw".to_sym
 
-              unless Tms::Objects.namedcollection_sources.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: works__lookup,
-                  keycolumn: :namedcollection_raw,
-                  fieldmap: {namedcollection: :use},
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :namedcollection_raw
-              end
-
-              if config.assocpeople_controlled? &&
-                  !config.assocpeople_source_fields.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: concept_ethnographic_culture__lookup,
-                  keycolumn: :assocpeople,
-                  fieldmap: {assocpeople_use: :use},
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :assocpeople
-                transform Rename::Field,
-                  from: :assocpeople_use,
-                  to: :assocpeople
-                transform Deduplicate::GroupedFieldValues,
-                  on_field: :assocpeople,
-                  grouped_fields: %i[assocpeopletype assocpeoplenote],
-                  delim: Tms.delim
-              end
-
-              if config.assocplace_controlled? &&
-                  !config.assocplace_source_fields.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: config.place_authority_lookup,
-                  keycolumn: :assocplace,
-                  fieldmap: {assocplace_use: :use},
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :assocplace
-                transform Rename::Field,
-                  from: :assocplace_use,
-                  to: :assocplace
-                transform Deduplicate::GroupedFieldValues,
-                  on_field: :assocplace,
-                  grouped_fields: %i[assocplacetype assocplacenote],
-                  delim: Tms.delim
-              end
-
-              unless config.contentconceptconceptassociated_sources.empty?
-                transform Merge::MultiRowLookup,
-                  lookup: concept_associated__lookup,
-                  keycolumn: :contentconceptconceptassociated,
-                  fieldmap: {cass_use: :use},
-                  multikey: true
-                transform Delete::Fields,
-                  fields: :contentconceptconceptassociated
-                transform Rename::Field,
-                  from: :cass_use,
-                  to: :contentconceptconceptassociated
-                transform Deduplicate::FieldValues,
-                  fields: :contentconceptconceptassociated,
-                  sep: Tms.delim
+                unless sources.empty?
+                  transform Merge::MultiRowLookup,
+                    lookup: lookup_by_field[field].call,
+                    keycolumn: orig_field,
+                    fieldmap: {field => :use},
+                    multikey: true
+                  transform Delete::Fields,
+                    fields: orig_field
+                  transform Deduplicate::FieldValues,
+                    fields: field,
+                    sep: Tms.delim
+                end
               end
             end
           end

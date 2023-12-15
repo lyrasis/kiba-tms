@@ -9,7 +9,7 @@ module Kiba
 
           def job
             return unless Tms::ObjectNames.used? &&
-              Tms::Objects.objectname_controlled_source_fields.include?(:on)
+              Tms::Objects.objectnamecontrolled_source_fields.include?(:on)
 
             Kiba::Extend::Jobs::Job.new(
               files: {

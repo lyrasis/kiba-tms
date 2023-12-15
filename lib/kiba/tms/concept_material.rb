@@ -17,7 +17,7 @@ module Kiba
         default: [],
         reader: true,
         constructor: ->(_base) do
-          Tms::Objects.material_controlled_source_fields.map do |type|
+          Tms::Objects.materialcontrolled_source_fields.map do |type|
             "concept_material__from_#{type}".to_sym
           end
         end

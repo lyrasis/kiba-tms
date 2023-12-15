@@ -429,7 +429,7 @@ module Kiba
             tags: %i[concepts nomenclature]
           }
           if Tms::ObjectNames.used? &&
-              Tms::Objects.objectname_controlled_source_fields.include?(:on)
+              Tms::Objects.objectnamecontrolled_source_fields.include?(:on)
             register :from_object_names_table, {
               creator:
               Tms::Jobs::ConceptNomenclature::FromObjectNamesTable,
@@ -3468,6 +3468,13 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working",
               "obj_rights_external_data_merged.csv"),
             tags: %i[obj_rights]
+          }
+          register :shape, {
+            creator: Kiba::Tms::Jobs::ObjRights::Shape,
+            path: File.join(Kiba::Tms.datadir, "working",
+              "obj_rights_shape.csv"),
+            tags: %i[obj_rights],
+            lookup_on: :objectid
           }
         end
 
