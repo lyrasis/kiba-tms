@@ -41,7 +41,7 @@ module Kiba
             action: :keep,
             fields: merge_fields
           transform Delete::Fields,
-            fields: :merge_fields
+            fields: merge_fields
         end
       end
     end
