@@ -28,6 +28,7 @@ module Kiba
             cond_line_items: :conditionid,
             conditions: :conditionid,
             constituents: :constituentid,
+            dd_contexts: :contextid,
             departments: :departmentid,
             exhibitions: :exhibitionid,
             folder_types: Tms::FolderTypes.id_field,

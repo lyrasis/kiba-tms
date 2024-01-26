@@ -77,6 +77,7 @@ module Kiba
       )
       @loader.inflector.inflect(
         "classification_xrefs" => "ClassificationXRefs",
+        "dd_contexts" => "DDContexts",
         "dd_languages" => "DDLanguages",
         "email_types" => "EMailTypes",
         "ref_xrefs" => "RefXRefs",
@@ -131,6 +132,15 @@ module Kiba
       },
       reader: true
 
+    # Maps contexts from DDContexts to Tables. Currently used only for
+    #   UserFields handling, so that UserFieldXrefs can be treated as
+    #   MultiTableMergeable
+    setting :context_to_table_mapping,
+      default: {
+        "Objects" => "Objects",
+        "Object Rights" => "ObjRights"
+      },
+      reader: true
     # PROJECT SPECIFIC CONFIG
     setting :boolean_active_mapping,
       default: {"0" => "inactive", "1" => "active"},

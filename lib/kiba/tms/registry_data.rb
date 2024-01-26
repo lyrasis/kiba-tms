@@ -4419,6 +4419,20 @@ module Kiba
           }
         end
 
+        # Since, by definition, UserFields will be custom to a given
+        #   project, most handling of these fields (if there are any)
+        #   will be in the client project. See az_ccp for examples
+        Kiba::Tms.registry.namespace("user_fields") do
+          register :used, {
+            creator: Kiba::Tms::Jobs::UserFields::Used,
+            path: File.join(Kiba::Tms.datadir, "reference",
+              "user_fields_used.csv"),
+            tags: %i[user_fields],
+            lookup_on: :userfieldid,
+            desc: "Unique :userfieldid values used in UserFieldXrefs"
+          }
+        end
+
         Kiba::Tms.registry.namespace("valuation_control") do
           register :all, {
             creator: Kiba::Tms::Jobs::ValuationControl::All,

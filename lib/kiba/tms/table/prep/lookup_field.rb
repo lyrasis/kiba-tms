@@ -117,6 +117,7 @@ module Kiba
             trans_codes: :transcodeid,
             trans_status: :transstatusid,
             treatment_priorities: :priorityid,
+            user_fields: :userfieldid,
             valuation_purposes: Tms::ValuationPurposes.id_field
           }
         end
