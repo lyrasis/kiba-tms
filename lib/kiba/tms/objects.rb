@@ -547,7 +547,7 @@ module Kiba
         end
 
       setting :othernumber_source_fields,
-        default: %i[],
+        default: %i[objnum2],
         reader: true,
         constructor: ->(base) do
           if Tms::AltNums.used? && Tms::AltNums.for?("Objects")

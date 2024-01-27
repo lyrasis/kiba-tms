@@ -9,9 +9,9 @@ module Kiba
 
           def initialize
             @source = :objectnumber2
-            @targettypefield = :othernumber_type
+            @targettypefield = :objnum2_numbertype
             @targettype = Tms::Objects.objectnumber2_type
-            @targetvalfield = :othernumber_value
+            @targetvalfield = :objnum2_numbervalue
             @append_targets_set = false
             @append_targets = false
           end
