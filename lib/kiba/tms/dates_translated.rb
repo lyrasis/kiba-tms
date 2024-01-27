@@ -2,30 +2,14 @@
 
 module Kiba
   module Tms
+    # Reusable code for merging CollectionSpace structured date fields from
+    # Emendate output into the migration
     module DatesTranslated
       extend Dry::Configurable
 
       module_function
 
       extend Tms::Mixins::Tableable
-
-      def used?
-        !lookup_sources.empty?
-      end
-
-      setting :cs_date_fields,
-        default: %i[datedisplaydate dateperiod dateassociation datenote
-          dateearliestsingleyear dateearliestsinglemonth
-          dateearliestsingleday dateearliestsingleera
-          dateearliestsinglecertainty dateearliestsinglequalifier
-          dateearliestsinglequalifiervalue
-          dateearliestsinglequalifierunit datelatestyear
-          datelatestmonth datelatestday datelatestera
-          datelatestcertainty datelatestqualifier
-          datelatestqualifiervalue datelatestqualifierunit
-          dateearliestscalarvalue datelatestscalarvalue
-          scalarvaluescomputed],
-        reader: true
 
       # Name of file(s) to be compiled into CS detailed date field lookup table.
       #   Must have an `:orig` column, containing date string that has been
@@ -37,19 +21,6 @@ module Kiba
         constructor: ->(value) {
           value.map { |file| "#{Tms.datadir}/supplied/#{file}" }
         }
-
-      def lookup_source_jobs
-        lookup_sources.map.with_index do |src, idx|
-          "dates_translated__source_orig_#{idx}".to_sym
-        end
-      end
-
-      def merge_fieldmap(target_prefix = "")
-        cs_date_fields.map { |field|
-          prefix = target_prefix.empty? ? "" : "#{target_prefix}_"
-          ["#{prefix}#{field}".to_sym, field]
-        }.to_h
-      end
 
       def merge_xforms(keycolumn:, target_prefix: "")
         fieldmap = merge_fieldmap(target_prefix)
@@ -69,8 +40,40 @@ module Kiba
             usenull: true
           transform Delete::EmptyFields
           # transform Delete::Fields, fields: keycolumn
-          # transform Clean::EnsureConsistentFields
+          transform Clean::EnsureConsistentFields
         end
+      end
+
+      def used?
+        !lookup_sources.empty?
+      end
+
+      setting :cs_date_fields,
+        default: %i[datedisplaydate dateperiod dateassociation datenote
+          dateearliestsingleyear dateearliestsinglemonth
+          dateearliestsingleday dateearliestsingleera
+          dateearliestsinglecertainty dateearliestsinglequalifier
+          dateearliestsinglequalifiervalue
+          dateearliestsinglequalifierunit datelatestyear
+          datelatestmonth datelatestday datelatestera
+          datelatestcertainty datelatestqualifier
+          datelatestqualifiervalue datelatestqualifierunit
+          dateearliestscalarvalue datelatestscalarvalue
+          scalarvaluescomputed],
+        reader: true
+
+
+      def lookup_source_jobs
+        lookup_sources.map.with_index do |src, idx|
+          "dates_translated__source_orig_#{idx}".to_sym
+        end
+      end
+
+      def merge_fieldmap(target_prefix = "")
+        cs_date_fields.map { |field|
+          prefix = target_prefix.empty? ? "" : "#{target_prefix}_"
+          ["#{prefix}#{field}".to_sym, field]
+        }.to_h
       end
     end
   end

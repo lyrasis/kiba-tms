@@ -41,15 +41,6 @@ module Kiba
       # @return [nil, Proc] Kiba.job_segment to be run after
       #   ObjDates::Prep xforms
       setting :prep_final_cleaners, default: nil, reader: true
-
-      # @return [Array<Symbol>] jobs to be compiled into final list of unique
-      #   date values for Emendate processing
-      setting :all_sources,
-        default: %i[
-          obj_dates__uniq
-          objects__dated_uniq
-        ],
-        reader: true
     end
   end
 end

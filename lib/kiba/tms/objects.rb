@@ -13,7 +13,8 @@ module Kiba
       #   (if applicable) and any ObjContext fields that contain only
       #   actual date data
       setting :date_fields,
-        default: %i[dated datebegin dateend beginisodate endisodate],
+        default: %i[dated datebegin dateend beginisodate endisodate
+          dateremarks dateeffectiveisodate],
         reader: true,
         constructor: ->(value) { value - empty_fields.keys }
 

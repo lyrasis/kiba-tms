@@ -347,6 +347,24 @@ module Kiba
               "objects.csv"),
             tags: %i[collectionobjects ingest]
           }
+          register :production_dates, {
+            creator: Kiba::Tms::Jobs::Collectionobjects::ProductionDates,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "object_production_dates.csv"),
+            tags: %i[collectionobjects ingest dates]
+          }
+          register :assoc_dates, {
+            creator: Kiba::Tms::Jobs::Collectionobjects::AssocDates,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "object_assoc_dates.csv"),
+            tags: %i[collectionobjects ingest dates]
+          }
+          register :assoc_date_added_fields, {
+            creator: Kiba::Tms::Jobs::Collectionobjects::AssocDateAddedFields,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "object_assoc_date_added_fields.csv"),
+            tags: %i[collectionobjects ingest dates]
+          }
         end
 
         Kiba::Tms.registry.namespace("concept_associated") do
@@ -3186,14 +3204,15 @@ module Kiba
             tags: %i[obj_dates],
             desc: "Unique date values for Emendate processing"
           }
-          register :all_uniq, {
-            creator: Kiba::Tms::Jobs::ObjDates::AllUniq,
+          register :merge_translated, {
+            creator: Kiba::Tms::Jobs::ObjDates::MergeTranslated,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_dates_all_uniq.csv"),
+              "obj_dates_merge_translated.csv"),
             tags: %i[obj_dates],
-            desc: "Unique date values from ObjDates, Objects.dated, and "\
-              "other sources as configured in ObjDates.all_sources, for "\
-              "Emendate processing"
+            desc: "Merges in CollectionSpace structured date fields from "\
+              "Emendate, and prepares for reshaping into potentially "\
+              "multivalued rows for ingest",
+            lookup_on: :objectid
           }
         end
 
@@ -3548,7 +3567,7 @@ module Kiba
               "objects_date_prep.csv"
             ),
             lookup_on: :objectid,
-            tags: %i[objects],
+            tags: %i[objects dates],
             desc: "Handle initial processing and cleanup of date fields from "\
               "TMS Objects table. The affected date fields are removed from "\
               "the main objects processing by Objects::Prep"
@@ -3560,7 +3579,7 @@ module Kiba
               "working",
               "objects_dated_uniq.csv"
             ),
-            tags: %i[objects],
+            tags: %i[objects dates],
             desc: "Unique values of :dated field, for Emendate processing"
           }
           register :numbers_cleaned, {

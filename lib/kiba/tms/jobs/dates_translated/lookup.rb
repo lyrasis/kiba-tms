@@ -35,6 +35,7 @@ module Kiba
                 row
               end
 
+              transform Deduplicate::Table, field: :orig
               transform Clean::EnsureConsistentFields
             end
           end
