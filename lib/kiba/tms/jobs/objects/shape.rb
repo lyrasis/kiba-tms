@@ -141,11 +141,22 @@ module Kiba
               # merged in by :authorities_merged job.
               %w[contentconceptconceptassociated
                 contenteventchronologyera contenteventchronologyevent
-                contentorganizationorganizationlocal contentpeople
-                contentpersonpersonlocal namedcollection].each do |target|
+                contentpeople namedcollection].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
                   target: "#{target}_raw".to_sym,
+                  delim: Tms.delim,
+                  delete_sources: true
+              end
+
+              # Preferred form of organization and person names should
+              #   already be merged in. We don't need to append "raw"
+              #   to field names
+              %w[contentorganizationorganizationlocal
+                contentpersonpersonlocal].each do |target|
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.send("#{target}_sources".to_sym),
+                  target: target,
                   delim: Tms.delim,
                   delete_sources: true
               end
