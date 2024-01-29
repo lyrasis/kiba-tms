@@ -106,8 +106,8 @@ module Kiba
               # Collapse repeatable field groups with values from multiple
               #   sources
               %w[annotation assocobject assocpeople assocplace contentother
-                material nontext_inscription objectname othernumber reference
-                text_inscription usage].each do |type|
+                material nontext_inscription objectname othernumber
+                objectproductionplace reference text_inscription usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?
@@ -153,7 +153,7 @@ module Kiba
               #   already be merged in. We don't need to append "raw"
               #   to field names
               %w[contentorganizationorganizationlocal
-                contentpersonpersonlocal].each do |target|
+                contentpersonpersonlocal contentplace].each do |target|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{target}_sources".to_sym),
                   target: target,

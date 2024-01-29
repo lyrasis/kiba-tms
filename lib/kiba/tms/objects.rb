@@ -433,6 +433,23 @@ module Kiba
           [assocplace_main_field, assocplace_grouped_fields].flatten
         end
 
+      setting :objectproductionplace_source_fields,
+        default: %i[],
+        reader: true
+      setting :objectproductionplace_main_field,
+        default: :objectproductionplace,
+        reader: true
+      setting :objectproductionplace_grouped_fields,
+        default: %i[objectproductionplacerole],
+        reader: true
+      setting :objectproductionplace_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [objectproductionplace_main_field,
+            objectproductionplace_grouped_fields].flatten
+        end
+
       setting :contentother_source_fields,
         default: %i[],
         reader: true,
@@ -762,6 +779,8 @@ module Kiba
       setting :contentpersonpersonlocal_sources,
         default: [],
         reader: true
+
+      setting :contentplace_sources, default: [], reader: true
 
       # Intermediate fields containing values to be merged into
       #   `inventoryStatus` field

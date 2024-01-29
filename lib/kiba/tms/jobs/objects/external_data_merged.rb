@@ -188,6 +188,7 @@ module Kiba
                   delim: Tms.delim
               end
 
+              # @todo extract project-specific logic
               if Tms::ObjGeography.used?
                 transform Merge::MultiRowLookup,
                   lookup: prep__obj_geography,
@@ -212,11 +213,10 @@ module Kiba
                   lookup: places__final_cleaned_lookup,
                   keycolumn: :place_made_orig_combined,
                   fieldmap: {
-                    made_assocplace: :place,
-                    made_assocplacenote: :note
+                    made_objectproductionplace: :place,
+                    made_objectproductionplacerole: :note
                   },
                   null_placeholder: "%NULLVALUE%",
-                  constantmap: {made_assocplacetype: "place made"},
                   multikey: true
                 transform Merge::MultiRowLookup,
                   lookup: places__final_cleaned_lookup,
