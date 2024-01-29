@@ -386,11 +386,15 @@ module Kiba
         end
 
       setting :assocobject_source_fields,
-        default: %i[],
+        default: %i[rel],
         reader: true,
         constructor: ->(base) do
           if Tms::TextEntries.used? && Tms::TextEntries.for?("Objects")
             base << :te
+          end
+          if Tms::Associations.used? && Tms::Associations.for?("Objects")
+            base << :ltr
+            base << :rtl
           end
           base
         end

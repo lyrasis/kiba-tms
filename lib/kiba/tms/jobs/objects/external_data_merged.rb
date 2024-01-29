@@ -230,6 +230,54 @@ module Kiba
                 transform Delete::Fields,
                   fields: %i[place_made_orig_combined other_place_orig_combined]
               end
+
+              if Tms::Associations.used? && Tms::Associations.for?("Objects")
+                ltr_lkup = Tms.get_lookup(
+                  jobkey: :associations_reportable_for__objects,
+                  column: :id1
+                )
+                transform Merge::MultiRowLookup,
+                  lookup: ltr_lkup,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    ltr_assocobject: :val2,
+                    ltr_assocobjecttype: :rel2
+                  },
+                  constantmap: {
+                    ltr_assocobjectnote: "%NULLVALUE%"
+                  },
+                  conditions: ->(_r, rows) do
+                                rows.reject { |row|
+                                  row[:relationtype] == "Parent/Child"
+                                }
+                              end,
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(
+                    on: :associationid, as: :to_i
+                  )
+
+                rtl_lkup = Tms.get_lookup(
+                  jobkey: :associations_reportable_for__objects,
+                  column: :id2
+                )
+                transform Merge::MultiRowLookup,
+                  lookup: rtl_lkup,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    rtl_assocobject: :val1,
+                    rtl_assocobjecttype: :rel1
+                  },
+                  constantmap: {
+                    rtl_assocobjectnote: "%NULLVALUE%"
+                  },
+                  conditions: ->(_r, rows) do
+                    rows.reject { |row| row[:relationtype] == "Parent/Child" }
+                  end,
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(
+                    on: :associationid, as: :to_i
+                  )
+              end
             end
           end
 
