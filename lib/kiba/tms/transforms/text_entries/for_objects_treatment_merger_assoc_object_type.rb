@@ -18,8 +18,10 @@ module Kiba
           end
 
           def process(row, mergerow)
-            append_value(row, objtarget, mergerow[objsource], delim)
-            append_value(row, typetarget, mergerow[typesource], delim)
+            append_value(row, objtarget, get_value(objsource, mergerow), delim)
+            append_value(
+              row, typetarget, get_value(typesource, mergerow), delim
+            )
             append_value(row, notetarget, derive_note(mergerow), delim)
 
             row
@@ -29,6 +31,11 @@ module Kiba
 
           attr_reader :objsource, :objtarget, :typesource, :typetarget,
             :notetarget, :delim
+
+          def get_value(field, mergerow)
+            val = mergerow[field]
+            val.blank? ? "%NULLVALUE%" : val
+          end
 
           def derive_note(mergerow)
             parts = [

@@ -21,8 +21,10 @@ module Kiba
             note = derive_note(mergerow)
 
             split_obj_type(mergerow).each do |ot|
-              append_value(row, objtarget, ot.obj, delim)
-              append_value(row, typetarget, ot.type, delim)
+              obj = ot.obj.blank? ? "%NULLVALUE%" : ot.obj
+              type = ot.type.blank? ? "%NULLVALUE%" : ot.type
+              append_value(row, objtarget, obj, delim)
+              append_value(row, typetarget, type, delim)
               append_value(row, notetarget, note, delim)
             end
             row
@@ -31,6 +33,11 @@ module Kiba
           private
 
           attr_reader :objtarget, :typetarget, :notetarget, :delim
+
+          def get_value(field, mergerow)
+            val = mergerow[field]
+            val.blank? ? "%NULLVALUE%" : val
+          end
 
           def derive_note(mergerow)
             parts = [
@@ -62,7 +69,6 @@ module Kiba
             parts = val.match(
               /((?:[Dd]uplicate|[Vv]ariant)s?)(?: *- *| *: *|, *| +)(.*)/
             )
-            binding.pry if parts.nil?
             [ObjType.new(parts[2], parts[1])]
           end
         end

@@ -36,7 +36,9 @@ module Kiba
           private :get_to_pad
 
           def pad(row)
-            to_pad.each { |field| row[field] = "%NULLVALUE%" }
+            to_pad.each do |field|
+              append_value(row, field, "%NULLVALUE%", delim)
+            end
           end
         end
       end
