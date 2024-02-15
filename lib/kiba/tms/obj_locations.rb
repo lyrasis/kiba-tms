@@ -118,11 +118,8 @@ module Kiba
             false
           end
         }
-      setting :cratenumber_lvl,
-        default: :loc12,
-        reader: true
 
-      # @return [:hier, Symbol] whether to use :fulllocid_fields or
+      # @return [:hier, :nonhier] whether to use :fulllocid_fields or
       #   :fulllocid_fields_hier to build fulllocid value
       setting :fulllocid_mode, default: :hier, reader: true
 
@@ -137,21 +134,27 @@ module Kiba
         default: %i[loclevel searchcontainer shipmentnumber cratenumber
           sublevel],
         reader: true
-      setting :fulllocid_fields_hier,
-        reader: true,
-        constructor: proc {
-          lkup = hier_lvl_lookup
-          fulllocid_fields.map { |field| lkup.fetch(field, field) }
-        }
+      setting :loclevel_lvl,
+        default: :loc3,
+        reader: true
+      setting :sublevel_lvl,
+        default: :loc5,
+        reader: true
       setting :searchcontainer_lvl,
         default: :loc8,
         reader: true
       setting :shipmentnumber_lvl,
         default: :loc11,
         reader: true
-      setting :sublevel_lvl,
-        default: :loc9,
+      setting :cratenumber_lvl,
+        default: :loc12,
         reader: true
+      setting :fulllocid_fields_hier,
+        reader: true,
+        constructor: proc {
+          lkup = hier_lvl_lookup
+          fulllocid_fields.map { |field| lkup.fetch(field, field) }
+        }
       setting :temptext_mapping_done,
         default: false,
         reader: true
@@ -170,10 +173,13 @@ module Kiba
       setting :temptext_note_targets,
         default: [],
         reader: true
+      setting :locnote_sources,
+        default: [],
+        reader: true
 
       def hier_lvl_lookup
         {
-          loclevel: :loc6,
+          loclevel: loclevel_lvl,
           searchcontainer: searchcontainer_lvl,
           sublevel: sublevel_lvl,
           shipmentnumber: shipmentnumber_lvl,

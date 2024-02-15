@@ -45,7 +45,6 @@ module Kiba
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              prefname = Tms::Constituents.preferred_name_field
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?

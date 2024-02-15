@@ -50,6 +50,10 @@ module Kiba
             unless config.objectnamecontrolled_source_fields.empty?
               base << :concept_nomenclature__lookup
             end
+            if config.reference_controlled? &&
+                !config.reference_source_fields.empty?
+              base << :citations__lookup
+            end
             base.uniq
               .select { |job| Kiba::Extend::Job.output?(job) }
           end
@@ -64,6 +68,23 @@ module Kiba
             Kiba.job_segment do
               job = bind.receiver
               config = job.send(:config)
+
+              if config.reference_controlled? &&
+                  !config.reference_source_fields.empty?
+                transform Cspace::NormalizeForID,
+                  source: :referencecitationlocal,
+                  target: :referencenorm,
+                  delim: Tms.delim
+                transform Delete::Fields,
+                  fields: :referencecitationlocal
+                transform Merge::MultiRowLookup,
+                  lookup: citations__lookup,
+                  keycolumn: :referencenorm,
+                  fieldmap: {referencecitationlocal: :termdisplayname},
+                  delim: Tms.delim,
+                  multikey: true
+                transform Delete::Fields, fields: :referencenorm
+              end
 
               lookup_by_field = {
                 assocpeople: -> do
@@ -80,14 +101,18 @@ module Kiba
                 contentpeople: -> do
                                  send(:concept_ethnographic_culture__lookup)
                                end,
+                contentplace: -> { config.place_authority_lookup },
                 materialcontrolled: -> { send(:concept_material__lookup) },
                 namedcollection: -> { send(:works__lookup) },
-                objectnamecontrolled: -> { send(:concept_nomenclature__lookup) }
+                objectnamecontrolled: -> {
+                                        send(:concept_nomenclature__lookup)
+                                      },
+                objectproductionplace: -> { config.place_authority_lookup }
               }
 
               # Terms in repeatable field groups configured for deduplication
               %i[assocpeople assocplace materialcontrolled
-                objectnamecontrolled].each do |field|
+                objectnamecontrolled objectproductionplace].each do |field|
                 contmeth = "#{field}_controlled?".to_sym
                 next if config.respond_to?(contmeth) &&
                   !config.send(contmeth)
@@ -121,12 +146,17 @@ module Kiba
                 end
               end
 
+              transform Rename::Fields, fieldmap: {
+                contentplace: :contentplace_raw
+              }
+
               # Terms in repeatable fields
               %i[
                 contentconceptconceptassociated
                 contenteventchronologyera
                 contenteventchronologyevent
                 contentpeople
+                contentplace
                 namedcollection
               ].each do |field|
                 sources = config.send("#{field}_sources".to_sym)

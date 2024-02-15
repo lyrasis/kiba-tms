@@ -27,8 +27,7 @@ module Kiba
                 field: :place
               transform Cspace::NormalizeForID,
                 source: :place,
-                target: :norm,
-                delim: "|"
+                target: :norm
               transform Replace::NormWithMostFrequentlyUsedForm,
                 normfield: :norm,
                 nonnormfield: :place,

@@ -40,6 +40,14 @@ module Kiba
           end
 
           def xforms
+            [
+              config.pre_prep_xforms,
+              default_xforms,
+              config.post_prep_xforms
+            ].compact
+          end
+
+          def default_xforms
             bind = binding
 
             Kiba.job_segment do

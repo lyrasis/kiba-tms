@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-## NOTE: NOT FINISHED YET
 module Kiba
   module Tms
     module Jobs
@@ -17,7 +16,12 @@ module Kiba
                 destination: :prep__reference_master,
                 lookup: lookups
               },
-              transformer: xforms
+              transformer: [
+                initial,
+                external_merge,
+                config.field_cleaners,
+                finalize
+              ].compact
             )
           end
 
@@ -28,13 +32,12 @@ module Kiba
             base
           end
 
-          def xforms
+          def initial
             bind = binding
 
             Kiba.job_segment do
               job = bind.receiver
               config = job.send(:config)
-              lookups = job.send(:lookups)
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
@@ -42,6 +45,16 @@ module Kiba
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
+            end
+          end
+
+          def external_merge
+            bind = binding
+
+            Kiba.job_segment do
+              job = bind.receiver
+              config = job.send(:config)
+              lookups = job.send(:lookups)
 
               if lookups.any?(:prep__ref_formats)
                 transform Merge::MultiRowLookup,
@@ -73,13 +86,59 @@ module Kiba
                 end
               end
 
-              unless config.citation_note_sources.empty?
-                transform CombineValues::FromFieldsWithDelimiter,
-                  sources: config.citation_note_sources,
-                  target: :citationnote,
-                  delim: config.citation_note_value_separator
+              if Tms::AltNums.used? && Tms::AltNums.for?("ReferenceMaster")
+                key = :alt_nums_reportable_for__reference_master_type_cleanup_merge
+                lkup = Tms.get_lookup(
+                  jobkey: key,
+                  column: :recordid
+                )
+                transform Merge::MultiRowLookup,
+                  lookup: lkup,
+                  keycolumn: :referenceid,
+                  fieldmap: {
+                    num: :altnum,
+                    numtype: :number_type
+                  },
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
 
+                transform Merge::MultiRowLookup,
+                  lookup: lkup,
+                  keycolumn: :referenceid,
+                  fieldmap: {numnote: :remarks},
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
+
+                transform Prepend::ToFieldValue,
+                  field: :numnote,
+                  value: "Identifier note: ",
+                  multival: true,
+                  delim: Tms.delim
               end
+            end
+          end
+
+          def finalize
+            Kiba.job_segment do
+              # @todo remove reversal of qualification once better cleanup
+              #   is implemented
+              transform do |row|
+                row[:pubunqual] = nil
+                val = row[:publisherorganizationlocal]
+                next row if val.blank?
+
+                row[:pubunqual] = if val["(duplicate"]
+                  val.sub(/ \(duplicate.*\)/, "")
+                else
+                  val
+                end
+                row
+              end
+
+              transform Fingerprint::Add,
+                fields: %i[placepublished pubunqual],
+                target: :orig_pub_fingerprint
+
               transform Clean::EnsureConsistentFields
             end
           end

@@ -55,7 +55,7 @@ module Kiba
                 nsigned_inscriptioncontent: :n_signed
               },
               constantmap: {
-                nsigned_inscriptioncontenttype: "signed",
+                nsigned_inscriptioncontenttype: "signature",
                 nsigned_inscriptioncontentinterpretation: "%NULLVALUE%"
               }
             }

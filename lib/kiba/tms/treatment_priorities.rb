@@ -8,7 +8,6 @@ module Kiba
       module_function
 
       extend Tms::Mixins::Tableable
-      extend Tms::Mixins::MultiTableMergeable
 
       setting :id_field, default: :priorityid, reader: true
       setting :type_field, default: :priority, reader: true

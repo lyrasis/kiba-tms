@@ -216,7 +216,7 @@ module Kiba
 
       # @return [nil, Proc] Kiba.job_segment of transforms run at the end of
       #   :objects__shape job.
-      setting :post_shape_xforms, default: {}, reader: true
+      setting :post_shape_xforms, default: nil, reader: true
 
       # -----------------------------------------------------------------------
       # Default field-specific shape transforms
@@ -588,6 +588,9 @@ module Kiba
         default: %i[],
         reader: true,
         constructor: ->(base) do
+          if Tms::RefXRefs.used? && Tms::RefXRefs.for?("Objects")
+            base << :ref
+          end
           base << :bib if bibliography_treatment == :referencenote
           base << :catrais if catrais_treatment == :referencenote
           base << :paper if paperfileref_treatment == :referencenote
@@ -597,9 +600,18 @@ module Kiba
           end
           base
         end
-      setting :reference_target_fields,
-        default: %i[reference referencenote],
+      setting :reference_main_field,
+        default: :referencecitationlocal,
         reader: true
+      setting :reference_grouped_fields,
+        default: %i[referencenote],
+        reader: true
+      setting :reference_target_fields,
+        default: %i[],
+        reader: true,
+        constructor: ->(base) do
+          [reference_main_field, reference_grouped_fields].flatten
+        end
 
       setting :text_inscription_source_fields,
         default: %i[signed inscribed markings],

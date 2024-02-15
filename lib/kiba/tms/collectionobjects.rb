@@ -11,6 +11,9 @@ module Kiba
         default: :objectnumber,
         reader: true
 
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :final_xforms, default: nil, reader: true
+
       extend Tms::Mixins::CsTargetable
 
       def sample_xforms

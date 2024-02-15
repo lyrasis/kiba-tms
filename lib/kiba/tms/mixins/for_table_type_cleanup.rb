@@ -174,6 +174,18 @@ module Kiba
                 Kiba.job_segment do
                   mod = bind.receiver
 
+                  #targetfield = :#{type_field_target}
+                  #origfield = :#{type_field}
+                  #unless targetfield == origfield
+                  #  transform do |row|
+                  #    target = row[targetfield]
+                  #    next row unless target.blank?
+                  #
+                  #    row[targetfield] = row[origfield]
+                  #    row
+                  #  end
+                  #end
+
                   transform Delete::Fields,
                     fields: [mod.collate_fields, :fingerprint,
                       :clean_fingerprint].flatten

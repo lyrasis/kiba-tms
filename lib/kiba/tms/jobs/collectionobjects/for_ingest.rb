@@ -18,13 +18,14 @@ module Kiba
           end
 
           def get_xforms
-            return [xforms] unless config.sampleable?
-
-            [config.sample_xforms, xforms]
+            base = [xforms, config.final_xforms]
+            base.unshift(config.sample_xforms) if config.sampleable?
+            base.compact
           end
 
           def xforms
             Kiba.job_segment do
+              transform Delete::Fields, fields: :objectid
               transform Tms.final_data_cleaner
             end
           end

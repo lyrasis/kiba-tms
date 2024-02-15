@@ -29,7 +29,9 @@ module Kiba
           "Inches" => "inches",
           "Centimeters" => "centimeters",
           "Pounds" => "pounds",
-          "Kilograms" => "kilograms"
+          "Kilograms" => "kilograms",
+          "Cubic Centimeters" => "cubic-centimeters",
+          "Cubic Inches" => "cubic inches"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

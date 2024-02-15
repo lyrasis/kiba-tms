@@ -47,6 +47,16 @@ module Kiba
               transform Delete::EmptyFieldValues,
                 fields: :note,
                 usenull: true
+              transform do |row|
+                placepub = row[:placepublished]
+                places = row[:place].split(Tms.delim)
+                next row unless places.include?(placepub)
+                next row if places.length == 1
+
+                places.delete(placepub)
+                row[:place] = places.join(Tms.delim)
+                row
+              end
             end
           end
         end

@@ -17,9 +17,10 @@ module Kiba
               "- Rename location detail fields to hierarchical level names\n"\
               "- Merge in client-mapped temptext mappings\n"\
               "- Add :fulllocid for :location value\n"\
+              "- Merge in :homelocation from ObjComponents\n"\
+              "- Create :fullhomelocid\n"\
               "- ADDS ROW FINGERPRINT for collapsing rows with identical data "\
               "into one LMI procedure\n"\
-              "- Merge in :homelocation from ObjComponents"\
               "- Merge in human readable :objectnumber, :location_purpose "\
               ":transport_status, :transport_type values\n"\
               "- Converts numeric :tempflag field value to y/nil in :is_temp\n"
@@ -151,6 +152,9 @@ module Kiba
                   },
                   delim: Tms.delim
               end
+              transform Tms::Transforms::ObjLocations::AddFulllocid,
+                source: :homelocationid,
+                target: :fullhomelocid
 
               transform Tms::Transforms::ObjLocations::AddFingerprint,
                 sources: config.fingerprint_fields

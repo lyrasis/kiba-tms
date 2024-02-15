@@ -22,11 +22,9 @@ module Kiba
           def xforms
             Kiba.job_segment do
               transform Deduplicate::Table,
-                field: :norm,
-                delete_field: true
+                field: :use
               transform Delete::Fields,
-                fields: %i[termused normduplicate termduplicate termid
-                  candidate approved]
+                fields: %i[termused termid candidate approved]
               transform Rename::Field,
                 from: :use,
                 to: :termdisplayname

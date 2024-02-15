@@ -6,6 +6,7 @@ module Kiba
       module Locations
         class AddParent
           def initialize
+            @direction = Tms::Locations.term_hierarchy_direction
             @delim = Tms::Locations.hierarchy_delim
             @target = :parent_location
           end
@@ -19,15 +20,20 @@ module Kiba
             segments = locname.split(delim)
             return row if segments.length == 1
 
-            segments.pop
-            row[target] = segments.join(delim)
+            case direction
+            when :narrow_to_broad
+              segments.shift
+            when :broad_to_narrow
+              segments.pop
+            end
 
+            row[target] = segments.join(delim)
             row
           end
 
           private
 
-          attr_reader :delim, :target
+          attr_reader :direction, :delim, :target
         end
       end
     end

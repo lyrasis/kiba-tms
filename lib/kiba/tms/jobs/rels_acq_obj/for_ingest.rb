@@ -50,6 +50,14 @@ module Kiba
               transform FilterRows::AllFieldsPopulated,
                 action: :keep,
                 fields: %i[item1_id item2_id]
+              transform CombineValues::FullRecord,
+                prepend_source_field_name: false,
+                delim: " ",
+                delete_sources: false
+
+              transform Deduplicate::Table,
+                field: :index,
+                delete_field: true
             end
           end
         end

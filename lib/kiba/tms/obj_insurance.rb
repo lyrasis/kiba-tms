@@ -40,11 +40,11 @@ module Kiba
         }
       setting :systemvaluetype_mapping,
         default: {
-          "0" => "object insurance value",
-          "1" => "loan object insurance value",
-          "2" => "loan object 3rd party appraisal value",
+          "0" => "insurance value",
+          "1" => "loan insurance value",
+          "2" => "loan 3rd party appraisal value",
           "3" => "shipment insurance value",
-          "4" => "object accession value"
+          "4" => "accession value"
         },
         reader: true
       # What to do with row if :value = 0

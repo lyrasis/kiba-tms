@@ -35,6 +35,10 @@ module Kiba
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[is_temp],
                 match: "^n$"
+              transform Delete::Fields,
+                fields: %i[prevobjlocid nextobjlocid
+                  componentid schedobjlocid homelocationid
+                  fullhomelocid fingerprint locauth]
             end
           end
         end

@@ -39,7 +39,6 @@ module Kiba
 
             Kiba.job_segment do
               job = bind.receiver
-              config = job.send(:config)
               lookups = job.send(:lookups)
 
               if lookups.any?(:locs__cleanup_changes)
@@ -66,6 +65,31 @@ module Kiba
                   end
                 end
               end
+
+              transform Cspace::NormalizeForID,
+                source: :location_name,
+                target: :norm
+              transform Deduplicate::FlagAll,
+                on_field: :norm,
+                in_field: :normduplicate,
+                explicit_no: false
+              transform Deduplicate::FlagAll,
+                on_field: :location_name,
+                in_field: :regularduplicate,
+                explicit_no: false
+              transform do |row|
+                row[:duplicate] = nil
+                next row if row[:normduplicate] == row[:regularduplicate]
+
+                row[:duplicate] = "y"
+                row
+              end
+              transform Delete::Fields,
+                fields: %i[normduplicate regularduplicate]
+
+              transform Sort::ByFieldValue,
+                field: :location_name,
+                mode: :string
             end
           end
         end

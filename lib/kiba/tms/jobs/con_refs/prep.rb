@@ -95,6 +95,13 @@ module Kiba
                 fields: %i[datebegin dateend],
                 find: "^0$",
                 replace: ""
+
+              transform Explode::RowsFromMultivalField,
+                field: :person,
+                delim: Tms.delim
+              transform Explode::RowsFromMultivalField,
+                field: :org,
+                delim: Tms.delim
             end
           end
         end

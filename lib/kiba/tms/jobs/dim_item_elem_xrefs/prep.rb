@@ -99,6 +99,11 @@ module Kiba
                 row
               end
               transform Delete::Fields, fields: :dimensiondate
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: %i[description remarks],
+                target: :note,
+                delim: "; "
             end
           end
         end

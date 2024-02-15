@@ -34,7 +34,15 @@ If false, all rows from this table are migrated.
 
 If true, rows marked inactive in TMS are dropped before any further processing of this table is done.
 
-Default value:: `false`
+Default value:: `true` -- Previous clients have indicated that the inactive setting is used in TMS to remove erroneous/accidental locations from the object location history. There is no need to migrate wrong/hidden data, so the default is to drop these.
+
+==== Supporting report
+
+Report name: obj_locations_inactive_review.csv
+
+Provides full location history data from TMS, with rows that link to invalid locations (id = -1) removed.
+
+The `inactive` column contains "1" if a row is inactive. These rows (or some of them, at least) should be compared to active rows and what you see in TMS to determine if the inactive rows should be retained in the migration.
 
 === :inactive_note_string
 
@@ -57,13 +65,14 @@ Default value:: `:inventorynote` -- Value of `:inactive_note_string` setting wil
 * `:currentlocationnote` - Value of `:inactive_note_string` setting will be mapped to the `currentLocationNote` field
 * `:currentlocationnote` - Value of `:inactive_note_string` setting will be mapped to the `movementNote` field
 
+
+=== Options internal to migration
+
 === :name_fields
 
 Fields in ObjLocations table that will be extracted as uncontrolled name values for name review/cleanup, and mapped to preferred name form in migration.
 
 Default value:: `%i[handler requestedby approver]`
-
-=== Options internal to migration
 
 ==== :temptext_note_targets
 

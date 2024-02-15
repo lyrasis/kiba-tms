@@ -9,7 +9,7 @@ module Kiba
           include TreatmentMergeable
 
           def initialize
-            @referencetarget = :te_reference
+            @referencetarget = :te_referencecitationlocal
             @referencevalue = "%NULLVALUE%"
             @notetarget = :te_referencenote
             @delim = Tms.delim

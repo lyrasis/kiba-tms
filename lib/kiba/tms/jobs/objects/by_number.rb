@@ -19,6 +19,7 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              # passthrough
             end
           end
         end

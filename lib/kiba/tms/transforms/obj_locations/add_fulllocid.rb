@@ -5,10 +5,14 @@ module Kiba
     module Transforms
       module ObjLocations
         class AddFulllocid
-          def initialize
-            @mode = Tms::ObjLocations.fulllocid_mode
-            @target = :fulllocid
-            @fields = set_fields(mode)
+          # @param source [Symbol] fieldname containing base location id
+          # @param mode [:hier, :nonhier, :plain] :plain is used to pad out a
+          #   fulllocid for non-primary location ids that will not have
+          #   ObjLocations details with nils for lookup
+          def initialize(source: :locationid, target: :fulllocid)
+            @source = source
+            @target = target
+            @fields = set_fields
             @placeholder = Tms::ObjLocations.fulllocid_placeholder
             @delim = Tms.delim
             @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
@@ -21,7 +25,7 @@ module Kiba
           end
 
           def process(row)
-            locid = row[:locationid]
+            locid = row[source]
             tt = tt_val(row)
             vals = field_vals(row)
             row[target] = [locid, tt, vals].join(delim)
@@ -31,8 +35,8 @@ module Kiba
 
           private
 
-          attr_reader :mode, :target, :fields, :temp_fields, :placeholder,
-            :delim, :getter, :ttgetter
+          attr_reader :source, :target, :fields, :temp_fields,
+            :placeholder, :delim, :getter, :ttgetter
 
           def field_vals(row)
             getter.call(row)
@@ -41,8 +45,9 @@ module Kiba
               .join(delim)
           end
 
-          def set_fields(mode)
-            if mode == :hier
+          def set_fields
+            case Tms::ObjLocations.fulllocid_mode
+            when :hier
               Tms::ObjLocations.fulllocid_fields_hier
             else
               Tms::ObjLocations.fulllocid_fields

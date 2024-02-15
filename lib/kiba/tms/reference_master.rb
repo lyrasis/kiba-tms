@@ -7,14 +7,33 @@ module Kiba
 
       module_function
 
+      # @return [nil, Proc] Kiba.job_segment definition
+      setting :field_cleaners, default: nil, reader: true
+
+      # @return [String]
       setting :citation_note_value_separator, default: Tms.notedelim,
         reader: true
+
+      # @return [Boolean] whether heading values need to be provided via an
+      #   external manual process and looked up into the data
+      setting :headings_needed, default: false, reader: true
+
+      # @return [Boolean] whether worksheet has been returned and is in
+      #   supplied dir as reference_master_headings.csv
+      setting :headings_returned, default: false, reader: true
 
       # @return [Array<Symbol>] fields whose values will be combined into
       #   citationNote field value
       setting :citation_note_sources,
-        default: %i[notes boilertext],
-        reader: true
+        default: %i[stmtresponsibility physdescription notes boilertext],
+        reader: true,
+        constructor: ->(base) do
+                       return base unless Tms::AltNums.used? &&
+                         Tms::AltNums.for?("ReferenceMaster")
+
+                       base << :numnote
+                       base
+                     end
 
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,

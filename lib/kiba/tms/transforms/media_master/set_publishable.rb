@@ -6,9 +6,7 @@ module Kiba
       module MediaMaster
         class SetPublishable
           def initialize
-            @getter = Kiba::Extend::Transforms::Helpers::FieldValueGetter.new(
-              fields: %i[publicaccess approvedforweb]
-            )
+            @logic = Tms::MediaMaster.publishable_logic
             @target = :publishto
             @publishing = Tms.using_public_browser
           end
@@ -17,19 +15,16 @@ module Kiba
             row[target] = "None"
             return row unless publishing
 
-            got = getter.call(row)
-            return row if got.blank?
+            publishable = logic.call(row)
+            return row unless publishable
 
-            vals = got.values
-            if vals.length == 2 && vals.uniq == ["1"]
-              row[target] = "CollectionSpace Public Browser"
-            end
+            row[target] = "CollectionSpace Public Browser"
             row
           end
 
           private
 
-          attr_reader :getter, :target, :publishing
+          attr_reader :logic, :target, :publishing
         end
       end
     end

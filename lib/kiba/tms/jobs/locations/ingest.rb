@@ -4,21 +4,25 @@ module Kiba
   module Tms
     module Jobs
       module Locations
-        module Cspace
+        module Ingest
           module_function
 
           def job(type:)
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :locs__compiled_hierarchy,
-                destination: "locs__#{type}_cspace".to_sym
+                destination: "locs__#{type}_ingest".to_sym
               },
               transformer: xforms(type)
             )
           end
 
           def xforms(type)
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
               transform FilterRows::WithLambda,
                 action: :keep,
                 lambda: ->(row) {
@@ -35,6 +39,11 @@ module Kiba
               transform Rename::Field,
                 from: :location_name,
                 to: :termdisplayname
+              if config.terms_abbreviated
+                transform Rename::Field,
+                  from: :tmslocationstring,
+                  to: :termname
+              end
             end
           end
         end

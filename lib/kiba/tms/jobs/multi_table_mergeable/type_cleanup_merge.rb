@@ -67,6 +67,7 @@ module Kiba
                   :treatment => :treatment,
                   :typenote => :note
                 }
+
               transform FilterRows::FieldEqualTo,
                 action: :reject,
                 field: :treatment,
@@ -77,6 +78,14 @@ module Kiba
                 target: mod.note_field,
                 delim: "; "
               unless origtypefield == newtypefield
+                transform do |row|
+                  corrtype = row[newtypefield]
+                  next row unless corrtype.blank?
+
+                  row[newtypefield] = row[origtypefield]
+                  row
+                end
+
                 transform Delete::Fields,
                   fields: origtypefield
               end

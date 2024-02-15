@@ -28,6 +28,7 @@ module Kiba
                 fields: :work
               transform Deduplicate::Table,
                 field: :termdisplayname
+              transform Tms.final_data_cleaner
             end
           end
         end

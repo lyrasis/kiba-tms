@@ -26,7 +26,10 @@ module Kiba
           "Height" => "height",
           "Width" => "width",
           "Depth" => "depth",
-          "Weight" => "weight"
+          "Weight" => "weight",
+          "Diameter" => "diameter",
+          "Length" => "length",
+          "Running Time" => "runningtime"
         },
         reader: true
       extend Tms::Mixins::TypeLookupTable

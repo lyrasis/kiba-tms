@@ -48,7 +48,7 @@ module Kiba
       #   derived from Constituents table. If needed, a project-specific
       #   transform can be defined
       setting :auth_merger,
-        default: nil,
+        default: Tms::Transforms::ConGeography::Merger,
         reader: true
 
       # Optional transform class to clean up table data mapped to non-authority
@@ -76,8 +76,8 @@ module Kiba
       #   place value. (Exact label different for person vs. org). These notes
       #   get combined with other field values into bionote (person) or
       #   historynote (org)
-      # - First death place value is mapped to deathplace (person) or
-      #   dissolutionplace (org)
+      # - First death place value is mapped to deathplace (person). There is no
+      #   dissolutionplace field in org record
       # - "Additional death/dissolution place: " prepended to each subsequent
       #   death place value. (Exact label different for person vs. org). These
       #   notes get combined with other field values into bionote (person) or

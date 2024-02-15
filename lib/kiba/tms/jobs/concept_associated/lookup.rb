@@ -40,19 +40,14 @@ module Kiba
               transform Cspace::NormalizeForID,
                 source: :conceptfin,
                 target: :norm
-              transform Deduplicate::FlagAll,
-                on_field: :norm,
-                in_field: :normduplicate,
-                explicit_no: false
-              transform Deduplicate::FlagAll,
-                on_field: :conceptfin,
-                in_field: :termduplicate,
-                explicit_no: false
-              transform Rename::Field,
-                from: :conceptfin,
-                to: :use
+              transform Replace::NormWithMostFrequentlyUsedForm,
+                normfield: :norm,
+                nonnormfield: :conceptfin,
+                target: :use
               transform Deduplicate::Table,
                 field: :termused
+              transform Delete::Fields,
+                fields: %i[conceptfin norm]
               transform Clean::EnsureConsistentFields
             end
           end

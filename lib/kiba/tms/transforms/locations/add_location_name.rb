@@ -8,6 +8,7 @@ module Kiba
           include Kiba::Extend::Transforms::Helpers
 
           def initialize
+            @direction = Tms::Locations.term_hierarchy_direction
             @delim = Tms::Locations.hierarchy_delim
             @target = :location_name
             @fields = Tms::Locations.loc_fields
@@ -31,13 +32,15 @@ module Kiba
             ].compact
             return row if locname.empty?
 
+            locname.reverse! if direction == :narrow_to_broad
+
             row[target] = locname.join(delim)
             row
           end
 
           private
 
-          attr_reader :delim, :target, :fields, :getter
+          attr_reader :direction, :delim, :target, :fields, :getter
 
           def get_unit(vals)
             result = %i[unittype unitnumber].select { |src| fields.any?(src) }

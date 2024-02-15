@@ -22,6 +22,17 @@ module Kiba
       # What to do with accessionvalue data
       # - :valuation_control - VC procedure created, linked to Acquisition
       #   procedure, and each linked object
+      #
+      # NOTE: In addition to a possible :accessionvalue value, each row may
+      # have an :objectvalueid value. When present, this links to a record in
+      # the ObjInsurance table from which a Valuation Control procedure will be
+      # created (and linked to the relevant Object). For this reason, if the
+      # value of the linked ObjInsurance/Valuation Control record is the same
+      # as the value of :accessionvalue, the :accessionvalue value is deleted.
+      # This prevents creation of duplicate Valuation Control procedures. Each
+      # ObjInsurance/Valuation Control procedure cited in an ObjAccession
+      # record is also linked to the CS Acquisition procedure derived from that
+      # row in addition to the relevant Object
       setting :accessionvalue_treatment,
         default: :valuation_control,
         reader: true
@@ -350,6 +361,13 @@ module Kiba
         constructor: ->(val) do
           val << :approvalnote if Tms::TextEntries.for?("ObjAccession")
         end
+
+      setting :has_objectvalueids,
+        default: false,
+        reader: true,
+        constructor: proc { |value|
+          empty_fields.any?(:objectvalueid) ? false : true
+        }
     end
   end
 end

@@ -18,10 +18,18 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              job = bind.receiver
+              config = job.send(:config)
+
+              keepfields = %i[locationid location_name parent_location
+                storage_location_authority locationtype address]
+              keepfields << :tmslocationstring if config.terms_abbreviated
+
               transform Delete::FieldsExcept,
-                fields: %i[locationid location_name parent_location
-                  storage_location_authority locationtype address]
+                fields: keepfields
               transform Tms::Transforms::ObjLocations::AddFulllocid
               transform Delete::Fields, fields: :locationid
               transform Merge::ConstantValue,

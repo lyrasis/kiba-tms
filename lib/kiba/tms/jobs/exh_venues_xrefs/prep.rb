@@ -57,9 +57,9 @@ module Kiba
                   lookup: names__by_constituentid,
                   keycolumn: :constituentid,
                   fieldmap: {type => type}
-                transform Delete::FieldValueIfEqualsOtherField,
-                  delete: type,
-                  if_equal_to: "venue#{type}".to_sym
+                # transform Delete::FieldValueIfEqualsOtherField,
+                #   delete: type,
+                #   if_equal_to: "venue#{type}".to_sym
               end
               transform Delete::Fields, fields: :constituentid
               transform Delete::EmptyFields

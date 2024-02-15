@@ -27,6 +27,7 @@ module Kiba
             unless config.row_treatment == :separate
               base << :one_to_one_acq__acq_num_lookup
             end
+            base << :objects__numbers_cleaned
             base
           end
 
@@ -37,7 +38,7 @@ module Kiba
               config = bind.receiver.send(:config)
 
               transform Delete::FieldsExcept,
-                fields: %i[objectnumber combined]
+                fields: %i[objectid objectnumber combined]
 
               if config.row_treatment == :separate
                 transform Copy::Field,
@@ -59,9 +60,10 @@ module Kiba
                 keycolumn: :increment,
                 fieldmap: {item1_id: :acquisitionreferencenumber}
 
-              transform Rename::Fields, fieldmap: {
-                objectnumber: :item2_id
-              }
+              transform Merge::MultiRowLookup,
+                lookup: objects__numbers_cleaned,
+                keycolumn: :objectid,
+                fieldmap: {item2_id: :objectnumber}
 
               transform Merge::ConstantValues, constantmap: {
                 item1_type: "acquisitions",
@@ -69,7 +71,7 @@ module Kiba
               }
 
               transform Delete::Fields,
-                fields: %i[combined refnum increment]
+                fields: %i[combined refnum increment objectnumber objectid]
             end
           end
         end

@@ -45,6 +45,9 @@ module Kiba
               base << :prep__obj_geography
               base << :places__final_cleaned_lookup
             end
+            if Tms::RefXRefs.used? && Tms::RefXRefs.for?("Objects")
+              base << :ref_xrefs_for__objects
+            end
             base << Tms::ObjRights.merge_lookup if Tms::ObjRights.merge_xforms
             base.select { |job| Kiba::Extend::Job.output?(job) }
           end
@@ -135,7 +138,7 @@ module Kiba
                   fieldmap: {
                     dimensionsummary: :displaydimensions,
                     valuedate: :valuedate,
-                    measuredpartnote: :description,
+                    measuredpartnote: :note,
                     measuredpart: :element,
                     measurementunit: :measurementunit,
                     value: :value,
@@ -247,10 +250,10 @@ module Kiba
                     ltr_assocobjectnote: "%NULLVALUE%"
                   },
                   conditions: ->(_r, rows) do
-                                rows.reject { |row|
-                                  row[:relationtype] == "Parent/Child"
-                                }
-                              end,
+                    rows.reject { |row|
+                      row[:relationtype] == "Parent/Child"
+                    }
+                  end,
                   delim: Tms.delim,
                   sorter: Lookup::RowSorter.new(
                     on: :associationid, as: :to_i
@@ -277,6 +280,19 @@ module Kiba
                   sorter: Lookup::RowSorter.new(
                     on: :associationid, as: :to_i
                   )
+              end
+
+              if Tms::RefXRefs.used? && Tms::RefXRefs.for?("Objects")
+                transform Merge::MultiRowLookup,
+                  lookup: ref_xrefs_for__objects,
+                  keycolumn: :objectid,
+                  fieldmap: {
+                    ref_referencecitationlocal: :reference,
+                    ref_referencenote: :referencenote
+                  },
+                  null_placeholder: "%NULLVALUE%",
+                  delim: Tms.delim,
+                  sorter: Lookup::RowSorter.new(on: :refxrefid, as: :to_i)
               end
             end
           end

@@ -9,6 +9,15 @@ module Kiba
 
       extend Tms::Mixins::Tableable
 
+      # @return [Proc] Used in :publishable_transform. The proc should take a
+      #   row and return a Boolean or nil value regarding whether row's record
+      #   is publishable
+      setting :publishable_logic,
+        default: ->(row) do
+          true if row[:publicaccess] == "1" && row[:approvedforweb] == "1"
+        end,
+        reader: true
+
       setting :publishable_transform,
         default: Tms::Transforms::MediaMaster::SetPublishable,
         reader: true

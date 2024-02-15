@@ -55,7 +55,7 @@ module Kiba
               when :referencenote
                 transform Reshape::FieldsToFieldGroupWithConstant,
                   fieldmap: {catrais: :catrais_referencenote},
-                  constant_target: :catrais_reference,
+                  constant_target: :catrais_referencecitationlocal,
                   constant_value: "%NULLVALUE%"
               when :delete
                 transform Delete::Fields,
@@ -84,7 +84,7 @@ module Kiba
               when :referencenote
                 transform Reshape::FieldsToFieldGroupWithConstant,
                   fieldmap: {paperfileref: :paper_referencenote},
-                  constant_target: :paper_reference,
+                  constant_target: :paper_referencecitationlocal,
                   constant_value: "%NULLVALUE%"
               when :delete
                 transform Delete::Fields,
@@ -95,7 +95,7 @@ module Kiba
               when :referencenote
                 transform Reshape::FieldsToFieldGroupWithConstant,
                   fieldmap: {pubreferences: :pubref_referencenote},
-                  constant_target: :pubref_reference,
+                  constant_target: :pubref_referencecitationlocal,
                   constant_value: "%NULLVALUE%"
               when :delete
                 transform Delete::Fields,
@@ -107,7 +107,8 @@ module Kiba
               #   sources
               %w[annotation assocobject assocpeople assocplace contentother
                 material nontext_inscription objectname othernumber
-                objectproductionplace reference text_inscription usage].each do |type|
+                objectproductionplace reference text_inscription
+                usage].each do |type|
                 sources = config.send("#{type}_source_fields".to_sym)
                 targets = config.send("#{type}_target_fields".to_sym)
                 if !sources.empty? && !targets.empty?

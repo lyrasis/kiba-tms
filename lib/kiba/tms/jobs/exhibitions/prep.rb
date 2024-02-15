@@ -14,7 +14,10 @@ module Kiba
                 destination: :prep__exhibitions,
                 lookup: lookups
               },
-              transformer: xforms
+              transformer: [
+                config.exhibitionnumber_xforms,
+                xforms
+              ].compact
             )
           end
 
@@ -42,6 +45,29 @@ module Kiba
               job = bind.receiver
               config = job.send(:config)
               lookups = job.send(:lookups)
+
+              if config.use_projectnumber_as_exhibitionnumber
+                transform do |row|
+                  pn = row[:projectnumber]
+                  next row if pn.blank?
+
+                  row[:prenum] = pn
+                  row.delete(:projectnumber)
+                  row
+                end
+              else
+                transform Prepend::ToFieldValue,
+                  field: :projectnumber,
+                  value: "Project number: "
+              end
+
+              transform Tms::Transforms::IdGenerator,
+                id_source: :prenum,
+                id_target: :exhibitionnumber,
+                sort_on: :exhibitionid,
+                sort_type: :i,
+                separator: "",
+                padding: 4
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
@@ -96,7 +122,7 @@ module Kiba
                   lookup: prep__exh_venues_xrefs,
                   keycolumn: :exhibitionid,
                   fieldmap: {
-                    venue_xref_org: :venueorg,
+                    venue_xref_org: :conref_org,
                     venue_xref_open_date: :beginisodate,
                     venue_xref_close_date: :endisodate
                   },
@@ -131,16 +157,6 @@ module Kiba
                   transform xform
                 end
               end
-
-              transform Merge::ConstantValue,
-                target: :pre, value: "EXH"
-              transform Tms::Transforms::IdGenerator,
-                id_source: :pre,
-                id_target: :exhibitionnumber,
-                sort_on: :exhibitionid,
-                sort_type: :i,
-                separator: "",
-                padding: 4
             end
           end
         end

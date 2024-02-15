@@ -34,7 +34,8 @@ module Kiba
                 fields: %i[objectnumber objectid]
               transform Deduplicate::Table,
                 field: :objectid
-              fieldmap = Tms::DatesTranslated.cs_date_fields
+              fieldmap = [Tms::DatesTranslated.cs_date_fields,
+                :assocdatetype, :assocdatenote].flatten
                 .map { |field| [field, field] }
                 .to_h
               transform Merge::MultiRowLookup,
