@@ -10,13 +10,12 @@ module Kiba
           def job
             return if config.movement_selector.nil?
 
-            Kiba::Extend::Jobs::MultiSourcePrepJob.new(
+            Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_locations__unique,
                 destination: :obj_locations__movement
               },
-              transformer: xforms,
-              helper: config.lmi_field_normalizer
+              transformer: xforms
             )
           end
 
@@ -35,7 +34,7 @@ module Kiba
                 sort_on: :objlocationid,
                 sort_type: :i,
                 omit_suffix_if_single: false,
-                padding: 4
+                padding: config.id_padding
 
               transform Tms::Transforms::ObjLocations::MergeHomeLocIntoCurrentTemp
 
@@ -48,9 +47,9 @@ module Kiba
 
               transform Tms::Transforms::ObjLocations::AssignContactPerson,
                 target: :movement
-
               transform Tms::Transforms::ObjLocations::RoleFieldNotes,
                 target: :movement
+              transform Clean::EnsureConsistentFields
             end
           end
         end

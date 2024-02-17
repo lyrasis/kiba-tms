@@ -36,9 +36,26 @@ module Kiba
       setting :contact_person_preference,
         default: %i[handler_person approver_person requestedby_person],
         reader: true
+
+      # Array of transform classes to do default removal of otherwise
+      #   migrating rows.
+      # - DropScheduledComplete - removes "scheduled move to
+      #   new home" or "scheduled temporary move" rows where transport_status
+      #   is complete. Such a row is always followed by the movement to the
+      #   scheduled place, which is the actual movement history we are
+      #   interested in
+      setting :default_droppers,
+        default: [
+          Tms::Transforms::ObjLocations::DropCancelled,
+          Tms::Transforms::ObjLocations::DropScheduledComplete,
+          Tms::Transforms::ObjLocations::DropScheduledPending
+        ],
+        reader: true
+
       # Array of transform classes to do project-specific removal of otherwise
       #   migrating rows
       setting :custom_droppers, default: [], reader: true
+
       # Settings related to creating LMIs and relating them to objects
       # Whether to drop rows marked inactive from the migration. The default
       #   is true because:
@@ -49,6 +66,7 @@ module Kiba
       setting :drop_inactive,
         default: true,
         reader: true
+
       # Initial/brief fingerprint fields. This fingerprint is merged in during
       #   Prep job. Later, in the Unique job, a full fingerprint is added
       setting :fingerprint_fields,
@@ -67,6 +85,7 @@ module Kiba
           value << :homelocationid
           value - %i[prevobjlocid nextobjlocid schedobjlocid]
         }
+
       # Fields included in full fingerprint value, which includes the initial
       #   fingerprint values for prev, next, and sched locs
       setting :full_fingerprint_fields,
@@ -76,26 +95,47 @@ module Kiba
           value = [:fingerprint]
           value + %i[prevfp nextfp schedfp]
         }
+
+      setting :inactive_treatment,
+        default: :currentlocationnote,
+        reader: true
+
       setting :inactive_note_string,
         default: "INACTIVE OBJECT LOCATION PROCEDURE",
         reader: true
-      setting :inactive_treatment,
-        default: :inventorynote,
-        reader: true
+
+      # client-specific mappings of TMS :location_purpose to CS
+      # :reasonformove
+      setting :reasonformove_remappings, default: {}, reader: true
+
       # client-specific transform to select only rows that should be treated as
       #   inventory LMIs
-      setting :inventory_selector, default: nil, reader: true
+      setting :inventory_selector,
+        default: Tms::Transforms::ObjLocations::InventorySelector,
+        reader: true
+
+      # client-specific transform to select only rows that should be treated as
+      #   movement LMIs
+      setting :movement_selector,
+        default: Tms::Transforms::ObjLocations::MovementSelector,
+        reader: true
+
       # client-specific transform to select only rows that should be treated as
       #   location-only LMIs
-      setting :location_selector, default: nil, reader: true
+      setting :location_selector,
+        default: Tms::Transforms::ObjLocations::LocationSelector,
+        reader: true
+
       # Even out fields when compiling LMIs from inventory, location, and
       #   movement split jobs
       setting :lmi_field_normalizer,
         default: Kiba::Extend::Utils::MultiSourceNormalizer.new,
         reader: true
-      # client-specific transform to select only rows that should be treated as
-      #   movement LMIs
-      setting :movement_selector, default: nil, reader: true
+
+      # @return [Integer] based on the number of rows in obj_locations__unique
+      #   with no :year value (i.e. no :transdate value)
+      setting :id_padding, default: 4, reader: true
+
       # Whether or not to create inventorynote and/or movementnote field
       #   values with labels appended to names in these fields. NOTE: the
       #   FIRST PERSON name from these fields is set as inventorycontact or

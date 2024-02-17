@@ -47,17 +47,15 @@ module Kiba
                 keycolumn: :fullfingerprint,
                 targetfield: :objct
 
-              transform Append::ToFieldValue,
-                field: :homelocationid,
-                value: "|nil"
               transform Merge::MultiRowLookup,
                 lookup: locs__compiled_clean,
-                keycolumn: :homelocationid,
+                keycolumn: :fullhomelocid,
                 fieldmap: {
                   homelocationname: :location_name,
                   homelocationauth: :storage_location_authority
                 }
-              transform Delete::Fields, fields: :homelocationid
+              transform Delete::Fields,
+                fields: %i[homelocationid fullhomelocid]
 
               transform do |row|
                 row[:year] = nil

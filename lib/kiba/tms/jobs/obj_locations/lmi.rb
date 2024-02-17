@@ -31,12 +31,8 @@ module Kiba
             Kiba.job_segment do
               config = bind.receiver.send(:config)
 
-              transform Append::NilFields,
-                fields: config.lmi_field_normalizer.get_fields
-
               transform Delete::FieldsExcept,
-                fields: %i[movementreferencenumber objectnumber
-                  transport_type transport_status
+                fields: %i[movementreferencenumber objectnumber current
                   currentlocationlocationlocal
                   currentlocationlocationoffsite
                   currentlocationorganizationlocal
@@ -48,6 +44,15 @@ module Kiba
                   reasonformove
                   movementcontact movementnote
                   inventorydate inventorycontact inventorynote]
+
+              reasonmapping = config.reasonformove_remappings
+              unless reasonmapping.empty?
+                transform Replace::FieldValueWithStaticMapping,
+                  source: :reasonformove,
+                  mapping: reasonmapping
+              end
+
+              transform Clean::EnsureConsistentFields
             end
           end
         end

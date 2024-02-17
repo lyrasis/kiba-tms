@@ -66,6 +66,8 @@ module Kiba
                 ),
                 keycolumn: :objlocationid,
                 targetfield: :currentct
+
+              config.default_droppers.each { |dropper| transform dropper }
             end
           end
         end

@@ -7,6 +7,8 @@ module Kiba
         # Collapses handler/approver/requestedby name notes and notes to a
         #   the single available CS field
         class RoleFieldNotes
+          include Tms::Transforms::ValueAppendable
+
           # @param target [:inventory, :movement] affects target note field
           #   and label of role-note
           def initialize(target:)
@@ -31,9 +33,10 @@ module Kiba
           end
 
           def process(row)
-            row[target] = roles.map { |role| notes_for(role, row) }
+            value = roles.map { |role| notes_for(role, row) }
               .reject { |val| val.blank? }
               .join("%CR%")
+            append_value(row, target, value, Tms.notedelim)
 
             roles.map { |role|
               ["#{role}_person", "#{role}_organization",

@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ObjLocations
-        module NhrLmiObj
+      module Movement
+        module NhrCurrent
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_locations__lmi,
-                destination: :obj_locations__nhr_lmi_obj
+                destination: :movement__nhr_current
               },
               transformer: xforms
             )
@@ -19,6 +19,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :current
               transform Delete::FieldsExcept,
                 fields: %i[movementreferencenumber objectnumber]
               transform Explode::RowsFromMultivalField,
