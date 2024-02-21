@@ -15,7 +15,8 @@ module Kiba
                 source: :tms__package_list,
                 destination: :prep__package_list,
                 lookup: %i[
-                  packages__migrating
+                  packages__shaped
+                  objects__numbers_cleaned
                 ]
               },
               transformer: xforms
@@ -38,13 +39,22 @@ module Kiba
               transform Tms::Transforms::TmsTableNames
 
               transform Merge::MultiRowLookup,
-                lookup: packages__migrating,
+                lookup: packages__shaped,
                 keycolumn: :packageid,
-                fieldmap: {package: :name},
+                fieldmap: {package: :title},
                 delim: Tms.delim
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :package
+              transform Merge::MultiRowLookup,
+                lookup: objects__numbers_cleaned,
+                keycolumn: :id,
+                fieldmap: {objectnumber: :objectnumber},
+                conditions: ->(r, rows) do
+                  return [] unless r[:tablename] == "Objects"
+
+                  rows
+                end
             end
           end
         end

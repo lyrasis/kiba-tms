@@ -1658,6 +1658,20 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("group") do
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::Group::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest", "group.csv"),
+            tags: %i[packages group]
+          }
+          register :nhr_objects, {
+            creator: Kiba::Tms::Jobs::Group::NhrObjects,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "nhr_group_object.csv"),
+            tags: %i[packages group collectionobjects nhr]
+          }
+        end
+
         Kiba::Tms.registry.namespace("packages") do
           register :flag_omitting, {
             creator: Kiba::Tms::Jobs::Packages::FlagOmitting,
@@ -1712,7 +1726,8 @@ module Kiba
               "packages_shaped.csv"),
             tags: %i[packages],
             desc: "Prepares for CS, but retains additional fields needed "\
-            "for linkage"
+            "for linkage",
+            lookup_on: :packageid
           }
           if Tms::Packages.selection_done
             Tms::Packages.provided_worksheet_jobs
