@@ -101,6 +101,17 @@ module Kiba
               desc: "Compile inventory, location, and movement LMIs",
               dest_special_opts: {initial_headers: %i[movementreferencenumber]}
             }
+            register :lmi_exploded, {
+              creator: Kiba::Tms::Jobs::ObjLocations::LmiExploded,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "obj_locations_lmi_exploded.csv"),
+              tags: %i[obj_locations],
+              desc: ":obj_locations__lmi exploded to one row per object "\
+                "number. Used in reporting/data review",
+              dest_special_opts: {
+                initial_headers: %i[objectnumber movementreferencenumber]
+              }
+            }
             register :location, {
               creator: Kiba::Tms::Jobs::ObjLocations::Location,
               path: File.join(Kiba::Tms.datadir, "working",
