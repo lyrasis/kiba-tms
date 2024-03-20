@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ExhLoanXrefs
-        module NhrExhLoanin
+      module Nhrs
+        module ExhibitionLoaninDirect
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__exh_loan_xrefs,
-                destination: :exh_loan_xrefs__nhr_exh_loanin
+                destination: :nhrs__exhibition_loanin_direct
               },
               transformer: xforms
             )

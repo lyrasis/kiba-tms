@@ -26,7 +26,11 @@ module Kiba
                 :creditline_to_loanin
               base << :loan_obj_xrefs__creditlines
             end
-            base.select { |job| Tms.job_output?(job) }
+            if Tms::LoanObjXrefs.requesteddate_treatment == :loan_status
+              base << :prep__loan_obj_xrefs
+            end
+            base.uniq
+              .select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -42,14 +46,19 @@ module Kiba
                 transform Delete::Fields, fields: config.omitted_fields
               end
 
-              rename_fieldmap = Tms::Loansin.delete_omitted_fields({
+              {
                 loannumber: :loaninnumber,
                 beginisodate: :loanindate,
                 endisodate: :loanreturndate,
                 loanrenewalisodate: :loanrenewalapplicationdate,
                 loanstatus: :tmsloanstatus
-              })
-              transform Rename::Fields, fieldmap: rename_fieldmap
+              }.each do |oldname, newname|
+                next unless loanin_fields.include?(oldname)
+
+                transform Rename::Field,
+                  from: oldname,
+                  to: newname
+              end
 
               req_map = {
                 requestdate: :req_loanstatusdate,
@@ -62,7 +71,7 @@ module Kiba
                   config.status_nil_merge_fields(req_map)
                 ),
                 constant_target: :req_loanstatus,
-                constant_value: "Requested"
+                constant_value: "requested"
 
               app_map = {
                 approveddate: :app_loanstatusdate,
@@ -75,7 +84,7 @@ module Kiba
                   config.status_nil_merge_fields(app_map)
                 ),
                 constant_target: :app_loanstatus,
-                constant_value: "Approved"
+                constant_value: "approved"
 
               agsent_map = {
                 agreementsentisodate: :agsent_loanstatusdate
@@ -87,7 +96,7 @@ module Kiba
                   config.status_nil_merge_fields(agsent_map)
                 ),
                 constant_target: :agsent_loanstatus,
-                constant_value: "Agreement sent",
+                constant_value: "agreement sent",
                 replace_empty: false
 
               agrec_map = {
@@ -100,23 +109,25 @@ module Kiba
                   config.status_nil_merge_fields(agrec_map)
                 ),
                 constant_target: :agrec_loanstatus,
-                constant_value: "Agreement received",
+                constant_value: "agreement received",
                 replace_empty: false
 
-              origloanend_map = {
-                origloanenddate: :origloanend_loanstatusdate
-              }
-              origloanend_nils = config.status_nil_append_fields(
-                origloanend_map
-              )
-              transform Append::NilFields, fields: origloanend_nils
-              transform Reshape::FieldsToFieldGroupWithConstant,
-                fieldmap: origloanend_map.merge(
-                  config.status_nil_merge_fields(origloanend_map)
-                ),
-                constant_target: :origloanend_loanstatus,
-                constant_value: "Original loan end",
-                replace_empty: false
+              if loanin_fields.include?(:origloanenddate)
+                origloanend_map = {
+                  origloanenddate: :origloanend_loanstatusdate
+                }
+                origloanend_nils = config.status_nil_append_fields(
+                  origloanend_map
+                )
+                transform Append::NilFields, fields: origloanend_nils
+                transform Reshape::FieldsToFieldGroupWithConstant,
+                  fieldmap: origloanend_map.merge(
+                    config.status_nil_merge_fields(origloanend_map)
+                  ),
+                  constant_target: :origloanend_loanstatus,
+                  constant_value: "original loan end",
+                  replace_empty: false
+              end
 
               if %i[note conditions].any?(dd_treatment)
                 transform Tms::Transforms::Loansin::DisplayDateNote,
@@ -156,19 +167,55 @@ module Kiba
                 transform Merge::MultiRowLookup,
                   lookup: loan_obj_xrefs__creditlines,
                   keycolumn: :loanid,
+                  fieldmap: {creditline: :creditline},
+                  conditions: ->(_r, rows) do
+                    val = rows.uniq { |row| row[:creditline] }
+                    return [] if val.empty?
+
+                    [val.first]
+                  end
+
+                transform Merge::MultiRowLookup,
+                  lookup: loan_obj_xrefs__creditlines,
+                  keycolumn: :loanid,
                   fieldmap: {cl_loanstatusnote: :creditline},
                   constantmap: {
-                    cl_loanstatus: "Credit line",
+                    cl_loanstatus: "credit line (additional)",
                     cl_loanindividual: Tms.nullvalue,
                     cl_loanstatusdate: Tms.nullvalue
                   },
-                  delim: Tms.delim
-                transform Deduplicate::GroupedFieldValues,
-                  on_field: :cl_loanstatusnote,
-                  grouped_fields: %i[cl_loanstatus cl_loanindividual
-                    cl_loanstatusdate],
-                  delim: Tms.delim
+                  delim: Tms.delim,
+                  conditions: ->(_r, rows) do
+                    val = rows.uniq { |row| row[:creditline] }
+                    return [] if val.empty? || val.length == 1
+
+                    val[1..-1]
+                  end
               end
+
+              if Tms::LoanObjXrefs.requesteddate_treatment == :loan_status
+                fieldmap = config.status_targets.map { |f|
+                  Array.new(2) { "objreq_#{f}".to_sym }
+                }.to_h
+                transform Merge::MultiRowLookup,
+                  lookup: prep__loan_obj_xrefs,
+                  keycolumn: :loanid,
+                  fieldmap: fieldmap
+              end
+
+              config.custom_status_values.each do |status|
+                transform do |row|
+                  target = "#{status}_loanstatus".to_sym
+                  row[target] = nil
+                  orig = row[:tmsloanstatus]
+                  next row if orig.blank?
+                  next row unless orig[status]
+
+                  row[target] = status
+                  row
+                end
+              end
+              transform Delete::Fields, fields: :tmsloanstatus
 
               if remarks_treatment == :statusnote
                 transform Tms::Transforms::Loansin::RemarksToStatusNote
@@ -185,7 +232,7 @@ module Kiba
                 delim: Tms.notedelim,
                 delete_sources: true
 
-              transform Tms::Transforms::InsuranceIndemnityNote
+              # transform Tms::Transforms::InsuranceIndemnityNote
 
               transform CombineValues::FromFieldsWithDelimiter,
                 sources: config.conditions_source_fields,
@@ -217,7 +264,8 @@ module Kiba
               transform Rename::Field,
                 from: :contact_person,
                 to: :lenderscontact
-              transform Tms::Transforms::Loansin::CombineLoanStatus
+              # transform Tms::Transforms::Loansin::CombineLoanStatus
+              transform Clean::EnsureConsistentFields
             end
           end
         end

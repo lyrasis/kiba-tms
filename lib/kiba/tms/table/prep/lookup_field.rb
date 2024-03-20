@@ -87,6 +87,7 @@ module Kiba
             obj_ins_indem_resp: :objinsindemrespid,
             obj_locations: :objlocationid,
             obj_rights_types: :objrightstypeid,
+            obj_rights: :objrightsid,
             obj_titles: :objectid,
             object_levels: Tms::ObjectLevels.id_field,
             object_name_types: Tms::ObjectNameTypes.id_field,

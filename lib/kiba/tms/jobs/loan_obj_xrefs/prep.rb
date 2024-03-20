@@ -21,7 +21,7 @@ module Kiba
           end
 
           def lookups
-            base = %i[tms__loans objects__numbers_cleaned]
+            base = %i[prep__loans objects__numbers_cleaned]
             base << :prep__loan_obj_statuses if Tms::LoanObjStatuses.used?
             base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used?
             base
@@ -42,9 +42,12 @@ module Kiba
               end
 
               transform Merge::MultiRowLookup,
-                lookup: tms__loans,
+                lookup: prep__loans,
                 keycolumn: :loanid,
-                fieldmap: {loannumber: :loannumber}
+                fieldmap: {
+                  loannumber: :loannumber,
+                  loantype: :loantype
+                }
               transform Merge::MultiRowLookup,
                 lookup: objects__numbers_cleaned,
                 keycolumn: :objectid,
@@ -108,6 +111,29 @@ module Kiba
                 end
               else
                 warn("Unknown value for Tms::LoanObjXrefs.conditions_label")
+              end
+
+              if config.requesteddate_treatment == :loan_status
+                transform Rename::Field,
+                  from: :requesteddateiso,
+                  to: :objreq_loanstatusdate
+                transform Merge::ConstantValueConditional,
+                  fieldmap: {
+                    objreq_loanstatus: "object requested",
+                    objreq_loanindividual: "%NULLVALUE%"
+                  },
+                  condition: ->(row) do
+                    !row[:objreq_loanstatusdate].blank?
+                  end
+                transform do |row|
+                  row[:objreq_loanstatusnote] = nil
+                  date = row[:objreq_loanstatusdate]
+                  next row if date.blank?
+
+                  row[:objreq_loanstatusnote] = row[:objectnumber]
+                  row
+                end
+
               end
 
               if Tms::TextEntries.for?("LoanObjXrefs") &&

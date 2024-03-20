@@ -46,7 +46,8 @@ module Kiba
                   keycolumn: :loanobjxrefid,
                   fieldmap: {
                     loannumber: :loannumber,
-                    loanid: :loanid
+                    loanid: :loanid,
+                    loantype: :loantype
                   },
                   delim: Tms.delim
               end

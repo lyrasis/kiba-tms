@@ -49,7 +49,8 @@ module Kiba
                 delete_sources: false
               transform Deduplicate::FieldValues, fields: :combined,
                 sep: Tms.delim
-              transform FilterRows::FieldEqualTo, action: :reject,
+              transform FilterRows::FieldEqualTo,
+                action: :reject,
                 field: :combined, value: "0"
               transform Delete::Fields, fields: :combined
 
@@ -89,6 +90,9 @@ module Kiba
                 target: :combined,
                 delim: Tms.notedelim,
                 delete_sources: false
+              transform FilterRows::FieldPopulated,
+                action: :keep,
+                field: :combined
             end
           end
         end

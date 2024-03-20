@@ -13,12 +13,18 @@ module Kiba
                 source: :prep__exhibitions,
                 destination: :exhibitions__shaped
               },
-              transformer: xforms
+              transformer: [
+                xforms,
+                config.post_shape_xforms
+              ].compact
             )
           end
 
           def publishto_true_value
-            Tms.using_public_browser ? "CollectionSpace Public Browser" : "None"
+            return "None" unless Tms.using_public_browser &&
+              config.publish_exhibitions
+
+            "CollectionSpace Public Browser"
           end
 
           def xforms
@@ -42,6 +48,7 @@ module Kiba
                 next row if venue.blank?
 
                 row[:galleryrotationname] = row[:locationname]
+                row[:locationname] = nil
                 row[:locationauth] = nil
                 row
               end
@@ -68,6 +75,13 @@ module Kiba
                 publicinfo: :publishto
               }
 
+              transform Clean::RegexpFindReplaceFieldVals,
+                fields: %i[exhibitionpersonpersonlocal
+                  exhibitionpersonorganizationlocal
+                  exhibitionpersonpersonlocalrole
+                  exhibitionpersonorganizationlocalrole],
+                find: /\|/,
+                replace: "^^"
               transform Append::ToFieldValue,
                 field: :department, value: " department"
               transform Merge::ConstantValueConditional,
@@ -95,12 +109,16 @@ module Kiba
                 delim: Tms.sgdelim,
                 delete_sources: true
 
+              transform Prepend::ToFieldValue,
+                field: :regnotes,
+                value: "Registrar's notes: "
+
               %i[boilerplatetext curatorialnote generalnote
                 planningnote].each do |field|
                 transform CombineValues::FromFieldsWithDelimiter,
                   sources: config.send("#{field}_sources".to_sym),
                   target: field,
-                  delim: "%CR%",
+                  delim: Tms.notedelim,
                   delete_sources: true
               end
 

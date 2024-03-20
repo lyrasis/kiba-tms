@@ -35,7 +35,13 @@ module Kiba
                 destination: :prep__loans,
                 lookup: lookups
               },
-              transformer: xforms
+              transformer: [
+                reduce,
+                merge,
+                config.post_merge_xforms,
+                finalize,
+                config.post_prep_xforms
+              ].compact
             )
           end
 
@@ -59,12 +65,11 @@ module Kiba
             base
           end
 
-          def xforms
+          def reduce
             bind = binding
 
             Kiba.job_segment do
               config = bind.receiver.send(:config)
-              namefields = config.name_fields - config.omitted_fields
 
               transform Tms::Transforms::DeleteTmsFields
               transform Tms::Transforms::DeleteEmptyMoney,
@@ -74,6 +79,15 @@ module Kiba
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner
+            end
+          end
+
+          def merge
+            bind = binding
+
+            Kiba.job_segment do
+              config = bind.receiver.send(:config)
+              namefields = config.name_fields - config.omitted_fields
 
               if Tms::LoanPurposes.used?
                 transform Merge::MultiRowLookup,
@@ -91,34 +105,44 @@ module Kiba
               end
               transform Delete::Fields, fields: :loanstatusid
 
-              indfields = %i[indemnityfromlender indemnityfrompreviousvenue
-                indemnityatvenue indemnityreturn]
               if Tms::IndemnityResponsibilities.used?
-                indfields.each do |field|
+                config.indemnity_fields.each do |field|
                   next if config.omitted_fields.any?(field)
 
                   transform Merge::MultiRowLookup,
                     lookup: prep__indemnity_responsibilities,
                     keycolumn: field,
                     fieldmap: {field => :responsibility}
+                  transform Prepend::ToFieldValue,
+                    field: field,
+                    value: config.indemnity_field_label_map[field]
                 end
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.indemnity_fields,
+                  target: :indemnityresponsibilities,
+                  delim: "%CR%"
               else
-                transform Delete::Fields, fields: indfields
+                transform Delete::Fields, fields: config.indemnity_fields
               end
 
-              insfields = %i[insurancefromlender insurancefrompreviousvenue
-                insuranceatvenue insurancereturn]
               if Tms::InsuranceResponsibilities.used
-                insfields.each do |field|
+                config.insurance_fields.each do |field|
                   next if config.omitted_fields.any?(field)
 
                   transform Merge::MultiRowLookup,
                     lookup: prep__insurance_responsibilities,
                     keycolumn: field,
                     fieldmap: {field => :responsibility}
+                  transform Prepend::ToFieldValue,
+                    field: field,
+                    value: config.insurance_field_label_map[field]
                 end
+                transform CombineValues::FromFieldsWithDelimiter,
+                  sources: config.insurance_fields,
+                  target: :insuranceresponsibilities,
+                  delim: "%CR%"
               else
-                transform Delete::Fields, fields: insfields
+                transform Delete::Fields, fields: config.insurance_fields
               end
 
               if Tms::Departments.used?
@@ -130,18 +154,19 @@ module Kiba
               transform Delete::Fields, fields: :departmentid
 
               if Tms::TextEntries.for?("Loans")
-                transform Merge::MultiRowLookup,
-                  lookup: text_entries_for__loans,
-                  keycolumn: :loanid,
-                  fieldmap: {text_entry: :text_entry},
-                  delim: Tms.delim,
-                  sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
+                if Tms::TextEntriesForLoans.merger_xforms
+                  Tms::TextEntriesForLoans.merger_xforms.each do |xform|
+                    transform xform
+                  end
+                else
+                  transform Merge::MultiRowLookup,
+                    lookup: text_entries_for__loans,
+                    keycolumn: :loanid,
+                    fieldmap: {text_entry: :text_entry},
+                    delim: Tms.delim,
+                    sorter: Lookup::RowSorter.new(on: :sort, as: :to_i)
+                end
               end
-
-              transform Replace::FieldValueWithStaticMapping,
-                source: :loanin,
-                target: :loantype,
-                mapping: {"1" => "loan in", "0" => "loan out"}
 
               if Tms::LoanObjXrefs.used? && Tms::LoanObjXrefs.merging_into_loans
                 if Tms::LoanObjXrefs.conditions_record == :loan
@@ -159,6 +184,32 @@ module Kiba
               namefields.each do |field|
                 transform Tms::Transforms::MergeUncontrolledName, field: field
               end
+            end
+          end
+
+          def finalize
+            bind = binding
+
+            Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
+              transform Replace::FieldValueWithStaticMapping,
+                source: :loanin,
+                target: :loantype,
+                mapping: {"1" => "loan in", "0" => "loan out"}
+              transform Clean::DowncaseFieldValues,
+                fields: :loanstatus
+
+              transform Delete::EmptyFields
+
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: config.conditions_sources,
+                target: :conditions,
+                delim: Tms.notedelim
+              transform CombineValues::FromFieldsWithDelimiter,
+                sources: config.note_sources,
+                target: :note,
+                delim: Tms.notedelim
             end
           end
         end

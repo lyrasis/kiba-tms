@@ -18,16 +18,32 @@ module Kiba
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
+              transform do |row|
+                treatment = row[:treatment]
+                val = if treatment == "other_number"
+                  "y"
+                elsif treatment.blank? &&
+                    config.for_objects_untyped_default_treatment ==
+                        "other_number"
+                  "y"
+                end
+                row[:keep] = val
+                row
+              end
               transform FilterRows::FieldEqualTo,
                 action: :keep,
-                field: :treatment,
-                value: "other_number"
+                field: :keep,
+                value: "y"
               transform FilterRows::AnyFieldsPopulated,
                 action: :keep,
                 fields: %i[remarks beginisodate endisodate]
               transform Delete::Fields,
-                fields: %i[recordid sort treatment]
+                fields: %i[recordid sort treatment keep]
               transform Rename::Fields, fieldmap: {
                 altnum: :other_number_value,
                 targetrecord: :object_number,

@@ -37,7 +37,7 @@ module Kiba
                 transform Count::MatchingRowsInLookup,
                   lookup: prep__exh_venues_xrefs,
                   keycolumn: :exhibitionid,
-                  target: :venues
+                  targetfield: :venues
               else
                 transform Merge::ConstantValue,
                   target: :venues,

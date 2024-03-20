@@ -10,7 +10,18 @@ module Kiba
       # Indicates what job output to use as the base for non-TMS-table-sourced
       #   modules
       setting :source_job_key, default: :loans__in, reader: true
+
+      setting :empty_fields,
+        default: [],
+        reader: true,
+        constructor: ->(base) do
+          [base, Tms::Loans.empty_fields].flatten.uniq
+        end
       extend Tms::Mixins::Tableable
+
+      # @return [nil, Proc] Kiba.job_segment definition run at the end of
+      #   loansin__cspace job
+      setting :pre_ingest_xforms, default: nil, reader: true
 
       # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
       #   needed
@@ -38,10 +49,10 @@ module Kiba
       setting :display_date_treatment, default: :status, reader: true
       # @return [String] used as status value of begin dates if
       #   treatment == :status
-      setting :display_date_begin_status, default: "Display begin", reader: true
+      setting :display_date_begin_status, default: "display begin", reader: true
       # @return [String] used as status value of end dates if
       #   treatment == :status
-      setting :display_date_end_status, default: "Display end", reader: true
+      setting :display_date_end_status, default: "display end", reader: true
       # @return [String] prepended to display date value for concatenation into
       #   note field
       setting :display_date_note_label, default: "Displayed: ", reader: true
@@ -53,7 +64,11 @@ module Kiba
       setting :remarks_delim, default: Tms.notedelim, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform as the
       #   constant value for status on derived status notes
-      setting :remarks_status, default: "Note", reader: true
+      setting :remarks_status, default: "note", reader: true
+
+      # @return [Array<String>] of status values with no accompanying info
+      #   that need to be exploded/padded out for combination in field group
+      setting :custom_status_values, default: [], reader: true
 
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
       #   to build status field group
@@ -70,6 +85,9 @@ module Kiba
           if Tms::ObjAccession.loaned_object_treatment == :creditline_to_loanin
             value << :cl
           end
+          if Tms::LoanObjXrefs.requesteddate_treatment == :loan_status
+            value << :objreq
+          end
           value
         }
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
@@ -81,22 +99,19 @@ module Kiba
           if remarks_treatment == :statusnote
             value << :loanstatusnote
           end
-          value
+          if Tms::LoanObjXrefs.requesteddate_treatment == :loan_status
+            value << :loanstatusnote
+          end
+          value.uniq
         }
 
       # @return [Array<Symbol>] fields to concatenated into target note field
       setting :note_source_fields,
-        default: %i[description],
+        default: %i[note],
         reader: true,
         constructor: proc { |value|
           if display_date_treatment == :note
             value << :display_dates_note
-          end
-          if remarks_treatment == :note
-            value << :remarks
-          end
-          if Tms::TextEntries.for?("Loans") && text_entries_treatment == :note
-            value << :text_entry
           end
           if Tms::LoanObjXrefs.conditions_record == :loan &&
               Tms::LoanObjXrefs.conditions_field == :note
@@ -108,18 +123,11 @@ module Kiba
       # @return [Array<Symbol>] fields to concatenated into target conditions
       #   field
       setting :conditions_source_fields,
-        default: %i[loanconditions insind],
+        default: %i[conditions],
         reader: true,
         constructor: proc { |value|
           if display_date_treatment == :conditions
             value << :display_dates_note
-          end
-          if remarks_treatment == :conditions
-            value << :remarks
-          end
-          if Tms::TextEntries.for?("Loans") &&
-              text_entries_treatment == :conditions
-            value << :text_entry
           end
           if Tms::LoanObjXrefs.conditions_record == :loan &&
               Tms::LoanObjXrefs.conditions_field == :conditions

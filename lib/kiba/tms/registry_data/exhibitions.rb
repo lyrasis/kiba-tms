@@ -23,7 +23,8 @@ module Kiba
                 Kiba::Tms.datadir, "working", "exhibitions_shaped.csv"
               ),
               desc: "Reshape prepped exhibition data",
-              tags: %i[exhibitions]
+              tags: %i[exhibitions],
+              lookup_on: :exhibitionid
             }
             register :merge_exh_obj_info, {
               creator: Kiba::Tms::Jobs::Exhibitions::MergeExhObjInfo,
@@ -36,6 +37,23 @@ module Kiba
                 "migration is configured to do so, otherwise passes the table "\
                 "through with no changes",
               tags: %i[exhibitions objects]
+            }
+            register :merge_venue_details, {
+              creator: Kiba::Tms::Jobs::Exhibitions::MergeVenueDetails,
+              path: File.join(
+                Kiba::Tms.datadir, "working",
+                "exhibitions_venue_details_merged.csv"
+              ),
+              desc: "Merges data from exh_venues_xrefs that does not map to "\
+                "Venue field group",
+              tags: %i[exhibitions]
+            }
+            register :ingest, {
+              creator: Kiba::Tms::Jobs::Exhibitions::Ingest,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "exhibitions.csv"
+              ),
+              tags: %i[exhibitions ingest]
             }
             register :nhrs, {
               creator: Kiba::Tms::Jobs::Exhibitions::Nhrs,
@@ -71,19 +89,10 @@ module Kiba
                 "working",
                 "nhr_exh_loan.csv"
               ),
-              desc: "Creates NHRs between exhibitions and loans in",
-              tags: %i[exhibitions loansin nhr]
+              desc: "Compiles exhibition-loanin and exhibition-loanout nhrs",
+              tags: %i[exhibitions loansin loansout loans nhr]
             }
-            register :nhr_exh_loanin, {
-              creator: Kiba::Tms::Jobs::ExhLoanXrefs::NhrExhLoanin,
-              path: File.join(
-                Kiba::Tms.datadir,
-                "working",
-                "nhr_exh_loanin.csv"
-              ),
-              desc: "Creates NHRs between exhibitions and loans in",
-              tags: %i[exhibitions loansin nhr]
-            }
+
             register :nhr_exh_loanout, {
               creator: Kiba::Tms::Jobs::ExhLoanXrefs::NhrExhLoanout,
               path: File.join(
@@ -93,20 +102,6 @@ module Kiba
               ),
               desc: "Creates NHRs between exhibitions and loans out",
               tags: %i[exhibitions loansout nhr]
-            }
-          end
-
-          Kiba::Tms.registry.namespace("exh_obj_loan_obj_xrefs") do
-            register :nhr_exh_loan, {
-              creator: Kiba::Tms::Jobs::ExhObjLoanObjXrefs::NhrExhLoan,
-              path: File.join(
-                Kiba::Tms.datadir,
-                "working",
-                "nhr_exh_loan_through_obj.csv"
-              ),
-              desc: "Creates NHRs between exhibitions and loans, through "\
-                "objects",
-              tags: %i[exhibitions loans nhr]
             }
           end
 
@@ -131,6 +126,44 @@ module Kiba
               desc: "Relationships between Exhibitions and Objects that "\
                 "have TextEntries merged in",
               tags: %i[exhibitions objects text_entries reports]
+            }
+          end
+
+          Kiba::Tms.registry.namespace("exh_venues_xrefs") do
+            register :single_venue, {
+              creator: Kiba::Tms::Jobs::ExhVenuesXrefs::SingleVenue,
+              path: File.join(
+                Kiba::Tms.datadir, "working",
+                "exh_venues_xrefs_single_venue.csv"
+              ),
+              desc: "Data from table for exhibitions having only one venue. "\
+                "Data can be merged into exhibition record in a "\
+                "straightforward way",
+              tags: %i[exhibitions exh_venues_xrefs],
+              lookup_on: :exhibitionid
+            }
+            register :multi_venue, {
+              creator: Kiba::Tms::Jobs::ExhVenuesXrefs::MultiVenue,
+              path: File.join(
+                Kiba::Tms.datadir, "working",
+                "exh_venues_xrefs_multi_venue.csv"
+              ),
+              desc: "Data from table for exhibitions having multiplevenue. "\
+                "Data cannot be merged into exhibition record in a "\
+                "straightforward way",
+              tags: %i[exhibitions exh_venues_xrefs],
+              lookup_on: :exhibitionid
+            }
+          end
+
+          Kiba::Tms.registry.namespace("exh_ven_obj_xrefs") do
+            register :report, {
+              creator: Kiba::Tms::Jobs::ExhVenObjXrefs::Report,
+              path: File.join(
+                Kiba::Tms.datadir, "reports",
+                "exhibited_object_at_venue_report.csv"
+              ),
+              tags: %i[exhibitions objects exh_ven_obj_xrefs]
             }
           end
         end

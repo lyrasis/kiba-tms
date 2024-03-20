@@ -3,18 +3,18 @@
 module Kiba
   module Tms
     module Jobs
-      module Loansin
-        module RelObj
+      module Nhrs
+        module LoaninObject
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :prep__loan_obj_xrefs,
-                destination: :loansin__rel_obj,
+                destination: :nhrs__loanin_object,
                 lookup: :loans__in
               },
-              transformer: xforms
+              transformer: [xforms, config.finalize_xforms]
             )
           end
 

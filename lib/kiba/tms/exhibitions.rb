@@ -18,6 +18,14 @@ module Kiba
                      end
       extend Tms::Mixins::Tableable
 
+      # @return [Integer] padding places for incrementing integer appended to
+      #   create unique id number for exhibitions
+      setting :id_increment_padding, default: 3, reader: true
+
+      # @return [Boolean] whether to publish properly coded exhibition records
+      #   to public browser.
+      setting :publish_exhibitions, default: false, reader: true
+
       # @return [Proc] Kiba.job_segment to generate :prenum value that
       #   will be used to generate :exhibitionnumber. Run at the
       #   beginning of :prep__exhibitions
@@ -48,7 +56,7 @@ module Kiba
         default: false,
         reader: true
       setting :boilerplatetext_sources,
-        default: %i[],
+        default: %i[organizationcreditline],
         reader: true
       setting :con_ref_name_merge_rules,
         default: {
@@ -57,31 +65,39 @@ module Kiba
               suffixes: %w[personlocal organizationlocal],
               merge_role: true,
               role_suffix: "role"
+            },
+            organizer: {
+              suffixes: %w[personlocal organizationlocal],
+              merge_role: false
             }
           }
         },
         reader: true
       setting :curatorialnote_sources,
-        default: %i[curnotes text_entry],
+        default: %i[curnotes],
         reader: true
       setting :generalnote_sources,
         default: %i[othertitle remarks],
-        # Whether to use data from ExhObjXrefs to populate the Exhibited
         reader: true
+      setting :planningnote_sources,
+        default: %i[planningnotes regnotes insindnote],
+        reader: true,
+        constructor: ->(base) do
+          return base if use_projectnumber_as_exhibitionnumber
+
+          base.unshift(:projectnumber)
+        end
+
+      # @return [nil, Proc] Kiba.job_segment of transforms run at the end of
+      #   :exhibitions__shaped job.
+      setting :post_shape_xforms, default: nil, reader: true
+
+      # Whether to use data from ExhObjXrefs to populate the Exhibited
       #   Object Information object checklist in the Exhibition record
       # NOTE: this may conflict or interact with
       #   ExhObjXrefs.text_entry_handling setting, so watch out if
       #   this is true and that is not :drop
       setting :migrate_exh_obj_info, default: false, reader: true
-
-      setting :planningnote_sources,
-        default: %i[planningnotes insindnote],
-        reader: true,
-        constructor: ->(base) do
-          unless use_projectnumber_as_exhibitionnumber
-            base.unshift(:projectnumber)
-          end
-        end
     end
   end
 end

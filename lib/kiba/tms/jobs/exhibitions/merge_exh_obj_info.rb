@@ -56,10 +56,21 @@ module Kiba
           end
 
           def obj_info
+            bind = binding
+
             Kiba.job_segment do
-              warn(
-                "#{job.send(:name)}: Implement merge of object details"
-              )
+              job = bind.receiver
+              transform Merge::MultiRowLookup,
+                lookup: job.send(:xref_lookup),
+                keycolumn: :exhibitionid,
+                fieldmap: {
+                  exhibitionobjectnumber: :objectnumber,
+                  exhibitionobjectname: :objecttitle,
+                  exhibitionobjectseqnum: :sequencenumber,
+                  exhibitionobjectnote: :remarks
+                },
+                null_placeholder: "%NULLVALUE%",
+                delim: Tms.delim
             end
           end
 

@@ -19,13 +19,18 @@ module Kiba
           end
 
           def lookups
-            base = [:names__by_constituentid]
+            base = %i[
+              names__by_constituentid
+              exhibitions__shaped
+              exhibitions__venue_count
+            ]
             if Tms::IndemnityResponsibilities.used
               base << :prep__indemnity_responsibilities
             end
             if Tms::InsuranceResponsibilities.used
               base << :prep__insurance_responsibilities
             end
+            base << :prep__exhibition_titles if Tms::ExhibitionTitles.used?
             base.select { |job| Tms.job_output?(job) }
           end
 
@@ -44,6 +49,39 @@ module Kiba
               end
               transform Tms.data_cleaner if Tms.data_cleaner
 
+              transform Merge::MultiRowLookup,
+                lookup: exhibitions__shaped,
+                keycolumn: :exhibitionid,
+                fieldmap: {
+                  exhibitionnumber: :exhibitionnumber,
+                  exhtitle: :title
+                }
+
+              transform Merge::MultiRowLookup,
+                lookup: exhibitions__venue_count,
+                keycolumn: :exhibitionid,
+                fieldmap: {venuecount: :venues}
+              transform do |row|
+                ct = row[:venuecount]
+                row[:venuecount] = if ct == "1"
+                  "single"
+                else
+                  "multi"
+                end
+                row
+              end
+
+              if lookups.any?(:prep__exhibition_titles)
+                transform Merge::MultiRowLookup,
+                  lookup: prep__exhibition_titles,
+                  keycolumn: :exhvenuetitleid,
+                  fieldmap: {titleatvenue: :title}
+              end
+              transform Delete::Fields, fields: :exhvenuetitleid
+              transform Delete::FieldValueIfEqualsOtherField,
+                delete: :titleatvenue,
+                if_equal_to: :exhtitle
+
               if Tms::ConRefs.for?("ExhVenuesXrefs")
                 if config.con_ref_name_merge_rules
                   transform Tms::Transforms::ConRefs::Merger,
@@ -57,12 +95,11 @@ module Kiba
                   lookup: names__by_constituentid,
                   keycolumn: :constituentid,
                   fieldmap: {type => type}
-                # transform Delete::FieldValueIfEqualsOtherField,
-                #   delete: type,
-                #   if_equal_to: "venue#{type}".to_sym
+                transform Delete::FieldValueIfEqualsOtherField,
+                  delete: type,
+                  if_equal_to: "venue#{type}".to_sym
               end
               transform Delete::Fields, fields: :constituentid
-              transform Delete::EmptyFields
 
               indfields = %i[indemnityfromlender indemnityfrompreviousvenue
                 indemnityatvenue indemnityreturn]
@@ -94,22 +131,20 @@ module Kiba
                 transform Delete::Fields, fields: insfields
               end
               transform Tms::Transforms::InsuranceIndemnityNote
-              transform do |row|
-                row[:prefix] = nil
-                insind = row[:insind]
-                next row if insind.blank?
+              if Tms::ConRefs.for?("ExhVenuesXrefs")
 
-                row[:prefix] = row[:venueorg]
-                row
+                transform do |row|
+                  row[:thevenue] = [row[:venueorg], row[:venueperson]]
+                    .reject(&:blank?)
+                    .first
+                  row
+                end
+              else
+                warn("WARNING: Implement prefix creation for :insind from "\
+                     "non-ConRef source")
               end
-              warn("WARNING: Transformation to create prefix for :insind has "\
-                   "only been verified for mmm")
 
-              transform CombineValues::FromFieldsWithDelimiter,
-                sources: %i[prefix insind],
-                target: :insindnote,
-                delim: ":%CR%",
-                delete_sources: true
+              transform Delete::EmptyFields
             end
           end
         end

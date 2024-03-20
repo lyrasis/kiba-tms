@@ -20,7 +20,7 @@ module Kiba
 
           def lookups
             base = %i[
-              prep__exhibitions
+              exhibitions__shaped
               objects__number_lookup
               prep__loans
             ]
@@ -50,10 +50,6 @@ module Kiba
                     insindemresp: :combined
                   },
                   delim: Tms.delim
-                transform Clean::RegexpFindReplaceFieldVals,
-                  fields: :insindemresp,
-                  find: "%CR%",
-                  replace: "\n"
               end
               transform Delete::Fields, fields: :insindemrespid
 
@@ -66,19 +62,17 @@ module Kiba
                   keycolumn: :exhvenuexrefid,
                   fieldmap: {
                     exhibitionid: :exhibitionid,
-                    venue: :venueorg
-                  },
-                  delim: Tms.delim
+                    venue: :thevenue
+                  }
               end
 
-              if lookups.any?(:prep__exhibitions)
+              if lookups.any?(:exhibitions__shaped)
                 transform Merge::MultiRowLookup,
-                  lookup: prep__exhibitions,
+                  lookup: exhibitions__shaped,
                   keycolumn: :exhibitionid,
                   fieldmap: {
                     exhibitionnumber: :exhibitionnumber
-                  },
-                  delim: Tms.delim
+                  }
               end
 
               if lookups.any?(:objects__number_lookup)
@@ -95,6 +89,15 @@ module Kiba
                   keycolumn: :loanid,
                   fieldmap: {loannumber: :loannumber},
                   delim: Tms.delim
+              end
+
+              transform Delete::Fields,
+                fields: %i[exhibitionid exhvenobjxrefid exhvenuexrefid
+                  objectid loanid exhibitionid]
+              %i[approved displayed].each do |field|
+                transform Replace::FieldValueWithStaticMapping,
+                  source: field,
+                  mapping: Tms.boolean_yes_no_mapping
               end
             end
           end

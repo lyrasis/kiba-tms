@@ -17,6 +17,7 @@ module Kiba
                 destination: :media_xrefs__obj_rights,
                 lookup: %i[
                   media_files__id_lookup
+                  prep__obj_rights
                   objects__number_lookup
                 ]
               },
@@ -29,8 +30,12 @@ module Kiba
               transform Delete::FieldsExcept,
                 fields: %i[mediamasterid id]
               transform Merge::MultiRowLookup,
-                lookup: objects__number_lookup,
+                lookup: prep__obj_rights,
                 keycolumn: :id,
+                fieldmap: {objectid: :objectid}
+              transform Merge::MultiRowLookup,
+                lookup: objects__number_lookup,
+                keycolumn: :objectid,
                 fieldmap: {item1_id: :objectnumber}
               transform Merge::MultiRowLookup,
                 lookup: media_files__id_lookup,

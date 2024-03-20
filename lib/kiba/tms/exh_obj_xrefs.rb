@@ -17,7 +17,14 @@ module Kiba
       # Others may be developed
       setting :text_entry_handling,
         default: :exhibited_object_information,
-        reader: true
+        reader: true,
+        constructor: ->(default) do
+                       return :drop if Tms::TextEntries.target_tables.none?(
+                         "ExhObjXrefs"
+                       )
+
+                       default
+                     end
     end
   end
 end

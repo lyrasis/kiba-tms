@@ -13,6 +13,18 @@ module Kiba
 
       extend Tms::Mixins::CsTargetable
 
+      def finalize_xforms
+        Kiba.job_segment do
+          transform FilterRows::AllFieldsPopulated,
+            action: :keep,
+            fields: %i[item1_id item2_id]
+          transform CombineValues::FullRecord, delim: " "
+          transform Deduplicate::Table,
+            field: :index,
+            delete_field: true
+        end
+      end
+
       def sample_xforms
         bind = binding
 

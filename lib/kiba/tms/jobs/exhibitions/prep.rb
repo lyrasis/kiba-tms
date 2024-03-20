@@ -66,8 +66,8 @@ module Kiba
                 id_target: :exhibitionnumber,
                 sort_on: :exhibitionid,
                 sort_type: :i,
-                separator: "",
-                padding: 4
+                separator: ".",
+                padding: config.id_increment_padding
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
@@ -101,6 +101,7 @@ module Kiba
                   fieldmap: {othertitle: :title},
                   delim: "%CR%"
               end
+              transform Delete::Fields, fields: :exhibitiontitleid
 
               if config.fields.any?(:locationid)
                 transform Append::ToFieldValue,

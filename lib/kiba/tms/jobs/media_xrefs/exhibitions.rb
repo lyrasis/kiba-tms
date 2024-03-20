@@ -17,7 +17,7 @@ module Kiba
                 destination: :media_xrefs__exhibitions,
                 lookup: %i[
                   media_files__id_lookup
-                  prep__exhibitions
+                  exhibitions__shaped
                 ]
               },
               transformer: xforms
@@ -26,20 +26,27 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
-              transform Delete::FieldsExcept,
-                fields: %i[mediamasterid id]
+              transform Delete::FieldsExcept, fields: %i[mediamasterid id]
               transform Merge::MultiRowLookup,
-                lookup: prep__exhibitions,
+                lookup: exhibitions__shaped,
                 keycolumn: :id,
                 fieldmap: {item1_id: :exhibitionnumber}
               transform Merge::MultiRowLookup,
                 lookup: media_files__id_lookup,
                 keycolumn: :mediamasterid,
                 fieldmap: {item2_id: :identificationnumber}
+              transform Delete::Fields, fields: %i[mediamasterid id]
               transform Merge::ConstantValues, constantmap: {
                 item1_type: "exhibitions",
                 item2_type: "media"
               }
+              transform FilterRows::AllFieldsPopulated,
+                action: :keep,
+                fields: %i[item1_id item2_id]
+              transform CombineValues::FullRecord
+              transform Deduplicate::Table,
+                field: :index,
+                delete_field: true
             end
           end
         end

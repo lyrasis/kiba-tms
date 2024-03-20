@@ -153,6 +153,9 @@ module Kiba
     setting :boolean_yn_mapping,
       default: {"0" => "n", "1" => "y"},
       reader: true
+    setting :boolean_yes_no_mapping,
+      default: {"0" => "no", "1" => "yes"},
+      reader: true
     setting :inverted_boolean_yn_mapping,
       default: {"0" => "y", "1" => "n"},
       reader: true

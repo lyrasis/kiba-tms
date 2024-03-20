@@ -23,7 +23,7 @@ module Kiba
           def lookups
             base = %i[
               objects__number_lookup
-              prep__exhibitions
+              exhibitions__shaped
             ]
             base << :prep__obj_ins_indem_resp if Tms::ObjInsIndemResp.used
             base.select { |job| Tms.job_output?(job) }
@@ -52,28 +52,14 @@ module Kiba
                   fieldmap: {objectnumber: :objectnumber}
               end
 
-              if lookups.any?(:prep__exhibitions)
+              if lookups.any?(:exhibitions__shaped)
                 transform Merge::MultiRowLookup,
-                  lookup: prep__exhibitions,
+                  lookup: exhibitions__shaped,
                   keycolumn: :exhibitionid,
                   fieldmap: {
                     exhibitionnumber: :exhibitionnumber,
                     exhtitle: :exhtitle
                   }
-              end
-              if Tms::ObjTitles.used
-                lookup = Tms.get_lookup(
-                  jobkey: :prep__obj_titles,
-                  column: :titleid
-                )
-                transform Merge::MultiRowLookup,
-                  lookup: lookup,
-                  keycolumn: :objtitleid,
-                  fieldmap: {objecttitle: :title},
-                  sorter: Lookup::RowSorter.new(on: :displayorder, as: :to_i),
-                  conditions: ->(_row, rows) do
-                    [rows.first]
-                  end
               end
 
               if Tms::TextEntries.for?("ExhObjXrefs") &&

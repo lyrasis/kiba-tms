@@ -27,6 +27,10 @@ module Kiba
       #   value
       setting :conditions_label, default: :objectnumber, reader: true
 
+      setting :requesteddate_treatment,
+        default: :loan_status,
+        reader: true
+
       # @return [nil, Array[Symbol]] fields to include in post-migration cleanup
       #   report. If nil, all columns are included.
       setting :post_migration_cleanup_columns, default: nil, reader: true

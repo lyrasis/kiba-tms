@@ -10,13 +10,10 @@ module Tms
 
         # @private
         def process(row)
-          if row.key?(:remarks)
-            msg = "#{self.class.name} includes unaccounted for `remarks` vals"
-            warn(msg)
-          end
           label = add_date(row, type_and_purpose(row))
           body = combine_label_and_note(row, label)
-          row[target] = signed(row, body)
+          full = append_remarks(row, body)
+          row[target] = signed(row, full)
           row
         end
 
@@ -32,13 +29,10 @@ module Tms
         end
 
         def author(row)
-          author_val = [row.fetch(:org_author, nil),
-            row.fetch(:person_author, nil)].reject { |author|
-            author.blank?
-          }
-          return nil if author_val.empty?
+          author_val = row[:authorname]
+          return nil if author_val.blank?
 
-          author_val.first
+          author_val
         end
 
         def combine_label_and_note(row, label)
@@ -48,6 +42,13 @@ module Tms
           return nil if val.empty?
 
           val.join(": ")
+        end
+
+        def append_remarks(row, body)
+          full = [body, row.fetch(:remarks)].reject { |part| part.blank? }
+          return nil if full.empty?
+
+          full.join("; ")
         end
 
         def signed(row, body)

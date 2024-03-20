@@ -86,7 +86,7 @@ module Kiba
 
               # Clear/clean data that should not be included as fingerprint
               #   values
-              transform Tms::Transforms::DeleteTmsFields
+              # transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
