@@ -50,11 +50,13 @@ module Kiba
               if config.omitting_fields?
                 transform Delete::Fields, fields: config.omitted_fields
               end
+
               if config.zero_value_treatment == :drop
-                transform FilterRows::FieldEqualTo,
-                  action: :reject,
-                  field: :value,
-                  value: ".0000"
+                transform Merge::ConstantValueConditional,
+                  fieldmap: {dropping: "y"},
+                  condition: ->(row) do
+                    row[:value] == ".0000"
+                  end
               end
 
               transform Tms.data_cleaner if Tms.data_cleaner

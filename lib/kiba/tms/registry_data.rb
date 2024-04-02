@@ -2136,54 +2136,8 @@ module Kiba
           }
         end
 
-        Kiba::Tms.registry.namespace("valuation_control") do
-          register :all, {
-            creator: Kiba::Tms::Jobs::ValuationControl::All,
-            path: File.join(Kiba::Tms.datadir, "working", "vc_all.csv"),
-            tags: %i[valuation],
-            lookup_on: :objinsuranceid
-          }
-          register :all_clean, {
-            creator: Kiba::Tms::Jobs::ValuationControl::AllClean,
-            path: File.join(Kiba::Tms.datadir, "working", "vc_all_clean.csv"),
-            tags: %i[valuation]
-          }
-          register :from_accession_lot, {
-            creator: Kiba::Tms::Jobs::ValuationControl::FromAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "vc_from_accessionlot.csv"),
-            tags: %i[valuation acquisitions]
-          }
-          register :from_obj_insurance, {
-            creator: Kiba::Tms::Jobs::ValuationControl::FromObjInsurance,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "vc_from_obj_insurance.csv"),
-            tags: %i[valuation obj_insurance]
-          }
-          register :nhrs, {
-            creator: Kiba::Tms::Jobs::ValuationControl::Nhrs,
-            path: File.join(Kiba::Tms.datadir, "working", "nhr_vc.csv"),
-            tags: %i[valuation nhr]
-          }
-          register :nhr_acq_accession_lot, {
-            creator: Kiba::Tms::Jobs::ValuationControl::NhrAcqAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "nhr_acq_vc_from_accessionlot.csv"),
-            tags: %i[valuation acquisitions nhr]
-          }
-          register :nhr_obj_accession_lot, {
-            creator: Kiba::Tms::Jobs::ValuationControl::NhrObjAccessionLot,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "nhr_obj_vc_from_accessionlot.csv"),
-            tags: %i[valuation objects nhr]
-          }
-          register :nhr_obj, {
-            creator: Kiba::Tms::Jobs::ValuationControl::NhrObj,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "nhr_obj_vc.csv"),
-            tags: %i[valuation objects nhr]
-          }
-        end
+        # "obj_insurance" "valuation_control"
+        Kiba::Tms::RegistryData::Valuation.register
 
         Kiba::Tms.registry.namespace("works") do
           register :lookup, {
