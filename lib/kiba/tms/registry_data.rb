@@ -958,11 +958,23 @@ module Kiba
             path: File.join(Kiba::Tms.datadir, "working", "loansout__prep.csv"),
             tags: %i[loans loansout]
           }
-          register :cspace, {
-            creator: Kiba::Tms::Jobs::Loansout::Cspace,
-            path: File.join(Kiba::Tms.datadir, "working",
-              "loansout__cspace.csv"),
-            tags: %i[loans loansout]
+          register :dropped_names, {
+            creator: Kiba::Tms::Jobs::Loansout::DroppedNames,
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
+              "loansout_dropped_names.csv"),
+            tags: %i[loans loansout postmigcleanup],
+            desc: "Retains only rows having unmigrateable values in "\
+              "borrowerscontactorg (name must be a person name) or "\
+              "borrowerscontactdropped (field is single-valued). Also retains "\
+              "borrowerpersonlocal values if there's a borrower org name, and "\
+              "there is another name in borrowerscontact, so it cannot be put "\
+              "there. These are retained as :borrowerdropped"
+          }
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::Loansout::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "loansout.csv"),
+            tags: %i[loans loansout ingest]
           }
           register :rel_obj, {
             creator: Kiba::Tms::Jobs::Loansout::RelObj,
@@ -1172,9 +1184,14 @@ module Kiba
           }
           register :problem_component_lmi, {
             creator: Kiba::Tms::Jobs::ObjComponents::ProblemComponentLmi,
-            path: File.join(Kiba::Tms.datadir, "reports",
+            path: File.join(Kiba::Tms.datadir, "postmigcleanup",
               "obj_components_problem_lmi.csv"),
-            tags: %i[obj_components reports postmigcleanup]
+            tags: %i[obj_components reports postmigcleanup],
+            dest_special_opts: {
+              initial_headers: %i[parent_object objectnumber transdate
+                location_purpose transport_status
+                transport_type is_temp location]
+            }
           }
           register :parent_objects, {
             creator: Kiba::Tms::Jobs::ObjComponents::ParentObjects,

@@ -25,6 +25,45 @@ module Kiba
       #   are handled a bit separately
       setting :authorities, default: %i[local offsite], reader: true
 
+      # @return [Boolean] whether to retain inactive location terms in
+      #   migration. If this is false, there may be effects in loading/migrating
+      #   LMIs using inactive locations as the current location, since the
+      #   needed location term will not exist, and LMIs require a current
+      #   location.
+      setting :migrate_inactive, default: true, reader: true
+
+      # @return [String] inserted in target field if record is inactive. Has no
+      #   effect if `:inactive_treatment` = `:none`. If `:inactive_treatment` =
+      #   `:status`, you will need to add the value to the optionlist
+      #   populating termStatus.
+      setting :inactive_label,
+        default: "DO NOT USE - INACTIVE",
+        reader: true
+
+      # @return [:status, :type, :none] how to represent inactive term
+      #   status in CollectionSpace term records. `:status` will set
+      #   the termStatus value to the string in `:inactive_label`. You
+      #   will need add the value to the optionlist config. `:type`
+      #   will set the locationType field to the string in
+      #   `:inactive_label`. This will overwrite any other locationType
+      #   value that may be derived for the location term. This
+      #   treatment is the default because the locationType value of a
+      #   term can be viewed when using the term in an LMI or other
+      #   record. `:none` will drop the field indicating whether a
+      #   location is active or not from the migration.
+      setting :inactive_treatment, default: :type, reader: true
+
+      # @return [:termqualifier, :termsourcenote, :securitynote, :accessnote,
+      #   :conditionnote] CS Location term field into which TMS
+      #   Locations.description data should be mapped. Do not use
+      #   :termqualifier or :termsourcenote if those fields are already being
+      #   used in your migration
+      setting :description_target, default: :termqualifier, reader: true
+
+      # @return [Boolean] whether to remove description values that occur
+      #   within termdisplayname or termname values
+      setting :deduplicate_description, default: true, reader: true
+
       # @return [Hash] mapping of TMS Locations.External field value to
       #  authority vocabulary
       def authority_vocab_mapping
@@ -36,7 +75,7 @@ module Kiba
       end
 
       # @return [Boolean] whether terms have been abbreviated in cleanup. If
-      #   true, triggers retention or original :locationstring value in
+      #   true, triggers retention of original :locationstring value in
       #   CollectionSpace :name field
       setting :terms_abbreviated, default: false, reader: true
 

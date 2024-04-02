@@ -9,7 +9,6 @@ module Kiba
 
           def job
             return unless config.used?
-            return unless config.actual_components
 
             Kiba::Extend::Jobs::Job.new(
               files: {
@@ -34,7 +33,10 @@ module Kiba
               transform Merge::MultiRowLookup,
                 lookup: obj_components__problem_components,
                 keycolumn: :componentid,
-                fieldmap: {problem: :componentnumber}
+                fieldmap: {
+                  problem: :componentnumber,
+                  parent_object: :parentobjectnumber
+                }
               transform FilterRows::FieldPopulated,
                 action: :keep,
                 field: :problem
@@ -44,9 +46,11 @@ module Kiba
 
           def finalize
             Kiba.job_segment do
+              transform Tms::Transforms::DeleteTmsFields
               transform Delete::EmptyFields
               transform Delete::Fields,
-                fields: %i[homelocationid fingerprint]
+                fields: %i[objlocationid componentid homelocationid fingerprint
+                  prevobjlocid nextobjlocid fullhomelocid]
             end
           end
         end

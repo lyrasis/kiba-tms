@@ -143,13 +143,19 @@ module Kiba
               transform Tms::Transforms::ObjLocations::AddFulllocid
 
               if lookups.any?(:obj_components__with_object_numbers_by_compid)
+                homelocmap = {
+                  objectnumber: :componentnumber,
+                  homelocationid: :homelocationid,
+                  homelevel: :homelevel,
+                  homesublevel: :homesublevel
+                }.reject do |target, src|
+                  Tms::ObjComponents.omitted_fields.include?(src)
+                end
+
                 transform Merge::MultiRowLookup,
                   lookup: obj_components__with_object_numbers_by_compid,
                   keycolumn: :componentid,
-                  fieldmap: {
-                    objectnumber: :componentnumber,
-                    homelocationid: :homelocationid
-                  },
+                  fieldmap: homelocmap,
                   delim: Tms.delim
               end
               transform Tms::Transforms::ObjLocations::AddFulllocid,

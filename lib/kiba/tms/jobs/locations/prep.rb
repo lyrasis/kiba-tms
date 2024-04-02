@@ -32,7 +32,6 @@ module Kiba
             Kiba.job_segment do
               job = bind.receiver
               config = job.send(:config)
-              lookups = job.send(:lookups)
 
               transform Tms::Transforms::DeleteTmsFields
               if config.omitting_fields?
@@ -68,14 +67,10 @@ module Kiba
               end
 
               transform Replace::FieldValueWithStaticMapping,
-                source: :active,
-                target: :termstatus,
-                mapping: Tms.boolean_active_mapping
-              transform Replace::FieldValueWithStaticMapping,
                 source: :external,
                 target: :storage_location_authority,
                 mapping: config.authority_vocab_mapping
-              transform Delete::Fields, fields: %i[active external]
+              transform Delete::Fields, fields: %i[external]
 
               transform Tms::Transforms::Locations::AddLocationName
               if config.hierarchy
@@ -84,6 +79,12 @@ module Kiba
               transform Rename::Field,
                 from: :locationstring,
                 to: :tmslocationstring
+
+              unless config.omitted_fields.include?(:description)
+                transform Rename::Field,
+                  from: :description,
+                  to: config.description_target
+              end
             end
           end
         end

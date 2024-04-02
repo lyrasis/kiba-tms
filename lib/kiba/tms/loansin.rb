@@ -59,11 +59,13 @@ module Kiba
 
       # @return [:statusnote, :note] target field for remarks data
       setting :remarks_treatment, default: :statusnote, reader: true
+
       # @return [String] used by Loansin::RemarksToStatusNote transform to split
       #   remarks field data into separate status notes
       setting :remarks_delim, default: Tms.notedelim, reader: true
+
       # @return [String] used by Loansin::RemarksToStatusNote transform as the
-      #   constant value for status on derived status notes
+      #   `loanStatus` constant value for derived status notes
       setting :remarks_status, default: "note", reader: true
 
       # @return [Array<String>] of status values with no accompanying info
@@ -82,6 +84,9 @@ module Kiba
           if remarks_treatment == :statusnote
             value << :rem
           end
+          # Since there can be multiple objects related to a loan in, and loan
+          # in credit line is nonrepeatable in CS, subsequent variant credit
+          # line values are mapped to loan status note
           if Tms::ObjAccession.loaned_object_treatment == :creditline_to_loanin
             value << :cl
           end
@@ -97,6 +102,9 @@ module Kiba
         reader: true,
         constructor: proc { |value|
           if remarks_treatment == :statusnote
+            value << :loanstatusnote
+          end
+          if Tms::ObjAccession.loaned_object_treatment == :creditline_to_loanin
             value << :loanstatusnote
           end
           if Tms::LoanObjXrefs.requesteddate_treatment == :loan_status

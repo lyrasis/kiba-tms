@@ -3,10 +3,10 @@
 require "bundler/setup"
 
 # This needs to be the very first thing in this file
-require "simplecov"
-SimpleCov.start do
-  enable_coverage :branch
-end
+# require "simplecov"
+# SimpleCov.start do
+#   enable_coverage :branch
+# end
 
 require_relative "helpers"
 require_relative "../lib/kiba/tms"

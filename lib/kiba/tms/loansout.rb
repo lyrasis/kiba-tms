@@ -12,6 +12,31 @@ module Kiba
       setting :source_job_key, default: :loans__out, reader: true
       extend Tms::Mixins::Tableable
 
+      # In general, the :approvedby field only has one value, which is a person
+      # name. In those cases, the `:approvedby_handling` setting fully controls
+      # how the :approvedby value will be treated.
+      #
+      # Because the `lendersAuthorizer` and `borrowersAuthorizer` fields are
+      # controlled by the Person authority in CS, any :approvedby value that has
+      # been categorized as an organization name will be mapped to `loanGroup`
+      # in the Loan status field group block. The accompanying `loanStatus`
+      # value will be set to "approved" and `loanStatusDate` will be set to
+      # the value of TMS :approveddate.
+      #
+      # If there are more than one person names in :approvedby, the
+      # subsequent names will be mapped to `loanIndividual` in the Loan
+      # status field group block. The accompanying `loanStatus` value
+      # will be set to "approved" and `loanStatusDate` will be set to
+      # the value of TMS :approveddate.
+      #
+      # @return [:lender, :borrower] How to map initial person name
+      #   value in :approvedby field. If :lender, the person name will
+      #   map to the `lendersAuthorizer` field, and :approveddate value
+      #   will map to `lendersAuthorizationDate` field. If :borrow, the person
+      #   name will map to `borrowersAuthorizer` field and :approveddate will
+      #   map to `borrowersAuthorizationDate`.
+      setting :approvedby_handling, default: :lender, reader: true
+
       # If changes are made here, update docs/mapping_options/con_xrefs.adoc as
       #   needed
       setting :con_ref_name_merge_rules,
@@ -20,15 +45,20 @@ module Kiba
             borrower: {
               suffixes: %w[personlocal organizationlocal],
               merge_role: false
+            },
+            borrowerscontact: {
+              suffixes: %w[person org],
+              merge_role: false
             }
           }
         },
         reader: true
-      # @return [:status, :note, :conditions] target field
+      # Tms::Loans has this setting so that it can be set once for loans in and
+      # out.
       # @return [Array<Symbol>] fields to concatenated into target conditions
       #   field
       setting :conditions_source_fields,
-        default: %i[loanconditions insind],
+        default: %i[conditions],
         reader: true,
         constructor: proc { |value|
           if display_date_treatment == :conditions
@@ -59,7 +89,7 @@ module Kiba
       setting :display_date_note_label, default: "Displayed: ", reader: true
       # @return [Array<Symbol>] fields to concatenated into target note field
       setting :note_source_fields,
-        default: %i[description],
+        default: %i[note],
         reader: true,
         constructor: proc { |value|
           if display_date_treatment == :note
@@ -78,13 +108,14 @@ module Kiba
           value
         }
       # @return [:statusnote, :note, :conditions] target field for remarks data
-      setting :remarks_treatment, default: :statusnote, reader: true
+      setting :remarks_treatment, default: :note, reader: true
       # @return [String] used by Loansin::RemarksToStatusNote transform to split
       #   remarks field data into separate status notes
       setting :remarks_delim, default: Tms.notedelim, reader: true
-      # @return [String] used by Loansin::RemarksToStatusNote transform as the
-      #   constant value for status on derived status notes
-      setting :remarks_status, default: "Note", reader: true
+
+      # @return [String] used as the `loanStatus` constant value for derived
+      #   status notes if `:remarks_treatment` = `:statusnote`
+      setting :remarks_status, default: "note", reader: true
 
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
       #   to build status field group
@@ -98,12 +129,13 @@ module Kiba
           if remarks_treatment == :statusnote
             value << :rem
           end
+          value << :tms
           value
         }
       # @return [Array<Symbol>] sent to Collapse::FieldsToRepeatableFieldGroup
       #   to build status field group
       setting :status_targets,
-        default: %i[loanindividual loanstatus loanstatusdate],
+        default: %i[loangroup loanindividual loanstatus loanstatusdate],
         reader: true,
         constructor: proc { |value|
           if remarks_treatment == :statusnote

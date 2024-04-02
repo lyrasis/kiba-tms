@@ -16,11 +16,25 @@ module Kiba
               desc: "Creates all NHRs between exhibitions and loans in",
               tags: %i[exhibitions loansin nhr ingest]
             }
+            register :exhibition_loanout, {
+              creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoanout,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_exhibition_loanout.csv"
+              ),
+              desc: "Creates all NHRs between exhibitions and loans out",
+              tags: %i[exhibitions loansout nhr ingest]
+            }
             register :loanin_object, {
               creator: Kiba::Tms::Jobs::Nhrs::LoaninObject,
               path: File.join(Kiba::Tms.datadir, "ingest",
                 "nhr_loanin_object.csv"),
               tags: %i[loans loansin collectionobjects nhr ingest]
+            }
+            register :loanout_object, {
+              creator: Kiba::Tms::Jobs::Nhrs::LoanoutObject,
+              path: File.join(Kiba::Tms.datadir, "ingest",
+                "nhr_loanout_object.csv"),
+              tags: %i[loans loansout collectionobjects nhr ingest]
             }
             register :object_object, {
               creator: Kiba::Tms::Jobs::Nhrs::ObjectObject,
@@ -61,6 +75,27 @@ module Kiba
               desc: "Creates direct NHRs between exhibitions and loans in "\
                 "through objects",
               tags: %i[exhibitions loansin nhr]
+            }
+            register :exhibition_loanout_direct, {
+              creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoanoutDirect,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "nhr_exhibition_loanout_direct.csv"
+              ),
+              desc: "Creates direct NHRs between exhibitions and loans in",
+              tags: %i[exhibitions loansout nhr]
+            }
+            register :exhibition_loanout_indirect, {
+              creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoanoutIndirect,
+              path: File.join(
+                Kiba::Tms.datadir,
+                "working",
+                "nhr_exhibition_loanout_indirect.csv"
+              ),
+              desc: "Creates direct NHRs between exhibitions and loans in "\
+                "through objects",
+              tags: %i[exhibitions loansout nhr]
             }
           end
         end

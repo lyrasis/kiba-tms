@@ -14,11 +14,17 @@ module Kiba
                 destination: :locs__compiled_hierarchy,
                 lookup: :locs__compiled_clean
               },
-              transformer: xforms
+              transformer: get_xforms
             )
           end
 
-          def xforms
+          def get_xforms
+            base = [initial_xforms, final_xforms]
+            base.insert(1, handle_inactive) if config.migrate_inactive
+            base
+          end
+
+          def initial_xforms
             bind = binding
 
             Kiba.job_segment do
@@ -32,6 +38,42 @@ module Kiba
               if config.populate_storage_loc_type
                 transform Tms::Transforms::Locations::AddLocationType
               end
+            end
+          end
+
+          def handle_inactive
+            bind = binding
+
+            Kiba.job_segment do
+              config = bind.receiver.send(:config)
+
+              label = config.inactive_label
+              typepop = config.populate_storage_loc_type
+
+              case config.inactive_treatment
+              when :status
+                transform Merge::ConstantValueConditional,
+                  fieldmap: {termstatus: label},
+                  condition: ->(row) { row[:active] == "0" }
+              when :type
+                transform do |row|
+                  case row[:active]
+                  when "0"
+                    row[:locationtype] = label
+                  when "1"
+                    next row if typepop
+
+                    row[:locationtype] = nil
+                  end
+                  row
+                end
+              end
+            end
+          end
+
+          def final_xforms
+            Kiba.job_segment do
+              transform Delete::Fields, fields: :active
               transform Sort::ByFieldValue,
                 field: :term_source,
                 mode: :string
