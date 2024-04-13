@@ -4,23 +4,28 @@ module Kiba
   module Tms
     module Jobs
       module ValuationControl
-        module AllClean
+        module Ingest
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :valuation_control__all,
-                destination: :valuation_control__all_clean
+                destination: :valuation_control__ingest
               },
               transformer: xforms
             )
           end
 
           def xforms
+            bind = binding
+
             Kiba.job_segment do
-              transform Delete::Fields,
-                fields: %i[objinsuranceid objectnumber]
+              config = bind.receiver.send(:config)
+
+              transform Delete::FieldsExcept,
+                fields: config.cs_fields[Tms.cspace_profile]
+              transform Tms.final_data_cleaner if Tms.final_data_cleaner
             end
           end
         end

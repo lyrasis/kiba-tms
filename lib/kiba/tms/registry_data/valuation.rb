@@ -43,10 +43,10 @@ module Kiba
               tags: %i[valuation],
               lookup_on: :objinsuranceid
             }
-            register :all_clean, {
-              creator: Kiba::Tms::Jobs::ValuationControl::AllClean,
-              path: File.join(Kiba::Tms.datadir, "working", "vc_all_clean.csv"),
-              tags: %i[valuation]
+            register :ingest, {
+              creator: Kiba::Tms::Jobs::ValuationControl::Ingest,
+              path: File.join(Kiba::Tms.datadir, "ingest", "valuation.csv"),
+              tags: %i[valuation ingest]
             }
             register :from_accession_lot, {
               creator: Kiba::Tms::Jobs::ValuationControl::FromAccessionLot,
