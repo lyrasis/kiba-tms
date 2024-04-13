@@ -27,8 +27,8 @@ module Kiba
             Kiba.job_segment do
               transform Delete::Fields, fields: :acquisitionlotid
 
-              warn("Need to implement the rest of "\
-                   "ValuationControl::FromAccessionLot")
+              raise("Need to implement the rest of "\
+                    "ValuationControl::FromAccessionLot")
 
               transform Merge::ConstantValue,
                 target: :datasource,
