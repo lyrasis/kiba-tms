@@ -339,6 +339,14 @@ module Kiba
               desc: "Removes rows for objects not linked to loansin, if "\
                 "configured to do so. Otherwise passes through all rows."
             }
+            register :valuation_review, {
+              creator: Kiba::Tms::Jobs::ObjAccession::ValuationReview,
+              path: File.join(Tms.datadir, "reports",
+                "obj_accession_valuation_review.csv"),
+              tags: %i[obj_accessions reports],
+              desc: "Includes rows with value/price data that are not linked to "\
+                "ObjInsurance rows."
+            }
             register :linked_lot, {
               creator: Kiba::Tms::Jobs::ObjAccession::LinkedLot,
               path: File.join(Kiba::Tms.datadir, "working",
