@@ -19,6 +19,22 @@ module Kiba
         },
         reader: true
       extend Tms::Mixins::CsTargetable
+
+      # @return [Array<Symbol>] full job keys of jobs whose output should be
+      #   compiled as valuation control procedure records
+      setting :source_jobs,
+        default: %i[
+          valuation_control__from_obj_insurance
+          valuation_control__from_accession_lot
+          valuation_control__from_obj_accession
+        ],
+        reader: true,
+        constructor: ->(base) do
+          Tms::ObjDeaccession.valuation_source_fields.each do |field|
+            base << "obj_deaccession__valuation_#{field}".to_sym
+          end
+          base
+        end
     end
   end
 end

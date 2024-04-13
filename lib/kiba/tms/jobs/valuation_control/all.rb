@@ -20,10 +20,8 @@ module Kiba
           end
 
           def sources
-            %i[
-              valuation_control__from_obj_insurance
-              valuation_control__from_accession_lot
-            ].select { |job| Tms.job_output?(job) }
+            config.source_jobs
+              .select { |job| Tms.job_output?(job) }
           end
 
           def xforms
@@ -32,7 +30,8 @@ module Kiba
                 prefix: "VC",
                 id_source: :idbase,
                 id_target: :valuationcontrolrefnumber,
-                omit_suffix_if_single: false
+                omit_suffix_if_single: false,
+                sort_on: :valuedate
               transform Clean::EnsureConsistentFields
             end
           end
