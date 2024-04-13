@@ -21,7 +21,28 @@ module Kiba
                                               )
                                             end
                           },
+      # @return [Symbol] name of field containing values to map to :valuetype
+      setting :valuetype_source,
+        default: :systemvaluetype,
         reader: true
+
+      # @return [nil, Proc] Kiba.job_segment definition of transforms to be run
+      #   at the beginning of :obj_insurance__shape
+      setting :pre_shape_xforms, default: nil, reader: true
+
+      # @return [:note] How to treat ValuationPurpose values merged
+      #   into migrating ObjInsurance rows. Currently there is only
+      #   one option, but more can be added as neede
+      setting :purpose_treatment, default: :note, reader: true
+
+      # @return [Array<Symbol>] fields to be combined into :valuenote
+      setting :valuenote_sources,
+        default: [:valuenotes],
+        reader: true,
+        constructor: ->(base) do
+          base.unshift(:valuationpurpose) if purpose_treatment == :note
+          base
+        end
 
       # :currencyid or :localcurrencyid
       # So far, localcurrencyid has data where currencyid does not, so we prefer
