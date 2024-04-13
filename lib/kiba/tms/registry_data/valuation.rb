@@ -14,6 +14,12 @@ module Kiba
                 "obj_insurance_migrating.csv"),
               tags: %i[obj_insurance valuation]
             }
+            register :shape, {
+              creator: Kiba::Tms::Jobs::ObjInsurance::Shape,
+              path: File.join(Kiba::Tms.datadir, "working",
+                "obj_insurance_shape.csv"),
+              tags: %i[obj_insurance valuation]
+            }
             register :dropped, {
               creator: Kiba::Tms::Jobs::ObjInsurance::Dropped,
               path: File.join(Kiba::Tms.datadir, "postmigcleanup",
