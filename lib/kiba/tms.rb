@@ -160,6 +160,9 @@ module Kiba
       default: {"0" => "y", "1" => "n"},
       reader: true
 
+    # @return [String] to use as currency value when none exists in the data
+    setting :default_currency, default: "US Dollar", reader: true
+
     # Client-specific initial data cleaner, applied before processing
     setting :data_cleaner, default: nil, reader: true
 

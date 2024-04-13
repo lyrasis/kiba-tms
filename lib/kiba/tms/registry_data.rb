@@ -1298,6 +1298,20 @@ module Kiba
               "obj_deaccession_obj_rel.csv"),
             tags: %i[obj_deaccession objects nhr]
           }
+          Tms::ObjDeaccession.valuation_source_fields.each do |src|
+            register "valuation_#{src}".to_sym, {
+              creator: {
+                callee: Tms::Jobs::ObjDeaccession::ValuationCreator,
+                args: {source: src}
+              },
+              path: File.join(
+                Tms.datadir, "working", "vc_from_#{src}.csv"
+              ),
+              desc: "Valuation control procedures derived from "\
+                "ObjDeaccession.#{src}",
+              tags: %i[obj_deaccession valuation_control]
+            }
+          end
         end
 
         Kiba::Tms.registry.namespace("obj_geography") do
