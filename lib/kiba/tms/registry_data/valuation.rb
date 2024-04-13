@@ -29,6 +29,7 @@ module Kiba
               {initial_headers: %i[objectnumber dropping value currency]}
             }
           end
+
           Kiba::Tms.registry.namespace("valuation_control") do
             register :all, {
               creator: Kiba::Tms::Jobs::ValuationControl::All,

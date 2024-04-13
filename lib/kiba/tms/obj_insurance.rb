@@ -7,20 +7,6 @@ module Kiba
 
       module_function
 
-      setting :checkable, default: {
-                            adjval_eq_val: proc do
-                              Tms::Services::CompareFieldPairValuesChecker.call(
-                                mod: self,
-                                fields: %i[value adjustedvalue]
-                              )
-                            end,
-                            currval_eq_val: proc do
-                                              Tms::Services::CompareFieldPairValuesChecker.call(
-                                                mod: self,
-                                                fields: %i[value currencyvalue]
-                                              )
-                                            end
-                          },
       # @return [Symbol] name of field containing values to map to :valuetype
       setting :valuetype_source,
         default: :systemvaluetype,
@@ -50,6 +36,7 @@ module Kiba
       setting :pref_currencyid,
         default: :localcurrencyid,
         reader: true
+
       setting :nonpref_currencyid,
         reader: true,
         constructor: ->(value) {
@@ -68,11 +55,13 @@ module Kiba
           "4" => "accession value"
         },
         reader: true
+
       # What to do with row if :value = 0
       # :drop or :create_record
       setting :zero_value_treatment,
         default: :drop,
         reader: true
+
       # @return [Array<Symbol>] unmigratable fields removed by default
       setting :delete_fields,
         default: %i[currencyrate2 currencyrateisodate currencyvalue
@@ -82,6 +71,24 @@ module Kiba
           adjustedvalue],
         reader: true,
         constructor: ->(value) { value << nonpref_currencyid }
+
+      setting :checkable,
+        default: {
+          adjval_eq_val: proc do
+            Tms::Services::CompareFieldPairValuesChecker.call(
+              mod: self,
+              fields: %i[value adjustedvalue]
+            )
+          end,
+          currval_eq_val: proc do
+            Tms::Services::CompareFieldPairValuesChecker.call(
+              mod: self,
+              fields: %i[value currencyvalue]
+            )
+          end
+        },
+        reader: true
+
       extend Tms::Mixins::Tableable
     end
   end
