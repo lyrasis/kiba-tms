@@ -61,6 +61,18 @@ module Kiba
 
               transform Tms.data_cleaner if Tms.data_cleaner
 
+              transform do |row|
+                val = row[:value]
+                next row if val.blank?
+
+                parts = val.to_f
+                  .round(2)
+                  .to_s
+                  .split(".")
+                row[:value] = [parts[0], parts[1].ljust(2, "0")].join(".")
+                row
+              end
+
               transform Merge::MultiRowLookup,
                 lookup: objects__number_lookup,
                 keycolumn: :objectid,

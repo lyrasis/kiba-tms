@@ -92,6 +92,22 @@ module Kiba
               transform Delete::FieldValueMatchingRegexp,
                 fields: %i[estimatehigh estimatelow netsaleamount],
                 match: '^\.0000$'
+
+              transform do |row|
+                %i[estimatehigh estimatelow netsaleamount].each do |field|
+                  val = row[field]
+                  next if val.blank?
+
+                  parts = val.to_f
+                    .round(2)
+                    .to_s
+                    .split(".")
+                  decplcs = parts[1].ljust(2, "0")
+                  row[field] = [parts[0], decplcs].join(".")
+                end
+                row
+              end
+
               transform Copy::Field,
                 from: :objectnumber,
                 to: :objnumforid

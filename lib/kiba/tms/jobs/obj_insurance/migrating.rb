@@ -24,6 +24,7 @@ module Kiba
               transform FilterRows::FieldPopulated,
                 action: :reject,
                 field: :dropping
+              transform Delete::Fields, fields: :dropping
             end
           end
         end
