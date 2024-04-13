@@ -29,6 +29,10 @@ module Kiba
 
               warn("Need to implement the rest of "\
                    "ValuationControl::FromAccessionLot")
+
+              transform Merge::ConstantValue,
+                target: :datasource,
+                value: "AccessionLot"
             end
           end
         end

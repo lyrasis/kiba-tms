@@ -24,6 +24,9 @@ module Kiba
               transform Copy::Field,
                 from: :objectnumber,
                 to: :idbase
+              transform Merge::ConstantValue,
+                target: :datasource,
+                value: "ObjInsurance"
             end
           end
         end
