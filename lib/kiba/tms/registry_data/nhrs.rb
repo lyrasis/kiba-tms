@@ -57,8 +57,12 @@ module Kiba
               ),
               tags: %i[nhr collectionobjects ingest]
             }
+            register :object_valuation, {
+              creator: Kiba::Tms::Jobs::Nhrs::ObjectValuation,
               path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_object_valuation.csv"
               ),
+              tags: %i[nhr collectionobjects valuation ingest]
             }
 
             register :exhibition_loanin_direct, {
