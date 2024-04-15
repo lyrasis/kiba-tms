@@ -15,6 +15,13 @@ module Kiba
               ),
               tags: %i[acquisitions collectionobjects nhr ingest]
             }
+            register :acquisition_valuation, {
+              creator: Kiba::Tms::Jobs::Nhrs::AcquisitionValuation,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_acquisition_valuation.csv"
+              ),
+              tags: %i[acquisitions valuation nhr ingest]
+            }
             register :exhibition_loanin, {
               creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoanin,
               path: File.join(
