@@ -310,8 +310,8 @@ module Kiba
               ),
               tags: %i[obj_accessions setup],
               desc: "Prepares data enough for loans report to be meaningful: "\
-                "merges in object numbers and accession methods. Flags objects "\
-                "linked to loans in through the LoanObjXrefs table."
+                "merges in object numbers and accession methods. Flags "\
+                "objects linked to loans in through the LoanObjXrefs table."
             }
             register :loans_in, {
               creator: Kiba::Tms::Jobs::ObjAccession::LoansIn,

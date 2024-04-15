@@ -43,23 +43,22 @@ module Kiba
                 "nhr_loanout_object.csv"),
               tags: %i[loans loansout collectionobjects nhr ingest]
             }
-            register :object_object, {
-              creator: Kiba::Tms::Jobs::Nhrs::ObjectObject,
-              path: File.join(
-                Kiba::Tms.datadir,
-                "ingest",
-                "nhr_object_object.csv"
-              ),
-              tags: %i[nhr collectionobjects ingest]
-            }
             register :media_object, {
               creator: Kiba::Tms::Jobs::Nhrs::MediaObject,
               path: File.join(
-                Kiba::Tms.datadir,
-                "ingest",
-                "nhr_media_object.csv"
+                Kiba::Tms.datadir, "ingest", "nhr_media_object.csv"
               ),
               tags: %i[nhr collectionobjects media ingest]
+            }
+            register :object_object, {
+              creator: Kiba::Tms::Jobs::Nhrs::ObjectObject,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_object_object.csv"
+              ),
+              tags: %i[nhr collectionobjects ingest]
+            }
+              path: File.join(
+              ),
             }
 
             register :exhibition_loanin_direct, {
