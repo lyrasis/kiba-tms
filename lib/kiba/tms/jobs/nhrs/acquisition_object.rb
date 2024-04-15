@@ -3,19 +3,23 @@
 module Kiba
   module Tms
     module Jobs
-      module RelsAcqObj
-        module ForIngest
+      module Nhrs
+        module AcquisitionObject
           module_function
 
           def job
             return if sources.empty?
 
+            config.config.rectype1 = "Acquisitions"
+            config.config.rectype2 = "Collectionobjects"
+            config.config.sample_from = :rectype1
+
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
-                destination: :rels_acq_obj__for_ingest
+                destination: :nhrs__acquisition_object
               },
-              transformer: get_xforms
+              transformer: config.transformers
             )
           end
 
@@ -37,28 +41,6 @@ module Kiba
               base << :one_to_one_acq__acq_obj_rel
             end
             base
-          end
-
-          def get_xforms
-            return [xforms] unless config.sampleable?
-
-            [config.sample_xforms, xforms]
-          end
-
-          def xforms
-            Kiba.job_segment do
-              transform FilterRows::AllFieldsPopulated,
-                action: :keep,
-                fields: %i[item1_id item2_id]
-              transform CombineValues::FullRecord,
-                prepend_source_field_name: false,
-                delim: " ",
-                delete_sources: false
-
-              transform Deduplicate::Table,
-                field: :index,
-                delete_field: true
-            end
           end
         end
       end

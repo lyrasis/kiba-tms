@@ -7,11 +7,81 @@ module Kiba
 
       extend Dry::Configurable
 
-      setting :cs_record_id_field,
-        default: :objectnumber,
+      # @return [String, nil] name of CsTargetable-extending config module. Set
+      #   from job
+      setting :rectype1,
+        default: nil,
         reader: true
 
-      extend Tms::Mixins::CsTargetable
+      # @return [String, nil] name of CsTargetable-extending config module. Set
+      #   from job
+      setting :rectype2,
+        default: nil,
+        reader: true
+
+      setting :job_xforms, default: nil, reader: true
+
+      def transformers
+        [sample_xforms, job_xforms, finalize_xforms].compact
+      end
+
+      # @return [:rectype1, :rectype2, nil] Set from job if intending to output
+      #   a sample set of relations
+      setting :sample_from,
+        default: nil,
+        reader: true
+
+      def sampleable?
+        return false if Tms.migration_status == :prod
+
+        sample_from && used? && sample_mod.sampleable?
+      end
+
+      def used?
+        Tms.cspace_target_records.include?(rectype1) &&
+          Tms.cspace_target_records.include?(rectype2)
+      end
+
+      def sample_mod
+        Tms.const_get(send(send(:sample_from)))
+      rescue NameError
+        nil
+      end
+
+      def sample_id_field
+        return :item1_id if sample_from == :rectype1
+
+        :item2_id
+      end
+
+      def sample_job_key = sample_mod.sample_job_key
+
+      def sample_lookup
+        Tms.get_lookup(
+          jobkey: sample_job_key,
+          column: sample_mod.cs_record_id_field
+        )
+      end
+
+      def sample_xforms
+        return nil unless sampleable?
+
+        bind = binding
+
+        Kiba.job_segment do
+          config = bind.receiver
+
+          transform Merge::MultiRowLookup,
+            lookup: config.sample_lookup,
+            keycolumn: config.sample_id_field,
+            fieldmap: {insample: config.sample_mod.cs_record_id_field}
+          transform FilterRows::FieldPopulated,
+            action: :keep,
+            field: :insample
+          transform Delete::Fields,
+            fields: :insample
+        end
+      end
 
       def finalize_xforms
         Kiba.job_segment do
@@ -22,38 +92,6 @@ module Kiba
           transform Deduplicate::Table,
             field: :index,
             delete_field: true
-        end
-      end
-
-      def sample_xforms
-        bind = binding
-
-        Kiba.job_segment do
-          config = bind.receiver
-
-          transform Merge::MultiRowLookup,
-            lookup: config.sample_lookup,
-            keycolumn: config.cs_record_id_field,
-            fieldmap: {insample: config.cs_record_id_field}
-
-          merge_fields = [:insample]
-
-          if Tms::RelsAcqObj.used? && Tms::RelsAcqObj.sampleable?
-            transform Merge::MultiRowLookup,
-              lookup: Tms.get_lookup(
-                jobkey: :rels_acq_obj__for_ingest,
-                column: :item2_id
-              ),
-              keycolumn: :objectnumber,
-              fieldmap: {acqobj: :item2_id}
-            merge_fields << :acqobj
-          end
-
-          transform FilterRows::AnyFieldsPopulated,
-            action: :keep,
-            fields: merge_fields
-          transform Delete::Fields,
-            fields: merge_fields
         end
       end
     end

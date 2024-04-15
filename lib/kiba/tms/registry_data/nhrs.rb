@@ -8,6 +8,13 @@ module Kiba
 
         def register
           Kiba::Tms.registry.namespace("nhrs") do
+            register :acquisition_object, {
+              creator: Kiba::Tms::Jobs::Nhrs::AcquisitionObject,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_acquisition_object.csv"
+              ),
+              tags: %i[acquisitions collectionobjects nhr ingest]
+            }
             register :exhibition_loanin, {
               creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoanin,
               path: File.join(

@@ -2061,20 +2061,6 @@ module Kiba
         # "reference_master"
         Kiba::Tms::RegistryData::ReferenceMaster.register
 
-        Kiba::Tms.registry.namespace("rels_acq_obj") do
-          register :for_ingest, {
-            creator: Kiba::Tms::Jobs::RelsAcqObj::ForIngest,
-            path: File.join(
-              Kiba::Tms.datadir,
-              "ingest",
-              "rels_acq_obj.csv"
-            ),
-            tags: %i[acquisitions objects nhr],
-            desc: "Compiles acquisition-object nhrs from all treatments and "\
-              "prepares for ingest"
-          }
-        end
-
         Kiba::Tms.registry.namespace("terms") do
           register :used_in_xrefs, {
             creator: Kiba::Tms::Jobs::Terms::UsedInXrefs,
