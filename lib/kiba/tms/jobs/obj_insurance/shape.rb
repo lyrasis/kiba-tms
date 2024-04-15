@@ -31,6 +31,19 @@ module Kiba
               if Tms::ValuationPurposes.used?
                 case config.purpose_treatment
                 when :note
+                  # Remove valuation purposes that duplicate :systemvaluetype
+                  transform do |row|
+                    purpose = row[:valuationpurpose]
+                    next row if purpose.blank?
+
+                    type = row[:systemvaluetype]
+                    next row if type.blank?
+                    next row unless purpose.downcase == type.downcase
+
+                    row[:valuationpurpose] = nil
+                    row
+                  end
+
                   transform Prepend::ToFieldValue,
                     field: :valuationpurpose,
                     value: "Purpose: "
