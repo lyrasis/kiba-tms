@@ -3,15 +3,15 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module Ingest
           module_function
 
           def job
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :valuation_control__all,
-                destination: :valuation_control__ingest
+                source: :valuationcontrols__all,
+                destination: :valuationcontrols__ingest
               },
               transformer: xforms
             )

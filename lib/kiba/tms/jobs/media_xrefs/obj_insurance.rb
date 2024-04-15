@@ -17,7 +17,7 @@ module Kiba
                 destination: :media_xrefs__obj_insurance,
                 lookup: %i[
                   media_files__id_lookup
-                  valuation_control__all
+                  valuationcontrols__all
                 ]
               },
               transformer: xforms
@@ -32,7 +32,7 @@ module Kiba
               #   we want all media :identificationnumber values in one column
               #   for lookup
               transform Merge::MultiRowLookup,
-                lookup: valuation_control__all,
+                lookup: valuationcontrols__all,
                 keycolumn: :id,
                 fieldmap: {item1_id: :valuationcontrolrefnumber}
               transform Merge::MultiRowLookup,

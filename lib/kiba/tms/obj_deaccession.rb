@@ -86,7 +86,7 @@ module Kiba
       #   procedures
       def valuation_control_fields
         %i[deaccessionid objectnumber idbase] +
-          Tms::ValuationControl.cs_fields[Tms.cspace_profile]
+          Tms::Valuationcontrols.cs_fields[Tms.cspace_profile]
       end
     end
   end

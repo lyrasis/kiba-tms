@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module All
           module_function
 
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
-                destination: :valuation_control__all
+                destination: :valuationcontrols__all
               },
               transformer: xforms
             )

@@ -148,7 +148,7 @@ module Kiba
     setting :cspace_profile, default: :fcart, reader: true
     setting :cspace_target_records,
       default: %w[Acquisitions Collectionobjects Loansin Loansout
-        Orgs Persons Places Works],
+        Orgs Persons Places Works Valuationcontrols],
       reader: true
     setting :boolean_yn_mapping,
       default: {"0" => "n", "1" => "y"},

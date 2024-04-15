@@ -3,13 +3,13 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
-        module FromAccessionLot
+      module Valuationcontrols
+        module FromObjAccession
           module_function
 
           def job
-            return unless Tms::AccessionLot.used?
-            return unless Tms::AccessionLot.has_valuations
+            return unless Tms::ObjAccession.used?
+            return unless Tms::ObjAccession.has_objectvalueids
 
             approaches = Tms::ObjAccession.processing_approaches
             return unless approaches.any?(:linkedlot)
@@ -17,7 +17,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :accession_lot__valuation_prep,
-                destination: :valuation_control__from_accession_lot
+                destination: :valuationcontrols__from_accession_lot
               },
               transformer: xforms
             )
@@ -28,11 +28,11 @@ module Kiba
               transform Delete::Fields, fields: :acquisitionlotid
 
               raise("Need to implement the rest of "\
-                    "ValuationControl::FromAccessionLot")
+                    "Valuationcontrols::FromAccessionLot")
 
               transform Merge::ConstantValue,
                 target: :datasource,
-                value: "AccessionLot"
+                value: "ObjAccession"
             end
           end
         end

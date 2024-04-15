@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module FromObjInsurance
           module_function
 
@@ -13,7 +13,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_insurance__shape,
-                destination: :valuation_control__from_obj_insurance
+                destination: :valuationcontrols__from_obj_insurance
               },
               transformer: xforms
             )

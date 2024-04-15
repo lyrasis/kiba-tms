@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module NhrAcqAccessionLot
           module_function
 
@@ -17,7 +17,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :accession_lot__valuation_prep,
-                destination: :valuation_control__nhr_acq_accession_lot
+                destination: :valuationcontrols__nhr_acq_accession_lot
               },
               transformer: xforms
             )

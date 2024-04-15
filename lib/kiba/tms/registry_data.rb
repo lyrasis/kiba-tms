@@ -2151,7 +2151,7 @@ module Kiba
         end
 
         # "obj_insurance" "valuation_control"
-        Kiba::Tms::RegistryData::Valuation.register
+        Kiba::Tms::RegistryData::Valuationcontrols.register
 
         Kiba::Tms.registry.namespace("works") do
           register :lookup, {

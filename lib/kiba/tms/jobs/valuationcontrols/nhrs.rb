@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module Nhrs
           module_function
 
@@ -11,7 +11,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: sources,
-                destination: :valuation_control__nhrs
+                destination: :valuationcontrols__nhrs
               },
               transformer: xforms
             )
@@ -19,13 +19,13 @@ module Kiba
 
           def sources
             %i[
-              valuation_control__nhr_acq_accession_lot
-              valuation_control__nhr_obj_accession_lot
+              valuationcontrols__nhr_acq_accession_lot
+              valuationcontrols__nhr_obj_accession_lot
               acq_num_acq__acq_valuation_rel
               linked_set_acq__acq_valuation_rel
               lot_num_acq__acq_valuation_rel
               one_to_one_acq__acq_valuation_rel
-              valuation_control__nhr_obj
+              valuationcontrols__nhr_obj
             ].select { |job| Tms.job_output?(job) }
           end
 

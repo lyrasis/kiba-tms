@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module NhrObjAccessionLot
           module_function
 
@@ -17,7 +17,7 @@ module Kiba
             Kiba::Extend::Jobs::Job.new(
               files: {
                 source: :obj_accession__linked_lot,
-                destination: :valuation_control__nhr_obj_accession_lot,
+                destination: :valuationcontrols__nhr_obj_accession_lot,
                 lookup: %i[
                   accession_lot__valuation_prep
                   objects__numbers_cleaned

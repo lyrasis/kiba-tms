@@ -59,7 +59,7 @@ module Kiba
                 fields: %i[combined refnum increment]
               transform Merge::MultiRowLookup,
                 lookup: Tms.get_lookup(
-                  jobkey: :valuation_control__all,
+                  jobkey: :valuationcontrols__all,
                   column: :objinsuranceid
                 ),
                 keycolumn: :objectvalueid,

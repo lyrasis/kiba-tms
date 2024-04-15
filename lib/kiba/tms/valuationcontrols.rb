@@ -2,7 +2,7 @@
 
 module Kiba
   module Tms
-    module ValuationControl
+    module Valuationcontrols
       extend Dry::Configurable
 
       module_function
@@ -13,8 +13,8 @@ module Kiba
 
       setting :cs_fields,
         default: {
-          fcart: %i[valuationcontrolrefnumber valuecurrency valueamount valuedate
-            valuerenewaldate valuesourcepersonlocal
+          fcart: %i[valuationcontrolrefnumber valuecurrency valueamount
+            valuedate valuerenewaldate valuesourcepersonlocal
             valuesourceorganizationlocal valuetype valuenote]
         },
         reader: true
@@ -24,9 +24,9 @@ module Kiba
       #   compiled as valuation control procedure records
       setting :source_jobs,
         default: %i[
-          valuation_control__from_obj_insurance
-          valuation_control__from_accession_lot
-          valuation_control__from_obj_accession
+          valuationcontrols__from_obj_insurance
+          valuationcontrols__from_accession_lot
+          valuationcontrols__from_obj_accession
         ],
         reader: true,
         constructor: ->(base) do

@@ -3,7 +3,7 @@
 module Kiba
   module Tms
     module Jobs
-      module ValuationControl
+      module Valuationcontrols
         module NhrObj
           module_function
 
@@ -12,8 +12,8 @@ module Kiba
 
             Kiba::Extend::Jobs::Job.new(
               files: {
-                source: :valuation_control__from_obj_insurance,
-                destination: :valuation_control__nhr_obj
+                source: :valuationcontrols__from_obj_insurance,
+                destination: :valuationcontrols__nhr_obj
               },
               transformer: xforms
             )
@@ -26,7 +26,7 @@ module Kiba
               transform Deduplicate::Table, field: :objectnumber
               transform Merge::MultiRowLookup,
                 lookup: Tms.get_lookup(
-                  jobkey: :valuation_control__all,
+                  jobkey: :valuationcontrols__all,
                   column: :objectnumber
                 ),
                 keycolumn: :objectnumber,
