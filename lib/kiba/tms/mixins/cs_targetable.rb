@@ -10,6 +10,12 @@
 # - `extend Tms::Mixins::CsTargetable`
 #
 # This module should be mixed in AFTER any other mixins
+#
+# The main reason for using this mixin is to enable semi-auto handling of
+# record samples in prod. For this use, you must define the following
+# before extending with this module:
+#
+# - :cs_record_id_field
 module Kiba
   module Tms
     module Mixins

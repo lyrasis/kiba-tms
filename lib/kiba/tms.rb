@@ -146,6 +146,11 @@ module Kiba
       default: {"0" => "inactive", "1" => "active"},
       reader: true
     setting :cspace_profile, default: :fcart, reader: true
+
+    # @return [Array<String>] CollectionSpace record types being populated in
+    #   the migration. For objects and procedures, the form used must
+    #   downcase to the form used in item1_type/item2_type fields in
+    #   nonhierarchical relationships
     setting :cspace_target_records,
       default: %w[Acquisitions Collectionobjects Loansin Loansout
         Orgs Persons Places Works Valuationcontrols],
