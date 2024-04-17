@@ -38,10 +38,17 @@ module Kiba
             end
           end
 
-          # @param xforms [Array] of transform classes
+          # @param xforms [Proc, Array] of transform classes. Proc is the
+          #   preferred type to pass, but not all have been converted
+          # @todo Convert all prepper_xforms from Array to Proc
           def prepper_xforms(mod)
-            Kiba.job_segment do
-              mod.prepper_xforms.each { |xform| transform xform }
+            xforms = mod.prepper_xforms
+            if xforms.is_a?(Array)
+              Kiba.job_segment do
+                xforms.each { |xform| transform xform }
+              end
+            elsif xforms.is_a?(Proc)
+              xforms
             end
           end
 
