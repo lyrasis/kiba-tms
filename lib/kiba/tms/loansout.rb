@@ -12,6 +12,9 @@ module Kiba
       setting :source_job_key, default: :loans__out, reader: true
       extend Tms::Mixins::Tableable
 
+      setting :cs_record_id_field, default: :loanoutnumber, reader: true
+      extend Tms::Mixins::CsTargetable
+
       # In general, the :approvedby field only has one value, which is a person
       # name. In those cases, the `:approvedby_handling` setting fully controls
       # how the :approvedby value will be treated.

@@ -22,7 +22,7 @@ module Kiba
       setting :job_xforms, default: nil, reader: true
 
       def transformers
-        [sample_xforms, job_xforms, finalize_xforms].compact
+        [job_xforms, sample_xforms, config_finalize_xforms].compact
       end
 
       # @return [:rectype1, :rectype2, nil] Set from job if intending to output
@@ -92,6 +92,27 @@ module Kiba
           transform Deduplicate::Table,
             field: :index,
             delete_field: true
+        end
+      end
+
+      def config_finalize_xforms
+        bind = binding
+
+        Kiba.job_segment do
+          config = bind.receiver
+
+          transform FilterRows::AllFieldsPopulated,
+            action: :keep,
+            fields: %i[item1_id item2_id]
+          transform CombineValues::FullRecord, delim: " "
+          transform Deduplicate::Table,
+            field: :index,
+            delete_field: true
+          transform Merge::ConstantValues,
+            constantmap: {
+              item1_type: config.send(:rectype1).downcase,
+              item2_type: config.send(:rectype2).downcase
+            }
         end
       end
     end

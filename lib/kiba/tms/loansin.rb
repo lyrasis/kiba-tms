@@ -19,6 +19,9 @@ module Kiba
         end
       extend Tms::Mixins::Tableable
 
+      setting :cs_record_id_field, default: :loaninnumber, reader: true
+      extend Tms::Mixins::CsTargetable
+
       # @return [nil, Proc] Kiba.job_segment definition run at the end of
       #   loansin__cspace job
       setting :pre_ingest_xforms, default: nil, reader: true

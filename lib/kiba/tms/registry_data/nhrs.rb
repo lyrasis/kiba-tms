@@ -13,7 +13,8 @@ module Kiba
               path: File.join(
                 Kiba::Tms.datadir, "ingest", "nhr_acquisition_object.csv"
               ),
-              tags: %i[acquisitions collectionobjects nhr ingest]
+              tags: %i[acquisitions collectionobjects nhr ingest],
+              lookup_on: :item2_id
             }
             register :acquisition_valuation, {
               creator: Kiba::Tms::Jobs::Nhrs::AcquisitionValuation,
@@ -44,11 +45,23 @@ module Kiba
                 "nhr_loanin_object.csv"),
               tags: %i[loans loansin collectionobjects nhr ingest]
             }
+            register :loanin_valuation, {
+              creator: Kiba::Tms::Jobs::Nhrs::LoaninValuation,
+              path: File.join(Kiba::Tms.datadir, "ingest",
+                "nhr_loanin_valuation.csv"),
+              tags: %i[loans loansin valuation nhr ingest]
+            }
             register :loanout_object, {
               creator: Kiba::Tms::Jobs::Nhrs::LoanoutObject,
               path: File.join(Kiba::Tms.datadir, "ingest",
                 "nhr_loanout_object.csv"),
               tags: %i[loans loansout collectionobjects nhr ingest]
+            }
+            register :loanout_valuation, {
+              creator: Kiba::Tms::Jobs::Nhrs::LoanoutValuation,
+              path: File.join(Kiba::Tms.datadir, "ingest",
+                "nhr_loanout_valuation.csv"),
+              tags: %i[loans loansout valuation nhr ingest]
             }
             register :media_object, {
               creator: Kiba::Tms::Jobs::Nhrs::MediaObject,
