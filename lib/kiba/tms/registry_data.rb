@@ -1281,11 +1281,20 @@ module Kiba
           }
         end
 
+        Kiba::Tms.registry.namespace("objectexit") do
+          register :ingest, {
+            creator: Kiba::Tms::Jobs::Objectexit::Ingest,
+            path: File.join(Kiba::Tms.datadir, "ingest",
+              "objectexit.csv"),
+            tags: %i[objectexit]
+          }
+        end
+
         Kiba::Tms.registry.namespace("obj_deaccession") do
-          register :shaped, {
-            creator: Kiba::Tms::Jobs::ObjDeaccession::Shaped,
+          register :shape, {
+            creator: Kiba::Tms::Jobs::ObjDeaccession::Shape,
             path: File.join(Kiba::Tms.datadir, "working",
-              "obj_deaccession_shaped.csv"),
+              "obj_deaccession_shape.csv"),
             tags: %i[obj_deaccession],
             desc: "Renames fields and reshapes data into CS Object Exit",
             dest_special_opts: {
