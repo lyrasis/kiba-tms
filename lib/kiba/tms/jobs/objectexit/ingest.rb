@@ -25,6 +25,9 @@ module Kiba
 
           def xforms
             Kiba.job_segment do
+              transform Delete::Fields,
+                fields: %i[salenumber deaccessionid]
+
               transform Tms.final_data_cleaner
             end
           end

@@ -129,9 +129,6 @@ module Kiba
                 row[amt_fld] = amount
                 row
               end
-
-              transform Delete::Fields,
-                fields: :salenumber
             end
           end
 
