@@ -47,7 +47,7 @@ module Kiba
       #
       # @return [:per_sale, :one_to_one] Overall strategy for converting
       #   ObjDeaccession rows to Object Exits
-      setting :treatment, default: :per_sale, reader: true
+      setting :treatment, default: :one_to_one, reader: true
 
       # @return [Array<Symbol>] fields to delete at beginning of Shape job
       setting :shape_delete_fields, default: [], reader: true
