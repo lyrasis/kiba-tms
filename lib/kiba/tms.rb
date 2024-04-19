@@ -314,6 +314,17 @@ module Kiba
       Tms.blank_jobs << jobkey unless result == true
       result
     end
+
+    # @param jobkey [Symbol]
+    # @return [Array<Symbol>]
+    def headers_for(jobkey)
+      path = Tms.registry.resolve(jobkey).path
+      return [] unless File.exist?(path)
+
+      `head -n 1 #{path}`.chomp
+        .split(",")
+        .map(&:to_sym)
+    end
   end
 end
 
