@@ -91,6 +91,13 @@ module Kiba
               ),
               tags: %i[nhr collectionobjects valuation ingest]
             }
+            register :objectexit_valuation, {
+              creator: Kiba::Tms::Jobs::Nhrs::ObjectexitValuation,
+              path: File.join(
+                Kiba::Tms.datadir, "ingest", "nhr_objectexit_valuation.csv"
+              ),
+              tags: %i[nhr objectexit valuation ingest]
+            }
 
             register :exhibition_loanin_direct, {
               creator: Kiba::Tms::Jobs::Nhrs::ExhibitionLoaninDirect,

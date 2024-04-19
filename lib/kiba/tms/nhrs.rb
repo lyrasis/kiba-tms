@@ -22,7 +22,8 @@ module Kiba
       setting :job_xforms, default: nil, reader: true
 
       def transformers
-        [job_xforms, sample_xforms, config_finalize_xforms].compact
+        [job_xforms, sample_xforms, config_finalize_xforms].flatten
+          .compact
       end
 
       # @return [:rectype1, :rectype2, nil] Set from job if intending to output
